@@ -81,7 +81,7 @@ public class PrecisionAiming extends AbilityBase {
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
 	
 	public static final SettingObject<Integer> Reload 
-	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "Reload", 30, "# 강화 대기 시간") {
+	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "Reload", 40, "# 강화 대기 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

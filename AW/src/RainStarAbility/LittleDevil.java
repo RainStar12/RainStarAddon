@@ -32,6 +32,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.google.common.base.Predicate;
 
@@ -133,6 +134,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 			List<Player> players = LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), RANGE_CONFIG.getValue(), predicate);
 	    	if (players.size() != 0) {
 				for (Player p : players) {
+					SoundLib.ENTITY_WITCH_AMBIENT.playSound(p, 1, 1.8f);
 					Inventory inventory = p.getPlayer().getInventory();
 					List<ItemStack> list = new CopyOnWriteArrayList<>(inventory.getContents());
 					for (ItemStack itemStack : list) {
@@ -148,11 +150,13 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 									itemStack.getType() == Material.SPLASH_POTION) {
 									getPlayer().getInventory().addItem(itemStack);
 									p.getInventory().removeItem(itemStack);
+									SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
 									playercount.add(p);
 									break;
 								} else {
 									ItemLib.addItem(getPlayer().getInventory(), itemStack.getType(), 1);
 									ItemLib.removeItem(p.getInventory(), itemStack.getType(), 1);
+									SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
 									playercount.add(p);
 									break;
 								}

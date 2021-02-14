@@ -22,8 +22,11 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,7 +37,6 @@ import RainStarEffect.Madness;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.Update;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
@@ -69,7 +71,7 @@ import daybreak.google.common.base.Predicate;
 		" 철괴를 다시 우클릭하면 원래 위치로 돌아가 주변 $[BLIND_RANGE]칸 내 플레이어를 실명시키고,",
 		" 카드를 휘날려 피해를 입힙니다. $[COOLDOWN_CONFIG]",
 		"§7사망 §8- §c내 죽음이 내 삶보다 가치있기를§f: 나를 죽인 대상과 그 주변 $[MADNESS_RANGE]칸 내",
-		" 모든 플레이어에게 5분간 지속되는 광란 디버프를 겁니다."
+		" 모든 플레이어에게 3분간 지속되는 광란 디버프를 겁니다."
 		})
 
 public class Joker extends Synergy implements ActiveHandler {
@@ -165,10 +167,23 @@ public class Joker extends Synergy implements ActiveHandler {
 	private final Cooldown cool = new Cooldown(COOLDOWN_CONFIG.getValue());
 	
 	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer()) && e.getCause() == DamageCause.BLOCK_EXPLOSION) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+	
+	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && e.getDamager() instanceof Player) {
+		onEntityDamage(e);
+		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0 && e.getDamager() instanceof Player) {
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, e.getDamager().getLocation(), madnessrange, madnessrange, predicate)) {
-				Madness.apply(getGame().getParticipant(p), TimeUnit.MINUTES, 5, 20);	
+				Madness.apply(getGame().getParticipant(p), TimeUnit.MINUTES, 3, 20);	
 			}
 			updateTime(getPlayer().getWorld());
 			if (e.getDamager() != null) {
@@ -556,7 +571,7 @@ public class Joker extends Synergy implements ActiveHandler {
 		});
 		
 		private CardBullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, float yaw, int suit, int rank) {
-			super(5);
+			super(3);
 			setPeriod(TimeUnit.TICKS, 1);
 			Joker.this.bullet = this;
 			this.shooter = shooter;

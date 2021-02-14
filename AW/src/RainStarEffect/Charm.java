@@ -53,6 +53,7 @@ public class Charm extends AbstractGame.Effect implements Listener {
 	@Override
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		super.onStart();
 	}
 
 	@EventHandler

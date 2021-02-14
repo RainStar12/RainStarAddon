@@ -22,6 +22,7 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
@@ -70,16 +71,6 @@ public class Teabagging extends AbilityBase {
 		}
 	};
 	
-	private boolean isBehind(Player p, Player target) {
-	    Location eye = p.getEyeLocation();
-	    Vector toEntity = target.getEyeLocation().toVector().subtract(eye.toVector());
-	    double dot = toEntity.normalize().dot(eye.getDirection());
-	    return dot < -0.5D;
-	}
-	
-	private Map<Player, Integer> teabaggingcount = new HashMap<>();
-	private Set<Player> bagged = new HashSet<>();
-	
 	private final Predicate<Entity> predicate2 = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -107,6 +98,16 @@ public class Teabagging extends AbilityBase {
 		}
 	};
 	
+	private boolean isBehind(Player p, Player target) {
+	    Location eye = p.getEyeLocation();
+	    Vector toEntity = target.getEyeLocation().toVector().subtract(eye.toVector());
+	    double dot = toEntity.normalize().dot(eye.getDirection());
+	    return dot < -0.5D;
+	}
+	
+	private Map<Player, Integer> teabaggingcount = new HashMap<>();
+	private Set<Player> bagged = new HashSet<>();
+	
     private final AbilityTimer passive = new AbilityTimer() {
     	
     	@Override
@@ -130,6 +131,7 @@ public class Teabagging extends AbilityBase {
         						}
         						Random random = new Random();
         						if (random.nextInt(10) == 0) {
+            						SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
         							switch(random.nextInt(8)) {
         							case 0: player.sendMessage("§e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §cㅋㅋ 야 꼴받냐?");
         							break;

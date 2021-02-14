@@ -22,6 +22,8 @@ import RainStarAbility.GuardianAngel;
 import RainStarAbility.HohoHaha;
 import RainStarAbility.Indecision;
 import RainStarAbility.Kairos;
+import RainStarAbility.Kuro;
+import RainStarAbility.KuroEye;
 import RainStarAbility.LightningCounter;
 import RainStarAbility.LingeringArrow;
 import RainStarAbility.LittleDevil;
@@ -43,6 +45,7 @@ import RainStarAbility.Yuki;
 import RainStarSynergy.ASAP;
 import RainStarSynergy.Accelerator;
 import RainStarSynergy.AkashicRecords;
+import RainStarSynergy.BadManner;
 import RainStarSynergy.Chance;
 import RainStarSynergy.Demisoda;
 import RainStarSynergy.GravityZero;
@@ -179,6 +182,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Ruber.class, Crystal.class, HealthCopy.class);
 		SynergyFactory.registerSynergy(Tesla.class, Tesla.class, TeslaPlasma.class);
 		SynergyFactory.registerSynergy(Clown.class, Alice.class, Joker.class);
+		SynergyFactory.registerSynergy(Teabagging.class, LittleDevil.class, BadManner.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -193,7 +197,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f31개 §7/ §d시너지 §f22개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f31개 §7/ §d시너지 §f23개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -203,7 +207,7 @@ public class AddonR extends Addon implements Listener {
 	public void onGameCredit(GameCreditEvent e) {
 		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f31개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f22개 적용 완료.");
+			e.addCredit("§d시너지 §f23개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}
