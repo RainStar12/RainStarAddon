@@ -14,7 +14,6 @@ import cokes86.addon.effects.GodsPressure;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.list.Zombie.Infection;
 import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityBase.RestrictionBehavior;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;

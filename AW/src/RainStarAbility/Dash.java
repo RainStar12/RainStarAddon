@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -60,7 +61,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 혼란 상태의 대상은 매 초마다 무작위의 방향으로 튕겨나갑니다.",
 		" 또한 스태미나 1을 즉시 회복합니다.",
 		"§7패시브 §8- §b대시 잔상§f: 대시로 지나친 자리에 대시 잔상이 남아",
-		" 닿는 플레이어에게 3의 마법 피해를 입힙니다. 만약 대상이 혼란 도중이라면,",
+		" 닿는 플레이어에게 2의 마법 피해를 입힙니다. 만약 대상이 혼란 도중이라면,",
 		" 추가로 5초간 신속 2 버프를 획득합니다.",
 		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"})
 
@@ -106,7 +107,7 @@ public class Dash extends AbilityBase {
 	private boolean onetime = true;
 	private static final Vector zerov = new Vector(0, 0, 0);
 	private ActionbarChannel ac = newActionbarChannel();
-	private int timer = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * 5 : 5);
+	private int timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 5 : 5);
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 200, 2, true, false);
 	private PotionEffect normalspeed = new PotionEffect(PotionEffectType.SPEED, 100, 1, true, false);
 	private PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 3, 0, true, false);
@@ -284,11 +285,12 @@ public class Dash extends AbilityBase {
     
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+    	onEntityDamage(e);
     	if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
 			target = getGame().getParticipant((Player) e.getEntity());
-    		attacked.start();
+    		if (attacked.isRunning()) attacked.setCount(3);
+    		else attacked.start();
     	}
-    	onEntityDamage(e);
     }
     
     @SubscribeEvent
@@ -298,9 +300,9 @@ public class Dash extends AbilityBase {
     
     public class AfterImage extends AbilityTimer {
     	
-    	Set<Player> damagedcheck = new HashSet<>();
-    	Location saveloc1;
-    	Location saveloc2;
+    	private Set<Damageable> damagedcheck = new HashSet<>();
+    	private Location saveloc1;
+    	private Location saveloc2;
     	
     	private AfterImage() {
     		super(TaskType.REVERSE, 60);
@@ -309,7 +311,7 @@ public class Dash extends AbilityBase {
     	
     	@Override
     	protected void onStart() {
-	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), 150).toLocations(startLocation)) {
+	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(getPlayer().getLocation()))))).toLocations(startLocation)) {
 	   			ParticleLib.END_ROD.spawnParticle(loc.add(0, 1, 0), 0, 0, 0, 1, 0);
 	   			saveloc1 = startLocation;
 	   			saveloc2 = getPlayer().getLocation();
@@ -318,18 +320,23 @@ public class Dash extends AbilityBase {
     	
     	@Override
     	protected void run(int count) {
-    		for (Player p : LocationUtil.rayTraceEntities(Player.class, saveloc1, saveloc2, 0.75, predicate)) {
+    		for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
     			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-        			if (getGame().getParticipant(p).hasEffect(Confusion.registration)) {
-        				if (count < 50) {
-        					getPlayer().addPotionEffect(normalspeed);
-        					Damages.damageMagic(p, getPlayer(), true, 3);
-        					damagedcheck.add(p);
-        				}
-        			} else {
-        				Damages.damageMagic(p, getPlayer(), true, 3);
-            			damagedcheck.add(p);
-        			}
+    				if (p instanceof Player) {
+            			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
+            				if (count < 50) {
+            					getPlayer().addPotionEffect(normalspeed);
+                				Damages.damageMagic(p, getPlayer(), true, 2);
+                				damagedcheck.add(p);
+            				}
+            			} else {
+            				Damages.damageMagic(p, getPlayer(), true, 2);
+            				damagedcheck.add(p);
+            			}
+    				} else {
+        				Damages.damageMagic(p, getPlayer(), true, 2);
+        				damagedcheck.add(p);
+    				}
     			}
     		}
     	}

@@ -27,6 +27,9 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "냉기", displayName = "§9냉기", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION
+}, description = {
+		"이동 속도 및 공격 속도가 감소합니다.",
+		"또한 지속시간 및 쿨타임이 천천히 흐릅니다."
 })
 public class Chill extends AbstractGame.Effect implements Listener {
 

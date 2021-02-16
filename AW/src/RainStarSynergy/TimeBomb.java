@@ -267,7 +267,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onBlockExplode(BlockExplodeEvent e) {
-		if (teleport) {
+		if (teleport && e.getBlock().getWorld().equals(getPlayer().getWorld())) {
 			getPlayer().teleport(e.getBlock().getLocation());
 			if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
 				if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 1) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {
@@ -288,7 +288,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 				Healths.setHealth(getPlayer(), getPlayer().getHealth() + (e.getFinalDamage() * 0.75));
 			}
 			if (!e.getEntity().equals(getPlayer())) {
-				if (teleport) {
+				if (teleport && e.getEntity().getWorld().equals(getPlayer().getWorld())) {
 					getPlayer().teleport(e.getEntity().getLocation());
 					if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
 						if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 1) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {

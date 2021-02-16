@@ -21,6 +21,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 
 @EffectManifest(name = "시간 둔화", displayName = "§3시간 둔화", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.ABILITY_RESTRICTION
+}, description = {
+		"쿨타임이 매 초마다 1초씩 늘어납니다."
 })
 public class TimeSlowdown extends AbstractGame.Effect implements Listener {
 

@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -73,7 +74,7 @@ public class Accelerator extends Synergy {
 	private Participant target;
 	private static final Vector zerov = new Vector(0, 0, 0);
 	private ActionbarChannel ac = newActionbarChannel();
-	int timer = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * 5 : 5);
+	int timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 5 : 5);
 	private PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 3, 0, true, false);
 	private ItemStack[] armors;
 	
@@ -214,7 +215,8 @@ public class Accelerator extends Synergy {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
     	if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
 			target = getGame().getParticipant((Player) e.getEntity());
-    		attacked.start();
+    		if (attacked.isRunning()) attacked.setCount(3);
+    		else attacked.start();
     	}
     	onEntityDamage(e);
     }
@@ -226,7 +228,7 @@ public class Accelerator extends Synergy {
     
     public class AfterImage extends AbilityTimer {
     	
-    	Set<Player> damagedcheck = new HashSet<>();
+    	Set<Damageable> damagedcheck = new HashSet<>();
     	Location saveloc1;
     	Location saveloc2;
     	
@@ -237,7 +239,7 @@ public class Accelerator extends Synergy {
     	
     	@Override
     	protected void onStart() {
-	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), 150).toLocations(startLocation)) {
+	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(getPlayer().getLocation()))))).toLocations(startLocation)) {
 	   			ParticleLib.END_ROD.spawnParticle(loc.add(0, 1, 0), 0, 0, 0, 1, 0);
 	   			saveloc1 = startLocation;
 	   			saveloc2 = getPlayer().getLocation();
@@ -246,53 +248,75 @@ public class Accelerator extends Synergy {
     	
     	@Override
     	protected void run(int count) {
-    		for (Player p : LocationUtil.rayTraceEntities(Player.class, saveloc1, saveloc2, 0.75, predicate)) {
+    		for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
     			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-        			if (getGame().getParticipant(p).hasEffect(Confusion.registration)) {
-        				if (count < 55) {
+    				if (p instanceof Player) {
+    					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
+            				if (count < 55) {
+            				Damages.damageMagic(p, getPlayer(), true, 3);
+        			   		stack = Math.min((stack + 1), 15);
+        			    	ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
+	        			    	new AbilityTimer(10) {
+	        			    			
+	        			    		@Override
+	        			    		protected void onStart() {
+	        			    			damagedcheck.add(p);
+	        			    		}
+	        			    		
+	        			    		@Override
+	        			    		protected void onEnd() {
+	        			    			onSilentEnd();
+	        			    		}
+	        			    			
+	        			    		@Override
+	        			    		protected void onSilentEnd() {
+	        			    			damagedcheck.remove(p);
+	        			    		}
+	        			    			
+	        			    	}.setPeriod(TimeUnit.TICKS, 1);
+            				}
+            			} else {
+            				Damages.damageMagic(p, getPlayer(), true, 3);
+        			    	new AbilityTimer(10) {
+    			    			
+        			    		@Override
+        			    		protected void onStart() {
+        			    			damagedcheck.add(p);
+        			    		}
+        			    		
+        			    		@Override
+        			    		protected void onEnd() {
+        			    			onSilentEnd();
+        			    		}
+        			    			
+        			    		@Override
+        			    		protected void onSilentEnd() {
+        			    			damagedcheck.remove(p);
+        			    		}
+        			    			
+        			    	}.setPeriod(TimeUnit.TICKS, 1);
+            			}
+    				} else {
         				Damages.damageMagic(p, getPlayer(), true, 3);
-    			   		stack = Math.min((stack + 1), 15);
-    			    	ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
-    			    		new AbilityTimer(10) {
-    			    			
-    			    			@Override
-    			    			protected void onStart() {
-    			    				damagedcheck.add(p);
-    			    			}
+    			    	new AbilityTimer(10) {
+			    			
+    			    		@Override
+    			    		protected void onStart() {
+    			    			damagedcheck.add(p);
+    			    		}
     			    		
-    			    			@Override
-    			    			protected void onEnd() {
-    			    				onSilentEnd();
-    			    			}
+    			    		@Override
+    			    		protected void onEnd() {
+    			    			onSilentEnd();
+    			    		}
     			    			
-    			    			@Override
-    			    			protected void onSilentEnd() {
-    			    				damagedcheck.remove(p);
-    			    			}
+    			    		@Override
+    			    		protected void onSilentEnd() {
+    			    			damagedcheck.remove(p);
+    			    		}
     			    			
-    			    		}.setPeriod(TimeUnit.TICKS, 1);
-        				}
-        			} else {
-            			Damages.damageArrow(p, getPlayer(), 3);
-			    		new AbilityTimer(10) {
-    			    			
-			    			@Override
-			    			protected void onStart() {
-			    				damagedcheck.add(p);
-			    			}
-			    			
-			    			@Override
-			    			protected void onEnd() {
-			    				onSilentEnd();
-			    			}
-			    			
-			    			@Override
-			    			protected void onSilentEnd() {
-			    				damagedcheck.remove(p);
-			    			}
-			    			
-			    		}.setPeriod(TimeUnit.TICKS, 1);
-        			}
+    			    	}.setPeriod(TimeUnit.TICKS, 1);
+    				}
     			}
     		}
     	}

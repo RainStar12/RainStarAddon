@@ -33,6 +33,10 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @EffectManifest(name = "훈수", displayName = "§c훈수", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+}, description = {
+		"플레이어가 특정 행동들을 할 때마다 확률적으로 훈수를 둡니다.",
+		"훈수를 받으면 시야가 잠깐 봉인됩니다.",
+		"이 효과는 자동 영구 지속 효과입니다."
 })
 public class BackseatGaming extends AbstractGame.Effect implements Listener {
 

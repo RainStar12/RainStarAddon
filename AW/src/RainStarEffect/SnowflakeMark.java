@@ -20,12 +20,17 @@ import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectConstructor;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Strings;
 
-@EffectManifest(name = "눈꽃 표식", displayName = "§b눈꽃 표식", method = ApplicationMethod.UNIQUE_LONGEST)
+@EffectManifest(name = "눈꽃 표식", displayName = "§b눈꽃 표식", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+		EffectType.COMBAT_RESTRICTION
+}, description = {
+		"방어력을 레벨당 2씩 감소시킵니다.",
+})
 
 public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 

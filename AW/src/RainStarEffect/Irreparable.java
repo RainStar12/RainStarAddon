@@ -19,6 +19,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 
 @EffectManifest(name = "회복 불능", displayName = "§c회복 불능", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.HEALING_BAN
+}, description = {
+		"모든 회복 효과를 받을 수 없습니다."
 })
 public class Irreparable extends AbstractGame.Effect implements Listener {
 

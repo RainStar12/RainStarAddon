@@ -71,6 +71,7 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "수호천사", rank = Rank.S, species = Species.OTHERS, explain = {
+		"신을 지키기 위해 강림한 §f§l빛§f 속성의 수호천사.",
 		"§7활 우클릭 §8- §c저지먼트§f: 바라보는 방향의 수평으로 성령의 화살을 발사합니다.",
 		" 성령의 화살이 적중할 때 다시 튕겨 시전자의 위치까지 되돌아오며,",
 		" 수호 스택에 비례해 적중 대상을 기절시킵니다.",

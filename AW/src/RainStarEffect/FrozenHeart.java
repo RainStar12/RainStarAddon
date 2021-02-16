@@ -27,6 +27,13 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "프로즌 하트", displayName = "§3프로즌 하트", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.HEALING_BAN
+}, description = {
+		"모든 회복 효과를 받을 수 없습니다.",
+		"슬롯을 변경할 때마다 2.5초를 대기해야 하고,", 
+		"이동 속도와 공격 속도가 감소합니다.",
+		"효과가 해제될 때, 원래 받을 회복 효과를",
+		"절반으로 줄여 한꺼번에 받습니다.",
+		"이 효과는 이동할 때마다 더 빨리 지속시간이 줄어듭니다."
 })
 public class FrozenHeart extends AbstractGame.Effect implements Listener {
 
