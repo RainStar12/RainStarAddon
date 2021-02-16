@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/스피곳_1.12.2_버킷/1.12.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rains/Downloads/CokesAddon.jar"/>
-	<classpathentry kind="lib" path="C:/Users/rains/Downloads/AbilityWar-2.4.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/Downloads/AbilityWar-2.4.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -11,6 +11,7 @@ import RainStarAbility.Butcher;
 import RainStarAbility.Chronos;
 import RainStarAbility.Crystal;
 import RainStarAbility.Dash;
+import RainStarAbility.Hovercraft;
 import RainStarAbility.DefileGak;
 import RainStarAbility.Detection;
 import RainStarAbility.Echo;
@@ -200,6 +201,8 @@ public class AddonR extends Addon implements Listener {
 		Bukkit.broadcastMessage("§e능력 §f31개 §7/ §d시너지 §f23개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
+		
+        RainStarEffectFactory.load();
 		
 	}
 	

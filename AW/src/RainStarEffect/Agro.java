@@ -18,6 +18,8 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @EffectManifest(name = "도발", displayName = "§c도발", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+}, description = {
+		"도발한 사람을 근접 타격할 때 추가 피해를 줄 수 있습니다."
 })
 public class Agro extends AbstractGame.Effect implements Listener {
 

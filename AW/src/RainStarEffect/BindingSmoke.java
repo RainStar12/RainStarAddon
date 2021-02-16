@@ -25,6 +25,9 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "속박의 연막", displayName = "§8속박의 연막", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
+}, description = {
+		"점프 및 이동 속도가 급격하게 감소합니다.",
+		"또한 엔티티에 의한 피해 외 모든 피해를 1.5배로 받습니다."
 })
 public class BindingSmoke extends AbstractGame.Effect implements Listener {
 

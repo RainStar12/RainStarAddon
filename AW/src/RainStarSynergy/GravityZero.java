@@ -24,7 +24,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "무중력", rank = Rank.A, species = Species.OTHERS, explain = {
 		"자신이 발사하는 모든 발사체가 5초간 중력의 영향을 무시하고 나아갑니다.",
-		"철괴 우클릭 시, $[DurationConfig]초간 자신의 몸이 중력의 영향을 받지 않습니다. $[CooldownConfig]",
+		"철괴 우클릭 시, $[DURATION]초간 자신의 몸이 중력의 영향을 받지 않습니다.",
+		"능력 지속 도중 다시 우클릭 시 즉시 끝낼 수 있습니다. $[COOLDOWN]",
 		"또한 화살로 맞힌 개체를 3초간 중력을 역행해 띄웁니다.",
 		"낙하 대미지를 무시합니다."
 })
@@ -42,12 +43,12 @@ public class GravityZero extends Synergy implements ActiveHandler {
 		}
 	}
 	
-	private final Cooldown gravityc = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown gravityc = new Cooldown(COOLDOWN.getValue());
 	
 	LivingEntity target;
 	
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(GravityZero.class,
-			"Cooldown", 30, "# 무중력 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(GravityZero.class,
+			"cooldown", 30, "# 무중력 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -59,8 +60,8 @@ public class GravityZero extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(GravityZero.class,
-			"Duration", 10, "# 지속시간") {
+	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(GravityZero.class,
+			"duration", 10, "# 지속시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -71,9 +72,13 @@ public class GravityZero extends Synergy implements ActiveHandler {
 	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !gravityc.isCooldown() && !nogravity.isDuration()) {
-			nogravity.start();
-			return true;
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !gravityc.isCooldown()) {
+			if (nogravity.isRunning()) {
+				nogravity.stop(false);
+			} else {
+				nogravity.start();
+				return true;
+			}
 		}
 		return false;
 	}		
@@ -129,7 +134,7 @@ public class GravityZero extends Synergy implements ActiveHandler {
 		}
 	}
 	
-	private final Duration nogravity = (Duration) new Duration(DurationConfig.getValue() * 20, gravityc) {
+	private final Duration nogravity = (Duration) new Duration(DURATION.getValue() * 20, gravityc) {
 		
 		@Override
 		protected void onDurationProcess(int ticks) {

@@ -19,6 +19,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @EffectManifest(name = "혼란", displayName = "§6혼란", method = ApplicationMethod.MULTIPLE, type = {
 		EffectType.MOVEMENT_RESTRICTION
+}, description = {
+		"전후좌우의 무작위 방향으로 튕겨나갑니다."
 })
 public class Confusion extends AbstractGame.Effect implements Listener {
 

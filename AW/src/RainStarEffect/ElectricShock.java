@@ -22,6 +22,10 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @EffectManifest(name = "감전", displayName = "§d감전", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.MOVEMENT_RESTRICTION
+}, description = {
+		"매 2초마다 0.5초간 기절합니다. 감전 도중에 기절 효과가",
+		"새로이 들어올 때마다 획득한 기절의 시간에 비례해",
+		"0.5초당 1의 피해를 끝날 때 입습니다."
 })
 public class ElectricShock extends AbstractGame.Effect implements Listener {
 

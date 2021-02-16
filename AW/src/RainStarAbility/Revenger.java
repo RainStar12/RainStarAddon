@@ -103,7 +103,7 @@ public class Revenger extends AbilityBase {
 	    	
     	@Override
     	public void run(int count) {
-        	for (Location loc : Line.between(target.getLocation(), getPlayer().getLocation(), 150).toLocations(target.getLocation())) {
+        	for (Location loc : Line.between(target.getLocation(), getPlayer().getLocation(), (int) Math.min(500, (15 * Math.sqrt(target.getLocation().distance(getPlayer().getLocation()))))).toLocations(target.getLocation())) {
     	   		ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, trace);
         	}	
 	    }

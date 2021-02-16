@@ -26,6 +26,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 
 @EffectManifest(name = "유혹", displayName = "§d유혹", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.SIGHT_CONTROL
+}, description = {
+		"유혹한 대상을 지속해서 바라보게 되며,",
+		"유혹한 대상이 유혹된 플레이어를 타격할 때 준 최종 피해량에",
+		"비례하여 유혹한 대상의 체력을 회복합니다."
 })
 public class Charm extends AbstractGame.Effect implements Listener {
 

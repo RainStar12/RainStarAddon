@@ -22,6 +22,9 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 
 @EffectManifest(name = "부식", displayName = "§7부식", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION
+}, description = {
+		"철과 관련된 아이템을 사용하지 못합니다. 또한 방어력이 감소됩니다.",
+		"낮은 등급의 광물을 사용한 갑옷일수록 방어력이 더 많이 감소됩니다."
 })
 public class Corrosion extends AbstractGame.Effect implements Listener {
 

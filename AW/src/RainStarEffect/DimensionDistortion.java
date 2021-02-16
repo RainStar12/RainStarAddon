@@ -25,6 +25,9 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "차원 왜곡", displayName = "§3차원 왜곡", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
+}, description = {
+		"점프 및 이동 속도가 급격하게 감소합니다.",
+		"주는 모든 피해가 절반으로 감소합니다."
 })
 public class DimensionDistortion extends AbstractGame.Effect implements Listener {
 
