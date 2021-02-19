@@ -17,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -84,6 +85,13 @@ public class TeslaPlasma extends Synergy {
 	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
 		if (e.getEffectType().equals(Stun.registration)) {
 			e.setDuration(TimeUnit.TICKS, (int) (e.getDuration() * 0.5));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if (e.getPlayer().equals(getPlayer()) && chargestack >= 7 && chargestack < 10) {
+			e.setCancelled(true);
 		}
 	}
 	

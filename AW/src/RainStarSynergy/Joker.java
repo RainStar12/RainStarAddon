@@ -80,7 +80,7 @@ public class Joker extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 90,
 			"# 쿨타임") {
 
 		@Override

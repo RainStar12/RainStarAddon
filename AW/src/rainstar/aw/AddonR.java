@@ -11,7 +11,6 @@ import RainStarAbility.Butcher;
 import RainStarAbility.Chronos;
 import RainStarAbility.Crystal;
 import RainStarAbility.Dash;
-import RainStarAbility.Hovercraft;
 import RainStarAbility.DefileGak;
 import RainStarAbility.Detection;
 import RainStarAbility.Echo;
@@ -22,6 +21,7 @@ import RainStarAbility.GlassCannon;
 import RainStarAbility.GuardianAngel;
 import RainStarAbility.HohoHaha;
 import RainStarAbility.Indecision;
+import RainStarAbility.Inferno;
 import RainStarAbility.Kairos;
 import RainStarAbility.Kuro;
 import RainStarAbility.KuroEye;
@@ -34,6 +34,7 @@ import RainStarAbility.MultiHit;
 import RainStarAbility.NineTailFox;
 import RainStarAbility.NineTailFoxC;
 import RainStarAbility.NineTailFoxCP;
+import RainStarAbility.OneShotOneKill;
 import RainStarAbility.PrecisionAiming;
 import RainStarAbility.RainStar;
 import RainStarAbility.Revenger;
@@ -60,6 +61,7 @@ import RainStarSynergy.MagicShow;
 import RainStarSynergy.MomentaryTrip;
 import RainStarSynergy.NineTailFoxSynergy;
 import RainStarSynergy.PatronSaint;
+import RainStarSynergy.Sharper;
 import RainStarSynergy.SocialDistancing;
 import RainStarSynergy.TeslaPlasma;
 import RainStarSynergy.TimeBomb;
@@ -158,6 +160,11 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Alice.class);
 		AbilityFactory.registerAbility(Teabagging.class);
 		AbilityList.registerAbility(Teabagging.class);
+		AbilityFactory.registerAbility(OneShotOneKill.class);
+		AbilityList.registerAbility(OneShotOneKill.class);
+		AbilityFactory.registerAbility(Kuro.class);
+		AbilityList.registerAbility(Kuro.class);
+		AbilityFactory.registerAbility(KuroEye.class);
 		
 		AbilityFactory.registerAbility(HohoHaha.class);
 		AbilityList.registerAbility(HohoHaha.class);
@@ -191,6 +198,7 @@ public class AddonR extends Addon implements Listener {
 			public void run() {
 				try {
 					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.DataMining"), AkashicRecords.class);
+					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("me.breakofday.yeomryo.abilities.Kaiji"), Moros.class, Sharper.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
 	            }
@@ -198,7 +206,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f31개 §7/ §d시너지 §f23개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f33개 §7/ §d시너지 §f24개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -208,9 +216,9 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f31개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f33개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f23개 적용 완료.");
+			e.addCredit("§d시너지 §f24개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

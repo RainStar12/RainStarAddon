@@ -315,7 +315,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			switch (constellation) {
 			case 0:
 				joiner.add(" §b양자리§f: 체력이 25% 이하가 되는 피해를 엔티티에게 받을 때");
-				joiner.add(" 잃은 체력만큼의 흡수 체력이 생성됩니다.");
+				joiner.add(" 잃은 체력의 2.5배만큼의 흡수 체력이 생성됩니다.");
 				break;
 			case 1:
 				joiner.add(" §b황소자리§f: 다른 플레이어를 바라보고 달릴 때 신속 버프를 획득합니다.");
@@ -784,7 +784,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (constellation == 0 && e.getEntity().equals(getPlayer())) {
 			if (getPlayer().getHealth() >= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 4) {
 				if (getPlayer().getHealth() - e.getFinalDamage() <= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 4) {
-					NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + e.getFinalDamage()));
+					NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + (e.getFinalDamage() * 2.5)));
 				}
 			}
 		}
@@ -916,7 +916,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						constellation++;
 					switch (constellation) {
 					case 0:
-						getPlayer().sendMessage("§b양자리§f: 체력이 25% 이하가 되는 피해를 엔티티에게 받을 때 잃은 체력만큼의 흡수 체력이 생성됩니다.");
+						getPlayer().sendMessage("§b양자리§f: 체력이 25% 이하가 되는 피해를 엔티티에게 받을 때 잃은 체력의 2.5배만큼의 흡수 체력이 생성됩니다.");
 						break;
 					case 1:
 						getPlayer().sendMessage("§b황소자리§f: 다른 플레이어를 바라보고 달릴 때 신속 버프를 획득합니다. 또한 혜성의 타격이 더 큰 넉백을 가집니다.");

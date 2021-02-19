@@ -1,41 +1,73 @@
 package RainStarAbility;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
-import RainStarEffect.Confusion;
-import RainStarSynergy.BadManner;
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
-import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
+import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
@@ -58,7 +90,7 @@ public class Kuro extends AbilityBase {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Kuro.class,
-			"cooldown", 40, "# 차원 절단 쿨타임",
+			"cooldown", 50, "# 차원 절단 쿨타임",
 			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -72,7 +104,9 @@ public class Kuro extends AbilityBase {
 	};
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "차원 절단", CooldownDecrease._50);
-		
+	private Map<Player, NextDimension> nextMap = new HashMap<>(); 
+	private final Crescent crescent = Crescent.of(1, 20);
+	
 	private static final Set<Material> swords;
 	
 	static {
@@ -116,8 +150,70 @@ public class Kuro extends AbilityBase {
 		}
 	};
 	
+	private final Predicate<Block> blockpredicate = new Predicate<Block>() {
+		@Override
+		public boolean test(Block block) {
+			if (!block.getType().isSolid() && !block.isLiquid()) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public boolean apply(@Nullable Block arg0) {
+			return false;
+		}
+	};
+	
+	@SubscribeEvent
+	private void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+		if (e.getRightClicked().hasMetadata("DimensionCutter")) e.setCancelled(true);
+	}
+	
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
+				getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2);
+			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
+			   	getPlayer().sendMessage("§8[§7!§8] §c죽음의 위기§f에서 탈출하기 위해 §4금지된 마안§f을 §3개방§f하였습니다! §7/aw check");
+		    	AbilityBase ab = getParticipant().getAbility();
+		    	if (ab.getClass().equals(Mix.class)) {
+		    		final Mix mix = (Mix) ab;
+					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+					if (this.equals(first)) {
+						try {
+							mix.setAbility(KuroEye.class, second.getClass());
+						} catch (ReflectiveOperationException e1) {
+							e1.printStackTrace();
+						}
+					} else if (this.equals(second)) {
+						try {
+							mix.setAbility(first.getClass(), KuroEye.class);
+						} catch (ReflectiveOperationException e1) {
+							e1.printStackTrace();
+						}
+					}
+		    	} else {
+			    	try {
+						getParticipant().setAbility(KuroEye.class);
+					} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
+						e1.printStackTrace();
+					}	
+		    	}
+		    	e.setCancelled(true);
+	    	}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
 		if (getPlayer().equals(e.getDamager())) {
 			if (attacked.isRunning()) attacked.setCount(7);
 			else attacked.start();
@@ -130,7 +226,7 @@ public class Kuro extends AbilityBase {
     		if (!cool.isCooldown() && attacked.isRunning()) {
     			Block lastEmpty = null;
     			try {
-					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection(), 1, 15); iterator.hasNext(); ) {
+					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection().clone().setY(0).normalize(), 1, 10); iterator.hasNext(); ) {
 						final Block block = iterator.next();
 						if (!block.getType().isSolid()) {
 							lastEmpty = block;
@@ -139,43 +235,292 @@ public class Kuro extends AbilityBase {
 				} catch (IllegalStateException ignored) {
 				}
 				if (lastEmpty != null) {
-					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation()).start();
+					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
+					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
+					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
+					new CutterParticle(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
 					getPlayer().teleport(LocationUtil.floorY(lastEmpty.getLocation()).setDirection(getPlayer().getLocation().getDirection()));
+					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
+					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
 				} else {
 					getPlayer().sendMessage("§4[§c!§4] §f바라보는 방향에 이동할 수 있는 곳이 없습니다.");
 				}
     			e.setCancelled(true);
+    			cool.start();
     		}
     	}
     }
 	
+	private class CutParticle extends AbilityTimer {
+
+		private final Vector axis;
+		private final Vector vector;
+		private final Vectors crescentVectors;
+		private final Location location;
+		private final RGB color;
+
+		private CutParticle(double angle, Location location, Vector direction, RGB color) {
+			super(4);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.axis = VectorUtil.rotateAroundAxis(VectorUtil.rotateAroundAxisY(direction.setY(0).normalize(), 90), direction.setY(0).normalize(), angle);
+			this.vector = direction.setY(0).normalize().multiply(0.5);
+			this.location = location;
+			this.crescentVectors = crescent.clone()
+					.rotateAroundAxisY(-location.getYaw())
+					.rotateAroundAxis(direction.setY(0).normalize(), (180 - angle) % 180)
+					.rotateAroundAxis(axis, -75);
+			this.color = color;
+		}
+
+		@Override
+		protected void run(int count) {
+			Location baseLoc = location.clone().add(vector).add(0, 1.3, 0);
+			for (Location loc : crescentVectors.toLocations(baseLoc)) {
+				ParticleLib.REDSTONE.spawnParticle(loc, color);
+			}
+			crescentVectors.rotateAroundAxis(axis, 40);
+		}
+
+	}
+    
+	private class CutterParticle extends AbilityTimer {
+		
+    	private final Location startLoc;
+    	private final Location endLoc;
+    	private List<Location> locations = new ArrayList<>();
+		
+		private CutterParticle(Location startLoc, Location endLoc) {
+			super(TaskType.NORMAL, Integer.MAX_VALUE);
+			setPeriod(TimeUnit.TICKS, 5);
+			this.startLoc = startLoc.clone().add(0, 3, 0);
+			this.endLoc = endLoc.clone().add(0, 3, 0);
+		}
+		
+		@Override
+		protected void onStart() {
+			locations.addAll(Line.between(startLoc, endLoc, (int) Math.min(15, Math.sqrt(startLoc.distanceSquared(endLoc)))).toLocations(startLoc));
+		}
+		
+    	@Override
+    	protected void run(int count) {
+        	if (locations.size() == count) {
+        		stop(false);
+        	} else {
+            	ArmorStand armorstand = locations.get(count - 1).getWorld().spawn(locations.get(count - 1), ArmorStand.class);
+            	armorstand.setRightArmPose(new EulerAngle(Math.toRadians(80), 0, 0));
+            	armorstand.setMetadata("DimensionCutter", new FixedMetadataValue(AbilityWar.getPlugin(), null));
+            	armorstand.setVisible(false);
+            	armorstand.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
+            	armorstand.setGravity(true);
+            	NMS.removeBoundingBox(armorstand);
+            	armorstand.setVelocity(new Vector(0, -0.5, 0));
+            	new AbilityTimer(2) {
+            		
+            		@Override
+            		public void run(int count) {
+                    	armorstand.setVelocity(new Vector(0, -1, 0));
+            		}
+            		
+            	}.setPeriod(TimeUnit.TICKS, 1).start();
+    			new BukkitRunnable() {
+    				@Override
+    				public void run() {
+    					armorstand.teleport(LocationUtil.floorY(armorstand.getLocation(), blockpredicate).subtract(0, 0.5, 0));
+    					if (ServerVersion.getVersion() >= 13) {
+    						for (Block block : LocationUtil.getBlocks2D(armorstand.getLocation(), 2, true, true, true)) {
+    							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+    							if (block.getType() == Material.AIR) continue;
+    							Location location = block.getLocation().add(0, 1, 0);
+    							FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.05).setY(Math.random()), Behavior.FALSE);
+    						}
+    					} else {
+    						for (Block block : LocationUtil.getBlocks2D(armorstand.getLocation(), 2, true, true, true)) {
+    							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+    							if (block.getType() == Material.AIR) continue;
+    							Location location = block.getLocation().add(0, 1, 0);
+    							FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.05).setY(Math.random()), Behavior.FALSE);
+    						}
+    					}
+    					armorstand.getWorld().strikeLightningEffect(armorstand.getLocation());
+    					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(armorstand.getLocation());
+    				}
+    			}.runTaskLater(AbilityWar.getPlugin(), 3L);
+    			new BukkitRunnable() {
+    				@Override
+    				public void run() {
+    					armorstand.remove();
+    				}
+    			}.runTaskLater(AbilityWar.getPlugin(), 4L);
+        	}
+    	}
+    	
+    	@Override
+    	protected void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	protected void onSilentEnd() {
+    		for (Location loc : Line.between(startLoc, endLoc, (int) Math.min(15, Math.sqrt(startLoc.distanceSquared(endLoc)))).toLocations(startLoc)) {
+    			ArmorStand armorstand = loc.getWorld().spawn(loc, ArmorStand.class);
+    			armorstand.setRightArmPose(new EulerAngle(Math.toRadians(80), 0, 0));
+            	armorstand.setMetadata("DimensionCutter", new FixedMetadataValue(AbilityWar.getPlugin(), null));
+            	armorstand.setVisible(false);
+            	armorstand.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
+            	armorstand.setGravity(true);
+            	NMS.removeBoundingBox(armorstand);
+            	armorstand.setVelocity(new Vector(0, -1, 0));
+    			new BukkitRunnable() {
+    				@Override
+    				public void run() {
+    					armorstand.teleport(LocationUtil.floorY(armorstand.getLocation(), blockpredicate).subtract(0, 0.5, 0));
+    					if (ServerVersion.getVersion() >= 13) {
+    						for (Block block : LocationUtil.getBlocks2D(armorstand.getLocation(), 2, true, true, true)) {
+    							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+    							if (block.getType() == Material.AIR) continue;
+    							Location location = block.getLocation().add(0, 1, 0);
+    							FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.05).setY(Math.random()), Behavior.FALSE);
+    						}
+    					} else {
+    						for (Block block : LocationUtil.getBlocks2D(armorstand.getLocation(), 2, true, true, true)) {
+    							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+    							if (block.getType() == Material.AIR) continue;
+    							Location location = block.getLocation().add(0, 1, 0);
+    							FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.05).setY(Math.random()), Behavior.FALSE);
+    						}
+    					}
+    					armorstand.getWorld().strikeLightningEffect(armorstand.getLocation());
+    					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(armorstand.getLocation());
+    				}
+				}.runTaskLater(AbilityWar.getPlugin(), 3L);
+    			new BukkitRunnable() {
+    				@Override
+    				public void run() {
+    					armorstand.remove();
+    				}
+    			}.runTaskLater(AbilityWar.getPlugin(), 4L);
+    		}
+    	}
+		
+	}
+    
 	private class DimensionCutter extends AbilityTimer {
 		
     	private Set<Damageable> damagedcheck = new HashSet<>();
     	private final Location startLoc;
     	private final Location endLoc;
+    	private final Location midLoc;
 		
 		private DimensionCutter(Location startLoc, Location endLoc) {
 			super(100);
 			setPeriod(TimeUnit.TICKS, 1);
-			this.startLoc = startLoc;
-			this.endLoc = endLoc;
+			this.startLoc = startLoc.clone().add(0, 1, 0);
+			this.endLoc = endLoc.clone().add(0, 1, 0);
+			this.midLoc = startLoc.clone().add(0, 1, 0).toVector().midpoint(endLoc.clone().add(0, 1, 0).toVector()).toLocation(getPlayer().getWorld());
 		}
 		
     	@Override
     	protected void run(int count) {
-    		if (count % 20 == 0) {
-        		for (Location loc : Line.between(startLoc, endLoc, (int) Math.min(250, 5 * Math.sqrt(startLoc.distanceSquared(endLoc)))).toLocations(startLoc)) {
-        			ParticleLib.PORTAL.spawnParticle(loc.clone().add(0, 1, 0), 0, 0, 0, 20, 0.2);
+        	for (Location loc : Line.between(startLoc, endLoc, (int) Math.min(250, 5 * Math.sqrt(startLoc.distanceSquared(endLoc)))).toLocations(startLoc)) {
+        		if (count % 10 == 0) {
+        			ParticleLib.PORTAL.spawnParticle(loc, 0, 0, 0, 5, 0.25);
         		}
-    		}
+        	}
     		for (Damageable d : LocationUtil.rayTraceEntities(Damageable.class, startLoc, endLoc, 0.75, predicate)) {
+    			if (d instanceof ArmorStand) continue;
     			if (!d.equals(getPlayer()) && !damagedcheck.contains(d)) {
-        			Damages.damageMagic(d, getPlayer(), false, 3);
-            		damagedcheck.add(d);
+        			Damages.damageMagic(d, getPlayer(), false, (float) (7 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4));
+            		new AbilityTimer(20) {
+            			
+            			@Override
+            			public void onStart() {
+            				damagedcheck.add(d);
+            			}
+            			
+            			@Override
+            			public void onEnd() {
+            				onSilentEnd();
+            			}
+            			
+            			@Override
+            			public void onSilentEnd() {
+            				damagedcheck.remove(d);
+            			} 
+            		}.setPeriod(TimeUnit.TICKS, 1).start();
+    			}
+    		}
+    		for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, midLoc, 5, 5, predicate)) {
+    			d.setVelocity(VectorUtil.validateVector(midLoc.toVector().subtract(d.getLocation().toVector()).normalize().multiply(0.1)));
+    			if (d.getLocation().distanceSquared(midLoc) < 1) {
+    				if (d instanceof Player) {
+    					Player p = (Player) d;
+    					if (!nextMap.containsKey(p)) {
+        					new NextDimension(p, p.getGameMode()).start();	
+    					}
+    				}
     			}
     		}
     	}
+    	
+	}
+	
+	private class NextDimension extends AbilityTimer implements Listener {
+		
+		private final Player player;
+		private ActionbarChannel actionbarChannel;
+		private final GameMode originalMode;
+		
+		private NextDimension(Player player, GameMode originalMode) {
+			super(35);
+			setPeriod(TimeUnit.TICKS, 2);
+			this.player = player;
+			if (originalMode.equals(GameMode.SPECTATOR)) {
+				this.originalMode = GameMode.SURVIVAL;
+			} else {
+				this.originalMode = originalMode;
+			}
+			nextMap.put(player, this);
+		}
+		
+    	@Override
+    	protected void onStart() {
+    		actionbarChannel = getGame().getParticipant(player).actionbar().newChannel();
+    		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+    	}
+    	
+    	@EventHandler
+    	public void onPlayerMove(PlayerMoveEvent e) {
+    		if (e.getPlayer().equals(player)) {
+    			e.setCancelled(true);
+    		}
+    	}
+    	
+    	@EventHandler
+    	public void onPlayerTeleport(PlayerTeleportEvent e) {
+    		if (e.getPlayer().equals(player) && e.getCause() == TeleportCause.SPECTATE) {
+    			e.setCancelled(true);
+    		}
+    	}
+		
+    	@Override
+    	protected void run(int count) {
+    		player.setGameMode(GameMode.SPECTATOR);
+    		ParticleLib.SMOKE_LARGE.spawnParticle(player.getLocation(), 0, 0, 0, 3, 0);
+    		actionbarChannel.update("§5차원의 저편§f: " + count / 10 + "초");
+    	}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			HandlerList.unregisterAll(this);
+			nextMap.remove(player);
+			player.setGameMode(originalMode);
+			actionbarChannel.unregister();
+		}
 		
 	}
     

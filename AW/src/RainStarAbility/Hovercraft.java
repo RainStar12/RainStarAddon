@@ -17,25 +17,35 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import RainStarAbility.GuardianAngel.Bullet;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Materials;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -69,7 +79,8 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 	
 	private static final Set<Material> swords;
 	private Hovering bullet = null;
-	private double speed = 0;
+	private double speed = 0.1;
+	private final ActionbarChannel ac = newActionbarChannel();
 	
 	static {
 		if (MaterialX.NETHERITE_SWORD.isSupported()) {
@@ -79,6 +90,23 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
+	private final AbilityTimer delaymaker = new AbilityTimer(1) {
+		
+		@Override
+		public void run(int count) {
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer stopmaker = new AbilityTimer(1) {
+		
+		@Override
+		public void run(int count) {
+    		Bukkit.broadcastMessage("스탑시작!");
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT) {
@@ -86,21 +114,50 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 		}
 		if (swords.contains(material)) {
 			if (clicktype == ClickType.RIGHT_CLICK) {
-				if (speed == 0.1) speed = 0.5;
-				else if (speed == 0.5) speed = 1.0;
-				else if (speed == 1.0) speed = 2.0;
-				else if (speed == 2.0) speed = 0.1;
+				if (speed == 0.1) {
+					speed = 0.5;
+					ac.update("§3속도§f: §b1§e단계");
+				} else if (speed == 0.5) {
+					speed = 1.0;
+					ac.update("§3속도§f: §b2§e단계");
+				} else if (speed == 1.0) {
+					speed = 1.5;
+					ac.update("§3속도§f: §b3§e단계");
+				} else if (speed == 1.5) {
+					speed = 0.1;
+					ac.update("§3속도§f: §b0§e단계");
+				}
 			}
 		}
 		return false;
 	}
 
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause() == DamageCause.SUFFOCATION || e.getCause() == DamageCause.FALL) {
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+	}
+	
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
-    		if (bullet == null) {
+    		if (bullet == null && !delaymaker.isRunning()) {
+    			delaymaker.start();
         		new Hovering(getPlayer(), getPlayer().getLocation(), getPlayer().getLocation().getDirection().clone().setY(0).normalize()).start();
-        		e.setCancelled(true);	
+        		e.setCancelled(true);
     		}
     	}
     }
@@ -115,7 +172,7 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 		private Location lastLocation;
 		
 		private Hovering(LivingEntity shooter, Location startLocation, Vector arrowVelocity) {
-			super(20);
+			super(10000);
 			setPeriod(TimeUnit.TICKS, 1);
 			Hovercraft.this.bullet = this;
 			this.shooter = shooter;
@@ -158,15 +215,18 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 		
 		@EventHandler()
 	    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
-	    	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
-	    		this.stop(false);
-	    		e.setCancelled(true);
+	    	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(shooter)) {
+	    		if (bullet != null && !delaymaker.isRunning()) {
+		    		delaymaker.start();
+		    		stopmaker.start();
+		    		e.setCancelled(true);
+	    		}
 	    	}
 		}
 		
 		@Override
 		protected void run(int i) {
-			final Location newLocation = lastLocation.clone().add(forward);
+			final Location newLocation = lastLocation.clone().add(forward.normalize().multiply(speed));
 			for (Iterator<Location> iterator = new Iterator<Location>() {
 				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
 				private final int amount = (int) (vectorBetween.length() / 0.1);
@@ -200,6 +260,10 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 				}
 				shooter.teleport(location);
 			}
+			if (stopmaker.isRunning()) {
+				Bukkit.broadcastMessage("스탑함");
+				stop(false);
+			}
 			lastLocation = newLocation;
 		}
 		
@@ -215,12 +279,28 @@ public class Hovercraft extends AbilityBase implements ActiveHandler {
 			Hovercraft.this.bullet = null;
 		}
 
-		public class ArrowEntity extends CustomEntity {
+		public class ArrowEntity extends CustomEntity implements Deflectable {
 
 			public ArrowEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
 			}
 
+			public ProjectileSource getShooter() {
+				return shooter;
+			}
+			
+			@Override
+			public Vector getDirection() {
+				return forward.clone();
+			}
+			
+			@Override
+			public void onDeflect(Participant deflector, Vector newDirection) {
+				stop(false);
+				final Player deflectedPlayer = deflector.getPlayer();
+				new Hovering(deflectedPlayer, lastLocation, newDirection).start();
+			}
+			
 			@Override
 			protected void onRemove() {
 			}

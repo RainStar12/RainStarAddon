@@ -49,6 +49,7 @@ public class DimensionDistortion extends AbstractGame.Effect implements Listener
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		PotionEffects.SLOW.addPotionEffect(participant.getPlayer(), 10000, 0, true);
+		super.onStart();
 	}
 
 	@EventHandler

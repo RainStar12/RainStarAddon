@@ -1,5 +1,6 @@
 package RainStarAbility;
 
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -17,6 +18,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 		" "
 		})
 
-public class Inferno {
+public class Inferno extends AbilityBase {
 
 }

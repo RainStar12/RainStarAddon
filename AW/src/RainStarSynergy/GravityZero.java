@@ -6,9 +6,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
@@ -20,6 +22,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "무중력", rank = Rank.A, species = Species.OTHERS, explain = {
@@ -134,29 +137,30 @@ public class GravityZero extends Synergy implements ActiveHandler {
 		}
 	}
 	
-	private final Duration nogravity = (Duration) new Duration(DURATION.getValue() * 20, gravityc) {
+	private final Duration nogravity = (Duration) new Duration(DURATION.getValue() * 2, gravityc) {
 		
 		@Override
 		protected void onDurationProcess(int ticks) {
+			getPlayer().setVelocity(VectorUtil.validateVector(getPlayer().getVelocity().normalize().multiply(0.5)));
 			getPlayer().setGravity(false);
 		}
 		
 		@Override
 		protected void onDurationStart() {
-			getPlayer().sendMessage("§b무중력§f이 적용됩니다. 당신은 이제 §5중력§f의 영향을 무시합니다.");
+			getPlayer().sendMessage("§5[§d!§5] §b무중력§f이 적용됩니다. 당신은 이제 §5중력§f의 영향을 무시합니다.");
 		}
 		
 		@Override
 		protected void onDurationEnd() {
 			getPlayer().setGravity(true);
-			getPlayer().sendMessage("다시 §5중력§f의 영향을 받습니다.");
+			getPlayer().sendMessage("§5[§d!§5] 다시 §5중력§f의 영향을 받습니다.");
 		}
 		
 		@Override
 		protected void onDurationSilentEnd() {
 			getPlayer().setGravity(true);
-			getPlayer().sendMessage("다시 §5중력§f의 영향을 받습니다.");
+			getPlayer().sendMessage("§5[§d!§5] 다시 §5중력§f의 영향을 받습니다.");
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 10);
 }

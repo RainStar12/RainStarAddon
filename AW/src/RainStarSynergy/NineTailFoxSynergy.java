@@ -54,7 +54,7 @@ import daybreak.google.common.collect.ImmutableSet;
 @AbilityManifest(name = "구미호[완전 둔갑]", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c둔갑§f: 완벽히 둔갑하여 회복 효과를 받을 수 있습니다.",
 		"§7공격 §8- §c사랑의 매질§f: 다른 플레이어를 공격할 때마다 표식을 쌓고,",
-		" 표식이 3개가 될 때 대상을 5초간 유혹합니다. 유혹 도중엔 표식을 쌓지 못합니다.",
+		" 표식이 3개가 될 때 대상을 8초간 유혹합니다. 유혹 도중엔 표식을 쌓지 못합니다.",
 		"§7철괴 좌클릭 §8- §c집착§f: 바라보는 방향에 10초간 원 파티클이 생기고,",
 		" 다시 좌클릭 시 끈을 던져 범위의 중심에 가장 가까운 대상에게 돌진합니다.",
 		" 이때 범위 내 모든 대상에게 방어 무시 대미지를 입힙니다. 만약 범위 내 대상 중",
@@ -70,7 +70,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private final Map<Player, Stack> stackMap = new HashMap<>();
 	private static final Set<Material> nocheck;
 	private Participant target = null;
@@ -90,8 +90,8 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 		}
 	}
 	
-	public static final SettingObject<Integer> CooldownConfig = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "Cooldown", 40,
+	public static final SettingObject<Integer> COOLDOWN = 
+			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "cooldown", 40,
             "# 쿨타임") {
 
         @Override
@@ -168,7 +168,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 			if (!target.hasEffect(Charm.registration)) {
 				if (stackMap.containsKey(e.getEntity())) {
 					if (stackMap.get(e.getEntity()).addStack()) {
-						Charm.apply(target, TimeUnit.SECONDS, 5, getPlayer(), 100, 50);
+						Charm.apply(target, TimeUnit.SECONDS, 8, getPlayer(), 100, 50);
 					}
 				} else new Stack((Player) e.getEntity()).start();
 			}
@@ -181,7 +181,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 				if (!target.hasEffect(Charm.registration)) {
 					if (stackMap.containsKey(e.getEntity())) {
 						if (stackMap.get(e.getEntity()).addStack()) {
-							Charm.apply(target, TimeUnit.SECONDS, 5, getPlayer(), 100, 50);
+							Charm.apply(target, TimeUnit.SECONDS, 8, getPlayer(), 100, 50);
 						}
 					} else new Stack((Player) e.getEntity()).start();
 				}
@@ -271,7 +271,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 		protected void onSilentEnd() {
 			for (Player p : LocationUtil.getEntitiesInCircle(Player.class, targetblock, 5, predicate)) {
 				if (getGame().getParticipant(p).hasEffect(Charm.registration)) {
-					Damages.damageFixed(p, getPlayer(), Math.max(5, ((100 - getGame().getParticipant(p).getPrimaryEffect(Charm.registration).getDuration()) / 8)));
+					Damages.damageFixed(p, getPlayer(), Math.max(5, ((160 - getGame().getParticipant(p).getPrimaryEffect(Charm.registration).getDuration()) / 8)));
 					getGame().getParticipant(p).removeEffects(Charm.registration);
 				} else {
 					Damages.damageFixed(p, getPlayer(), 4);

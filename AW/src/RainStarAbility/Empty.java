@@ -20,7 +20,6 @@ import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -91,6 +90,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	private AbilityBase ability;
 
+	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
 		@Override
 		public String toString() {

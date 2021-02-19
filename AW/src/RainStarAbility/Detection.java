@@ -42,9 +42,10 @@ import daybreak.google.common.base.Predicate;
 		rank = Rank.A, 
 		species = Species.HUMAN, 
 		explain = {
-		"검으로 대상을 우클릭 시 대상의 수를 $[DurationConfig]초간 간파합니다. $[CooldownConfig]",
-		"수를 간파당한 대상의 근접 공격을 전부 회피합니다.",
-		"간파 중 예상하지 못한 피해를 받았을 때 1의 추가 피해를 입습니다."
+		"검으로 대상을 우클릭 시 대상의 수를 $[DURATION]초간 §2간파§f합니다. $[COOLDOWN]",
+		"수를 §2간파§f당한 대상의 근접 공격을 전부 회피합니다.",
+		"§2간파§f 중 예상하지 못한 피해를 받았을 때 1의 추가 피해를 입습니다.",
+		"§7광역 간파§f: $[CHANGE]"
 		})
 
 @Tips(tip = {
@@ -86,13 +87,13 @@ public class Detection extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private final Cooldown skill = new Cooldown(CooldownConfig.getValue());
-	private final int duration = DurationConfig.getValue();
+	private final Cooldown skill = new Cooldown(COOLDOWN.getValue());
+	private final int duration = DURATION.getValue();
 
 	private Set<UUID> noatk = new HashSet<>();
 	private boolean dur = false;
-	private boolean config = ChangeConfig.getValue();
-	private int range = RangeConfig.getValue();
+	private boolean config = CHANGE.getValue();
+	private int range = RANGE.getValue();
 	
 	@Override
 	public boolean usesMaterial(Material material) {
@@ -104,9 +105,9 @@ public class Detection extends AbilityBase implements TargetHandler {
 				|| material == MaterialX.NETHERITE_SWORD.getMaterial());
 	}
 	
-	public static final SettingObject<Integer> DurationConfig = 
+	public static final SettingObject<Integer> DURATION = 
 			abilitySettings.new SettingObject<Integer>(Detection.class,
-			"Duration", 3, "# 능력 지속시간") {
+			"duration", 3, "# 능력 지속시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -115,9 +116,9 @@ public class Detection extends AbilityBase implements TargetHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(
 			Detection.class,
-			"Range", 3, "# 범위 설정", "# 주의! 범위 모드로 Change 콘피그 변경 후 적용됩니다.") {
+			"range", 3, "# 범위 설정", "# 주의! 범위 모드로 change 콘피그 변경 후 적용됩니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -126,27 +127,19 @@ public class Detection extends AbilityBase implements TargetHandler {
 
 	};	
 	
-	public static final SettingObject<Boolean> ChangeConfig = abilitySettings.new SettingObject<Boolean>(
-			Detection.class,
-			"Change", false, "# true로 변경하시면 간파 시도시 대상의",
+	public static final SettingObject<Boolean> CHANGE = abilitySettings.new SettingObject<Boolean>(
+			Detection.class, "change", false, "# true로 변경하시면 간파 시도시 대상의",
 			"일부 범위 내의 모든 플레이어의 근접 공격을 간파합니다.") {
-	};
+		
+		@Override
+		public String toString() {
+                return getValue() ? "§b켜짐" : "§c꺼짐";
+        }
 	
-	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (noatk.contains(e.getDamager().getUniqueId()) && e.getEntity() == getPlayer()) {
-			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
-			e.setCancelled(true);
-		}
-		if (dur == true) {
-				if (e.getEntity().equals(getPlayer())) {
-					e.setDamage(e.getDamage() + 1);
-			}
-		}
-	}
+	};
 	 
-	public static final SettingObject<Integer> CooldownConfig = 
-			abilitySettings.new SettingObject<Integer>(Detection.class, "Cooldown", 45,
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Detection.class, "cooldown", 45,
             "# 쿨타임") {
 
         @Override
@@ -188,8 +181,21 @@ public class Detection extends AbilityBase implements TargetHandler {
 			return false;
 		}
 	};
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (noatk.contains(e.getDamager().getUniqueId()) && e.getEntity() == getPlayer()) {
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
+			e.setCancelled(true);
+		}
+		if (dur == true) {
+				if (e.getEntity().equals(getPlayer())) {
+					e.setDamage(e.getDamage() + 1);
+			}
+		}
+	}
     
-	public void TargetSkill (Material material, LivingEntity entity) {
+	public void TargetSkill(Material material, LivingEntity entity) {
 		if ((material.equals(Material.WOOD_SWORD) || 
 				material.equals(Material.STONE_SWORD) || 
 				material.equals(Material.IRON_SWORD) || 
@@ -207,7 +213,7 @@ public class Detection extends AbilityBase implements TargetHandler {
 
 						@Override
 						protected void run(int count) {
-							actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + (getFixedCount()) + " 초");
+							actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + (count * 0.05) + " 초");
 						}
 
 						@Override
@@ -247,7 +253,7 @@ public class Detection extends AbilityBase implements TargetHandler {
 
 					@Override
 					protected void run(int count) {
-						actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + (getFixedCount()) + " 초");
+						actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + (count * 0.05) + " 초");
 					}
 
 					@Override

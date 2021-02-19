@@ -94,6 +94,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 	
 	private List<Cards> deck = new ArrayList<>();
 	private ActionbarChannel ac = newActionbarChannel();
+	@SuppressWarnings("unused")
 	private CardBullet bullet = null;
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN_CONFIG.getValue(), "카드", CooldownDecrease._50);

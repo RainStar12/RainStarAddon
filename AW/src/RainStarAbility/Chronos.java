@@ -54,7 +54,7 @@ import daybreak.abilitywar.utils.base.color.RGB;
 		" 낮이라면 밤으로 만듭니다. 이 능력은 3번만 쓸 수 있습니다.",
 		"§7철괴 우클릭 §8- §3시간 조작§f: 주변 6칸 내 플레이어의 시간을 조작해",
 		" 액티브 능력을 즉시 발동시키게 하며 쿨타임을 15초 증가시키고,",
-		" 10초간 시간 둔화 상태로 만듭니다. $[CooldownConfig]",
+		" 10초간 시간 둔화 상태로 만듭니다. $[COOLDOWN]",
 		"§7상태이상 §8- §3시간 둔화§f: 쿨타임이 매 초마다 1초씩 늘어납니다."
 		})
 
@@ -83,13 +83,14 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private int number = 3;
 	private static final RGB color = RGB.of(25, 147, 168);
 	private long worldtime = 0;
+	private static final Circle circle = Circle.of(5.5, 70);
 	
-	public static final SettingObject<Integer> CooldownConfig = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "Cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 120,
             "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
@@ -107,8 +108,6 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 			passive.start();
 		}
 	}
-	
-	private static final Circle circle = Circle.of(5.5, 70);
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -153,7 +152,6 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     	
     	@Override
 		public void run(int count) {
-    		
     		final Location playerLoc = getPlayer().getLocation();
 			worldtime = getPlayer().getWorld().getTime();
     		

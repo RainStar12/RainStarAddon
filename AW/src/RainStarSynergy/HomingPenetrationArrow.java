@@ -180,7 +180,7 @@ public class HomingPenetrationArrow extends Synergy {
 	}
 
 	private void startReload() {
-		final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(70) * 60.0) : 60;
+		final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(50) * 60.0) : 60;
 		this.reload = new AbilityTimer(reloadCount) {
 			private final ProgressBar progressBar = new ProgressBar(reloadCount, 20);
 

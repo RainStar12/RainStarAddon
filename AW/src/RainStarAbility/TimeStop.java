@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Enderman;
@@ -59,32 +61,33 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "½Ã°£ Á¤Áö", rank = Rank.L, species = Species.HUMAN, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×bÅ¸ÀÓ ½ºÅé¡×f: 5ÃÊÀÇ ½Ã°£À» Àç°í $[DURATION_CONFIG]ÃÊ°£ ½Ã°£À» ¸ØÃä´Ï´Ù.",
-		" ½Ã°£ÀÌ ¸ØÃá µ¿¾È ¸ğµç ÇÃ·¹ÀÌ¾î´Â Çàµ¿ ºÒ´ÉÀÌ µÇ¾î Á¤Áö ÇØÁ¦ ÈÄ Á¤ÁöµÈ ½Ã°£µ¿¾È",
-		" ¹ŞÀ» ÇÇÇØ¸¦ ÇÑ ¹ø¿¡ 1/5·Î ÁÙ¿©¼­ ¹Ş½À´Ï´Ù. ½Ã°£ÀÌ Á¤ÁöµÇ±â Àü Áö¼Ó ÁßÀÌ´ø",
-		" ´É·ÂÀº Á¤Áö°¡ ³¡³­ ÀÌÈÄ ¿¬¼ÓÇØ¼­ Áö¼ÓÇÏ°Ô µË´Ï´Ù. $[COOLDOWN_CONFIG]",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×aÅ¸ÀÓ ÇÃ·Î¿ì¡×f: ½Ã°£ Á¤ÁöÀÇ ¿µÇâÀ» ¹ŞÁö ¾Ê½À´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3Å¸ÀÓ µğºñÀü¡×f: ½Ã°£ Á¤Áö ¼ÒÀ¯ÀÚ ÇÑ ¸í´ç Áö¼Ó½Ã°£ÀÌ 30%¾¿ °¨¼ÒÇÕ´Ï´Ù.",
-		" ÁÙ¾îµç Áö¼Ó½Ã°£ÀÇ ¼Ò¼öÁ¡Àº ¿Ã¸² Ã³¸®µÇ¸ç, 1ÃÊ ¹Ì¸¸À¸·Î´Â ÁÙÁö ¾Ê½À´Ï´Ù.",
-		" ¶ÇÇÑ ÇÑ ¸í´ç Á¤Áö Á¾·á ÈÄ ÇÇÇØ °¨¼Ò·®ÀÌ ÁÙ¾îµì´Ï´Ù."})
+@AbilityManifest(name = "ì‹œê°„ ì •ì§€", rank = Rank.L, species = Species.HUMAN, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bíƒ€ì„ ìŠ¤í†±Â§f: 5ì´ˆì˜ ì‹œê°„ì„ ì¬ê³  $[DURATION_CONFIG]ì´ˆê°„ ì‹œê°„ì„ ë©ˆì¶¥ë‹ˆë‹¤.",
+		" ì‹œê°„ì´ ë©ˆì¶˜ ë™ì•ˆ ëª¨ë“  í”Œë ˆì´ì–´ëŠ” í–‰ë™ ë¶ˆëŠ¥ì´ ë˜ì–´ ì •ì§€ í•´ì œ í›„ ì •ì§€ëœ ì‹œê°„ë™ì•ˆ",
+		" ë°›ì„ í”¼í•´ë¥¼ í•œ ë²ˆì— 1/5ë¡œ ì¤„ì—¬ì„œ ë°›ìŠµë‹ˆë‹¤. ì‹œê°„ì´ ì •ì§€ë˜ê¸° ì „ ì§€ì† ì¤‘ì´ë˜",
+		" ëŠ¥ë ¥ì€ ì •ì§€ê°€ ëë‚œ ì´í›„ ì—°ì†í•´ì„œ ì§€ì†í•˜ê²Œ ë©ë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		" Â§7ë°˜ì „ ì„¸ê³„ íš¨ê³¼Â§f: $[EFFECT_CONFIG]",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§aíƒ€ì„ í”Œë¡œìš°Â§f: ì‹œê°„ ì •ì§€ì˜ ì˜í–¥ì„ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3íƒ€ì„ ë””ë¹„ì „Â§f: ì‹œê°„ ì •ì§€ ì†Œìœ ì í•œ ëª…ë‹¹ ì§€ì†ì‹œê°„ì´ 30%ì”© ê°ì†Œí•©ë‹ˆë‹¤.",
+		" ì¤„ì–´ë“  ì§€ì†ì‹œê°„ì˜ ì†Œìˆ˜ì ì€ ì˜¬ë¦¼ ì²˜ë¦¬ë˜ë©°, 1ì´ˆ ë¯¸ë§Œìœ¼ë¡œëŠ” ì¤„ì§€ ì•ŠìŠµë‹ˆë‹¤.",
+		" ë˜í•œ í•œ ëª…ë‹¹ ì •ì§€ ì¢…ë£Œ í›„ í”¼í•´ ê°ì†ŒëŸ‰ì´ ì¤„ì–´ë“­ë‹ˆë‹¤."})
 
 @Tips(tip = {
-        "¼¼»óÀÇ ½Ã°£À» ¸ØÃç, ¸ğµç ÇÃ·¹ÀÌ¾î¸¦ Çàµ¿ÇÏÁö ¸øÇÏ°Ô ¸¸µé°í",
-        "¸ØÃá ½Ã°£µ¿¾È °ø°İ, µµ¸Á, È¸º¹ µî ¹«¾ùÀÌµç ÇÒ ¼ö ÀÖ´Â ´É·ÂÀÔ´Ï´Ù.",
-        "½Ã°£À» ¾î¶»°Ô »ç¿ëÇÒ Áö´Â ´ç½ÅÀÇ ¼±ÅÃÀÔ´Ï´Ù."
+        "ì„¸ìƒì˜ ì‹œê°„ì„ ë©ˆì¶°, ëª¨ë“  í”Œë ˆì´ì–´ë¥¼ í–‰ë™í•˜ì§€ ëª»í•˜ê²Œ ë§Œë“¤ê³ ",
+        "ë©ˆì¶˜ ì‹œê°„ë™ì•ˆ ê³µê²©, ë„ë§, íšŒë³µ ë“± ë¬´ì—‡ì´ë“  í•  ìˆ˜ ìˆëŠ” ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "ì‹œê°„ì„ ì–´ë–»ê²Œ ì‚¬ìš©í•  ì§€ëŠ” ë‹¹ì‹ ì˜ ì„ íƒì…ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "½Ã°£ µ¶Á¡", explain = {
-        		"´Ù¸¥ ÇÃ·¹ÀÌ¾îÀÇ °³ÀÔÀ» ¿ÏÀüÈ÷ ¹èÁ¦ÇÏ°í ½Ã°£À» ¿ÂÀüÈ÷",
-        		"³» °ÍÀ¸·Î ¸¸µé¾î, ¸ğµç ´É·ÂÀ» Ä«¿îÆÃÇÒ ¼ö ÀÖ½À´Ï´Ù.",
+        @Description(subject = "ì‹œê°„ ë…ì ", explain = {
+        		"ë‹¤ë¥¸ í”Œë ˆì´ì–´ì˜ ê°œì…ì„ ì™„ì „íˆ ë°°ì œí•˜ê³  ì‹œê°„ì„ ì˜¨ì „íˆ",
+        		"ë‚´ ê²ƒìœ¼ë¡œ ë§Œë“¤ì–´, ëª¨ë“  ëŠ¥ë ¥ì„ ì¹´ìš´íŒ…í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
         })
 }, weak = {
-		@Description(subject = "Å¸°ÔÆÃ ºÒ°¡", explain = {
-        		"Å¸°ÔÆÃ ºÒ°¡ÀÎ ´ë»ó¿¡°Ô ÀÌ ´É·ÂÀº ÅëÇÏÁö ¾Ê½À´Ï´Ù."
+		@Description(subject = "íƒ€ê²ŒíŒ… ë¶ˆê°€", explain = {
+        		"íƒ€ê²ŒíŒ… ë¶ˆê°€ì¸ ëŒ€ìƒì—ê²Œ ì´ ëŠ¥ë ¥ì€ í†µí•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."
         }),
-		@Description(subject = "½Ã°£ Á¤Áö ´É·Â ¼ÒÀ¯ÀÚ", explain = {
-        		"½Ã°£ Á¤Áö ´É·ÂÀ» º¸À¯ÇÏ°í ÀÖ´Â ´ë»ó¿¡°Ô",
-        		"ÀÌ ´É·ÂÀº ÅëÇÏÁö ¾ÊÀ½À» ÁÖÀÇÇÏ¼¼¿ä."
+		@Description(subject = "ì‹œê°„ ì •ì§€ ëŠ¥ë ¥ ì†Œìœ ì", explain = {
+        		"ì‹œê°„ ì •ì§€ ëŠ¥ë ¥ì„ ë³´ìœ í•˜ê³  ìˆëŠ” ëŒ€ìƒì—ê²Œ",
+        		"ì´ ëŠ¥ë ¥ì€ í†µí•˜ì§€ ì•ŠìŒì„ ì£¼ì˜í•˜ì„¸ìš”."
         })
 }, stats = @Stats(offense = Level.TWO, survival = Level.EIGHT, crowdControl = Level.TEN, mobility = Level.ZERO, utility = Level.SEVEN), difficulty = Difficulty.VERY_EASY)
 
@@ -102,11 +105,12 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	private boolean effectboolean = EFFECT_CONFIG.getValue();
 	private Duration stopduration = null;
 	private static final Vector zerov = new Vector(0, 0, 0);
+	private ArmorStand hologram;
+	private Location defaultLocation;
 	private long worldtime = 0;
 	
-	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(TimeStop.class,
-			"cooldown", 120, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 120, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -119,7 +123,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(TimeStop.class,
-			"duration", 10, "# ½Ã°£À» ¸î ÃÊ Á¤Áö½ÃÅ³Áö ¼³Á¤ÇÕ´Ï´Ù.") {
+			"duration", 7, "# ì‹œê°„ì„ ëª‡ ì´ˆ ì •ì§€ì‹œí‚¬ì§€ ì„¤ì •í•©ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -127,7 +131,13 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Boolean> EFFECT_CONFIG = abilitySettings.new SettingObject<Boolean>(TimeStop.class,
-			"effect-config", true, "# ÀÌÆåÆ® ¿©ºÎ", "# ½Ã°£ Á¤Áö ½Ã ¹İÀü ¼¼°è ½ÃÁ¡À» º¼ ¼ö ÀÖÀ»Áö ¼±ÅÃÇÕ´Ï´Ù.") {
+			"effect-config", true, "# ì´í™íŠ¸ ì—¬ë¶€", "# ì‹œê°„ ì •ì§€ ì‹œ ë°˜ì „ ì„¸ê³„ ì‹œì ì„ ë³¼ ìˆ˜ ìˆì„ì§€ ì„ íƒí•©ë‹ˆë‹¤.") {
+		
+		@Override
+		public String toString() {
+                return getValue() ? "Â§bì¼œì§" : "Â§cêº¼ì§";
+        }
+		
 	};
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
@@ -136,8 +146,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			if (entity.equals(getPlayer())) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))) {
 					return false;
 				}
 				if (getGame().getParticipant(entity.getUniqueId()).hasAbility()) {
@@ -164,6 +173,19 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	if (!checkTimestoppers.isRunning()) checkTimestoppers.start();
+	    	defaultLocation = getPlayer().getLocation().clone().add(0, 100, 0);
+			this.hologram = getPlayer().getWorld().spawn(defaultLocation, ArmorStand.class);
+			hologram.setVisible(false);
+			hologram.setGravity(false);
+			hologram.setInvulnerable(true);
+			NMS.removeBoundingBox(hologram);
+			hologram.setCustomNameVisible(true);
+			hologram.setCustomName("Â§bâŒš");
+	    }
+	    if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
+	    	if (hologram != null) {
+		    	hologram.remove();	
+	    	}
 	    }
 	}
 	
@@ -197,27 +219,22 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void run(int count) {
+			hologram.teleport(getPlayer().getLocation().clone().add(0, 2.1, 0));
 		}
 		
 		@Override
 		protected void onStart() {
+			PotionEffects.SLOW.addPotionEffect(getPlayer(), 100, 1, false);
 			timecount1.start();
 		}
 		
 		@Override
 		protected void onEnd() {
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-		      for (AbstractGame.Participant participants : getGame().getParticipants()) {
-		    	  if (participants.equals(getParticipant()))
-		    		  continue; 
-		    	  if (getGame() instanceof DeathManager.Handler) {
-		    		  DeathManager.Handler game = (DeathManager.Handler)getGame();
-		    		  if (game.getDeathManager().isExcluded(participants.getPlayer().getUniqueId()))
-		    			  continue; 
-			      } 
-		      } 
-			  stopduration.start();
+		    hologram.teleport(defaultLocation);
+		    stopduration.start();
 		}
+		
 	}.setPeriod(TimeUnit.TICKS, 1);
 	
 	private final AbilityTimer timecount1 = new AbilityTimer(5) {
@@ -231,6 +248,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
+		
 	}.setPeriod(TimeUnit.SECONDS, 1);
 	
 	@SubscribeEvent(priority = Priority.HIGHEST)
@@ -467,14 +485,14 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			worldtime = getPlayer().getWorld().getTime();
 			for (Participant participants : getGame().getParticipants()) {
 				if (predicate.test(participants.getPlayer())) {
-					Enderman enderman = participants.getPlayer().getWorld().spawn(participants.getPlayer().getLocation(), Enderman.class);
-					enderman.setSilent(true);
-					enderman.setInvulnerable(true);
-					enderman.setAI(false);
-					PotionEffects.INVISIBILITY.addPotionEffect(enderman, 9999, 1, false);
 					if (effectboolean) {
+						Enderman enderman = participants.getPlayer().getWorld().spawn(participants.getPlayer().getLocation(), Enderman.class);
+						enderman.setSilent(true);
+						enderman.setInvulnerable(true);
+						enderman.setAI(false);
+						PotionEffects.INVISIBILITY.addPotionEffect(enderman, 9999, 1, false);
 						new AbilityTimer((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))) * 20) {
-							
+								
 							@Override
 							public void onStart() {
 								NMS.setCamera(participants.getPlayer(), enderman);	
@@ -484,14 +502,16 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 							public void onEnd() {
 								onSilentEnd();
 							}
-							
+								
 							@Override
 							public void onSilentEnd() {
 								NMS.setCamera(participants.getPlayer(), participants.getPlayer());
 								enderman.remove();
 							}
-							
-						}.setPeriod(TimeUnit.TICKS, 1).start();		
+								
+						}.setPeriod(TimeUnit.TICKS, 1).start();	
+					} else {
+						PotionEffects.BLINDNESS.addPotionEffect(participants.getPlayer(), ((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))) * 20), 2, false);
 					}
 				}
 				
@@ -504,7 +524,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 						}
 					}
 					PotionEffects.SLOW_DIGGING.addPotionEffect(participants.getPlayer(), 400, 30, true);
-					NMS.sendTitle(participants.getPlayer(), "¡×b½Ã°£ÀÌ ¸ØÃè´Ù.", "", 0, 40, 20);	
+					NMS.sendTitle(participants.getPlayer(), "Â§bì‹œê°„ì´ ë©ˆì·„ë‹¤.", "", 0, 40, 20);	
 				} else {
 					getParticipant().attributes().TARGETABLE.setValue(false);
 				}
@@ -545,6 +565,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 					
 					NMS.clearTitle(participants.getPlayer());
 					participants.getPlayer().removePotionEffect(PotionEffectType.SLOW_DIGGING);	
+					participants.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
 				} else {
 					getParticipant().attributes().TARGETABLE.setValue(true);
 				}

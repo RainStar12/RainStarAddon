@@ -53,8 +53,9 @@ import daybreak.google.common.base.Predicate;
 		" 이동시키고 순간이동한 위치에서 폭발을 일으키고 0.2초 기절시킵니다.",
 		" 만약 대상이 속박의 연막의 효과를 받고 있었을 경우 1.5초간 기절시킵니다.",
 		" 순간이동 이후, 끌려간 모든 대상이 낙하 피해를 1회 무시합니다.",
+		" §7단일 대상 텔레포트 여부§f: $[TELEPORT_COUNT]",
 		"§7상태이상 §8- §9속박의 연막§f: 이동 속도 및 점프가 느려집니다.",
-		" 또한 엔티티에 대한 피해 이외의 모든 피해를 1.5배로 받게 됩니다."
+		" 또한 엔티티에 대한 피해 이외의 모든 피해를 1.5배로 받게 됩니다.",
 		})
 
 public class Mira extends AbilityBase implements ActiveHandler {
@@ -110,7 +111,13 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Boolean> TELEPORT_COUNT = abilitySettings.new SettingObject<Boolean>(Mira.class,
-			"teleport-count", false, "# 텔레포트 여부", "# true로 변경하시면 주변 모든 플레이어가 아닌", "  가장 가까운 한 플레이어만 같이 텔레포트됩니다.") {
+			"teleport-count", false, "# 단일 대상 텔레포트 여부", "# true로 변경하시면 주변 모든 플레이어가 아닌", "  가장 가까운 한 플레이어만 같이 텔레포트됩니다.") {
+		
+		@Override
+		public String toString() {
+                return getValue() ? "§b켜짐" : "§c꺼짐";
+        }
+		
 	};
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {

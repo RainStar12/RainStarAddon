@@ -67,6 +67,7 @@ import daybreak.google.common.base.Strings;
 		" 바라보는 방향으로 서리를 내뿜습니다. 서리는 영창한 만큼의 마법 대미지를 입히며",
 		" 적중 대상이 냉기 상태라면 빙결시키고, 아니라면 냉기시킵니다. $[CAST_COOLDOWN]",
 		" 눈과 얼음 위에서 서리의 대미지 및 사거리가 1씩 증가하며 신속 버프를 받습니다.",
+		" §7적 처치 시 눈사람 소환§f: $[SNOWMAN_SPAWN]",
 		"§7지팡이 좌클릭 §8- §b앱솔루트 제로§f: 주변의 모든 빙결 상태이상을 가진 플레이어를",
 		" 얼음을 깨트려 마법 대미지를 입힙니다. 또한 대상에게 방어력이 2 감소하는",
 		" 눈꽃 표식을 15초간 부여시킵니다. $[BREAK_COOLDOWN]",
@@ -92,6 +93,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	private final Cooldown breakcool = new Cooldown(BREAK_COOLDOWN.getValue(), "파괴");
 	private boolean snowman = SNOWMAN_SPAWN.getValue();
 	
+	@SuppressWarnings("unused")
 	private Bullet bullet = null;
 	private int cast = 0;
 	private int addDamage = 6;
@@ -193,6 +195,12 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	= abilitySettings.new SettingObject<Boolean>(Yuki.class,
 			"snowman-spawn", true, "# 유키가 플레이어를 죽일 때 눈사람을",
 			"# 소환할 지 여부를 정합니다.") {
+		
+		@Override
+		public String toString() {
+                return getValue() ? "§b켜짐" : "§c꺼짐";
+        }
+		
 	};
 	
 	@Override

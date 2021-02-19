@@ -58,7 +58,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(HealthCopy.class, "cooldown", 4,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(HealthCopy.class, "cooldown", 6,
 			"# ÈíÇ÷ ÄðÅ¸ÀÓ") {
 
 		@Override
