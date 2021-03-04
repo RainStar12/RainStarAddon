@@ -81,15 +81,15 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "레인스타", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
 		"§7패시브 §8- §5점성술§f: 열두 별자리 중 하나를 배정받습니다.", 
 		"$(EXPLAIN)", 
-		"§7검 공격 §8- §a별소나기§f: 다른 플레이어를 근접 공격할 때마다 20%의 확률로",
-		" 내 주변을 맴도는 별소나기를 소환합니다. 이 확률은 발동 실패시마다 20%씩", 
+		"§7검 공격 §8- §a별소나기§f: 다른 플레이어를 근접 공격할 때마다 15%의 확률로",
+		" 내 주변을 맴도는 별소나기를 소환합니다. 이 확률은 발동 실패시마다 15%씩", 
 		" 증가하며 총 일곱 개의 별소나기만 소지 가능합니다.",
 		" 별소나기는 누군가를 5회 이상 타격했을 때 사라집니다.", 
 		"§7활 공격 §8- §e스타더스트§f: 화살을 발사할 때 화살을 따라다니는 혜성 투사체가",
 		" 같이 소환됩니다. 혜성은 화살이 적중한 위치로부터 0.5초간 가장 가까운 적에게로", 
 		" 유도됩니다. 만약 엔티티를 맞혔을 경우, 대신 대상을 발화시킵니다. $[ARROW_COOLDOWN]",
 		"§7철괴 우클릭 §8- §3은하수의 밤§f: 7칸의 필드를 $[FIELD_DURATION]초간 전개합니다. 필드 위에서 별소나기가",
-		" 항상 발동하며, 근접 공격 피해량이 1.3배로 증가합니다. $[RIGHT_COOLDOWN]", 
+		" 항상 발동하며, 근접 공격 피해량이 1.2배로 증가합니다. $[RIGHT_COOLDOWN]", 
 		"§7철괴 좌클릭 §8- §b별의 일주§f: 점성술의 별자리 효과를 다음 별자리로 넘깁니다.",
 		" 또한 $[MODE_DURATION]초간 §b수호 모드§f가 되어 별소나기에 적중한 적에게 피해를 주는 대신", 
 		" 줄 피해의 10%만큼 내 체력을 회복합니다. $[LEFT_COOLDOWN]" })
@@ -209,7 +209,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 	private final Circle[] circles = newCircleArray(8);
 	private final Bullets bullets = new Bullets();
 	private final RouletteWheel rouletteWheel = new RouletteWheel();
-	private final RouletteWheel.Slice positive = rouletteWheel.newSlice(20),
+	private final RouletteWheel.Slice positive = rouletteWheel.newSlice(15),
 			negative = rouletteWheel.newSlice(100 - positive.getWeight());
 	private Location mylocation;
 	private final ActionbarChannel ac1 = newActionbarChannel();
@@ -820,7 +820,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
     				}
 					if (constellation == 2) bullets.add(new Bullet(getPlayer(), getPlayer().getLocation()));
 				}
-				e.setDamage(e.getDamage() * 1.3);
+				e.setDamage(e.getDamage() * 1.2);
 			} else {
 				final RouletteWheel.Slice select = rouletteWheel.select();
 				if (select == positive) {
@@ -856,7 +856,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					}
 					positive.resetWeight();
 				} else {
-					positive.increaseWeight(20);
+					positive.increaseWeight(15);
 					negative.resetWeight();
 				}
 			}
@@ -1440,9 +1440,9 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
 						if (constellation == 8) {
-							Damages.damageArrow(damageable, getPlayer(), 9);
+							Damages.damageArrow(damageable, getPlayer(), 8);
 						} else {
-							Damages.damageArrow(damageable, getPlayer(), 7);
+							Damages.damageArrow(damageable, getPlayer(), 6);
 						}
 						if (constellation == 1)
 							damageable.setVelocity(damageable.getVelocity().multiply(new Vector(1.1, 1, 1.1)));
@@ -1484,10 +1484,10 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						if (constellation == 10 && spawnAEC) {
 							AreaEffectCloud AEC = damageable.getWorld().spawn(damageable.getLocation().add(0, 0.2, 0),
 									AreaEffectCloud.class);
-							AEC.setDuration(100);
+							AEC.setDuration(150);
 							AEC.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 200, 0), true);
 							AEC.setColor(Color.BLACK);
-							AEC.setWaitTime(0);
+							AEC.setWaitTime(10);
 							spawnAEC = false;
 						}
 						if (constellation == 11) {
@@ -1567,10 +1567,10 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						if (constellation == 10 && spawnAEC) {
 							AreaEffectCloud AEC = e.getHitEntity().getWorld()
 									.spawn(e.getHitEntity().getLocation().add(0, 0.2, 0), AreaEffectCloud.class);
-							AEC.setDuration(100);
-							AEC.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 200, 0), true);
+							AEC.setDuration(150);
+							AEC.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 150, 0), true);
 							AEC.setColor(Color.BLACK);
-							AEC.setWaitTime(0);
+							AEC.setWaitTime(10);
 							spawnAEC = false;
 						}
 						e.getHitEntity().setFireTicks(e.getHitEntity().getFireTicks() + 100);

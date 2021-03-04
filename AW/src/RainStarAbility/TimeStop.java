@@ -1,5 +1,6 @@
 package RainStarAbility;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -49,14 +51,16 @@ import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
-import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.ZeroTick;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -98,6 +102,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	}
 	
 	private final Map<Player, Double> damageCounter = new HashMap<>();
+	private final Map<Player, Stack> stackMap = new HashMap<>();
 	private final Map<Projectile, Vector> velocityMap = new HashMap<>();
 	private Set<Player> custominv = new HashSet<>();
 	private Set<Player> timestoppers = new HashSet<>();
@@ -408,6 +413,13 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	}
 	
 	@SubscribeEvent(priority = Priority.HIGHEST)
+	public void onTeleport(EntityTeleportEvent e) {
+		if (e.getEntity() instanceof Enderman && stopduration.isRunning()) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (stopduration != null) {
 			if (stopduration.isRunning() && e.getEntity() instanceof Damageable) {
@@ -419,6 +431,15 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (stopduration != null) {
+			if (stopduration.isRunning() && e.getEntity() instanceof Enderman) {
+				for (Player player : LocationUtil.getConflictingEntities(Player.class, e.getEntity(), predicate)) {
+					if (player.equals(LocationUtil.getNearestEntity(Player.class, e.getEntity().getLocation(), predicate))) {
+						player.damage(e.getDamage(), e.getDamager());
+					}
+				}
+				e.setCancelled(true);
+				e.setDamage(0);
+			}
 			if (stopduration.isRunning() && e.getEntity() instanceof Player) {
 				e.setCancelled(true);
 				if (!custominv.contains(e.getEntity())) {
@@ -428,7 +449,9 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			      	}
 					double damage = (damageCounter.getOrDefault(e.getEntity(), Double.valueOf(0.0D))).doubleValue();
 					damageCounter.put((Player) e.getEntity(), Double.valueOf(damage + e.getFinalDamage()));
-					new CustomInv((Player) e.getEntity()).start();
+					if (!getGame().hasModule(ZeroTick.class)) {
+						new CustomInv((Player) e.getEntity()).start();	
+					}
 				}
 		    }	
 		}
@@ -450,6 +473,44 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			}
 		} 
 		return false;
+	}
+	
+	private class Stack extends AbilityTimer {
+		
+		private final Player player;
+		private final IHologram hologram;
+		private final DecimalFormat df = new DecimalFormat("0.00");
+		
+		private Stack(Player player) {
+			setPeriod(TimeUnit.TICKS, 1);
+			this.player = player;
+			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
+					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ());
+			hologram.display(getPlayer());
+			stackMap.put(player, this);
+		}
+
+		@Override
+		protected void run(int count) {
+			hologram.teleport(player.getWorld(), player.getLocation().getX(), 
+					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
+					player.getLocation().getYaw(), 0);
+			if (damageCounter.containsKey(player)) {
+				hologram.setText("§c§l" + df.format((damageCounter.get(player) / Math.max(1, 5 - (timestoppers.size() - 1)))));
+			}
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			hologram.unregister();
+			stackMap.remove(player);
+		}
+		
 	}
 	
 	class InvTimer extends Duration {
@@ -485,10 +546,10 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			worldtime = getPlayer().getWorld().getTime();
 			for (Participant participants : getGame().getParticipants()) {
 				if (predicate.test(participants.getPlayer())) {
+					new Stack(participants.getPlayer()).start();
 					if (effectboolean) {
-						Enderman enderman = participants.getPlayer().getWorld().spawn(participants.getPlayer().getLocation(), Enderman.class);
+						Enderman enderman = participants.getPlayer().getWorld().spawn(participants.getPlayer().getLocation().clone().subtract(0, 0.8, 0), Enderman.class);
 						enderman.setSilent(true);
-						enderman.setInvulnerable(true);
 						enderman.setAI(false);
 						PotionEffects.INVISIBILITY.addPotionEffect(enderman, 9999, 1, false);
 						new AbilityTimer((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))) * 20) {
@@ -547,12 +608,13 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationSilentEnd() {
 			for (Player p : damageCounter.keySet()) {
-				Healths.setHealth((Player) p, Math.max(0.0, p.getHealth() - (damageCounter.get(p) / Math.max(1, 5 - (timestoppers.size() - 1)))));
+				Healths.setHealth((Player) p, Math.max(1, p.getHealth() - (damageCounter.get(p) / Math.max(1, 5 - (timestoppers.size() - 1)))));
 			}
 			damageCounter.clear();
 			
-			for (AbstractGame.Participant participants : getGame().getParticipants()) {
-				if (predicate.test(participants.getPlayer())) {		
+			for (Participant participants : getGame().getParticipants()) {
+				if (predicate.test(participants.getPlayer())) {
+					stackMap.get(participants.getPlayer()).stop(false);
 					if (participants.hasAbility()) {
 						AbilityBase ab = participants.getAbility();
 						for (GameTimer t : ab.getTimers()) {

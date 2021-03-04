@@ -55,9 +55,9 @@ import daybreak.google.common.base.Predicate;
 		" 어느 하나가 피해입거나 회복 효과를 받을때 다른 사람도 영향을 받습니다.",
 		" 또한 두 플레이어는 슬롯을 바꿀 때마다 5초의 주도권을 가진 채 같은 슬롯만을",
 		" 들 수 있게 되고, 자신의 주도권이 넘어가면 다음 주도권은 무조건 상대가 됩니다.",
-		" 내가 아닌 운명공동체가 사망 시 모든 효과가 해제됩니다. $[RightCooldownConfig]",
-		"§7철괴 좌클릭 §8- §3운명개찬§f: $[DurationConfig]초간 자신의 운명을 개찬해 발사체 및",
-		" 다른 능력의 타게팅을 흘려보냅니다. $[LeftCooldownConfig]"
+		" 내가 아닌 운명공동체가 사망 시 모든 효과가 해제됩니다. $[RIGHT_COOLDOWN]",
+		"§7철괴 좌클릭 §8- §3운명개찬§f: $[DURATION]초간 자신의 운명을 개찬해 발사체 및",
+		" 다른 능력의 타게팅을 흘려보냅니다. $[LEFT_COOLDOWN]"
 		})
 
 public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
@@ -69,8 +69,8 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	private Map<Player, Mortal> mortal = new HashMap<>();
 	private Set<Projectile> projectiles = new HashSet<>();
 	private Player target;
-	private final Cooldown leftcool = new Cooldown(LeftCooldownConfig.getValue(), "좌클릭");
-	private final Cooldown rightcool = new Cooldown(RightCooldownConfig.getValue(), "우클릭");
+	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue(), "좌클릭");
+	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue(), "우클릭");
 	private final ActionbarChannel ac = newActionbarChannel();
 	private ActionbarChannel actionbarChannel;
 	private static final RGB color1 = RGB.of(1, 204, 254);
@@ -188,7 +188,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 		{false, false, false, false, false, false, true, true, true, true, true, true, true, true, false, false, false, false, false, false},
 	});
 	
-	public static final SettingObject<Integer> LeftCooldownConfig 
+	public static final SettingObject<Integer> LEFT_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
 			"left-cooldown", 40, "# 좌클릭 쿨타임") {
 		@Override
@@ -202,7 +202,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RightCooldownConfig 
+	public static final SettingObject<Integer> RIGHT_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
 			"right-cooldown", 80, "# 우클릭 쿨타임") {
 		@Override
@@ -216,7 +216,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DurationConfig 
+	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
 			"duration", 5, "# 지속 시간") {
 		@Override
@@ -289,7 +289,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 4).register();
 	
-	private final Duration duration = new Duration(DurationConfig.getValue() * 20, leftcool) {
+	private final Duration duration = new Duration(DURATION.getValue() * 20, leftcool) {
 		
 		@Override
 		public void onDurationStart() {

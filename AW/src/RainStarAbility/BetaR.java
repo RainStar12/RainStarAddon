@@ -1,8 +1,12 @@
 package RainStarAbility;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
@@ -31,15 +35,16 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 
 @Beta
 
-@AbilityManifest(name = "베타임", rank = Rank.A, species = Species.OTHERS, explain = {
+@AbilityManifest(name = "베타 R", rank = Rank.A, species = Species.OTHERS, explain = {
 		"테스트용 베타 능력입니다.",
 		"현재 기능은 넉백 오류로 넉백되지 않는 플레이어에게 부여 시,",
-		"대상이 한 번이라도 움직이면 넉백 버그가 풀리게 됩니다."
+		"대상이 한 번이라도 움직이면 넉백 버그가 풀리게 됩니다.",
+		"또한 방어력을 초기화시킵니다."
 		})
 
-public class HohoHaha extends AbilityBase {
+public class BetaR extends AbilityBase {
 
-	public HohoHaha(Participant participant) {
+	public BetaR(Participant participant) {
 		super(participant);
 	}
 	

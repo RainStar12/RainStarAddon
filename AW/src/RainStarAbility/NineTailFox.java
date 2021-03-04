@@ -170,7 +170,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && stack == 9) {
 	    	if (master) {
 	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("¡×e¿ÏÀü µÐ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
+		    	getPlayer().sendMessage("¡×5[¡×d!¡×5] ¡×e¿ÏÀü µÐ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -197,7 +197,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		    	}	
 	    	} else {
 	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("¡×eµÐ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
+		    	getPlayer().sendMessage("¡×5[¡×d!¡×5] ¡×eµÐ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;

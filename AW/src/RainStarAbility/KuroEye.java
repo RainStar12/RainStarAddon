@@ -45,7 +45,9 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -114,6 +116,8 @@ public class KuroEye extends AbilityBase {
 	private static final Circle circle = Circle.of(6, 70);
 	private Map<Player, LogParticle> logMap = new HashMap<>();
 	private Set<Player> damaged = new HashSet<>();
+	private final Crescent crescent = Crescent.of(3, 50);
+	private Random random = new Random();
 	
 	static {
 		if (MaterialX.NETHERITE_SWORD.isSupported()) {
@@ -207,6 +211,7 @@ public class KuroEye extends AbilityBase {
 		
 		@Override
 		public void onStart() {
+			SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer(), 0.75f, 0.75f);
 			for (Participant participant : getGame().getParticipants()) {
 				if (predicate.test(participant.getPlayer())) {
 					new LogParticle(participant.getPlayer()).start();	
@@ -230,6 +235,8 @@ public class KuroEye extends AbilityBase {
 		
 		@Override
 		public void onSilentEnd() {
+			new CutParticle(180).start();
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.2f);
 			skillcircle.stop(false);
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 			for (Participant participant : getGame().getParticipants()) {
@@ -265,7 +272,7 @@ public class KuroEye extends AbilityBase {
 				    					clock.remove();
 				    					armorstand.remove();
 				    				}
-		    					}.runTaskLater(AbilityWar.getPlugin(), 30L);
+		    					}.runTaskLater(AbilityWar.getPlugin(), 20L);
 								damaged.add(participant.getPlayer());
 							}
 						}
@@ -274,9 +281,34 @@ public class KuroEye extends AbilityBase {
 				}
 			}
 			damaged.clear();
+			cool.start();
 		}
 		
 	}.setPeriod(TimeUnit.SECONDS, 1).register();
+	
+	private class CutParticle extends AbilityTimer {
+
+		private final Vector vector;
+		private final Vectors crescentVectors;
+
+		private CutParticle(double angle) {
+			super(4);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.vector = getPlayer().getLocation().getDirection().setY(0).normalize().multiply(0.5);
+			this.crescentVectors = crescent.clone()
+					.rotateAroundAxisY(-getPlayer().getLocation().getYaw())
+					.rotateAroundAxis(getPlayer().getLocation().getDirection().setY(0).normalize(), (180 - angle) % 180);
+		}
+
+		@Override
+		protected void run(int count) {
+			Location baseLoc = getPlayer().getLocation().clone().add(vector).add(0, 1, 0);
+			for (Location loc : crescentVectors.toLocations(baseLoc)) {
+				ParticleLib.REDSTONE.spawnParticle(loc, RGB.of((int) (146 + (((random.nextDouble() * 2) - 1) * 20)), 254 - (random.nextInt(20)), 254 - (random.nextInt(20))));
+			}
+		}
+
+	}
 	
 	private class LogParticle extends AbilityTimer {
 		

@@ -271,14 +271,14 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 			if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
 				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation(), 0, 1, 0, 50, 0.3, MaterialX.CLOCK);
 				SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), 1, 1.5f);
-				pastTraveling();
-				e.setCancelled(true);
 			    savehp2 = getPlayer().getHealth();
 			    saveloc2 = getPlayer().getLocation();
 			    savefiretick2 = getPlayer().getFireTicks();
 			    savefall2 = getPlayer().getFallDistance();
 			    savepotion2 = getPlayer().getActivePotionEffects();
 			    getPlayer().sendMessage("§3[§b!§3] §f시간이 §c강제 §a저장§f되었습니다.");	
+				pastTraveling();
+				e.setCancelled(true);
 			}
 		}
 	}

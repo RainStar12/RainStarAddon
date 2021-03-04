@@ -469,7 +469,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		private Location lastLocation;
 		
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int cast) {
-			super(Math.max(cast / 2, 1));
+			super((int) Math.max(2 + cast / 3, 2));
 			setPeriod(TimeUnit.TICKS, 1);
 			Yuki.this.bullet = this;
 			this.cast = cast;

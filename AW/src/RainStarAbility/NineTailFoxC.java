@@ -57,7 +57,7 @@ import daybreak.google.common.collect.ImmutableSet;
 @AbilityManifest(name = "구미호(둔갑)", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c둔갑§f: 최대 체력의 75%만큼 둔갑 체력을 가집니다.",
 		" 둔갑 체력은 유혹을 제외한 회복 효과를 받지 않습니다. 또한 둔갑 체력을",
-		" 전부 소모할 때 전체 체력의 40%만 남고 구미호로 돌아갑니다.",
+		" 전부 소모할 때 전체 체력의 30%만 남고 구미호로 돌아갑니다.",
 		"§7공격 §8- §c사랑의 매질§f: 다른 플레이어를 공격할 때마다 표식을 쌓고,",
 		" 표식이 4개가 될 때 대상을 4초간 유혹합니다. 유혹 도중엔 표식을 쌓지 못합니다.",
 		"§7철괴 좌클릭 §8- §c집착§f: 바라보는 방향에 10초간 원 파티클이 생기고,",
@@ -65,8 +65,8 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 이때 범위 내 모든 대상에게 방어 무시 대미지를 입힙니다. 만약 범위 내 대상 중",
 		" 유혹 중인 대상이 있다면 유혹을 풀고 남은 시간에 반비례하여 피해를 입힙니다.",
 		"§7상태이상 §8- §d유혹§f: 대상이 강제로 나를 바라보게 되고,",
-		" 대상이 내게 주는 피해량이 40% 감소합니다. 대상을 공격할 때마다",
-		" 준 최종 대미지의 60%만큼 체력을 회복합니다."
+		" 대상이 내게 주는 피해량이 35% 감소합니다. 대상을 공격할 때마다",
+		" 준 최종 대미지의 55%만큼 체력을 회복합니다."
 		})
 
 public class NineTailFoxC extends AbilityBase implements ActiveHandler {
@@ -158,10 +158,10 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 				e.setCancelled(true);
 			}
 	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
-				nowhp = ((2 * (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 5));
+				nowhp = ((3 * (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 10));
 				getPlayer().setHealth(nowhp);
 			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
-			   	getPlayer().sendMessage("§c둔갑이 풀렸습니다. 구미호로 되돌아갑니다. §7/aw check");
+			   	getPlayer().sendMessage("§5[§d!§5] §c둔갑이 풀렸습니다. 구미호로 되돌아갑니다. §7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -205,7 +205,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 			if (!target.hasEffect(Charm.registration)) {
 				if (stackMap.containsKey(e.getEntity())) {
 					if (stackMap.get(e.getEntity()).addStack()) {
-						Charm.apply(target, TimeUnit.SECONDS, 4, getPlayer(), 60, 40);
+						Charm.apply(target, TimeUnit.SECONDS, 4, getPlayer(), 55, 35);
 					}
 				} else new Stack((Player) e.getEntity()).start();
 			}
@@ -218,7 +218,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 				if (!target.hasEffect(Charm.registration)) {
 					if (stackMap.containsKey(e.getEntity())) {
 						if (stackMap.get(e.getEntity()).addStack()) {
-							Charm.apply(target, TimeUnit.SECONDS, 4, getPlayer(), 60, 40);
+							Charm.apply(target, TimeUnit.SECONDS, 4, getPlayer(), 55, 35);
 						}
 					} else new Stack((Player) e.getEntity()).start();
 				}

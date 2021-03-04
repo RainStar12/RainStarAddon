@@ -133,21 +133,21 @@ public class Teabagging extends AbilityBase {
         						if (random.nextInt(10) == 0) {
             						SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
         							switch(random.nextInt(8)) {
-        							case 0: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせせ 醤 加閤劃?");
+        							case 0: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせせ 醤 加閤劃?");
         							break;
-        							case 1: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cez");
+        							case 1: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cez");
         							break;
-        							case 2: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c公説相?");
+        							case 2: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c公説相?");
         							break;
-        							case 3: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせ");
+        							case 3: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせ");
         							break;
-        							case 4: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c荘~");
+        							case 4: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c荘~");
         							break;
-        							case 5: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c冊弾嬢推? 嬢村虞壱推~");
+        							case 5: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c冊弾嬢推? 嬢村虞壱推~");
         							break;
-        							case 6: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cさぉずし~");
+        							case 6: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cさぉずし~");
         							break;
-        							case 7: player.sendMessage("」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c滴滴欠紙薩四~");
+        							case 7: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c滴滴欠紙薩四~");
         							break;
         							}
         						}
