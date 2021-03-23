@@ -32,6 +32,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.google.common.base.Predicate;
@@ -145,7 +146,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 						if (!playercount.contains(p)) {
 							if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
 									itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.ENDER_PEARL
-									|| itemStack.getType() == Material.GOLDEN_APPLE || itemStack.getType() == Material.TOTEM) {
+									|| itemStack.getType() == Material.GOLDEN_APPLE || itemStack.getType() == MaterialX.TOTEM_OF_UNDYING.getMaterial()) {
 								if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
 									itemStack.getType() == Material.SPLASH_POTION) {
 									getPlayer().getInventory().addItem(itemStack);

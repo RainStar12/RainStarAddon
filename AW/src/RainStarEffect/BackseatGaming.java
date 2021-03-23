@@ -31,7 +31,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "훈수", displayName = "§3[§b능력§3] §c훈수", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "훈수", displayName = "§c훈수", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 }, description = {
 		"플레이어가 특정 행동들을 할 때마다 확률적으로 훈수를 둡니다.",
 		"훈수를 받으면 시야가 잠깐 봉인됩니다.",

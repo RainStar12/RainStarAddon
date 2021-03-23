@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.EulerAngle;
@@ -49,7 +50,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.Mix; 
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -75,13 +76,24 @@ import daybreak.google.common.collect.ImmutableSet;
 		name = "쿠로", rank = Rank.A, species = Species.HUMAN, explain = {
 		"마왕을 행세하는 §8어둠§f 속성의 중2병 검사, 쿠로.",
 		"§7패시브 §8- §8어둠의 추종자§f: 자신이 있는 위치가 어두울수록 스킬 피해량이 증가합니다.",
+		" 실명을 가진 적을 근접 공격하면 추가 피해를 입힙니다.",
 		"§7근접 타격 후 F §8- §5차원 절단§f: 바라보는 방향으로 빠르게 질주합니다.",
 		" 질주하며 지나간 공간을 절단시켜 주변 엔티티들을 끌어와 피해를 입히고",
 		" 잠시간 차원의 저편으로 보내버립니다. $[COOLDOWN]",
+		" §7대시형 절단§f: $[DASH_CONFIG]",
 		"§7패시브 §8- §c마안 개방§f: 치명적인 피해를 입었을 때, 체력을 최대 체력의 절반까지",
 		" 즉시 회복하고 마안을 개방합니다."
+		},
+		summarize = {
+		"§7근접 타격 후 검을 들고 F키를 빠르게§f 누르면 바라보는 방향으로 질주해",
+		"지나간 공간을 절단시켜 주변 엔티티들을 끌어와 피해를 입히고",
+		"잠시간 §3차원의 저편§f으로 보내 공격 불능, 무적, 타게팅 불능 상태로 만듭니다.",
+		" $[COOLDOWN]",
+		"사망 위기에 놓일 때 체력을 최대 체력의 절반까지 즉시 회복 후",
+		"마안이 개방된 능력으로 변경됩니다."
 		})
 
+@SuppressWarnings("deprecation")
 public class Kuro extends AbilityBase {
 
 	public Kuro(Participant participant) {
@@ -103,9 +115,22 @@ public class Kuro extends AbilityBase {
 		}
 	};
 	
+	public static final SettingObject<Boolean> DASH_CONFIG = abilitySettings.new SettingObject<Boolean>(Kuro.class,
+			"dash-config", false, "# 차원 절단 이동 대시형 여부", "# 질주 개념으로 적용시켜 블럭을 관통할 지 정합니다.") {
+		
+		@Override
+		public String toString() {
+                return getValue() ? "§b켜짐" : "§c꺼짐";
+        }
+		
+	};
+	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "차원 절단", CooldownDecrease._50);
 	private Map<Player, NextDimension> nextMap = new HashMap<>(); 
 	private final Crescent crescent = Crescent.of(1, 20);
+	private boolean dashboolean = DASH_CONFIG.getValue();
+	private static final Vector zerov = new Vector(0, 0, 0);
+	private Location startLocation;
 	
 	private static final Set<Material> swords;
 	
@@ -217,37 +242,77 @@ public class Kuro extends AbilityBase {
 		if (getPlayer().equals(e.getDamager())) {
 			if (attacked.isRunning()) attacked.setCount(7);
 			else attacked.start();
+			if (e.getEntity() instanceof Player) {
+				Player player = (Player) e.getEntity();
+				if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+					e.setDamage(e.getDamage() + 2);
+				}
+			}
 		}
 	}
+	
+	private final AbilityTimer dashing = new AbilityTimer(1) {
+		
+		@Override
+		public void onStart() {
+			startLocation = getPlayer().getLocation();
+	    	getPlayer().setVelocity(VectorUtil.validateVector(getPlayer().getLocation().getDirection().normalize().multiply(10)));
+	   	}
+	   	
+	   	@Override
+	   	public void onEnd() {
+	   		onSilentEnd();
+	   	}
+	    	
+	   	@Override
+	    public void onSilentEnd() {
+			getPlayer().setVelocity(zerov);
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					new DimensionCutter(startLocation, getPlayer().getLocation()).start();
+					new CutterParticle(startLocation, getPlayer().getLocation()).start();
+				}
+				
+			}.runTaskLater(AbilityWar.getPlugin(), 1L);
+	   	}
+	
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType())) {
     		if (!cool.isCooldown() && attacked.isRunning()) {
-    			Block lastEmpty = null;
-    			try {
-					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection().clone().setY(0).normalize(), 1, 10); iterator.hasNext(); ) {
-						final Block block = iterator.next();
-						if (!block.getType().isSolid()) {
-							lastEmpty = block;
-						}
-					}
-				} catch (IllegalStateException ignored) {
-				}
-				if (lastEmpty != null) {
-					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
-					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
-					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
-					new CutterParticle(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
-					getPlayer().teleport(LocationUtil.floorY(lastEmpty.getLocation()).setDirection(getPlayer().getLocation().getDirection()));
-					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
-					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
-				} else {
-					getPlayer().sendMessage("§4[§c!§4] §f바라보는 방향에 이동할 수 있는 곳이 없습니다.");
-				}
-    			e.setCancelled(true);
-    			cool.start();
+    			if (dashboolean) {
+    				dashing.start();
+    				cool.start();
+    			} else {
+        			Block lastEmpty = null;
+        			try {
+    					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection().clone().setY(0).normalize(), 1, 10); iterator.hasNext(); ) {
+    						final Block block = iterator.next();
+    						if (!block.getType().isSolid()) {
+    							lastEmpty = block;
+    						}
+    					}
+    				} catch (IllegalStateException ignored) {
+    				}
+    				if (lastEmpty != null) {
+    					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
+    					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
+    					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
+    					new CutterParticle(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
+    					getPlayer().teleport(LocationUtil.floorY(lastEmpty.getLocation()).setDirection(getPlayer().getLocation().getDirection()));
+    					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
+    					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
+            			cool.start();
+    				} else {
+    					getPlayer().sendMessage("§4[§c!§4] §f바라보는 방향에 이동할 수 있는 곳이 없습니다.");
+    				}	
+    			}
     		}
+			e.setCancelled(true);
     	}
     }
 	

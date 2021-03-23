@@ -22,6 +22,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
@@ -76,7 +77,7 @@ public class Infallibility extends Synergy {
 		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
 			target = (Player) e.getEntity();
 		}
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow ar = (Arrow) e.getDamager();
 			if (ar.getShooter().equals(getPlayer()) && e.getEntity() instanceof Player 
 					&& !e.getEntity().equals(getPlayer())) {

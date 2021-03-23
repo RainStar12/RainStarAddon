@@ -52,6 +52,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -77,6 +78,15 @@ import daybreak.google.common.collect.Iterables;
 		"§7상태이상 §8- §d감전§f: 매 2초마다 0.5초간 기절합니다. 감전 도중에 기절 효과가 새로이",
 		" 들어올 때마다 획득한 기절의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다.",
 		"§8[§7HIDDEN§8] §b초전도§f: 이거 뜨고 있는거야?"
+		},
+		summarize = {
+		"자신이 주는 모든 §c근접 피해 외 피해§f는 피해량에 비례한 §e기절 부여§f로 대체됩니다.",
+		"§7철괴 좌클릭 시§f 자기 폭풍을 만들어내 플레이어들을 끌어당기고 폭발을 일으켜",
+		"대상들을 §d감전§f시킵니다. $[LEFT_COOLDOWN]",
+		"§7철괴 우클릭 시§f 레일건을 차징해 발사하여 최대 3명에게까지 유도되고,",
+		"마지막 세 번째 적에게 순간이동하며 폭발시킵니다. $[RIGHT_COOLDOWN]",
+		"§d감전된 대상§f은 일정 시간마다 잠깐씩 기절하고, 별개의 기절 효과가 새로 들어오면",
+		"§d감전 효과§f가 끝날 때 기절 시간에 비례해 피해를 입습니다."
 		})
 
 public class Tesla extends AbilityBase implements ActiveHandler {
@@ -239,7 +249,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(EntityShootBowEvent e) {
-		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity()) && NMS.isArrow(e.getProjectile())) {
 			if (charged) {
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 				SoundLib.ENTITY_WITHER_HURT.playSound(getPlayer().getLocation(), 7, 1.4f);
@@ -393,7 +403,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			for (Location loc : explosioncircle.toLocations(location)) {
-				location.getWorld().createExplosion(getPlayer(), loc, 1.15f, false, false);
+				location.getWorld().createExplosion(loc, 1.35f, false, false);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				location.getWorld().strikeLightning(loc);
@@ -531,7 +541,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 								ParticleLib.EXPLOSION_HUGE.spawnParticle(player.getLocation());
 								player.getWorld().strikeLightningEffect(player.getLocation());
 								player.damage(10, getPlayer());
-								player.getWorld().createExplosion(getPlayer(), player.getLocation(), 1.3f, false, false);
+								player.getWorld().createExplosion(player.getLocation(), 1.4f, false, false);
 								new BukkitRunnable() {
 									@Override
 									public void run() {

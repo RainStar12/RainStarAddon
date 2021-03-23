@@ -56,14 +56,20 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향으로 짧게 대시합니다.",
 		" 대시 도중엔 무적 및 타게팅 불능이 되고, 스태미나를 2 소모합니다.",
 		" 스태미나는 5초마다 1씩 회복하며 10까지 보유 가능합니다.",
+		" 전투 도중엔 스태미나가 더 느리게 차오릅니다.",
 		"§7공격 후 대시 §8- §e광속§f: 혼란 도중이 아닌 다른 플레이어를 근접 공격 후",
-		" 0.15초 내에 대시하였을 경우 대상에게 3초간 혼란 및 출혈 상태를 부여합니다.",
+		" 0.15초 내에 대시하였을 경우 대상에게 2초간 혼란 및 출혈 상태를 부여합니다.",
 		" 혼란 상태의 대상은 매 초마다 무작위의 방향으로 튕겨나갑니다.",
 		" 또한 스태미나 1을 즉시 회복합니다.",
 		"§7패시브 §8- §b대시 잔상§f: 대시로 지나친 자리에 대시 잔상이 남아",
 		" 닿는 플레이어에게 2의 마법 피해를 입힙니다. 만약 대상이 혼란 도중이라면,",
 		" 추가로 5초간 신속 2 버프를 획득합니다.",
-		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"})
+		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"},
+		summarize = {
+		"§7검을 들고 F키§f를 누를 시 스태미나를 2 소모해 바라보는 방향으로 §b대시§f합니다.",
+		"§b대시§f로 지나간 자리에 잔상이 남아 마법 피해를 입힙니다.",
+		"누군가를 타격 후 §b대시§f할 경우 스태미나 1을 회복하고 대상은 §6혼란 상태§f가 됩니다."
+		})
 
 @Tips(tip = {
         "기동의 다양성보다는 단순 속도를 살린 기동성 캐릭터입니다.",
@@ -203,26 +209,26 @@ public class Dash extends AbilityBase {
 						    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 						    			onetime = false;
 									} else {
-										Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 3);
-							    		Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+										Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+							    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
 							    		stack = Math.min((stack + 1), 10);
 										ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
 									}
 							} else {
-								Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 3);
-								Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+								Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+								Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
 					    		stack = Math.min((stack + 1), 10);
 								ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
 							}
 						} else {
-				    		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 3);
-				    		Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+				    		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+				    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
 				    		stack = Math.min((stack + 1), 10);
 							ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
 			    		}
 					} else if (onetime == false || !target.hasAbility()) {
-			   			Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 3);
-			   			Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+			   			Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+			   			Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
 			    		stack = Math.min((stack + 1), 10);
 			    		ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
 					}

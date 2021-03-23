@@ -138,10 +138,10 @@ public class Accelerator extends Synergy {
 	    	getPlayer().getInventory().setArmorContents(null);
 			getParticipant().attributes().TARGETABLE.setValue(false);
 	    	if (attacked.isRunning()) {
-		   			Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 4);
-		    		Confusion.apply(target, TimeUnit.SECONDS, 4, 10);
-		    		stack = Math.min((stack + 1), 15);
-		    		ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
+		   		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 4);
+		    	Confusion.apply(target, TimeUnit.SECONDS, 4, 10);
+		    	stack = Math.min((stack + 1), 15);
+		    	ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
 			}
 	   	}
 	 

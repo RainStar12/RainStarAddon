@@ -59,9 +59,16 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 다시 좌클릭 시 끈을 던져 범위의 중심에 가장 가까운 대상에게 돌진합니다.",
 		" 이때 범위 내 모든 대상에게 방어 무시 대미지를 입힙니다. 만약 범위 내 대상 중",
 		" 유혹 중인 대상이 있다면 유혹을 풀고 남은 시간에 반비례하여 피해를 입힙니다.",
+		" $[COOLDOWN]",
 		"§7상태이상 §8- §d유혹§f: 대상이 강제로 나를 바라보게 되고,",
 		" 대상이 내게 주는 피해량이 절반으로 감소합니다. 대상을 공격할 때마다",
 		" 준 최종 대미지만큼 체력을 회복합니다."
+		},
+		summarize = {
+		"§d유혹 상태§f인 적을 타격해 회복하는 것 외엔 회복 효과를 받을 수 없습니다.",
+		"다른 플레이어를 공격할 때마다 표식을 쌓아 3개가 될 때 대상을 §d유혹§f합니다.",
+		"§d유혹§f된 대상은 나를 강제로 바라보며 내게 주는 피해량이 감소합니다.",
+		"§7철괴 좌클릭§f으로 끈을 던져 대상의 위치까지 이동해 공격합니다. $[COOLDOWN]"
 		})
 
 public class NineTailFoxCP extends AbilityBase implements ActiveHandler {
@@ -70,7 +77,7 @@ public class NineTailFoxCP extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private final Map<Player, Stack> stackMap = new HashMap<>();
 	private static final Set<Material> nocheck;
 	private Participant target = null;
@@ -90,8 +97,8 @@ public class NineTailFoxCP extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	public static final SettingObject<Integer> CooldownConfig = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxCP.class, "Cooldown", 40,
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(NineTailFoxCP.class, "cooldown", 40,
             "# 쿨타임") {
 
         @Override
@@ -173,7 +180,7 @@ public class NineTailFoxCP extends AbilityBase implements ActiveHandler {
 				} else new Stack((Player) e.getEntity()).start();
 			}
 		}
-		if (e.getDamager() instanceof Arrow && e.getEntity() instanceof Player
+		if (NMS.isArrow(e.getDamager()) && e.getEntity() instanceof Player
 				&& !e.isCancelled() && predicate.test(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter())) {

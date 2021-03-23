@@ -59,7 +59,15 @@ import daybreak.google.common.base.Strings;
 		" 별무리 표식의 수에 비례해 공명 피해를 강화합니다. $[CooldownConfig]",
 		"§7패시브 §8- §b공명§f: 발광 효과를 가진 플레이어를 근접 공격할 때",
 		" 피해량의 10%만큼의 마법 피해를 대상의 범위 3칸 내 플레이어들과",
-		" 발광 효과를 받고 있는 플레이어들에게 입힙니다. $[PassiveCool]"})
+		" 발광 효과를 받고 있는 플레이어들에게 입힙니다. $[PassiveCool]"
+		},
+		summarize = {
+		"다른 플레이어를 근접 공격할 때마다 대상에게 표식을 쌓아",
+		"표식이 5개가 될 때 대상을 발광시킵니다. 이미 발광중인 적에게는",
+		"대신 기절시킵니다. 발광 중인 적들은 스텔라가 발광 적을 공격할 때",
+		"공명 피해로 피해량의 일부를 같이 받습니다.",
+		"§7철괴 우클릭 시§f 주변 플레이어를 지속해 발광시킵니다."
+		})
 
 public class Stella extends AbilityBase implements ActiveHandler {
 

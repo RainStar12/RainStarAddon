@@ -19,6 +19,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
@@ -39,9 +40,8 @@ public class Butcher extends AbilityBase {
 	private static final RGB MinorityHealth = RGB.of(183, 0, 0);
 	
 	@SubscribeEvent
-	public void onEntityDamageByEntity (EntityDamageByEntityEvent e) {
-		
-		if (e.getDamager() instanceof Arrow) {
+	public void onEntityDamageByEntity (EntityDamageByEntityEvent e) {	
+		if (NMS.isArrow(e.getDamager())) {
 		    Arrow arrow = (Arrow) e.getDamager();
 		    if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity) {
 		    	final LivingEntity target = (LivingEntity) e.getEntity();

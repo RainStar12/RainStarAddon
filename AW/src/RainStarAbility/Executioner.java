@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
@@ -76,6 +75,13 @@ import daybreak.google.common.base.Strings;
 		" 대상의 체력을 33% 이하로 만들 경우 $[PASSIVE_DURATION]초간 발동합니다.",
 		" §2[§a기본§2]§f 잃은 체력만큼의 흡수 체력을 획득하고, 근접 피해량이 $[DAMAGE_DECREASE_AMOUNT]% 감소됩니다.",
 		" §4[§c집행§4]§f 대상에게 영구 지속하는 출혈 피해를 주며, 근접 피해량이 $[DAMAGE_INCREASE_AMOUNT]% 증가합니다."
+		},
+		summarize = {
+		"§7철괴 우클릭 시§f 집행권을 획득 혹은 소모해 주변 적에게 피해를 입힙니다.",
+		" $[COOLDOWN_CONFIG]",
+		"집행권 유무에 따라 근접, 원거리 공격이 각각의 방식대로 강화됩니다.",
+		"§2[§a기본§2]§f 공격력이 낮아지지만, 방어력과 생존력이 증가합니다.",
+		"§4[§c집행§4]§f 방어력을 낮추고 체력을 소모하는 대신 공격력이 증가합니다.",
 		})
 
 public class Executioner extends AbilityBase implements ActiveHandler {
@@ -510,7 +516,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
 			else ac.update(null);
 		}
 		
-		if (e.getDamager() instanceof Arrow && !e.getEntity().equals(getPlayer()) && e.getEntity() instanceof Player) {
+		if (NMS.isArrow(e.getDamager()) && !e.getEntity().equals(getPlayer()) && e.getEntity() instanceof Player) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter())) {
 				if (hitplayer.contains(e.getEntity())) {
@@ -619,7 +625,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
 					Damages.damageMagic(p, getPlayer(), false, ACTIVE_BIG_DAMAGE.getValue());
 					Irreparable.apply(getGame().getParticipant(p), TimeUnit.SECONDS, IRREPARABLE_DURATION.getValue());
 					for (Location loc : Line.between(getPlayer().getLocation().add(0, 0.5, 0), p.getPlayer().getLocation().add(0, 0.5, 0), 120).toLocations(getPlayer().getLocation().add(0, 0.5, 0))) {
-			   			getPlayer().getWorld().spawnParticle(Particle.FOOTSTEP, loc, 0, 0, 0, 1, 0);
+			   			ParticleLib.SMOKE_LARGE.spawnParticle(loc, 0, 0, 0, 1, 0);
 			   		}
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer().getLocation(), 1, 1.2f);
 				}

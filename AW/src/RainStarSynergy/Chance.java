@@ -82,7 +82,7 @@ public class Chance extends Synergy {
     public AbilityRegistration getRandomSynergy() {
 
 		Set<AbilityRegistration> synergies = SynergyFactory.getSynergies();
-
+		
         Random r = new Random();
         return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
     }

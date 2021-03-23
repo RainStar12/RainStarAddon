@@ -42,6 +42,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -97,7 +98,7 @@ public class TeslaPlasma extends Synergy {
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(EntityShootBowEvent e) {
-		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity()) && NMS.isArrow(e.getProjectile())) {
 			if (charged) {
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 				SoundLib.ENTITY_WITHER_HURT.playSound(getPlayer().getLocation(), 7, 1.4f);

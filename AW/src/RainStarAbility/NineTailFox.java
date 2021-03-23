@@ -28,6 +28,7 @@ import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
@@ -41,6 +42,11 @@ import daybreak.google.common.collect.ImmutableMap;
 		"§7철괴 우클릭 §8- §d둔갑§f: 꼬리가 9개일 때 사용할 수 있습니다.",
 		" 사용 시 둔갑하여 §e구미호(둔갑)§f 능력이 되고 모든 꼬리를 잃습니다.",
 		"§8[§7HIDDEN§8] §3산전수전§f: §o수행의 끝에 도달할 수 있을까요?"
+		},
+		summarize = {
+		"미경험 피해 방법으로 피해입을 때마다 꼬리 1개를 즉시 획득합니다.",
+		"꼬리가 5개 이상일 때 꼬리 하나당 주는 대미지가 0.5씩 상승합니다.",
+		"꼬리가 9개일 때 §7철괴 우클릭 시§f §e구미호(둔갑)§f으로 둔갑합니다."
 		})
 
 public class NineTailFox extends AbilityBase implements ActiveHandler {
@@ -158,7 +164,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
 			e.setDamage(e.getDamage() + ((stack - 4) * 0.5));
 		}
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter())) {
 				e.setDamage(e.getDamage() + ((stack - 4) * 0.5));

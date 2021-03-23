@@ -23,6 +23,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -158,7 +159,7 @@ public class HomingPenetrationArrow extends Synergy {
 
 	@SubscribeEvent(ignoreCancelled = true)
 	private void onProjectileLaunch(EntityShootBowEvent e) {
-		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity()) && NMS.isArrow(e.getProjectile())) {
 			e.setCancelled(true);
 			if (reload == null) {
 				if (!ammo.hasAmmo()) {

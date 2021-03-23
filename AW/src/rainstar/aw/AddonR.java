@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.Alice;
 import RainStarAbility.AntiGravity;
+import RainStarAbility.ArrowRain;
 import RainStarAbility.Butcher;
 import RainStarAbility.Chronos;
 import RainStarAbility.Crystal;
@@ -37,10 +38,12 @@ import RainStarAbility.NineTailFoxC;
 import RainStarAbility.NineTailFoxCP;
 import RainStarAbility.OneShotOneKill;
 import RainStarAbility.PrecisionAiming;
+import RainStarAbility.Protagonist;
 import RainStarAbility.RainStar;
 import RainStarAbility.Revenger;
 import RainStarAbility.Soda;
 import RainStarAbility.Stella;
+import RainStarAbility.Stop;
 import RainStarAbility.Teabagging;
 import RainStarAbility.Tesla;
 import RainStarAbility.TimeStop;
@@ -50,8 +53,11 @@ import RainStarSynergy.Accelerator;
 import RainStarSynergy.AkashicRecords;
 import RainStarSynergy.BadManner;
 import RainStarSynergy.Chance;
+import RainStarSynergy.CurseOfGod;
 import RainStarSynergy.Demisoda;
-import RainStarSynergy.GravityZero;
+import RainStarSynergy.DemonLord;
+import RainStarSynergy.GhostRider;
+import RainStarSynergy.Gravity;
 import RainStarSynergy.HawkEye;
 import RainStarSynergy.HealthCopy;
 import RainStarSynergy.HomingPenetrationArrow;
@@ -60,6 +66,7 @@ import RainStarSynergy.Joker;
 import RainStarSynergy.LaplaceDemon;
 import RainStarSynergy.MagicShow;
 import RainStarSynergy.MomentaryTrip;
+import RainStarSynergy.MovingSkill;
 import RainStarSynergy.NineTailFoxSynergy;
 import RainStarSynergy.PatronSaint;
 import RainStarSynergy.Sharper;
@@ -73,7 +80,9 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.list.Clown;
+import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.Demigod;
+import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.DiceGod;
 import daybreak.abilitywar.ability.list.EnergyBlocker;
 import daybreak.abilitywar.ability.list.Magician;
@@ -168,12 +177,16 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(KuroEye.class);
 		AbilityFactory.registerAbility(Divinity.class);
 		AbilityList.registerAbility(Divinity.class);
+		AbilityFactory.registerAbility(Protagonist.class);
+		AbilityList.registerAbility(Protagonist.class);
+		AbilityFactory.registerAbility(Stop.class);
+		AbilityList.registerAbility(Stop.class);
 		
 		AbilityFactory.registerAbility(BetaR.class);
 		AbilityList.registerAbility(BetaR.class);
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
-		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, GravityZero.class);
+		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, Gravity.class);
 		SynergyFactory.registerSynergy(TimeRewind.class, TimeStop.class, TimeTravel.class);
 		SynergyFactory.registerSynergy(Dash.class, Dash.class, Accelerator.class);
 		SynergyFactory.registerSynergy(EnergyBlocker.class, Indecision.class, SocialDistancing.class);
@@ -194,6 +207,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Tesla.class, Tesla.class, TeslaPlasma.class);
 		SynergyFactory.registerSynergy(Clown.class, Alice.class, Joker.class);
 		SynergyFactory.registerSynergy(Teabagging.class, LittleDevil.class, BadManner.class);
+		SynergyFactory.registerSynergy(Dash.class, Divinity.class, MovingSkill.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -209,7 +223,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f34개 §7/ §d시너지 §f24개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f36개 §7/ §d시너지 §f25개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -219,9 +233,9 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f34개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f36개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f24개 적용 완료.");
+			e.addCredit("§d시너지 §f25개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

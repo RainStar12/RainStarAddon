@@ -17,13 +17,21 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.google.common.base.Predicate;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import javax.annotation.Nullable;
+
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -31,7 +39,7 @@ import org.bukkit.entity.Player;
 		"§a---------------------------------",
 		"$(EXPLAIN)",
 		"§a---------------------------------",
-		"철괴로 대상을 우클릭하여 능력을 30초간 복제합니다. $[MIN_COOLDOWN]",
+		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 30초간 복제합니다. $[MIN_COOLDOWN]",
 		"이후 [  ]으로 되돌아옵니다. 되돌아올 때 복제한 능력이",
 		"쿨타임일 경우, 절반의 시간만큼 [  ]의 쿨타임을 더합니다."
 })
@@ -88,6 +96,26 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	};
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
+	
 	private AbilityBase ability;
 
 	@SuppressWarnings("unused")
@@ -122,7 +150,71 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		return ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, clickType);
+		if (ability != null) {
+			return ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, clickType);	
+		} else {
+			if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+				if (!cooldown.isCooldown()) {
+					Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate);
+					if (player != null) {
+						final Player entityPlayer = (Player) player;
+						final Participant target = getGame().getParticipant(entityPlayer);
+						if (target.hasAbility() && !target.getAbility().isRestricted()) {
+							final AbilityBase targetAbility = target.getAbility();
+							if (getGame() instanceof AbstractMix) {
+								final Mix targetMix = (Mix) targetAbility;
+								if (targetMix.hasAbility()) {
+									if (targetMix.hasSynergy()) {
+										try {
+											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
+											this.ability.setRestricted(false);
+											getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+											new ReturnTimer();
+										} catch (ReflectiveOperationException e) {
+											e.printStackTrace();
+										}
+									} else {
+										final Mix myMix = (Mix) getParticipant().getAbility();
+										final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
+										
+										try {
+											final Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
+											if (clazz != Empty.class) {
+												this.ability = AbilityBase.create(clazz, getParticipant());
+												this.ability.setRestricted(false);
+												getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+												new ReturnTimer();
+											} else {
+												getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
+											}
+										} catch (ReflectiveOperationException e) {
+											e.printStackTrace();
+										}
+									}
+
+								}
+
+							} else {
+								try {
+									final Class<? extends AbilityBase> clazz = targetAbility.getClass();
+									if (clazz != Empty.class) {
+										this.ability = AbilityBase.create(clazz, getParticipant());
+										this.ability.setRestricted(false);
+										getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
+										new ReturnTimer();
+									} else {
+										getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
+									}
+								} catch (ReflectiveOperationException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -130,64 +222,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		if (ability != null) {
 			if (ability instanceof TargetHandler) {
 			((TargetHandler) ability).TargetSkill(material, entity);
-			}
-		} else {
-			if (material == Material.IRON_INGOT && entity instanceof Player) {
-				if (!cooldown.isCooldown()) {
-					final Player entityPlayer = (Player) entity;
-					final Participant target = getGame().getParticipant(entityPlayer);
-					if (target.hasAbility() && !target.getAbility().isRestricted()) {
-						final AbilityBase targetAbility = target.getAbility();
-						if (getGame() instanceof AbstractMix) {
-							final Mix targetMix = (Mix) targetAbility;
-							if (targetMix.hasAbility()) {
-								if (targetMix.hasSynergy()) {
-									try {
-										this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
-										this.ability.setRestricted(false);
-										getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-										new ReturnTimer();
-									} catch (ReflectiveOperationException e) {
-										e.printStackTrace();
-									}
-								} else {
-									final Mix myMix = (Mix) getParticipant().getAbility();
-									final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
-
-									try {
-										final Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
-										if (clazz != Empty.class) {
-											this.ability = AbilityBase.create(clazz, getParticipant());
-											this.ability.setRestricted(false);
-											getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-											new ReturnTimer();
-										} else {
-											getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
-										}
-									} catch (ReflectiveOperationException e) {
-										e.printStackTrace();
-									}
-								}
-
-							}
-
-						} else {
-							try {
-								final Class<? extends AbilityBase> clazz = targetAbility.getClass();
-								if (clazz != Empty.class) {
-									this.ability = AbilityBase.create(clazz, getParticipant());
-									this.ability.setRestricted(false);
-									getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
-									new ReturnTimer();
-								} else {
-									getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
-								}
-							} catch (ReflectiveOperationException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
 			}
 		}
 	}

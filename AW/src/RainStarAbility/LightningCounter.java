@@ -45,9 +45,15 @@ import daybreak.google.common.base.Predicate;
 		" 스치며 주는 피해량이 1씩 증가합니다. 최대 5단계까지 가속이 가능하고",
 		" 매 가속 시마다 §3빨리빨리§f의 지속 시간이 10초로 갱신됩니다.",
 		"§7피격 §8- §c내가 졌다고?§f: 최대 가속 중 플레이어에게 피해받을 때",
-		" 가속이 초기화되고, 쿨타임을 가집니다. $[CooldownConfig]",
+		" 가속이 초기화되고, 쿨타임을 가집니다. $[COOLDOWN]",
 		"§7패시브 §8- §eE=mc²§f: 가속 중 누군가를 근접 타격 시 가속을 한 단계 잃고",
 		" 가속에 비례하는 추가 피해를 입힙니다."
+		},
+		summarize = {
+		"§7달리면서 누군가를 스쳐 지나가면§f 피해를 입히고 느리게 만든 후, §b가속§f합니다.",
+		"달리기를 해제할 때마다 가속을 1 잃고, §b가속§f의 수치만큼",
+		"스쳐 지나가는 피해량이 점점 증가합니다.",
+		"가속 중 근접 타격 시 §b가속§f을 한 단계 소모하여 추가 피해를 입힙니다."
 		})
 
 @Tips(tip = {
@@ -81,11 +87,11 @@ public class LightningCounter extends AbilityBase {
 		super(participant);
 	}
 	
-	private final Cooldown RunCool = new Cooldown(CooldownConfig.getValue(), CooldownDecrease._25);
+	private final Cooldown RunCool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._25);
 	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1, true, false);
 	
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(
-			LightningCounter.class, "Cooldown", 10, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
+			LightningCounter.class, "cooldown", 10, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

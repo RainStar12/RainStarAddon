@@ -74,6 +74,13 @@ import daybreak.google.common.base.Strings;
 		" 눈꽃 표식은 최대 3번까지 중첩됩니다.",
 		"§7상태이상 §8- §9냉기§f: 이동 속도, 공격 속도가 감속하고 회복력이 줄어듭니다.",
 		" 또한 지속시간과 쿨타임 타이머가 천천히 흐르게 됩니다."
+		},
+		summarize = {
+		"§7지팡이 우클릭 시§f 영창을 시작해 영창 중에 다시 우클릭하면 서리를 내뿜어",
+		"적중 대상들을 §9냉기§f시키고, 이미 §9냉기§f 상태라면 §3빙결§f시킵니다. $[CAST_COOLDOWN]",
+		"§7지팡이 좌클릭 시§f 영창 없이 주변의 모든 빙결 상태의 플레이어의 §3빙결§f을",
+		"깨트려 피해를 입히고 방어력이 레벨당 2씩 감소하는 §b눈꽃 표식§f을 부여합니다.",
+		"§9냉기 상태의 적§f은 이동 속도, 공격 속도가 감소하고 회복력이 줄어듭니다."
 		})
 
 @Materials(materials = {
@@ -232,6 +239,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		return (material == MaterialX.STICK.getMaterial());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.STICK && clicktype == ClickType.RIGHT_CLICK && !castcool.isCooldown()) {
@@ -292,12 +300,12 @@ public class Yuki extends AbilityBase implements ActiveHandler {
     				Damages.damageMagic(p, getPlayer(), false, addDamage);
     				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration)) {
     					if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() == 1) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15, 2);
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 2);
     					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 2) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15, 3);
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 3);
     					}
     				} else {
-    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15, 1);
+    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 1);
     				}
     				addDamage += 2;
         		}	
@@ -539,9 +547,9 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 						Damages.damageMagic(p, (Player) shooter, true, cast / 3);
 						if (getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
 							attacked.add(p);
-							Frost.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 2);
+							Frost.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 3);
 						} else if (!getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
-							Chill.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 11);
+							Chill.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15);
 							attacked.add(p);
 						}
 					}

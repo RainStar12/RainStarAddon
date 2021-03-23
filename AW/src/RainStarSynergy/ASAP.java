@@ -111,7 +111,7 @@ public class ASAP extends Synergy {
 				} else new MyStack((Player) e.getDamager()).start();
 			}
 		}
-		if (e.getDamager() instanceof Arrow && !e.isCancelled() && e.getEntity() instanceof Player) {
+		if (NMS.isArrow(e.getDamager()) && !e.isCancelled() && e.getEntity() instanceof Player) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter()) && predicate.test(e.getEntity())) {
 				e.setDamage(0);

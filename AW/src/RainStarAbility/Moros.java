@@ -40,6 +40,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -58,6 +59,12 @@ import daybreak.google.common.base.Predicate;
 		" 내가 아닌 운명공동체가 사망 시 모든 효과가 해제됩니다. $[RIGHT_COOLDOWN]",
 		"§7철괴 좌클릭 §8- §3운명개찬§f: $[DURATION]초간 자신의 운명을 개찬해 발사체 및",
 		" 다른 능력의 타게팅을 흘려보냅니다. $[LEFT_COOLDOWN]"
+		},
+		summarize = {
+		"§7다른 플레이어에게 철괴 우클릭§f하면 대상과 §3운명 공동체§f가 되어",
+		"서로가 받는 피해 효과 및 회복 효과, 그리고 슬롯의 위치를 §3공유§f합니다.",
+		"§7철괴 좌클릭§f으로 $[DURATION]초간 발사체를 흘려보내고 타게팅 불능 상태가 됩니다.",
+		" $[LEFT_COOLDOWN]"
 		})
 
 public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
@@ -379,7 +386,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 					mortal.get(e.getEntity()).start();
 				} else mortal.get(e.getEntity()).addDamage();
 			}
-			if (e.getDamager() instanceof Arrow) {
+			if (NMS.isArrow(e.getDamager())) {
 				Arrow arrow = (Arrow) e.getDamager();
 				if (getPlayer().equals(arrow.getShooter()) && !e.isCancelled() && !e.getEntity().equals(getPlayer()) && e.getEntity() != null) {
 					if (!mortal.containsKey(e.getEntity())) {

@@ -19,16 +19,17 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "사회적 거리 조절", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §a에너지 블로커§f: 최근에 내가 받은 피해의 근·원거리에 따라",
 		" 다음 피해 방어상태를 동일하게 조절합니다. 만약 방어상태인 피해 타입으로",
-		" 피격당했을 경우 피해량을 1/3으로 줄여 받습니다.",
+		" 피격당했을 경우 피해량을 2/3으로 줄여 받습니다.",
 		"§7패시브 §8- §b우유부단§f: 최근에 내가 받은 피해의 근·원거리에 따라",
 		" 내 공격 상태를 동일하게 조절합니다. 만약 공격상태인 피해 타입으로",
-		" 공격했을 경우 2.5칸의 추가 피해를 줍니다."
+		" 공격했을 경우 1.5의 추가 피해를 줍니다."
 })
 
 public class SocialDistancing extends Synergy {
@@ -72,7 +73,7 @@ public class SocialDistancing extends Synergy {
 		if (e.getEntity().equals(getPlayer()) && !e.getDamager().equals(getPlayer())) {
 			if (e.getCause() == DamageCause.PROJECTILE) {
 				if (isshort == false) {
-					e.setDamage(e.getDamage() / 3);
+					e.setDamage(e.getDamage() * ((double) 2 / 3));
 					SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer());
 				} else {
 					isshort = false;
@@ -80,7 +81,7 @@ public class SocialDistancing extends Synergy {
 				}
 			} else if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 				if (isshort == true) {
-					e.setDamage(e.getDamage() / 3);
+					e.setDamage(e.getDamage() * ((double) 2 / 3));
 					SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer());
 				} else {
 					isshort = true;
@@ -93,7 +94,7 @@ public class SocialDistancing extends Synergy {
 			SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 			SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 			SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
-			e.setDamage(e.getDamage() + 2.5);
+			e.setDamage(e.getDamage() + 1.5);
 			new AbilityTimer(5) {
 				@Override
 				protected void run(int count) {
@@ -105,14 +106,14 @@ public class SocialDistancing extends Synergy {
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 		
-		if (e.getDamager() instanceof Arrow && isshort == false) {
+		if (NMS.isArrow(e.getDamager()) && isshort == false) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (arrow.getShooter().equals(getPlayer()) && e.getEntity() instanceof LivingEntity
 					&& !e.getEntity().equals(getPlayer())) {
 				SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 				SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 				SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
-				e.setDamage(e.getDamage() + 2.5);
+				e.setDamage(e.getDamage() + 1.5);
 				new AbilityTimer(5) {
 					@Override
 					protected void run(int count) {
