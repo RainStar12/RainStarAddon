@@ -174,7 +174,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, 100, 0, true, false, Color.TEAL);
+	PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, 100, 0, true, false);
 	
 	private final Duration duration = new Duration((DurationConfig.getValue() * 20), cool) {
 		

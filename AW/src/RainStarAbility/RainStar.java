@@ -92,7 +92,16 @@ import daybreak.google.common.base.Predicate;
 		" 항상 발동하며, 근접 공격 피해량이 1.2배로 증가합니다. $[RIGHT_COOLDOWN]", 
 		"§7철괴 좌클릭 §8- §b별의 일주§f: 점성술의 별자리 효과를 다음 별자리로 넘깁니다.",
 		" 또한 $[MODE_DURATION]초간 §b수호 모드§f가 되어 별소나기에 적중한 적에게 피해를 주는 대신", 
-		" 줄 피해의 10%만큼 내 체력을 회복합니다. $[LEFT_COOLDOWN]" })
+		" 줄 피해의 10%만큼 내 체력을 회복합니다. $[LEFT_COOLDOWN]"
+		},
+		summarize = {
+		"12가지 §5별자리 패시브 효과§f 중 하나를 지급받습니다.",
+		"근접 타격시마다 일정 확률로 내 주변을 맴도는 §a별소나기§f가 생겨납니다.",
+		"활을 발사할 때 화살을 따라다니는 §b혜성§f 투사체가 같이 발사됩니다.",
+		"§7철괴 우클릭 시§f 필드를 펼쳐 필드 위에서 §a별소나기§f가 항상 생겨납니다.",
+		"또한 근접 공격 피해량이 1.2배 증가합니다. $[RIGHT_COOLDOWN]",
+		"§7철괴 좌클릭 시§f §5별자리 패시브 효과§f를 다음 효과로 넘깁니다. $[LEFT_COOLDOWN]"
+		})
 
 public class RainStar extends AbilityBase implements ActiveHandler {
 
@@ -869,14 +878,14 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (e.getEntity() instanceof Arrow) {
+		if (NMS.isArrow(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getEntity();
 			if (getPlayer().equals(arrow.getShooter()) && !arrowcool.isRunning()) {
 				new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow,
 						arrow.getVelocity().length()).start();
 				arrowcool.start();
 			}
-			if (constellation == 8) {
+			if (getPlayer().equals(arrow.getShooter()) && constellation == 8) {
 				new AbilityTimer(100) {
 
 					@Override

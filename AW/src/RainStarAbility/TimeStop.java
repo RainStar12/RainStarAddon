@@ -74,7 +74,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7패시브 §8- §a타임 플로우§f: 시간 정지의 영향을 받지 않습니다.",
 		"§7패시브 §8- §3타임 디비전§f: 시간 정지 소유자 한 명당 지속시간이 30%씩 감소합니다.",
 		" 줄어든 지속시간의 소수점은 올림 처리되며, 1초 미만으로는 줄지 않습니다.",
-		" 또한 한 명당 정지 종료 후 피해 감소량이 줄어듭니다."})
+		" 또한 한 명당 정지 종료 후 피해 감소량이 줄어듭니다."
+		},
+		summarize = {
+		"§7철괴 우클릭 시§f 시간을 멈춰 자신 혹은 시간 정지 능력자들 외 모든 플레이어의",
+		"시간이 멈추게 됩니다. 이 능력은 타게팅 불능 대상도 무시합니다. $[COOLDOWN_CONFIG]"
+		})
 
 @Tips(tip = {
         "세상의 시간을 멈춰, 모든 플레이어를 행동하지 못하게 만들고",
@@ -443,7 +448,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			if (stopduration.isRunning() && e.getEntity() instanceof Player) {
 				e.setCancelled(true);
 				if (!custominv.contains(e.getEntity())) {
-					if (e.getDamager() instanceof Arrow) {
+					if (NMS.isArrow(e.getDamager())) {
 						Arrow arrow = (Arrow) e.getDamager();
 						arrow.remove();
 			      	}
@@ -486,6 +491,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ());
+			hologram.setText("§c§l0");
 			hologram.display(getPlayer());
 			stackMap.put(player, this);
 		}

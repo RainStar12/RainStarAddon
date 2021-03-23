@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @EffectManifest(name = "광란", displayName = "§c광란", method = ApplicationMethod.UNIQUE_LONGEST, type = {
-		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
+		EffectType.MOVEMENT_INTERRUPT, EffectType.COMBAT_RESTRICTION
 }, description = {
 		"상하전후좌우의 무작위 방향으로 튕겨나갑니다.",
 		"또한 엔티티에 의한 피해 외 모든 피해를 1.5배로 받습니다."

@@ -12,7 +12,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Arrow.PickupStatus;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -33,6 +32,8 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -188,7 +189,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 	    if (update == AbilityBase.Update.RESTRICTION_SET || update == AbilityBase.Update.ABILITY_DESTROY) {
 	    	if (arrowmark != null) {
 				arrowmark.setGlowing(false);
-				arrowmark.setPickupStatus(PickupStatus.ALLOWED);
+				NMS.setPickupStatus(arrowmark, PickupStatus.ALLOWED);
 				arrowmark = null;
 	    	}
 	    } 
@@ -293,7 +294,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 				DimensionDistortion.apply(getGame().getParticipant(e.getPlayer()), TimeUnit.SECONDS, DEBUFF_DURATION.getValue());
 				SoundLib.ENTITY_ZOMBIE_VILLAGER_CONVERTED.playSound(getPlayer().getLocation(), 1, 0.7f);
 				arrowmark.setGlowing(false);
-				arrowmark.setPickupStatus(PickupStatus.ALLOWED);
+				NMS.setPickupStatus(arrowmark, PickupStatus.ALLOWED);
 				arrowmark = null;
 			}	
 		}
@@ -318,16 +319,16 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getEntity() instanceof Arrow) {
+		if (NMS.isArrow(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getEntity();
 			if (getPlayer().equals(arrow.getShooter()) && e.getHitEntity() == null && !arrowCool.isRunning()) {
 				if (arrowmark != null) {
 					arrowmark.setGlowing(false);
-					arrowmark.setPickupStatus(PickupStatus.ALLOWED);	
+					NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);
 				}
 				arrowmark = arrow;
 				arrowmark.setGlowing(true);
-				arrowmark.setPickupStatus(PickupStatus.DISALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.DISALLOWED);
 				if (!arrowchecker.isRunning()) {
 					arrowchecker.start();
 				}

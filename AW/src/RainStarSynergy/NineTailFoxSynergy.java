@@ -173,7 +173,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 				} else new Stack((Player) e.getEntity()).start();
 			}
 		}
-		if (e.getDamager() instanceof Arrow && e.getEntity() instanceof Player
+		if (NMS.isArrow(e.getDamager()) && e.getEntity() instanceof Player
 				&& !e.isCancelled() && predicate.test(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter())) {

@@ -63,14 +63,6 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7철괴 좌클릭 §8- §3상승 기류§f: 몸을 급격하게 높이 띄웁니다. $[COOLDOWN]",
 		"§7패시브 §8- §b안전장치§f: 낙하 피해, 압사 피해를 무시합니다."})
 
-@Materials(materials = {
-		Material.WOOD_SWORD,
-		Material.STONE_SWORD,
-		Material.IRON_SWORD,
-		Material.GOLD_SWORD,
-		Material.DIAMOND_SWORD
-	})
-
 public class Hovercraft extends AbilityBase implements ActiveHandler {
 	
 	public Hovercraft(Participant participant) {

@@ -69,7 +69,14 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 검의 힘을 모으는 도중 다시 F를 누르는 것으로 즉시 발현도 가능하다.",
 		"§7패시브 §8- §4『§c마안 폭주§4』§f: 나는 저주받은 마안을 사용하기에,",
 		" 회복을 받을 수 없는 몸이 되었지만 회복을 하려 할 때마다 대신",
-		" 회복량의 5%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있다."
+		" 회복량의 10%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있다."
+		},
+		summarize = {
+		"체력 회복을 하지 못하는 대신 회복량의 10%만큼 추가 공격력을 획득합니다.",
+		"§7검을 들고 F키§f를 누르면 모든 플레이어가 지나가는 과거의 기록이 남아",
+		"플레이어의 과거의 기록이 범위 내에 있을 때 다시 §7검을 들고 F키§f를 누르거나",
+		"지속 시간이 종료될 때 대상에게 큰 피해를 입힐 수 있습니다.",
+		" $[COOLDOWN]"
 		})
 
 public class KuroEye extends AbilityBase {
@@ -155,7 +162,7 @@ public class KuroEye extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			stack = Math.min(MAX_DAMAGE.getValue(), stack + (e.getAmount() * 0.05));
+			stack = Math.min(MAX_DAMAGE.getValue(), stack + (e.getAmount() * 0.1));
 			ac.update("§c마안 폭주§f: §7" + df.format(stack));
 			e.setCancelled(true);
 		}
@@ -181,16 +188,18 @@ public class KuroEye extends AbilityBase {
 	
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
-    	if (swords.contains(e.getOffHandItem().getType()) && !cool.isCooldown()) {
-    		if (skill.isRunning()) {
-    			if (skill.getCount() >= 7) {
-    				getPlayer().sendMessage("§4[§c!§4] §f아직 최소한의 검의 힘이 모아지지 않았습니다.");
-    				getPlayer().sendMessage("§4[§c!§4] §3최소 대기 시간: 앞으로 §e" + Math.abs(6 - skill.getCount()) + "§f초");
-    			} else {
-    				skill.stop(false);
-    			}
-    		} else {
-        		skill.start();	
+    	if (swords.contains(e.getOffHandItem().getType())) {
+    		if (!cool.isCooldown()) {
+        		if (skill.isRunning()) {
+        			if (skill.getCount() >= 7) {
+        				getPlayer().sendMessage("§4[§c!§4] §f아직 최소한의 검의 힘이 모아지지 않았습니다.");
+        				getPlayer().sendMessage("§4[§c!§4] §3최소 대기 시간§f: 앞으로 §e" + Math.abs(6 - skill.getCount()) + "§f초");
+        			} else {
+        				skill.stop(false);
+        			}
+        		} else {
+            		skill.start();	
+        		}	
     		}
     		e.setCancelled(true);
     	}
@@ -258,13 +267,13 @@ public class KuroEye extends AbilityBase {
 								clock.setRightArmPose(new EulerAngle(Math.toRadians(270), 0, 0));
 								clock.setMetadata("TimeCutter", new FixedMetadataValue(AbilityWar.getPlugin(), null));
 								clock.setVisible(false);
-								clock.getEquipment().setItemInMainHand(new ItemStack(Material.WATCH));
+								clock.getEquipment().setItemInMainHand(new ItemStack(MaterialX.CLOCK.getMaterial()));
 								clock.setGravity(false);
 				            	NMS.removeBoundingBox(clock);
 				    			new BukkitRunnable() {
 				    				@Override
 				    				public void run() {
-				    					participant.getPlayer().damage(10 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4, getPlayer());
+				    					participant.getPlayer().damage(15 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4, getPlayer());
 				    					ParticleLib.ITEM_CRACK.spawnParticle(clock.getLocation().clone().add(0, 1, 0), 0, 0, 0, 10, 0.5f, MaterialX.CLOCK);
 				    					ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), 0.4, 0.5, 0.4, 50, 0.35, MaterialX.CLOCK);
 				    					SoundLib.ENTITY_ENDER_EYE_DEATH.playSound(clock.getLocation().clone().add(0, 1, 0), 1, 0.7f);

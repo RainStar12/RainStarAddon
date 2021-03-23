@@ -19,6 +19,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
@@ -105,7 +106,7 @@ public class SocialDistancing extends Synergy {
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 		
-		if (e.getDamager() instanceof Arrow && isshort == false) {
+		if (NMS.isArrow(e.getDamager()) && isshort == false) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (arrow.getShooter().equals(getPlayer()) && e.getEntity() instanceof LivingEntity
 					&& !e.getEntity().equals(getPlayer())) {

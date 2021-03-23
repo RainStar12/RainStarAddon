@@ -75,11 +75,18 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7활 우클릭 §8- §c저지먼트§f: 바라보는 방향의 수평으로 성령의 화살을 발사합니다.",
 		" 성령의 화살이 적중할 때 다시 튕겨 시전자의 위치까지 되돌아오며,",
 		" 수호 스택에 비례해 적중 대상을 기절시킵니다.",
-		"§7철괴 우클릭 §8- §b생츄어리§f: $[DurationConfig]초간 계속해 늘어나는 성역을 전개합니다.",
+		"§7철괴 우클릭 §8- §b생츄어리§f: $[DURATION]초간 계속해 늘어나는 성역을 전개합니다.",
 		" 성역 내에서 자신은 참가자 중 신 능력자의 수에 비례해 회복 효과를 받습니다.",
 		" 다른 플레이어도 언데드나 기타 종족이 아닐 시 50%로 회복효과를 받으며",
-		" 언데드의 경우 지속적으로 피해를 입힙니다. $[CooldownConfig]",
+		" 언데드의 경우 지속적으로 피해를 입힙니다. $[COOLDOWN]",
 		" 이 효과로 체력이 20% 이하였던 플레이어를 회복해 줄 때 수호 스택을 얻습니다."
+		},
+		summarize = {
+		"§7활을 우클릭하면§f 장전하지 않고 즉시 수평으로 §e특수한 화살§f을 발사합니다.",
+		"이 §e투사체§f는 어딘가에 적중할 때 튕겨서 나에게 되돌아오며,",
+		"맞힌 대상을 기절시킵니다.",
+		"§7철괴 우클릭 시§f 주변 신 종족 능력자의 사람에 비례해 회복 효과를 받는",
+		"§b성역§f을 펼칩니다. §b성역§f 내에서 언데드 종족은 반대로 피해를 받습니다."
 		})
 
 @Tips(tip = {
@@ -116,6 +123,7 @@ import daybreak.google.common.collect.ImmutableSet;
         })
 }, stats = @Stats(offense = Level.FOUR, survival = Level.THREE, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.HARD)
 
+@SuppressWarnings("deprecation")
 public class GuardianAngel extends AbilityBase implements ActiveHandler {
 
 	public GuardianAngel(Participant participant) {
@@ -208,9 +216,9 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	
-	private final Duration sanctuary = new Duration(DurationConfig.getValue() * 20, cool) {
+	private final Duration sanctuary = new Duration(DURATION.getValue() * 20, cool) {
 		
 		@Override
 		public void onDurationStart() {
@@ -387,9 +395,9 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1);
 	
-	public static final SettingObject<Integer> CooldownConfig 
+	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"Cooldown", 80, "# 쿨타임") {
+			"cooldown", 80, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -401,9 +409,9 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DurationConfig 
+	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"Duration", 10, "# 지속 시간") {
+			"duration", 10, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

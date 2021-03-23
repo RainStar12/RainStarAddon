@@ -18,6 +18,7 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
 @EffectManifest(name = "부식", displayName = "§7부식", method = ApplicationMethod.UNIQUE_LONGEST, type = {
@@ -52,27 +53,27 @@ public class Corrosion extends AbstractGame.Effect implements Listener {
 	protected void onStart() {
 		if (participant.getPlayer().getInventory().getHelmet() != null) {
 			Material helmet = participant.getPlayer().getInventory().getHelmet().getType();
-			if (helmet == Material.GOLD_HELMET) level += 2;
-			if (helmet == Material.IRON_HELMET) level += 1;
-			if (helmet == Material.DIAMOND_HELMET) level += 0.5;
+			if (helmet == MaterialX.GOLDEN_HELMET.getMaterial()) level += 2;
+			if (helmet == MaterialX.IRON_HELMET.getMaterial()) level += 1;
+			if (helmet == MaterialX.DIAMOND_HELMET.getMaterial()) level += 0.5;
 		}
 		if (participant.getPlayer().getInventory().getChestplate() != null) {
 			Material chestplate = participant.getPlayer().getInventory().getChestplate().getType();
-			if (chestplate == Material.GOLD_CHESTPLATE) level += 2;
-			if (chestplate == Material.IRON_CHESTPLATE) level += 1;
-			if (chestplate == Material.DIAMOND_CHESTPLATE) level += 0.5;
+			if (chestplate == MaterialX.GOLDEN_CHESTPLATE.getMaterial()) level += 2;
+			if (chestplate == MaterialX.IRON_CHESTPLATE.getMaterial()) level += 1;
+			if (chestplate == MaterialX.DIAMOND_CHESTPLATE.getMaterial()) level += 0.5;
 		}
 		if (participant.getPlayer().getInventory().getLeggings() != null) {
 			Material leggings = participant.getPlayer().getInventory().getLeggings().getType();
-			if (leggings == Material.GOLD_LEGGINGS) level += 2;
-			if (leggings == Material.IRON_LEGGINGS) level += 1;
-			if (leggings == Material.DIAMOND_LEGGINGS) level += 0.5;
+			if (leggings == MaterialX.GOLDEN_LEGGINGS.getMaterial()) level += 2;
+			if (leggings == MaterialX.IRON_LEGGINGS.getMaterial()) level += 1;
+			if (leggings == MaterialX.DIAMOND_LEGGINGS.getMaterial()) level += 0.5;
 		}
 		if (participant.getPlayer().getInventory().getBoots() != null) {
 			Material boots = participant.getPlayer().getInventory().getBoots().getType();
-			if (boots == Material.GOLD_BOOTS) level += 2;
-			if (boots == Material.IRON_BOOTS) level += 1;
-			if (boots == Material.DIAMOND_BOOTS) level += 0.5;
+			if (boots == MaterialX.GOLDEN_BOOTS.getMaterial()) level += 2;
+			if (boots == MaterialX.IRON_BOOTS.getMaterial()) level += 1;
+			if (boots == MaterialX.DIAMOND_BOOTS.getMaterial()) level += 0.5;
 		}
 		this.armorcorrosion = new AttributeModifier(UUID.randomUUID(), "armor-corrosion", -(level), Operation.ADD_NUMBER);
 		participant.getPlayer().getAttribute(Attribute.GENERIC_ARMOR).addModifier(armorcorrosion);

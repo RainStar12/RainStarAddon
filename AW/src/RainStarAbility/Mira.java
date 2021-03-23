@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Arrow.PickupStatus;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -39,6 +38,8 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -50,12 +51,18 @@ import daybreak.google.common.base.Predicate;
 		" 도약 표식은 새로 만들어질 때마다 갱신되고 공간 도약을 3초간 사용하지 못합니다.",
 		"§7철괴 좌클릭 §8- §3공간 도약§f: 도약 표식이 있는 곳으로 순간이동합니다. $[COOLDOWN]",
 		" 이때 기존에 자신이 있던 위치로부터 $[TELEPORT_RANGE]칸 이내의 모든 플레이어를 함께",
-		" 이동시키고 순간이동한 위치에서 폭발을 일으키고 0.2초 기절시킵니다.",
+		" 이동시킨 뒤 순간이동한 위치에서 폭발을 일으키고 0.2초 기절시킵니다.",
 		" 만약 대상이 속박의 연막의 효과를 받고 있었을 경우 1.5초간 기절시킵니다.",
-		" 순간이동 이후, 끌려간 모든 대상이 낙하 피해를 1회 무시합니다.",
 		" §7단일 대상 텔레포트 여부§f: $[TELEPORT_COUNT]",
 		"§7상태이상 §8- §9속박의 연막§f: 이동 속도 및 점프가 느려집니다.",
 		" 또한 엔티티에 대한 피해 이외의 모든 피해를 1.5배로 받게 됩니다.",
+		},
+		summarize = {
+		"§7웅크린 채로 활을 발사해§f 적중 위치에 §3도약 표식§f을 만듭니다. $[ARROW_COOL]",
+		"§3표식§f 주변에는 이동 속도가 느려지는 §9속박의 연막§f 효과를 받는 필드가 생성됩니다.",
+		"§7철괴 좌클릭 시§f 도약 표식이 있는 곳으로 주변 플레이어와 함께 §5순간이동§f해",
+		"§3도약 표식§f이 있던 지점에 폭발을 일으키고 같이 §5순간이동§f한 대상들을 기절시킵니다.",
+		" $[COOLDOWN]"
 		})
 
 public class Mira extends AbilityBase implements ActiveHandler {
@@ -188,7 +195,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	    if (update == AbilityBase.Update.RESTRICTION_SET || update == AbilityBase.Update.ABILITY_DESTROY) {
 	    	if (arrow != null) {
 				arrow.setGlowing(false);
-				arrow.setPickupStatus(PickupStatus.ALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);
 				arrow = null;
 				ac.update(null);
 	    	}
@@ -255,15 +262,15 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getHitEntity() == null && !arrowCool.isRunning() && e.getEntity() instanceof Arrow && getPlayer().equals(e.getEntity().getShooter())) {
+		if (e.getHitEntity() == null && !arrowCool.isRunning() && NMS.isArrow(e.getEntity()) && getPlayer().equals(e.getEntity().getShooter())) {
 			Arrow hitarrow = (Arrow) e.getEntity();
 			if (hitarrow == shootarrow) {
 				if (arrow != null) {
 					arrow.setGlowing(false);
-					arrow.setPickupStatus(PickupStatus.ALLOWED);	
+					NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);	
 				}
 				arrow = (Arrow) e.getEntity();
-				arrow.setPickupStatus(PickupStatus.DISALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.DISALLOWED);
 				arrow.setGlowing(true);
 				if (!passive.isRunning()) {
 					passive.start();
@@ -358,7 +365,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 						}	
 					}
 					arrow.setGlowing(false);
-					arrow.setPickupStatus(PickupStatus.ALLOWED);
+					NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);
 					teleCool.start();
 					arrow = null;
 					ac.update(null);

@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Arrow.PickupStatus;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -46,6 +45,8 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -186,7 +187,7 @@ public class MagicShow extends Synergy implements ActiveHandler {
 	    if (update == AbilityBase.Update.RESTRICTION_SET || update == AbilityBase.Update.ABILITY_DESTROY) {
 	    	if (arrow != null) {
 				arrow.setGlowing(false);
-				arrow.setPickupStatus(PickupStatus.ALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);
 				arrow = null;
 				ac.unregister();
 	    	}
@@ -244,15 +245,15 @@ public class MagicShow extends Synergy implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getHitEntity() == null && !arrowCool.isRunning() && e.getEntity() instanceof Arrow && getPlayer().equals(e.getEntity().getShooter())) {
+		if (e.getHitEntity() == null && !arrowCool.isRunning() && NMS.isArrow(e.getEntity()) && getPlayer().equals(e.getEntity().getShooter())) {
 			Arrow hitarrow = (Arrow) e.getEntity();
 			if (hitarrow == shootarrow) {
 				if (arrow != null) {
 					arrow.setGlowing(false);
-					arrow.setPickupStatus(PickupStatus.ALLOWED);	
+					NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);	
 				}
 				arrow = (Arrow) e.getEntity();
-				arrow.setPickupStatus(PickupStatus.DISALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.DISALLOWED);
 				arrow.setGlowing(true);
 				if (!passive.isRunning()) {
 					passive.start();
@@ -382,7 +383,7 @@ public class MagicShow extends Synergy implements ActiveHandler {
 					}
 				}
 				arrow.setGlowing(false);
-				arrow.setPickupStatus(PickupStatus.ALLOWED);
+				NMS.setPickupStatus(arrow, PickupStatus.ALLOWED);
 				arrow = null;
 				ac.unregister();
 				return teleCool.start();

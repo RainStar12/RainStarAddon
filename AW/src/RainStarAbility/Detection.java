@@ -16,7 +16,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Materials;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
@@ -72,14 +71,6 @@ import daybreak.google.common.base.Predicate;
                 "오히려 대상에게서 매번 2의 추가 피해를 입으므로 주의해야 합니다."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.SEVEN, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TWO), difficulty = Difficulty.EASY)
-
-@Materials(materials = {
-		Material.WOOD_SWORD,
-		Material.STONE_SWORD,
-		Material.IRON_SWORD,
-		Material.GOLD_SWORD,
-		Material.DIAMOND_SWORD
-	})
 
 public class Detection extends AbilityBase implements TargetHandler { 
 
@@ -196,13 +187,7 @@ public class Detection extends AbilityBase implements TargetHandler {
 	}
     
 	public void TargetSkill(Material material, LivingEntity entity) {
-		if ((material.equals(Material.WOOD_SWORD) || 
-				material.equals(Material.STONE_SWORD) || 
-				material.equals(Material.IRON_SWORD) || 
-				material.equals(Material.GOLD_SWORD) || 
-				material.equals(Material.DIAMOND_SWORD)) 
-				&& entity instanceof Player && !skill.isCooldown()) {
-			
+		if (usesMaterial(material) && entity instanceof Player && !skill.isCooldown()) {
 			Player p = (Player) entity;
 			if (config) {
 				for (Player player : LocationUtil.getNearbyEntities(Player.class, p.getLocation(), range, range, predicate)) {
