@@ -29,6 +29,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "ÀÜ·ù È­»ì", rank = Rank.B, species = Species.HUMAN, explain = {
@@ -149,7 +150,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof Player
 					&& !e.getEntity().equals(getPlayer()) && !arrowC.isCooldown()) {

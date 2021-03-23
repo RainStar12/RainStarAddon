@@ -20,6 +20,7 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
@@ -75,7 +76,7 @@ public class DimensionDistortion extends AbstractGame.Effect implements Listener
 		if (e.getDamager().getUniqueId().equals(participant.getPlayer().getUniqueId())) {
 			e.setDamage(e.getDamage() * 0.5);
 		}
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (participant.getPlayer().equals(arrow.getShooter())) {
 				e.setDamage(e.getDamage() * 0.5);

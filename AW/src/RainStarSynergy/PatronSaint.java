@@ -51,6 +51,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -180,12 +181,13 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager() instanceof Player && e.getEntity().equals(getPlayer())) {
 			if (gods.contains((Player) e.getDamager())) e.setDamage(e.getDamage() * 0.8);
-		} else if (e.getDamager() instanceof Arrow && e.getEntity().equals(getPlayer())) {
+		} else if (NMS.isArrow(e.getDamager()) && e.getEntity().equals(getPlayer())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (gods.contains((Player) arrow.getShooter())) e.setDamage(e.getDamage() * 0.8);
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(PlayerInteractEvent e) {
 		if ((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && bows.contains(e.getItem().getType())) {

@@ -43,7 +43,15 @@ import daybreak.google.common.base.Predicate;
 		" 비례해서 증가시킵니다. 대상이 나에게 사망할 경우, 자신도 성불합니다.",
 		" 대상을 바라볼 때마다 10초 주기로 대상이 실명에 걸리고 나와 같은 방향을 바라봅니다.",
 		"§7패시브 §8- §c증오의 씨§f: 대상이 다른 플레이어에게 사망 시",
-		" 복수 대상이 대상을 사망시킨 플레이어로 옮겨갑니다."})
+		" 복수 대상이 대상을 사망시킨 플레이어로 옮겨갑니다."
+		},
+		summarize = {
+		"부활 전까지 내가 주는 모든 공격 피해량이 75%가 감소합니다.",
+		"다른 플레이어에게 사망 시 §c복수§f를 시작해, §c복수 대상§f 외에겐 싸우지 못하고",
+		"§c복수 대상§f에겐 대상이 날 죽일때 준 최종 피해량에 비례해 추가 피해를 줍니다.",
+		"대상을 바라보면 대상은 실명에 걸리고 나와 같은 방향을 바라봅니다.",
+		"§c복수§f를 시작하고 나면 체력을 회복할 수 없습니다."
+		})
 
 public class Revenger extends AbilityBase {
 	
@@ -162,7 +170,7 @@ public class Revenger extends AbilityBase {
 				e.setDamage(e.getDamage() / 4);
 			}
 		
-			if (e.getDamager() instanceof Arrow) {
+			if (NMS.isArrow(e.getDamager())) {
 				Arrow arrow = (Arrow) e.getDamager();
 				if (arrow.getShooter().equals(getPlayer())) {
 					if (checkdeath) {

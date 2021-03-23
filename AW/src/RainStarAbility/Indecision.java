@@ -29,6 +29,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
@@ -121,7 +122,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (arrow.getShooter().equals(getPlayer()) && e.getEntity() instanceof LivingEntity) {
 				final LivingEntity target = (LivingEntity) e.getEntity();

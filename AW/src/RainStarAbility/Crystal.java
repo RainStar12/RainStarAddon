@@ -26,6 +26,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -55,6 +56,12 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 		"§7패시브 §8- §3수정 방벽§f: 흡수 체력을 가지고 있을 때 흡수 체력량을 넘는",
 		" 피해량이 들어온다면, 오직 흡수 체력만이 소진됩니다.",
 		"§8[§7HIDDEN§8] §5마탄의 사수§f: 정밀 조준 따위가 없어도 백발백중."
+		},
+		summarize = {
+		"§7철괴 좌클릭§f으로 내 체력을 사용해 §e흡수 체력§f을 만들어",
+		"§e흡수 체력§f이 있을 때 §e흡수 체력량§f보다도 많은 피해를 방어해줍니다.",
+		"화살을 발사할 때 두 발을 소모하여 적중 대상을 느리게 만들고,",
+		"거리 비례 피해를 추가로 주며 반드시 치명타가 발생합니다."
 		})
 
 @Tips(tip = {
@@ -121,7 +128,7 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent e) {
     	if (e.getEntity().equals(getPlayer()) && !getPlayer().isDead()) {
     		float yellowheart = NMS.getAbsorptionHearts(getPlayer());
@@ -142,7 +149,7 @@ public class Crystal extends AbilityBase implements ActiveHandler {
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
     	onEntityDamage(e);
-    	if (e.getDamager() instanceof Arrow && e.getEntity() instanceof Player) {
+    	if (NMS.isArrow(e.getDamager()) && e.getEntity() instanceof Player) {
     		target = (Player) e.getEntity();
     		Arrow arrow = (Arrow) e.getDamager();
     		if (arrow != null) {    		
@@ -200,7 +207,7 @@ public class Crystal extends AbilityBase implements ActiveHandler {
     
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getEntity() instanceof Arrow) {
+		if (NMS.isArrow(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getEntity();
 			if (myarrow.contains(arrow)) {
 				myarrow.remove(arrow);
@@ -215,7 +222,7 @@ public class Crystal extends AbilityBase implements ActiveHandler {
     
     @SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-    	if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
+    	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		Arrow arrow = (Arrow) e.getEntity();
     		myarrow.add(arrow);
     		arrow.setCritical(true);

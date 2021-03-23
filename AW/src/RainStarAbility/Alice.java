@@ -53,7 +53,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "앨리스", rank = Rank.A, species = Species.HUMAN, explain = {
+		name = "앨리스", rank = Rank.A, species = Species.HUMAN, 
+		explain = {
 		"§7철괴 우클릭 §8- §a이상한 나라로§f: 한 장의 트럼프 카드를 발사합니다.",
 		" 트럼프 카드는 총 54장으로 구성되어 있으며, 한 번 뽑은 카드는 나오지 않습니다.",
 		" 각 문양별로 특수 효과가 하나씩 존재하며, 1~13의 숫자로 효과 배율이 정해집니다.",
@@ -63,7 +64,13 @@ import daybreak.google.common.base.Predicate;
 		" §8♣ §7-§f 카드를 발사해 적중 위치를 폭발시킵니다.",
 		" §c♦ §7-§f 카드를 발사해 적중 대상에게 추가 피해와 혼란 효과를 부여합니다.",
 		" §8Joker §7-§f §8♠ §f+ §8♣ §f효과를 최대 출력으로 동시에 사용합니다.",
-		" §cJoker §7-§f §c♥ §f+ §c♦ §f효과를 최대 출력으로 동시에 사용합니다.",
+		" §cJoker §7-§f §c♥ §f+ §c♦ §f효과를 최대 출력으로 동시에 사용합니다."
+		},
+		summarize = {
+		"§7철괴를 우클릭§f하면 바라보는 방향으로 카드를 발사해 적중한 적에게",
+		"상태이상 및 피해를 입히거나, 적과 자신이 회복됩니다.",
+		"문양에 따라 효과가 다르며 숫자가 높을수록 카드 효과가 강력해집니다.",
+		" $[COOLDOWN_CONFIG]"
 		})
 
 public class Alice extends AbilityBase implements ActiveHandler {

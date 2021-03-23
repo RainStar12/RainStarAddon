@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -41,6 +42,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
@@ -173,7 +175,7 @@ public class PrecisionAiming extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
 			if (stack > 0) {
 				stack--;
     			ac.update(Strings.repeat("§a▐", stack).concat(Strings.repeat("§7▐", ammo - stack)));
@@ -267,6 +269,7 @@ public class PrecisionAiming extends AbilityBase {
 		
 		@Override
 		protected void onEnd() {
+			HandlerList.unregisterAll(this);
 			arrow.setGravity(true);
 			arrow.setGlowing(false);
 		}

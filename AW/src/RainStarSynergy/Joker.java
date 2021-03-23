@@ -80,7 +80,7 @@ public class Joker extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 90,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 110,
 			"# 쿨타임") {
 
 		@Override
@@ -154,6 +154,7 @@ public class Joker extends Synergy implements ActiveHandler {
 	    } 
 	}
 	
+	@SuppressWarnings("unused")
 	private CardBullet bullet = null;
 	private Location originalPoint = null;
 	private final int blindrange = BLIND_RANGE.getValue();

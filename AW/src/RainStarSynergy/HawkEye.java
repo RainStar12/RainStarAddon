@@ -118,7 +118,7 @@ public class HawkEye extends Synergy {
 
 	@SubscribeEvent
 	public void onProjectileLaunch(EntityShootBowEvent e) {
-		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity()) && NMS.isArrow(e.getProjectile())) {
 			e.setCancelled(true);
 			if (reload == null) {
 				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {

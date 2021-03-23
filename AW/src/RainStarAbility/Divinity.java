@@ -13,6 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -53,11 +54,19 @@ import kotlin.ranges.RangesKt;
 		" 분신 지속 중 자신이 주는 모든 피해량이 50%로 감소합니다. $[COOLDOWN]",
 		"§7철괴 좌클릭 §8- §b신출귀몰§f: 신선놀음 지속 도중 사용 시 지속시간 1초를 소모해",
 		" 자신의 위치와 분신의 위치를 서로 뒤바꾸고 피해량 감소를 2초간 없앱니다.",
-		"§7패시브 §8- §b허공답보§f: 공중에서 웅크릴 시 한 번 더 점프합니다.",
+		"§7패시브 §8- §b허공답보§f: 낙하하며 공중에서 웅크릴 시 한 번 더 점프합니다.",
 		" 사용 후 첫 낙하 피해를 무시합니다. 사용 후 착지 전 공중에서 근접 타격했을 때",
 		" 체공한 시간에 비례하여 최대 5의 추가 피해를 입힐 수 있습니다."
+		},
+		summarize = {
+		"§7철괴 우클릭 시§f 적의 시선을 강제로 조작하는 §3분신§f을 소환합니다. $[COOLDOWN]",
+		"분신이 있을 때 모든 피해량이 50% 감소합니다.",
+		"§7철괴 좌클릭 시§f 분신이 있을 때 지속시간 1초를 소모해 분신과 나의 위치를 뒤바꾸고",
+		"피해량 감소 효과를 2초간 제거합니다.",
+		"공중에서 웅크릴 시 한 번 더 점프하고 첫 낙하 피해를 무시합니다."
 		})
 
+@SuppressWarnings("deprecation")
 public class Divinity extends AbilityBase implements ActiveHandler {
 
 	public Divinity(Participant participant) {
@@ -65,7 +74,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	}
 	
 	private ArmorStand armorstand = null;
-	private static final Sphere sphere = Sphere.of(6, 13);
+	private static final Sphere sphere = Sphere.of(6, 12);
 	private boolean morejump = false;
 	private boolean fallcancel = false;
 	private BossBar bossBar = null;
@@ -118,7 +127,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(Divinity.class,
-			"duration", 10, "# 지속 시간") {
+			"duration", 8, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -143,7 +152,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		    		armorstand.teleport(previousloc.setDirection(previousdirection));
 		    		skill.setCount(skill.getCount() - 20);
 		    		if (nodamage.isRunning()) {
-		    			nodamage.setCount(30);
+		    			nodamage.setCount(40);
 		    		} else {
 			    		nodamage.start();	
 		    		}
@@ -210,31 +219,43 @@ public class Divinity extends AbilityBase implements ActiveHandler {
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
 	
+    @SubscribeEvent
+    private void onBlockPlace(BlockPlaceEvent e) {
+    	if (getPlayer().equals(e.getPlayer()) && addcounter.isRunning()) {
+    		e.setCancelled(true);
+    	}
+    }
+    
 	@SubscribeEvent
 	private void onPlayerJoin(final PlayerJoinEvent e) {
 		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-			bossBar.addPlayer(e.getPlayer());
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+			if (bossBar2 != null) bossBar2.addPlayer(e.getPlayer());
 		}
 	}
 
 	@SubscribeEvent
 	private void onPlayerQuit(final PlayerQuitEvent e) {
 		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-			bossBar.removePlayer(e.getPlayer());
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+			if (bossBar2 != null) bossBar2.removePlayer(e.getPlayer());
 		}
 	}
     
 	@SubscribeEvent
 	private void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
-			if (!e.getPlayer().isOnGround() && !morejump) {
-				if (e.getPlayer().isSneaking()) {
-					e.getPlayer().setVelocity(VectorUtil.validateVector(new Vector(e.getPlayer().getVelocity().getX() * 1.25, 1, e.getPlayer().getVelocity().getZ() * 1.25)));
-					ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0.5, 0.1, 0.5, 100, 0);
-					SoundLib.BLOCK_SNOW_FALL.playSound(getPlayer().getLocation(), 1, 0.7f);
-					morejump = true;
-					addcounter.start();
-					fallcancel = true;
+			if (!e.getPlayer().isOnGround() && !morejump && !getPlayer().isFlying()) {
+				final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
+				if (toY < fromY) {
+					if (e.getPlayer().isSneaking()) {
+						e.getPlayer().setVelocity(VectorUtil.validateVector(new Vector(e.getPlayer().getVelocity().getX() * 1.25, 1, e.getPlayer().getVelocity().getZ() * 1.25)));
+						ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0.5, 0.1, 0.5, 100, 0);
+						SoundLib.BLOCK_SNOW_FALL.playSound(getPlayer().getLocation(), 1, 0.7f);
+						morejump = true;
+						addcounter.start();
+						fallcancel = true;
+					}	
 				}
 			}
 			if (e.getPlayer().isOnGround() && morejump) {
@@ -333,6 +354,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationSilentEnd() {
 			armorstand.remove();
+			nodamage.stop(false);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1);

@@ -170,7 +170,7 @@ public class GlassCannon extends AbilityBase {
 					2, 0, amount, 1, MaterialX.GLASS);
 		}
 		
-		if (e.getDamager() instanceof Arrow) {
+		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity
 					&& !e.getEntity().equals(getPlayer())) {

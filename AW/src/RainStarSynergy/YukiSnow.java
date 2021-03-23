@@ -271,6 +271,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 		return (material == MaterialX.STICK.getMaterial());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.STICK && clicktype == ClickType.RIGHT_CLICK && !castcool.isCooldown()) {

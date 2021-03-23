@@ -47,6 +47,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
+@SuppressWarnings("deprecation")
 @AbilityManifest(
 		name = "소다", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§3물 속성§f의 꼬마 정령, 소다.",
@@ -57,6 +58,12 @@ import daybreak.google.common.base.Predicate;
 		" 해제되고 주변 $[RANGE_CONFIG]칸 내 적에게 $[EFFECT_DURATION]초간 부식 상태이상을 겁니다. $[COOLDOWN_CONFIG]",
 		"§7상태이상 §8- §7부식§f: 철 광물을 사용하는 모든 아이템을 사용할 수 없습니다.",
 		" 또한 갑옷의 방어력이 착용 광물에 비례해 희귀성이 낮을수록 더 많이 감소합니다."
+		},
+		summarize = {
+		"모든 불 피해, 상태이상, 포션 효과에 면역이 생깁니다.",
+		"§7철괴 좌클릭 시§f §b물§f 상태가 되어 지면에 맞닿아 이동할 수 있으며,",
+		"§b물§f 상태가 해제될 때 주변 적에게 §7부식§f 상태이상을 겁니다.",
+		"§7부식§f된 적은 방어력이 감소하고 철 아이템을 사용할 수 없습니다."
 		})
 
 public class Soda extends AbilityBase implements ActiveHandler {
@@ -219,7 +226,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK ||
+		if (e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK || e.getCause() == DamageCause.HOT_FLOOR ||
 				e.getCause() == DamageCause.LAVA || e.getCause() == DamageCause.WITHER || e.getCause() == DamageCause.POISON) {
 			e.setCancelled(true);		
 		}
