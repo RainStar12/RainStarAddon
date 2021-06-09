@@ -53,12 +53,12 @@ import daybreak.google.common.base.Strings;
 		"§7공격 §8- §e반짝반짝 작은별♪§f: 다른 플레이어를 근접 공격할 때마다",
 		" 대상에게 별무리 표식을 부여합니다. 표식은 공명 효과로도 부여 가능합니다.",
 		" 대상이 가진 표식이 5개가 되면 대상이 발광 중이 아니라면 표식을 제거하고",
-		" 발광을 부여합니다. 발광 중이라면 해제하고 1초간 기절시킵니다.",
+		" 발광을 부여합니다. 발광 중이라면 해제하고 2초간 기절시킵니다.",
 		"§7철괴 우클릭 §8- §e별의 소녀§f: 주변 10칸의 플레이어들을 발광시키고 3칸 내",
 		" 플레이어들을 $[DurationConfig]초간 지속해 발광시키며 또한 게임에 존재하는",
 		" 별무리 표식의 수에 비례해 공명 피해를 강화합니다. $[CooldownConfig]",
 		"§7패시브 §8- §b공명§f: 발광 효과를 가진 플레이어를 근접 공격할 때",
-		" 피해량의 10%만큼의 마법 피해를 대상의 범위 3칸 내 플레이어들과",
+		" 피해량의 20%만큼의 마법 피해를 대상의 범위 3칸 내 플레이어들과",
 		" 발광 효과를 받고 있는 플레이어들에게 입힙니다. $[PassiveCool]"
 		},
 		summarize = {
@@ -86,8 +86,8 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	private Participant target;
 	private final Cooldown cool = new Cooldown(CooldownConfig.getValue(), CooldownDecrease._50);
 	private final Cooldown passivecool = new Cooldown(PassiveCool.getValue(), "공명", CooldownDecrease._50);
-	private PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, 150, 10, true, false);
-	private PotionEffect powerglowing = new PotionEffect(PotionEffectType.GLOWING, 200, 15, true, false);
+	private PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, 150, 15, true, false);
+	private PotionEffect powerglowing = new PotionEffect(PotionEffectType.GLOWING, 200, 20, true, false);
 	private int stargroup = 0;
 	private final ActionbarChannel ac = newActionbarChannel();
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
@@ -289,7 +289,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 					} else {
 						p.removePotionEffect(PotionEffectType.GLOWING);
 						p.setGlowing(false);
-						Stun.apply(target, TimeUnit.TICKS, 20);
+						Stun.apply(target, TimeUnit.TICKS, 40);
 						final Firework firework = getPlayer().getWorld().spawn(p.getEyeLocation(), Firework.class);
 						final FireworkMeta meta = firework.getFireworkMeta();
 						meta.addEffect(
@@ -316,9 +316,9 @@ public class Stella extends AbilityBase implements ActiveHandler {
 						if (LocationUtil.isInCircle(e.getEntity().getLocation(), participant.getPlayer().getLocation(), 3)) {
 							if (!glowMap.contains(participant)) {
 								if (duration.isRunning()) {
-									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min(e.getDamage() / 10, 7));
+									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min(e.getDamage() * 0.2, 7));
 								} else {
-									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min((e.getDamage() / 10) + (stargroup / 2), 7));
+									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min((e.getDamage() * 0.2) + (stargroup / 2), 7));
 								}
 								if (stackMap.containsKey(participant.getPlayer())) {
 									if (stackMap.get(participant.getPlayer()).addStack()) {
@@ -326,7 +326,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 										if (glowMap.contains(participant)) {
 											player.removePotionEffect(PotionEffectType.GLOWING);
 											player.setGlowing(false);
-											Stun.apply(participant, TimeUnit.TICKS, 20);
+											Stun.apply(participant, TimeUnit.TICKS, 40);
 										} else {
 											player.addPotionEffect(glowing);
 										}
@@ -337,9 +337,9 @@ public class Stella extends AbilityBase implements ActiveHandler {
 						} else {
 							if (glowMap.contains(participant)) {
 								if (duration.isRunning()) {
-									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min(e.getDamage() / 10, 7));
+									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min(e.getDamage() * 0.2, 7));
 								} else {
-									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min((e.getDamage() / 10) + (stargroup / 2), 7));
+									Damages.damageMagic(participant.getPlayer(), getPlayer(), true, (float) Math.min((e.getDamage() * 0.2) + (stargroup / 2), 7));
 								}
 							}
 							if (stackMap.containsKey(participant.getPlayer())) {
@@ -348,7 +348,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 									if (glowMap.contains(participant)) {
 										player.removePotionEffect(PotionEffectType.GLOWING);
 										player.setGlowing(false);
-										Stun.apply(participant, TimeUnit.TICKS, 20);
+										Stun.apply(participant, TimeUnit.TICKS, 40);
 									} else {
 										player.addPotionEffect(glowing);
 									}

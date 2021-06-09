@@ -35,6 +35,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -116,6 +117,18 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
+	private final Predicate<Effect> effectpredicate = new Predicate<Effect>() {
+		@Override
+		public boolean test(Effect effect) {
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Effect arg0) {
+			return false;
+		}
+	};
+	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -179,6 +192,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
     		if (getPlayer().getFireTicks() > 0) {
     			getPlayer().setFireTicks(0);
     		}
+			getParticipant().removeEffects(effectpredicate);
     		if (isWater(getPlayer().getLocation().getBlock())) {
     			if (getPlayer().getInventory().getBoots() != null) {
     				ItemStack enchantedboots = getPlayer().getInventory().getBoots();
@@ -239,15 +253,17 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		onEntityDamage(e);	
-		if (e.getDamager() instanceof SplashPotion) {
-			e.setCancelled(true);
-		}
-		if (e.getDamager() instanceof LingeringPotion) {
-			e.setCancelled(true);
-		}
-		if (e.getDamager() instanceof AreaEffectCloud) {
-			e.setCancelled(true);
+		onEntityDamage(e);
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getDamager() instanceof SplashPotion) {
+				e.setCancelled(true);
+			}
+			if (e.getDamager() instanceof LingeringPotion) {
+				e.setCancelled(true);
+			}
+			if (e.getDamager() instanceof AreaEffectCloud) {
+				e.setCancelled(true);
+			}	
 		}
 		if (e.getDamager().equals(getPlayer()) && e.getEntity().equals(getPlayer()) && e.getCause() == DamageCause.ENTITY_ATTACK && potiondrank) {
 			e.setCancelled(true);

@@ -55,8 +55,9 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(
 		name = "앨리스", rank = Rank.A, species = Species.HUMAN, 
 		explain = {
-		"§7철괴 우클릭 §8- §a이상한 나라로§f: 한 장의 트럼프 카드를 발사합니다.",
-		" 트럼프 카드는 총 54장으로 구성되어 있으며, 한 번 뽑은 카드는 나오지 않습니다.",
+		"§7철괴 클릭 §8- §a이상한 나라로§f: 우클릭 시 한 장의 §7트럼프 카드§f를 발사합니다.",
+		" 좌클릭 시 다섯 장의 §7트럼프 카드§f를 §d연속§f 발사하고, §c쿨타임§f을 §e100%§f 더 가집니다.",
+		" §7트럼프 카드§f는 총 54장으로 구성되어 있으며, 한 번 뽑은 §7카드§f는 나오지 않습니다.",
 		" 각 문양별로 특수 효과가 하나씩 존재하며, 1~13의 숫자로 효과 배율이 정해집니다.",
 		" 54장을 전부 사용시 덱을 갈아끼웁니다. $[COOLDOWN_CONFIG]",
 		" §8♠ §7-§f 카드를 발사해 엔티티를 관통하며 닿은 적에게 출혈 피해를 입힙니다.",
@@ -64,12 +65,13 @@ import daybreak.google.common.base.Predicate;
 		" §8♣ §7-§f 카드를 발사해 적중 위치를 폭발시킵니다.",
 		" §c♦ §7-§f 카드를 발사해 적중 대상에게 추가 피해와 혼란 효과를 부여합니다.",
 		" §8Joker §7-§f §8♠ §f+ §8♣ §f효과를 최대 출력으로 동시에 사용합니다.",
-		" §cJoker §7-§f §c♥ §f+ §c♦ §f효과를 최대 출력으로 동시에 사용합니다."
+		" §cJoker §7-§f §c♥ §f+ §c♦ §f효과를 최대 출력으로 동시에 사용합니다.",
 		},
 		summarize = {
 		"§7철괴를 우클릭§f하면 바라보는 방향으로 카드를 발사해 적중한 적에게",
 		"상태이상 및 피해를 입히거나, 적과 자신이 회복됩니다.",
 		"문양에 따라 효과가 다르며 숫자가 높을수록 카드 효과가 강력해집니다.",
+		"§7철괴를 좌클릭§f하면 다섯 번 연속 발사가 가능합니다.",
 		" $[COOLDOWN_CONFIG]"
 		})
 
@@ -91,6 +93,15 @@ public class Alice extends AbilityBase implements ActiveHandler {
             return Formatter.formatCooldown(getValue());
         }
     };
+    
+	public static final SettingObject<Integer> DELAY_CONFIG = 
+			abilitySettings.new SettingObject<Integer>(Alice.class, "shoot-delay", 3,
+            "# 철괴 좌클릭 연속발사 딜레이", "# 단위: 틱", "# 20틱 = 1초") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
 	
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
@@ -104,6 +115,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 	@SuppressWarnings("unused")
 	private CardBullet bullet = null;
 	
+	private final int shotdelay = DELAY_CONFIG.getValue();
 	private final Cooldown cool = new Cooldown(COOLDOWN_CONFIG.getValue(), "카드", CooldownDecrease._50);
 	
     private final AbilityTimer passive = new AbilityTimer() {
@@ -114,16 +126,44 @@ public class Alice extends AbilityBase implements ActiveHandler {
     	}
     
     }.setPeriod(TimeUnit.TICKS, 1).register();
-	
-	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK && !cool.isCooldown()) {
-			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 2f);
+    
+    private final AbilityTimer continuity = new AbilityTimer(5) {
+    	
+    	@Override
+		public void run(int count) {
 			new CardBullet(getPlayer(), getPlayer().getEyeLocation().clone().subtract(0, 0.5, 0), getPlayer().getEyeLocation().getDirection().setY(0).normalize(), getPlayer().getLocation().getYaw(), deck.get(0).getSuit(), deck.get(0).getRank()).start();
 			deck.remove(0);
 			if (deck.isEmpty()) {
 				refill();
 			}
-			return cool.start();
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	public void onSilentEnd() {
+    		cool.start();
+    		cool.setCount((int) (cool.getCount() * 2));
+    	}
+    
+    }.setPeriod(TimeUnit.TICKS, shotdelay).register();
+	
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material == Material.IRON_INGOT && !cool.isCooldown() && !continuity.isRunning()) {
+			if (clicktype == ClickType.RIGHT_CLICK) {
+				new CardBullet(getPlayer(), getPlayer().getEyeLocation().clone().subtract(0, 0.5, 0), getPlayer().getEyeLocation().getDirection().setY(0).normalize(), getPlayer().getLocation().getYaw(), deck.get(0).getSuit(), deck.get(0).getRank()).start();
+				deck.remove(0);
+				if (deck.isEmpty()) {
+					refill();
+				}
+				return cool.start();	
+			} else if (clicktype == ClickType.LEFT_CLICK) {
+				continuity.start();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -396,7 +436,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 			setPeriod(TimeUnit.TICKS, 1);
 			Alice.this.bullet = this;
 			this.shooter = shooter;
-			this.entity = new CardBullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-1, -0.5, -1, 1, 0.5, 1);
+			this.entity = new CardBullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-1.25, -0.5, -1.25, 1.25, 0.5, 1.25);
 			this.forward = arrowVelocity.multiply(3);
 			this.lastLocation = startLocation;
 			this.suit = suit;
@@ -433,6 +473,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onStart() {
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(shooter.getLocation(), 1, 2f);
 			SPADE1.rotateAroundAxisY(-yaw).rotateAroundAxis(VectorUtil.rotateAroundAxisY(forward.clone().normalize().setY(0), 90), 90);
 			SPADE2.rotateAroundAxisY(-yaw).rotateAroundAxis(VectorUtil.rotateAroundAxisY(forward.clone().normalize().setY(0), 90), 90);
 			HEART1.rotateAroundAxisY(-yaw).rotateAroundAxis(VectorUtil.rotateAroundAxisY(forward.clone().normalize().setY(0), 90), 90);
@@ -472,11 +513,11 @@ public class Alice extends AbilityBase implements ActiveHandler {
 				if (type.isSolid()) {
 					if (suit == 2) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.2)), false, true);
+						shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.1)), false, true);
 					}
 					if (suit == 4) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-						shooter.getWorld().createExplosion(entity.getLocation(), 3.6f, false, true);
+						shooter.getWorld().createExplosion(entity.getLocation(), 2.3f, false, true);
 					}
 					stop(false);
 					return;
@@ -514,7 +555,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 						}
 						if (suit == 2) {
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.2)), false, true);
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.1)), false, true);
 							stop(false);
 							return;
 						}
@@ -533,7 +574,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, 130, 10);
 							}
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation(), 3.6f, false, true);
+							shooter.getWorld().createExplosion(entity.getLocation(), 2.4f, false, true);
 						}
 						if (suit == 5) {
 							if (damageable instanceof Player) {

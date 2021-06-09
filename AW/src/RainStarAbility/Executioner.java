@@ -113,7 +113,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ACTIVE_SMALL_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "active-small-damage", 5,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "active-small-damage", 4,
             "# 철괴 우클릭 [기본] 소 대미지") {
         @Override
         public boolean condition(Integer value) {
@@ -122,7 +122,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ACTIVE_BIG_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "active-big-damage", 10,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "active-big-damage", 9,
             "# 철괴 우클릭 [집행] 대 대미지") {
         @Override
         public boolean condition(Integer value) {
@@ -131,7 +131,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> IRREPARABLE_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "irreparable-duration", 8,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "irreparable-duration", 15,
             "# 회복 불능 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -212,7 +212,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_INCREASE_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase-amount", 140,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase-amount", 145,
             "# 패시브 [집행] 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -263,7 +263,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
 	private Location defaultLocation;
 	private final Crescent crescent = Crescent.of(1, 20);
 	
-	private static final Points LAYER = Points.of(0.1, new boolean[][]{
+	private static final Points LAYER = Points.of(0.175, new boolean[][]{
 		{false, false, true, true, false, false},
 		{false, false, true, true, false, false},
 		{false, false, true, true, false, false},

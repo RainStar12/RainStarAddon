@@ -25,6 +25,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -32,6 +33,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @EffectManifest(name = "훈수", displayName = "§c훈수", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+		EffectType.MOVEMENT_RESTRICTION, EffectType.SIGHT_RESTRICTION
 }, description = {
 		"플레이어가 특정 행동들을 할 때마다 확률적으로 훈수를 둡니다.",
 		"훈수를 받으면 시야가 잠깐 봉인됩니다.",

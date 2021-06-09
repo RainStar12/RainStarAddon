@@ -19,7 +19,9 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -64,11 +66,11 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 스태미나가 3 이상일 때 어떠한 이동에 관한 제약이라도 받지 않으며,",
 		" 능력을 사용한 것이 아닌 이동에 있어 스태미나는 더 빨리 차오릅니다.",
 		" 스태미나가 1 이하가 될 때 3초간 회복하지 못하며 1초 후 1.5초간 기절합니다.",
-		"§7검 들고 F §8- §3대시§f: 바라보는 방향으로 매우 빠르게 대시합니다. §c소모 §7: §f3",
+		"§7검 들고 F §8- §3대시§f: 바라보는 방향으로 매우 빠르게 대시합니다. §c소모 §7: §b2",
 		" 대시로 지나간 위치엔 대시 잔상이 남아 닿은 개체에게 피해를 입히고, §e기절§f시킵니다.",
 		" 대시 시작부터 1초간 무적 및 타게팅 불능 상태가 됩니다.",
 		" 공격 후 대시를 시전할 경우 대상을 §6혼란§f 및 §c출혈§f시킵니다.",
-		"§7허공에서 웅크리기 §8- §a이단 점프§f: 공중에서 한 번 더 점프합니다. §c소모 §7: §f2",
+		"§7허공에서 웅크리기 §8- §a이단 점프§f: 공중에서 한 번 더 점프합니다. §c소모 §7: §b1",
 		" 착지 전까지 적에게 피해를 입힐 때마다 대상은 2초간 §a이동 불능§f이 됩니다.",
 		"§7패시브 §8- §b앞지르기§f: 이동 관련 상태 이상을 보유한 적에게 피해를 입히면",
 		" 1.2배로 입히고, 스태미나를 소량 회복합니다."
@@ -177,14 +179,10 @@ public class MovingSkill extends Synergy {
     			getParticipant().removeEffects(effectpredicate);
     		}
     		if (timer == 0) {
-    			if (stamina < 10) {
-    				staminaGain(0.1);
-    			}
+    			staminaGain(0.5);
     			bossBar.setProgress(stamina * 0.1);
     		} else {
-    			if (stamina < 10) {
-    				staminaGain((double) 1 / (timer * 20));
-    			}
+    			staminaGain((double) 1 / (timer * 20));
     			bossBar.setProgress(stamina * 0.1);	
     		}
     	}
@@ -298,11 +296,12 @@ public class MovingSkill extends Synergy {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (stamina >= 3) {
+    			if (stamina >= 2) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
-            		staminaUse(3);
+            		staminaUse(2);
                 	dashing.start();
+                	jumptimer.pause();
                 	if (dashinv.isRunning()) {
                 		dashinv.setCount(20);
                 	} else {
@@ -320,12 +319,13 @@ public class MovingSkill extends Synergy {
     public void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
 			if (!e.getPlayer().isOnGround() && !jumptimer.isRunning()) {
-				if (stamina >= 2) {
+				if (stamina >= 1) {
 					if (e.getPlayer().isSneaking()) {
-						staminaUse(2);
+						staminaUse(1);
 						e.getPlayer().setVelocity(VectorUtil.validateVector(new Vector(e.getPlayer().getVelocity().getX() * 1.25, 1, e.getPlayer().getVelocity().getZ() * 1.25)));
 						ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0.5, 0.1, 0.5, 100, 0);
 						SoundLib.BLOCK_SNOW_FALL.playSound(getPlayer().getLocation(), 1, 0.7f);
+						jumptimer.resume();
 						jumptimer.start();
 						fallcancel = true;
 					}
@@ -390,6 +390,20 @@ public class MovingSkill extends Synergy {
     		}
     	}
     }
+    
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && staminaupdater.isRunning()) {
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+		}
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+		}
+	}
     
     @SubscribeEvent
     public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {

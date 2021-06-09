@@ -28,11 +28,10 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
-import daybreak.abilitywar.utils.library.item.ItemLib;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -46,6 +45,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,8 +59,10 @@ import java.util.function.Predicate;
 		"활을 쏘면 벽과 생명체를 통과하며 특수한 능력이 있는 발사체를 쏩니다.",
 		"발사체는 가장 가까운 대상에게 유도되며, 대상이 피격 시 제외하고 다음으로",
 		"가장 가까운 대상에게 다시 유도됩니다. 화살은 1.5초간 지속됩니다.",
-		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 3초간 재장전하며,",
+		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 1.5초간 재장전하며,",
 		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
+		"탄약을 쏠 때마다 0.5초의 §3대기시간§f을 가지며, 이 §3대기시간§f은 매번 0.25초씩 3초까지",
+		"늘어납니다. 30초간 발사를 중단하면, §3대기시간§f이 다시 0.5초로 초기화됩니다.",
 		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
 		"§5중력§f: 대상을 0.5초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
 		"§e풍월§f: 대상을 멀리 밀쳐냅니다."
@@ -81,6 +83,8 @@ public class HomingPenetrationArrow extends Synergy {
 	private static final RGB YELLOW = new RGB(255, 246, 122);
 	private static final Sphere sphere = Sphere.of(4, 10);
 	private final Random random = new Random();
+	private double delay = 0.5;
+	private final DecimalFormat df = new DecimalFormat("0.00");
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.RED, "절단") {
 				@Override
@@ -154,6 +158,7 @@ public class HomingPenetrationArrow extends Synergy {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			actionbarChannel.update(ammo.toString());
+			resetcount.start();
 		}
 	}
 
@@ -162,26 +167,52 @@ public class HomingPenetrationArrow extends Synergy {
 		if (getPlayer().equals(e.getEntity()) && NMS.isArrow(e.getProjectile())) {
 			e.setCancelled(true);
 			if (reload == null) {
-				if (!ammo.hasAmmo()) {
-					startReload();
-					return;
-				}
-				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
-					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
-				}
-				ammo.poll().launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
-				actionbarChannel.update(ammo.toString());
-				if (!ammo.hasAmmo()) {
-					startReload();
+				if (!shotdelay.isRunning()) {
+					if (!ammo.hasAmmo()) {
+						startReload();
+						return;
+					}
+					ammo.poll().launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
+					shotdelay.start();
+					delay = Math.min(3, delay + 0.25);
+					if (resetcount.isRunning()) {
+						resetcount.setCount(600);
+					} else {
+						resetcount.start();
+					}
+					actionbarChannel.update(ammo.toString());
+					if (!ammo.hasAmmo()) {
+						startReload();
+					}	
+				} else {
+					getPlayer().sendMessage("§c[§5!§e] §3발사 대기시간§f입니다. §3남은 시간§7: §f" + df.format(shotdelay.getCount() * 0.05) + "초");
 				}
 			} else {
-				getPlayer().sendMessage("§b재장전 §f중입니다.");
+				getPlayer().sendMessage("§c[§5!§e] §b재장전 §f중입니다.");
 			}
 		}
 	}
 
+	private final AbilityTimer shotdelay = new AbilityTimer(10) {
+		
+		@Override
+		public void onStart() {
+			shotdelay.setCount((int) (delay * 20));
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer resetcount = new AbilityTimer(600) {
+		
+		@Override
+		public void onEnd() {
+			delay = 0.5;
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	private void startReload() {
-		final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(50) * 60.0) : 60;
+		final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(50) * 30.0) : 30;
 		this.reload = new AbilityTimer(reloadCount) {
 			private final ProgressBar progressBar = new ProgressBar(reloadCount, 20);
 
@@ -326,7 +357,7 @@ public class HomingPenetrationArrow extends Synergy {
 		protected void run(int i) {
 			Damageable nearest = LocationUtil.getNearestEntity(Damageable.class, entity.getLocation(), predicate);
 			if (nearest != null) {
-				this.forward = nearest.getLocation().add(0, 1, 0).clone().subtract(lastLocation.clone()).toVector().normalize();
+				this.forward = nearest.getLocation().add(0, 1, 0).clone().subtract(lastLocation.clone()).toVector().normalize().multiply(1.1);
 			} else {
 				stop(false);
 			}

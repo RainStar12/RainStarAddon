@@ -261,7 +261,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	
 	@SubscribeEvent(priority = 6)
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (timeshield && !e.isCancelled()) {
+		if (timeshield && !e.isCancelled() && e.getEntity().equals(getPlayer())) {
 			getPlayer().sendMessage("§3[§b!§3] §c최초 피해§f를 §3시간의 보호막§f이 보호해주었습니다.");
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 			e.setCancelled(true);

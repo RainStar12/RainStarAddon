@@ -1,32 +1,49 @@
 package RainStarAbility;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -40,73 +57,84 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.google.common.base.Predicate;
+import net.md_5.bungee.api.ChatColor;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "Ä«ÀÌ·Î½º", rank = Rank.S, species = Species.GOD, explain = {
-		"±âÈ¸ÀÇ ½Å Ä«ÀÌ·Î½º.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×a±âÈ¸ ºÎ¿©¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ 15Ä­ ³»¿¡¼­ ¿ìÅ¬¸¯ ÇØ ´ë»óÀÇ ´É·ÂÀÌ",
-		" ¡×dS µî±Ş¡×fº¸´Ù ³·À» °æ¿ì ÃÖ¼Ò ÇÑ µî±Ş ÀÌ»óÀÇ ´É·ÂÀ¸·Î ÀçÃßÃ·ÇÕ´Ï´Ù.",
-		" ÀÌ¶§ ´ë»ó¿¡°Ô ¹Ù²ãÁØ ´É·ÂÀ» ¾Ë ¼ö ÀÖ½À´Ï´Ù. $[CooldownConfig]",
-		" ¶ÇÇÑ ¹Ù²ãÁØ ´ë»ó¿¡°Ô¼­ ±âÈ¸ Ã¼·ÂÀ» 1Ä­ Àû¸³ÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×a¸¶Áö¸· ±âÈ¸¡×f: Ä¡¸íÀûÀÎ ÇÇÇØ¸¦ ÀÔ¾úÀ» ¶§ ´Ü ÇÑ ¹ø",
-		" »ç¸ÁÇÏÁö ¾Ê°í ´ë½Å Ã¼·Â ¹İ Ä­À¸·Î ºÎÈ°ÇÕ´Ï´Ù. ÀÌ¶§, ´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô",
-		" Àû¸³ÇÑ ±âÈ¸ Ã¼·Â¸¸Å­ °¢ ´ë»óÀÇ Ã¼·ÂÀ» °¡Á®¿Í Áï½Ã È¸º¹ÇÏ°í, È¸º¹ÇÑ Ã¼·ÂÀÌ",
-		" ÀüÃ¼ Ã¼·ÂÀÇ Àı¹İ ÀÌ»óÀÏ °æ¿ì ÀÌ ´É·ÂÀ» ¹«ÀÛÀ§·Î ÀçÃßÃ·ÇÕ´Ï´Ù.",
-		" ¹ßµ¿ ÀÌÈÄ ±âÈ¸ ºÎ¿© ´É·ÂÀº »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù."
+@AbilityManifest(name = "ì¹´ì´ë¡œìŠ¤", rank = Rank.L, species = Species.GOD, explain = {
+		"ê¸°íšŒì˜ ì‹  ì¹´ì´ë¡œìŠ¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§aê¸°íšŒ ë¶€ì—¬Â§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ 15ì¹¸ ë‚´ì—ì„œ ìš°í´ë¦­ í•´ ëŒ€ìƒì˜ ëŠ¥ë ¥ì´",
+		" Â§dS ë“±ê¸‰Â§fë³´ë‹¤ ë‚®ì„ ê²½ìš° ìµœì†Œ í•œ ë“±ê¸‰ ì´ìƒì˜ ëŠ¥ë ¥ìœ¼ë¡œ Â§bì¬ì¶”ì²¨Â§fí•©ë‹ˆë‹¤.",
+		" ì´ë•Œ ëŒ€ìƒì—ê²Œ ë°”ê¿”ì¤€ ëŠ¥ë ¥ì„ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[COOLDOWN]",
+		" ë˜í•œ ë°”ê¿”ì¤€ ëŒ€ìƒì—ê²Œì„œ Â§eê¸°íšŒ ì²´ë ¥Â§fì„ 1.5ì¹¸ ì ë¦½í•©ë‹ˆë‹¤. ëŒ€ìƒì€ ë‚˜ì—ê²Œ",
+		" ë‹¤ìŒ ê³µê²© í”¼í•´ë¥¼ ì…íˆì§€ ëª»í•˜ê³  ê°•í•˜ê²Œ ë„‰ë°±ë‹¹í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§aë§ˆì§€ë§‰ ê¸°íšŒÂ§f: Â§cì¹˜ëª…ì ì¸ í”¼í•´ë¥¼ ì…ì—ˆì„ ë•ŒÂ§f ë‹¨ í•œ ë²ˆ",
+		" ì‚¬ë§í•˜ì§€ ì•Šê³  ëŒ€ì‹  ì²´ë ¥ ë°˜ ì¹¸ìœ¼ë¡œ Â§dë¶€í™œÂ§fí•©ë‹ˆë‹¤. ì´ë•Œ, ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ",
+		" ì ë¦½í•œ Â§eê¸°íšŒ ì²´ë ¥Â§fë§Œí¼ ê° ëŒ€ìƒì˜ ì²´ë ¥ì„ ê°€ì ¸ì™€ ì¦‰ì‹œ Â§díšŒë³µÂ§fí•©ë‹ˆë‹¤.",
+		" ë˜í•œ ìµœëŒ€ 15ì´ˆê°„ GUIê°€ ì—´ë ¤ íšŒë³µí•œ ì²´ë ¥ì— ë¹„ë¡€í•´ ìµœëŒ€ 5ê°€ì§€ì˜ ëŠ¥ë ¥ ì¤‘",
+		" í•œ ê°€ì§€ì˜ ëŠ¥ë ¥ì„ ì„ íƒí•´ ì´ ëŠ¥ë ¥ì„ ë³€ê²½í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯¡×fÀ¸·Î ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ 15Ä­ ³»¿¡¼­ ¹Ù¶óº¸°í ¿ìÅ¬¸¯ÇÏ¸é",
-		"´ë»óÀÇ ´É·ÂÀÌ ¡×dS µî±Ş¡×fº¸´Ù ³·À» °æ¿ì ÃÖ¼Ò ÇÑ µî±Ş ÀÌ»óÀÇ ´É·ÂÀ¸·Î ÀçÃßÃ·ÇÕ´Ï´Ù.",
-		"¹Ù²ãÁØ ´ë»ó¿¡°Ô ÇÑ ¹ø´ç ¡×c±âÈ¸ Ã¼·Â¡×f 1Ä­¾¿À» Àû¸³ÇÏ¿© »ç¸Á À§±âÀÏ ¶§ ´ë»óµé¿¡°Ô",
-		"¡×c±âÈ¸ Ã¼·Â¡×fÀ» °¡Á®¿Í ´Ü ÇÑ ¹ø ºÎÈ°ÇÕ´Ï´Ù. ÀÌ¶§ È¸º¹ÇÑ Ã¼·ÂÀÌ ÀüÃ¼ Ã¼·ÂÀÇ",
-		"Àı¹İ ÀÌ»óÀÏ °æ¿ì º»ÀÎÀÇ Ä«ÀÌ·Î½º ´É·Âµµ ÀçÃßÃ·ÇÕ´Ï´Ù."
+		"Â§7ì² ê´´ ìš°í´ë¦­Â§fìœ¼ë¡œ ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ 15ì¹¸ ë‚´ì—ì„œ ë°”ë¼ë³´ê³  ìš°í´ë¦­í•˜ë©´",
+		"ëŒ€ìƒì˜ ëŠ¥ë ¥ì´ Â§dS ë“±ê¸‰Â§fë³´ë‹¤ ë‚®ì„ ê²½ìš° ìµœì†Œ í•œ ë“±ê¸‰ ì´ìƒì˜ ëŠ¥ë ¥ìœ¼ë¡œ ì¬ì¶”ì²¨í•©ë‹ˆë‹¤.",
+		"ë°”ê¿”ì¤€ ëŒ€ìƒì—ê²Œ í•œ ë²ˆë‹¹ Â§cê¸°íšŒ ì²´ë ¥Â§f 1.5ì¹¸ì”©ì„ ì ë¦½í•˜ì—¬ ì‚¬ë§ ìœ„ê¸°ì¼ ë•Œ ëŒ€ìƒë“¤ì—ê²Œ",
+		"Â§cê¸°íšŒ ì²´ë ¥Â§fì„ ê°€ì ¸ì™€ ë‹¨ í•œ ë²ˆ ë¶€í™œí•©ë‹ˆë‹¤. ë¶€í™œ ì‹œ ê¸°íšŒ ì²´ë ¥ ì ë¦½ì— ë¹„ë¡€í•´",
+		"ìµœëŒ€ 5ê°€ì§€ì˜ ì„ íƒì§€ ì¤‘ í•˜ë‚˜ì˜ ëŠ¥ë ¥ì„ ì„ íƒí•´ ë¶€í™œí•©ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "Ä«ÀÌ·Î½º´Â ´Ù¸¥ ÇÃ·¹ÀÌ¾îÀÇ ´É·ÂÀ» ½Â°İ½ÃÄÑ ¶Ç ÇÑ ¹øÀÇ",
-        "±âÈ¸¸¦ ÁÜÀ¸·Î½á, ´ë»ó°ú ÀÚ½Å µÑ ´Ù ÀÌµæÀ» ÃëÇÒ ¼ö ÀÖ´Â",
-        "Æ¯º°ÇÑ ´É·ÂÀÔ´Ï´Ù. ¶ÇÇÑ ±âÈ¸ Ã¼·ÂÀ» ÀÏÁ¤ ÀÌ»ó Àû¸³ÇÏ¸é",
-        "Ä«ÀÌ·Î½º º»ÀÎÀÇ ´É·ÂÀÌ »õ·Î¿î ±âÈ¸·Î ¹Ù²î¾î ¿îÀÌ ÁÁ´Ù¸é",
-        "»óÈ²À» Å¸°³ÇÒ °­·ÂÇÑ ´É·ÂÀÌ µÇ¾î µ¹¾Æ¿Ã ¼ö ÀÖ½À´Ï´Ù.",
-        "Ä«ÀÌ·Î½ºÀÇ ´É·Â º¯°æ ´É·ÂÀº ÆÀ °ÔÀÓ¿¡¼­ ±× À§·ÂÀ» ´õ¿í º¸¿©ÁÖ´Âµ¥,",
-        "ÆÀ¿øÀÇ ºÒÇÊ¿äÇÑ Àúµî±Ş ´É·ÂÀ» °íµî±Ş ´É·ÂÀ¸·Î ¹Ù²ãÄ¥ ¼ö ÀÖ½À´Ï´Ù."
+        "ì¹´ì´ë¡œìŠ¤ëŠ” ë‹¤ë¥¸ í”Œë ˆì´ì–´ì˜ ëŠ¥ë ¥ì„ ìŠ¹ê²©ì‹œì¼œ ë˜ í•œ ë²ˆì˜",
+        "ê¸°íšŒë¥¼ ì¤Œìœ¼ë¡œì¨, ëŒ€ìƒê³¼ ìì‹  ë‘˜ ë‹¤ ì´ë“ì„ ì·¨í•  ìˆ˜ ìˆëŠ”",
+        "íŠ¹ë³„í•œ ëŠ¥ë ¥ì…ë‹ˆë‹¤. ë˜í•œ ê¸°íšŒ ì²´ë ¥ì„ ì¼ì • ì´ìƒ ì ë¦½í•˜ë©´",
+        "ì¹´ì´ë¡œìŠ¤ ë³¸ì¸ì˜ ëŠ¥ë ¥ì´ ìƒˆë¡œìš´ ê¸°íšŒë¡œ ë°”ë€Œì–´ ìš´ì´ ì¢‹ë‹¤ë©´",
+        "ìƒí™©ì„ íƒ€ê°œí•  ê°•ë ¥í•œ ëŠ¥ë ¥ì´ ë˜ì–´ ëŒì•„ì˜¬ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+        "ì¹´ì´ë¡œìŠ¤ì˜ ëŠ¥ë ¥ ë³€ê²½ ëŠ¥ë ¥ì€ íŒ€ ê²Œì„ì—ì„œ ê·¸ ìœ„ë ¥ì„ ë”ìš± ë³´ì—¬ì£¼ëŠ”ë°,",
+        "íŒ€ì›ì˜ ë¶ˆí•„ìš”í•œ ì €ë“±ê¸‰ ëŠ¥ë ¥ì„ ê³ ë“±ê¸‰ ëŠ¥ë ¥ìœ¼ë¡œ ë°”ê¿”ì¹  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "º¯¼ö Ã¢Ãâ", explain = {
-                "´ë»óÀÇ ´É·ÂÀ» ¹Ù²Û´Ù´Â °ÍÀº, ¹«ÇÑÇÑ º¯¼ö¸¦",
-                "Ã¢ÃâÇÒ ¼ö ÀÖ½À´Ï´Ù. ¶ÇÇÑ ºÎÈ° ÈÄ ´É·Â º¯°æµµ",
-                "º¯¼ö¸¦ Ã¢ÃâÇÏ±â ÁÁ½À´Ï´Ù."
+        @Description(subject = "ë³€ìˆ˜ ì°½ì¶œ", explain = {
+                "ëŒ€ìƒì˜ ëŠ¥ë ¥ì„ ë°”ê¾¼ë‹¤ëŠ” ê²ƒì€, ë¬´í•œí•œ ë³€ìˆ˜ë¥¼",
+                "ì°½ì¶œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. ë˜í•œ ë¶€í™œ í›„ ëŠ¥ë ¥ ë³€ê²½ë„",
+                "ë³€ìˆ˜ë¥¼ ì°½ì¶œí•˜ê¸° ì¢‹ìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "°­·ÂÇÑ Àúµî±Ş ´É·Â", explain = {
-                "½ºÅäÄ¿ µî Aµî±ŞÀÌ°Å³ª ±× ÀÌÇÏÀÓ¿¡µµ °­·ÂÇÑ ¼º´ÉÀ»",
-                "»Ë³»´Â ´É·ÂÀ» ¿ÀÈ÷·Á ½Â°İ½ÃÄÑ À§±â¿¡¼­ Å»ÃâÇØº¸¼¼¿ä."
+        @Description(subject = "ê°•ë ¥í•œ ì €ë“±ê¸‰ ëŠ¥ë ¥", explain = {
+                "ìŠ¤í† ì»¤ ë“± Aë“±ê¸‰ì´ê±°ë‚˜ ê·¸ ì´í•˜ì„ì—ë„ ê°•ë ¥í•œ ì„±ëŠ¥ì„",
+                "ë½ë‚´ëŠ” ëŠ¥ë ¥ì„ ì˜¤íˆë ¤ ìŠ¹ê²©ì‹œì¼œ ìœ„ê¸°ì—ì„œ íƒˆì¶œí•´ë³´ì„¸ìš”."
         }),
-        @Description(subject = "ÆÀ °ÔÀÓ", explain = {
-                "»ó¼úÇßµí ÆÀ¿øÀÇ ºÒÇÊ¿äÇÑ ´É·ÂÀ» ½Â°İ½ÃÄÑ",
-                "ÁÁÀº ´É·ÂÀ¸·Î ¹Ù²ãÁÙ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "íŒ€ ê²Œì„", explain = {
+                "ìƒìˆ í–ˆë“¯ íŒ€ì›ì˜ ë¶ˆí•„ìš”í•œ ëŠ¥ë ¥ì„ ìŠ¹ê²©ì‹œì¼œ",
+                "ì¢‹ì€ ëŠ¥ë ¥ìœ¼ë¡œ ë°”ê¿”ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "¿î", explain = {
-                "»ó´ë³ª ÀÚ½ÅÀÌ ¿øÇÏ´Â ´É·ÂÀÌ °É¸®°Ô ÇÏ·Á¸é",
-                "»ó´çÇÑ Çà¿îÀÌ ÇÊ¿äÇÕ´Ï´Ù."
+        @Description(subject = "ëŠ¥ë ¥ ì„ íƒ", explain = {
+                "ë³¸ì¸ì˜ ë¶€í™œ ì‹œ ëŠ¥ë ¥ì„ ì„ íƒí•´ì˜¤ëŠ” ê²ƒì€",
+                "ìì‹ ì´ ì›í•˜ëŠ” ëŠ¥ë ¥ì„ í™•ì •ì‹œí‚¤ëŠ” ëŠ¥ë ¥ìœ¼ë¡œ,",
+                "ì—„ì²­ë‚œ ì„±ëŠ¥ì„ ìë‘í•©ë‹ˆë‹¤. íŠ¹íˆ ê·¸ê²ƒì´ ë¯¹ìŠ¤ ëŠ¥ë ¥ìë¼ë©´",
+                "ë‹¤ë¥¸ í•˜ë‚˜ì˜ ì¡°í•©ì„ í†µí•´ ì‹œë„ˆì§€ë¥¼ ê³ ë¥¼ ìˆ˜ë„ ìˆê² ì£ ."
         })
 }, weak = {
-        @Description(subject = "°íµî±Ş ´É·Â", explain = {
-                "°íµî±Ş ´É·Â¿¡°Ô Ä«ÀÌ·Î½º°¡ ÇÒ ¼ö ÀÖ´Â °ÍÀº ¾ø½À´Ï´Ù.",
-                "ÀüÅõ¸¦ °¡±ŞÀûÀ¸·Î ÇÇÇÏ¼¼¿ä."
+        @Description(subject = "ê³ ë“±ê¸‰ ëŠ¥ë ¥", explain = {
+                "ê³ ë“±ê¸‰ ëŠ¥ë ¥ì—ê²Œ ì¹´ì´ë¡œìŠ¤ê°€ í•  ìˆ˜ ìˆëŠ” ê²ƒì€ ì—†ìŠµë‹ˆë‹¤.",
+                "ì „íˆ¬ë¥¼ ê°€ê¸‰ì ìœ¼ë¡œ í”¼í•˜ì„¸ìš”."
         }),
-        @Description(subject = "¿î", explain = {
-                "»ó´ë³ª ÀÚ½ÅÀÌ ¿øÇÏ´Â ´É·ÂÀÌ °É¸®°Ô ÇÏ·Á¸é",
-                "»ó´çÇÑ Çà¿îÀÌ ÇÊ¿äÇÕ´Ï´Ù."
+        @Description(subject = "ìš´", explain = {
+                "ìƒëŒ€ë‚˜ ìì‹ ì´ ì›í•˜ëŠ” ëŠ¥ë ¥ì´ ê±¸ë¦¬ê²Œ í•˜ë ¤ë©´",
+                "ìƒë‹¹í•œ í–‰ìš´ì´ í•„ìš”í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.SEVEN, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.EIGHT), difficulty = Difficulty.EASY)
 
@@ -116,7 +144,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Cooldown cooldown = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final ActionbarChannel ac = newActionbarChannel();
 	private int stack = 0;
 	private static final Circle circle = Circle.of(0.5, 30);
@@ -124,8 +152,10 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 	private Participant target = null;
 	private Set<UUID> inv = new HashSet<>();
 	private Map<Participant, Integer> getHp = new HashMap<>();
+	private Set<Player> knockback = new HashSet<>();
 	private static final Random random = new Random();
 	private boolean rebirth = false;
+	private final int chance = CHANCE.getValue();
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -147,8 +177,21 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Kairos.class,
-			"Cooldown", 20, "# ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Kairos.class,
+			"cooldown", 20, "# ì¿¨íƒ€ì„") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Kairos.class,
+			"chance", 10, "# ì‹œë„ˆì§€ ë“±ì¥ í™•ë¥ ", "# ê¸°ì¤€: n/1000", "# 10ìœ¼ë¡œ ì…ë ¥ ì‹œ 10/1000, 1%ì…ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -175,7 +218,37 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
+	
+	public AbilityRegistration getRealRandomAbility(Participant target) {
+		final Set<AbilityRegistration> usedAbilities = new HashSet<>();
+		for (Participant participant : getGame().getParticipants()) {
+			if (participant.hasAbility() && participant.attributes().TARGETABLE.getValue()) {
+				usedAbilities.add(participant.getAbility().getRegistration());
+			}
+		}
+		
+		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
+				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) &&
+				!usedAbilities.contains(ability)
+		).collect(Collectors.toList());
+		return registrations.isEmpty() ? null : random.pick(registrations);
+	}
 
+    public AbilityRegistration getRandomSynergy() {
+
+		Set<AbilityRegistration> synergies = new HashSet<>();
+		
+        for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
+        	String name = synergy.getManifest().name();
+        	if (!Configuration.Settings.isBlacklisted(name) && !name.equals("ê¸°íšŒ")) {
+        		synergies.add(synergy);
+        	}
+        }
+		
+        Random r = new Random();
+        return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
+    }
+	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK
@@ -191,16 +264,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 						} catch (UnsupportedOperationException | ReflectiveOperationException e) {
 							e.printStackTrace();
 						}
-						getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´Ô¿¡°Ô ¡×a±âÈ¸¡×f¸¦ µå¸³´Ï´Ù.");
-						getPlayer().sendMessage("ÀÌÁ¦ ´ë»óÀÇ ´É·ÂÀº ¡×e" + target.getAbility().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-						target.getPlayer().sendMessage("´ç½Å¿¡°Ô »õ ±âÈ¸°¡ ÁÖ¾îÁ³½À´Ï´Ù. ÀÌÁ¦ ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + target.getAbility().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-						new AbilityTimer(60) {
+						getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì—ê²Œ Â§aê¸°íšŒÂ§fë¥¼ ë“œë¦½ë‹ˆë‹¤.");
+						getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§fì´ì œ ëŒ€ìƒì˜ ëŠ¥ë ¥ì€ Â§e" + target.getAbility().getDisplayName() + "Â§fì…ë‹ˆë‹¤.");
+						target.getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + getPlayer().getName() + "Â§fë‹˜ì´ ë‹¹ì‹ ì—ê²Œ ê¸°íšŒë¥¼ ì£¼ì–´ ëŠ¥ë ¥ì´ Â§e" + target.getAbility().getDisplayName() + "Â§f" + KoreanUtil.getJosa(target.getAbility().getDisplayName(), Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
+						new AbilityTimer(100) {
 
 							private ActionbarChannel actionbarChannel;
 
 							@Override
 							protected void run(int count) {
-								actionbarChannel.update("¡×7¹«Àû ¡×f: " + (getCount() / 10.0) + "ÃÊ");
+								actionbarChannel.update("Â§7ë¬´ì  Â§f: " + (getCount() / 20.0) + "ì´ˆ");
 							}
 
 							@Override
@@ -222,19 +295,20 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 									actionbarChannel.unregister();
 							}
 						}.setPeriod(TimeUnit.TICKS, 1).start();
-						getHp.put(target, getHp.getOrDefault(target, 0) + 2);
+						getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+						knockback.add(target.getPlayer());
 						SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
 						cooldown.start();
 						stack++;
-						ac.update("±âÈ¸¸¦ ÁØ È½¼ö: " + stack);
+						ac.update("Â§bê¸°íšŒë¥¼ ì¤€ íšŸìˆ˜Â§7: Â§e" + stack);
 						return true;
 					} else if (ab.getClass().equals(Mix.class)) {
 						final Mix mix = (Mix) ab;
 						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
 						
 						if (mix.hasSynergy()) {
-							getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´ÔÀº ¡×c±âÈ¸¡×f¸¦ ¹ŞÀ» ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì€ Â§cê¸°íšŒÂ§fë¥¼ ë°›ì„ í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.");
 							SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
 							return false;
 						}
@@ -249,16 +323,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 								} catch (ReflectiveOperationException e) {
 									e.printStackTrace();
 								}
-								getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´Ô¿¡°Ô ¡×a±âÈ¸¡×f¸¦ µå¸³´Ï´Ù.");
-								getPlayer().sendMessage("ÀÌÁ¦ ´ë»óÀÇ ´É·ÂÀº ¡×e" + mix.getFirst().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-								target.getPlayer().sendMessage("´ç½Å¿¡°Ô »õ ±âÈ¸°¡ ÁÖ¾îÁ³½À´Ï´Ù. ÀÌÁ¦ ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + mix.getFirst().getDisplayName() + "¡×f, ¡×e" + mix.getSecond().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-								new AbilityTimer(60) {
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì—ê²Œ Â§aê¸°íšŒÂ§fë¥¼ ë“œë¦½ë‹ˆë‹¤.");
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§fì´ì œ ëŒ€ìƒì˜ ëŠ¥ë ¥ì€ Â§e" + mix.getFirst().getDisplayName() + "Â§fì…ë‹ˆë‹¤.");
+								target.getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + getPlayer().getName() + "Â§fë‹˜ì´ ë‹¹ì‹ ì—ê²Œ ê¸°íšŒë¥¼ ì£¼ì–´ ëŠ¥ë ¥ì´ Â§e" + mix.getFirst().getDisplayName() + "Â§f, Â§e" + mix.getSecond().getDisplayName() + "Â§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
+								new AbilityTimer(100) {
 
 									private ActionbarChannel actionbarChannel;
 
 									@Override
 									protected void run(int count) {
-										actionbarChannel.update("¡×8¹«Àû¡×f: " + (getCount() / 20.0) + "ÃÊ");
+										actionbarChannel.update("Â§8ë¬´ì Â§f: " + (getCount() / 20.0) + "ì´ˆ");
 									}
 
 									@Override
@@ -280,15 +354,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 											actionbarChannel.unregister();
 									}
 								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 2);
+								getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+								knockback.add(target.getPlayer());
 								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
 								cooldown.start();
 								stack++;
-								ac.update("¡×b±âÈ¸¸¦ ÁØ È½¼ö¡×f: " + stack);
+								ac.update("Â§bê¸°íšŒë¥¼ ì¤€ íšŸìˆ˜Â§7: Â§e" + stack);
 								return true;
 							} else {
-								getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´ÔÀº ¡×c±âÈ¸¡×f¸¦ ¹ŞÀ» ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.");
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì€ Â§cê¸°íšŒÂ§fë¥¼ ë°›ì„ í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.");
 								SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
 								return false;
 							}
@@ -302,16 +377,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 								} catch (ReflectiveOperationException e) {
 									e.printStackTrace();
 								}
-								getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´Ô¿¡°Ô ¡×a±âÈ¸¡×f¸¦ µå¸³´Ï´Ù.");
-								getPlayer().sendMessage("ÀÌÁ¦ ´ë»óÀÇ ´É·ÂÀº ¡×e" + mix.getSecond().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-								target.getPlayer().sendMessage("´ç½Å¿¡°Ô »õ ±âÈ¸°¡ ÁÖ¾îÁ³½À´Ï´Ù. ÀÌÁ¦ ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + mix.getFirst().getDisplayName() + "¡×f, ¡×e" + mix.getSecond().getDisplayName() + "¡×fÀÔ´Ï´Ù.");
-								new AbilityTimer(60) {
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì—ê²Œ Â§aê¸°íšŒÂ§fë¥¼ ë“œë¦½ë‹ˆë‹¤.");
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§fì´ì œ ëŒ€ìƒì˜ ëŠ¥ë ¥ì€ Â§e" + mix.getSecond().getDisplayName() + "Â§fì…ë‹ˆë‹¤.");
+								target.getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + getPlayer().getName() + "Â§fë‹˜ì´ ë‹¹ì‹ ì—ê²Œ ê¸°íšŒë¥¼ ì£¼ì–´ ëŠ¥ë ¥ì´ Â§e" + mix.getFirst().getDisplayName() + "Â§f, Â§e" + mix.getSecond().getDisplayName() + "Â§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
+								new AbilityTimer(100) {
 
 									private ActionbarChannel actionbarChannel;
 
 									@Override
 									protected void run(int count) {
-										actionbarChannel.update("¡×8¹«Àû¡×f: " + (getCount() / 20.0) + "ÃÊ");
+										actionbarChannel.update("Â§8ë¬´ì Â§f: " + (getCount() / 20.0) + "ì´ˆ");
 									}
 
 									@Override
@@ -333,26 +408,27 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 											actionbarChannel.unregister();
 									}
 								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 2);
+								getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+								knockback.add(target.getPlayer());
 								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
 								cooldown.start();
 								stack++;
-								ac.update("¡×b±âÈ¸¸¦ ÁØ È½¼ö¡×f: " + stack);
+								ac.update("Â§bê¸°íšŒë¥¼ ì¤€ íšŸìˆ˜Â§7: Â§e" + stack);
 								return true;
 							} else {
-								getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´ÔÀº ¡×c±âÈ¸¡×f¸¦ ¹ŞÀ» ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.");
+								getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì€ Â§cê¸°íšŒÂ§fë¥¼ ë°›ì„ í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.");
 								SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
 								return false;
 							}
 						}
 					} else {
-							getPlayer().sendMessage("¡×e" + player.getName() + "¡×f´ÔÀº ¡×c±âÈ¸¡×f¸¦ ¹ŞÀ» ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§e" + player.getName() + "Â§fë‹˜ì€ Â§cê¸°íšŒÂ§fë¥¼ ë°›ì„ í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.");
 							SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
 							return false;
 						}
 				} else {
-					getPlayer().sendMessage("ÇØ´ç ÇÃ·¹ÀÌ¾î´Â ¹ŞÀ» ¼ö ÀÖ´Â ±âÈ¸°¡ ¾ø½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§fí•´ë‹¹ í”Œë ˆì´ì–´ëŠ” ë°›ì„ ìˆ˜ ìˆëŠ” ê¸°íšŒê°€ ì—†ìŠµë‹ˆë‹¤.");
 					return false;
 				}
 			}
@@ -360,20 +436,39 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		onEntityDamage(e);
 		if (inv.contains(e.getDamager().getUniqueId()) || inv.contains(e.getEntity().getUniqueId())) {
 		 	e.setCancelled(true);
 		}
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() != null) {
+				Player player = (Player) projectile.getShooter();
+				if (inv.contains(player.getUniqueId())) {
+					e.setCancelled(true);
+				}
+				if (knockback.contains(player)) {
+					knockback.remove(player);
+					player.setVelocity(VectorUtil.validateVector(player.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().clone().setY(0).multiply(3.5)));	
+					e.setCancelled(true);
+				}
+			}
+		}
+		if (knockback.contains(e.getDamager()) && e.getEntity().equals(getPlayer())) {
+			knockback.remove(e.getDamager());
+			e.getDamager().setVelocity(VectorUtil.validateVector(e.getDamager().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().clone().setY(0).multiply(3.5)));	
+			e.setCancelled(true);
+		}
+		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0 && !rebirth) {
 			this.rebirth = true;
@@ -385,32 +480,131 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 				sum += health;
 			}
 			Healths.setHealth(getPlayer(), 1 + sum);
-			if (1 + sum >= (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2)) {
+			if (sum >= 3) {
+				new AbilitySelect(sum / 3).start();
+			}
+			e.setCancelled(true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityShootBow(EntityShootBowEvent e) {
+		if (inv.contains(e.getEntity().getUniqueId())) {
+			e.setCancelled(true);
+		}
+	}
+	
+	public class AbilitySelect extends AbilityTimer implements Listener {
+		
+		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(null).build();
+		
+		private final List<AbilityRegistration> values = new ArrayList<>();
+		private Set<AbilityRegistration> synergies = new HashSet<>();
+		
+		private Map<Integer, AbilityRegistration> slots = new HashMap<>();
+		
+		private AbilityRegistration selected;
+		
+		private final Inventory gui;
+		private int getHps;
+		
+		public AbilitySelect(int getHps) {
+			super(TaskType.REVERSE, 300);
+			setPeriod(TimeUnit.TICKS, 1);
+			gui = Bukkit.createInventory(null, 9, "Â§0ëŠ¥ë ¥ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
+			this.getHps = Math.min(5, getHps);
+		}
+		
+		protected void onStart() {
+			SoundLib.BLOCK_ENDER_CHEST_OPEN.playSound(getPlayer().getLocation(), 1f, 0.5f);
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			getPlayer().openInventory(gui);
+			for (int i = 0; i < getHps; i++) {
 				if (getParticipant().getAbility().getClass().equals(Mix.class)) {
 					final Mix mix = (Mix) getParticipant().getAbility();
 					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
 					final boolean firstStatus = first.getClass().equals(Kairos.class), 
 							secondStatus = second.getClass().equals(Kairos.class);
-					if (firstStatus || secondStatus) {
-						Class<? extends AbilityBase> firstClass = first.getClass(), secondClass = second.getClass();
-						if (firstStatus) firstClass = getRandomAbility(getParticipant(), first.getRank()).getAbilityClass();
-						if (secondStatus) secondClass = getRandomAbility(getParticipant(), second.getRank()).getAbilityClass();
-						try {
-							mix.setAbility(firstClass, secondClass);
-						} catch (ReflectiveOperationException e1) {
-							e1.printStackTrace();
+					if (firstStatus && secondStatus) {
+						AbilityRegistration randomSynergy = getRandomSynergy();
+						values.add(randomSynergy);
+						selected = randomSynergy;
+						synergies.add(randomSynergy);
+					} else {
+						Random random = new Random();
+						if (random.nextInt(1000) <= chance) {
+							AbilityRegistration randomSynergy = getRandomSynergy();
+							values.add(randomSynergy);
+							selected = randomSynergy;
+							synergies.add(randomSynergy);
+						} else {
+							AbilityRegistration randomAbility = getRealRandomAbility(getParticipant());
+							values.add(randomAbility);
+							selected = randomAbility;
 						}
 					}
-					getPlayer().sendMessage("¡×b¸¶Áö¸· ±âÈ¸¡×f¸¦ ºÙÀâ¾Æ ¡×eÄ«ÀÌ·Î½º¡×f ´É·ÂÀÌ ¹Ù²î¾ú½À´Ï´Ù.");
-					getPlayer().sendMessage("ÇöÀç ´É·Â: ¡×e" + mix.getFirst().getDisplayName() + "¡×f, ¡×e" + mix.getSecond().getDisplayName());
 				} else {
+					Random random = new Random();
+					if (random.nextInt(1000) <= chance) {
+						AbilityRegistration randomSynergy = getRandomSynergy();
+						values.add(randomSynergy);
+						selected = randomSynergy;
+						synergies.add(randomSynergy);
+					} else {
+						AbilityRegistration randomAbility = getRealRandomAbility(getParticipant());
+						values.add(randomAbility);
+						selected = randomAbility;
+					}
+				}
+			}
+		}
+		
+		@Override
+		protected void run(int arg0) {
+			placeItem(getHps);
+			getPlayer().setGameMode(GameMode.SPECTATOR);
+			if (arg0 == 60) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 40) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 20) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			if (getParticipant().getAbility().getClass().equals(Mix.class)) {
+				final Mix mix = (Mix) getParticipant().getAbility();
+				final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+				final boolean firstStatus = first.getClass().equals(Kairos.class), 
+						secondStatus = second.getClass().equals(Kairos.class);
+				if (firstStatus && secondStatus) {
 					try {
-						getParticipant().setAbility(getRandomAbility(getParticipant(), getParticipant().getAbility().getRank()).getAbilityClass());
-					} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
+						mix.setAbility(SynergyFactory.getSynergyBase(selected).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(selected).getRight().getAbilityClass());
+					} catch (ReflectiveOperationException e1) {
 						e1.printStackTrace();
 					}
-					getPlayer().sendMessage("¡×b¸¶Áö¸· ±âÈ¸¡×f¸¦ ºÙÀâ¾Æ ¡×eÄ«ÀÌ·Î½º¡×f ´É·ÂÀÌ ¡×e" + getParticipant().getAbility().getDisplayName() + "¡×fÀ¸·Î ¹Ù²î¾ú½À´Ï´Ù.");
+				} else if (firstStatus || secondStatus) {
+					Class<? extends AbilityBase> firstClass = first.getClass(), secondClass = second.getClass();
+					if (firstStatus) firstClass = selected.getAbilityClass();
+					if (secondStatus) secondClass = selected.getAbilityClass();
+					try {
+						mix.setAbility(firstClass, secondClass);
+					} catch (ReflectiveOperationException e1) {
+						e1.printStackTrace();
+					}
 				}
+				getPlayer().sendMessage("Â§b[Â§a!Â§b] ë§ˆì§€ë§‰ ê¸°íšŒÂ§fë¥¼ ë¶™ì¡ì•„ Â§eì¹´ì´ë¡œìŠ¤Â§f ëŠ¥ë ¥ì´ ë°”ë€Œì—ˆìŠµë‹ˆë‹¤.");
+				getPlayer().sendMessage("Â§b[Â§a!Â§b] Â§fí˜„ì¬ ëŠ¥ë ¥: Â§e" + mix.getFirst().getDisplayName() + "Â§f, Â§e" + mix.getSecond().getDisplayName());
+			} else {
+				try {
+					getParticipant().setAbility(selected.getAbilityClass());
+				} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
+					e1.printStackTrace();
+				}
+				getPlayer().sendMessage("Â§b[Â§a!Â§b] ë§ˆì§€ë§‰ ê¸°íšŒÂ§fë¥¼ ë¶™ì¡ì•„ Â§eì¹´ì´ë¡œìŠ¤Â§f ëŠ¥ë ¥ì´ Â§e" + getParticipant().getAbility().getDisplayName() + "Â§f" + KoreanUtil.getJosa(getParticipant().getAbility().getDisplayName(), Josa.ìœ¼ë¡œë¡œ) + " ë°”ë€Œì—ˆìŠµë‹ˆë‹¤.");
 			}
 			new AbilityTimer(60) {
 				@Override
@@ -436,14 +630,163 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 			}.runTaskLater(AbilityWar.getPlugin(), 30L);
 			stack = 0;
 			ac.unregister();
-			e.setCancelled(true);
+			HandlerList.unregisterAll(this);
+			getPlayer().setGameMode(GameMode.SURVIVAL);
+			getPlayer().closeInventory();
 		}
+		
+		private MaterialX getRankBlock(Rank rank) {
+			if (rank.equals(Rank.C)) {
+				return MaterialX.YELLOW_CONCRETE;
+			} else if (rank.equals(Rank.B)) {
+				return MaterialX.LIGHT_BLUE_CONCRETE;
+			} else if (rank.equals(Rank.A)) {
+				return MaterialX.LIME_CONCRETE;
+			} else if (rank.equals(Rank.S)) {
+				return MaterialX.MAGENTA_CONCRETE;
+			} else if (rank.equals(Rank.L)) {
+				return MaterialX.ORANGE_CONCRETE;
+			} else if (rank.equals(Rank.SPECIAL)) {
+				return MaterialX.RED_CONCRETE;
+			}
+			return null;
+		}
+		
+		private void placeItem(int number) {
+			for (int i = 0; i < number; i++) {
+				ItemStack item = new ItemBuilder(getRankBlock(values.get(i).getManifest().rank())).build();
+				ItemMeta meta = item.getItemMeta();
+				if (synergies.contains(values.get(i))) meta.addEnchant(Enchantment.LOOT_BONUS_BLOCKS, 1, true);
+				meta.setDisplayName(ChatColor.AQUA + values.get(i).getManifest().name());
+				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				if (values.get(i).hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "ì•¡í‹°ë¸Œ");
+				if (values.get(i).hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "íƒ€ê²ŒíŒ…");
+				if (values.get(i).hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "ë² íƒ€");
+				final List<String> lore = Messager.asList(
+						"Â§fë“±ê¸‰: " + values.get(i).getManifest().rank().getRankName(),
+						"Â§fì¢…ë¥˜: " + values.get(i).getManifest().species().getSpeciesName(),
+						joiner.toString(),
+						"");
+				for (final String line : values.get(i).getManifest().explain()) {
+					lore.add(ChatColor.WHITE.toString().concat(line));
+				}
+				lore.add("");
+				lore.add("Â§2Â» Â§fì´ ëŠ¥ë ¥ì„ ë¶€ì—¬í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.");
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+				switch(number) {
+				case 1:
+					gui.setItem(4, item);
+					slots.put(4, values.get(i));
+					break;
+				case 2:
+					switch(i) {
+					case 0:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 1:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					}
+					break;
+				case 3:
+					switch(i) {
+					case 0:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 1:
+						gui.setItem(4, item);
+						slots.put(4, values.get(i));
+						break;
+					case 2:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
+						break;
+					}
+					break;
+				case 4:
+					switch(i) {
+					case 0:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 1:
+						gui.setItem(3, item);
+						slots.put(3, values.get(i));
+						break;
+					case 2:
+						gui.setItem(5, item);
+						slots.put(5, values.get(i));
+						break;
+					case 3:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
+						break;
+					}
+					break;
+				case 5:
+					switch(i) {
+					case 0:
+						gui.setItem(0, item);
+						slots.put(0, values.get(i));
+						break;
+					case 1:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 2:
+						gui.setItem(4, item);
+						slots.put(4, values.get(i));
+						break;
+					case 3:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					case 4:
+						gui.setItem(8, item);
+						slots.put(8, values.get(i));
+						break;
+					}
+					break;
+				}
+				
+				for (int j = 0; j < 8; j++) {
+					if (gui.getItem(j) == null) {
+						gui.setItem(j, NULL);
+					}
+				}
+			}
+		}
+		
+		@EventHandler
+		private void onInventoryClose(InventoryCloseEvent e) {
+			if (e.getInventory().equals(gui)) stop(false);
+		}
+
+		@EventHandler
+		private void onQuit(PlayerQuitEvent e) {
+			if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) stop(false);
+		}
+		
+		@EventHandler
+		private void onPlayerMove(PlayerMoveEvent e) {
+			if (e.getPlayer().equals(getPlayer())) e.setCancelled(true);
+		}
+
+		@EventHandler
+		private void onInventoryClick(InventoryClickEvent e) {
+			if (e.getInventory().equals(gui)) {
+				e.setCancelled(true);
+				if (slots.containsKey(e.getSlot())) {
+					selected = slots.get(e.getSlot());
+					getPlayer().closeInventory();
+				}
+			}
+		}
+		
 	}
 	
-	@SubscribeEvent
-	public void onEntityShootBow(EntityShootBowEvent e) {
-		if (inv.contains(e.getEntity().getUniqueId())) {
-			e.setCancelled(true);
-		}
-	}
 }

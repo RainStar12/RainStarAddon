@@ -95,6 +95,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	
 	private boolean given = true;
 	private Random random = new Random();
+	private static final Vector zeroV = new Vector(0, 0, 0);
 	
 	private final Cooldown castcool = new Cooldown(CAST_COOLDOWN.getValue(), "영창", CooldownDecrease._25);
 	private final Cooldown breakcool = new Cooldown(BREAK_COOLDOWN.getValue(), "파괴");
@@ -186,7 +187,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> BREAK_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Yuki.class,
-			"break-cooldown", 30, "# 파괴 쿨타임") {
+			"break-cooldown", 20, "# 파괴 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -300,12 +301,12 @@ public class Yuki extends AbilityBase implements ActiveHandler {
     				Damages.damageMagic(p, getPlayer(), false, addDamage);
     				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration)) {
     					if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() == 1) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 2);
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 2);
     					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 2) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 3);
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 3);
     					}
     				} else {
-    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 30, 1);
+    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 1);
     				}
     				addDamage += 2;
         		}	
@@ -462,7 +463,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if (casting.isRunning() && e.getPlayer().equals(getPlayer()) && cast < 12) getPlayer().setVelocity(new Vector(0, 0, 0));
+		if (casting.isRunning() && e.getPlayer().equals(getPlayer()) && cast < 12) getPlayer().setVelocity(zeroV);
 	}
 
 	public class Bullet extends AbilityTimer {
@@ -482,7 +483,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 			Yuki.this.bullet = this;
 			this.cast = cast;
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-2, -2, -2, 2, 2, 2);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-2.5, -2.5, -2.5, 2.5, 2.5, 2.5);
 			this.forward = arrowVelocity.multiply(2.5);
 			this.lastLocation = startLocation;
 			this.predicate = new Predicate<Entity>() {
@@ -555,7 +556,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 					}
 				}
 				ParticleLib.BLOCK_CRACK.spawnParticle(location, 0, 0, 0, 1, MaterialX.ICE);
-				ParticleLib.SNOW_SHOVEL.spawnParticle(location, 0.5, 0.5, 0.5, 3, 0.1f);
+				ParticleLib.SNOW_SHOVEL.spawnParticle(location, 0.75, 0.75, 0.75, 3, 0.1f);
 			}
 			lastLocation = newLocation;
 		}

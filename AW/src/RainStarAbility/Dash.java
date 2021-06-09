@@ -5,14 +5,21 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -45,30 +52,27 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
-import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "대시", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향으로 짧게 대시합니다.",
-		" 대시 도중엔 무적 및 타게팅 불능이 되고, 스태미나를 2 소모합니다.",
-		" 스태미나는 5초마다 1씩 회복하며 10까지 보유 가능합니다.",
-		" 전투 도중엔 스태미나가 더 느리게 차오릅니다.",
-		"§7공격 후 대시 §8- §e광속§f: 혼란 도중이 아닌 다른 플레이어를 근접 공격 후",
-		" 0.15초 내에 대시하였을 경우 대상에게 2초간 혼란 및 출혈 상태를 부여합니다.",
-		" 혼란 상태의 대상은 매 초마다 무작위의 방향으로 튕겨나갑니다.",
-		" 또한 스태미나 1을 즉시 회복합니다.",
-		"§7패시브 §8- §b대시 잔상§f: 대시로 지나친 자리에 대시 잔상이 남아",
-		" 닿는 플레이어에게 2의 마법 피해를 입힙니다. 만약 대상이 혼란 도중이라면,",
-		" 추가로 5초간 신속 2 버프를 획득합니다.",
+		"§7패시브 §8- §b스태미나§f: 스태미나를 회복하여 총 5초에 1 게이지가 찹니다.",
+		" 스태미나는 전투 도중에는 더 적게 차오르고, 더 많이 소모합니다.",
+		" 화면을 전환하지도 않고 움직이지도 않고 있다면 더 빨리 차오릅니다.",
+		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. §c소모 §7: §b2",
+		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
+		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. §d회복 §7: §b0.2",
+		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 2초간",
+		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. §d회복 §7: §b0.5",
 		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"},
 		summarize = {
 		"§7검을 들고 F키§f를 누를 시 스태미나를 2 소모해 바라보는 방향으로 §b대시§f합니다.",
 		"§b대시§f로 지나간 자리에 잔상이 남아 마법 피해를 입힙니다.",
-		"누군가를 타격 후 §b대시§f할 경우 스태미나 1을 회복하고 대상은 §6혼란 상태§f가 됩니다."
+		"타격 후 §b대시§f할 경우 스태미나 0.5를 회복하고 대상은 §6혼란§f / §c출혈§f 상태가 됩니다."
 		})
 
 @Tips(tip = {
@@ -106,13 +110,16 @@ public class Dash extends AbilityBase {
 	}
 	
 	private static final Set<Material> swords;
-	private int stack = 0;
+	private double stamina = 0;
+	private BossBar bossBar = null;
+	private ActionbarChannel ac = newActionbarChannel();
+	
+	private int movepoint = 0;
 	
 	private Location startLocation;
 	private Participant target;
 	private boolean onetime = true;
 	private static final Vector zerov = new Vector(0, 0, 0);
-	private ActionbarChannel ac = newActionbarChannel();
 	private int timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 5 : 5);
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 200, 2, true, false);
 	private PotionEffect normalspeed = new PotionEffect(PotionEffectType.SPEED, 100, 1, true, false);
@@ -129,7 +136,8 @@ public class Dash extends AbilityBase {
 	
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	stackupdate.start();
+	    	staminaupdater.start();
+	    	nomove.start();
 	    } 
 	}
 	
@@ -166,17 +174,95 @@ public class Dash extends AbilityBase {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer stackupdate = new AbilityTimer() {
+	private final AbilityTimer inbattle = new AbilityTimer(50) {
+		
+		@Override
+		public void onStart() {
+			ac.update("§a전투 중");
+		}
 		
 		@Override
 		public void run(int count) {
-			if (stack < 10) {
-				stack++;
-				ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
-			}
+			ac.update("§a전투 중");
 		}
 		
-	}.setPeriod(TimeUnit.SECONDS, timer).register();
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			ac.update(null);
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer nomove = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			movepoint++;
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer staminaupdater = new AbilityTimer() {
+		
+    	@Override
+    	public void onStart() {
+    		bossBar = Bukkit.createBossBar("스태미나", BarColor.BLUE, BarStyle.SEGMENTED_10);
+    		bossBar.setProgress(stamina * 0.1);
+    		bossBar.addPlayer(getPlayer());
+    		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
+    	}
+    	
+    	@Override
+		public void run(int count) {
+    		if (timer == 0) {
+    			staminaGain(0.5);
+    			bossBar.setProgress(stamina * 0.1);
+    		} else {
+    			staminaGain((double) 1 / (timer * 20));
+    			bossBar.setProgress(stamina * 0.1);	
+    		}
+    	}
+    	
+		@Override
+		public void onEnd() {
+			bossBar.removeAll();
+		}
+
+		@Override
+		public void onSilentEnd() {
+			bossBar.removeAll();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	public void staminaUse(double value) {
+		if (!inbattle.isRunning()) {
+			stamina = Math.max(0, stamina - value);
+		} else {
+			stamina = Math.max(0, stamina - (value * 1.25));	
+		}
+	}
+	
+	public void staminaGain(double value) {
+		if (!inbattle.isRunning()) {
+			if (movepoint > 1) {
+				stamina = Math.min(10, stamina + (value * 1.25));	
+			} else {
+				stamina = Math.min(10, stamina + value);
+			}
+		} else {
+			stamina = Math.min(10, stamina + (value * 0.75));
+		}
+	}
+	
+	public void staminaTrueGain(double value) {
+		stamina = Math.min(10, stamina + value);
+	}
 	
 	private final AbilityTimer dashing = new AbilityTimer(1) {
 		
@@ -195,6 +281,7 @@ public class Dash extends AbilityBase {
 			    			getPlayer().addPotionEffect(speed);
 			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f우연히 고속의 상대를 만나 경쟁을 하여 매우 빨라졌습니다.");
 			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c속도 경쟁§f을 달성하였습니다.");
+			    			staminaGain(10);
 			    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 			    			onetime = false;
 						} else if (ab.getClass().equals(Mix.class)) {
@@ -206,31 +293,28 @@ public class Dash extends AbilityBase {
 						    			getPlayer().addPotionEffect(speed);
 						    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f우연히 고속의 상대를 만나 경쟁을 하여 매우 빨라졌습니다.");
 						    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c속도 경쟁§f을 달성하였습니다.");
+						    			staminaGain(10);
 						    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 						    			onetime = false;
 									} else {
 										Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
 							    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-							    		stack = Math.min((stack + 1), 10);
-										ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
+							    		staminaTrueGain(0.5);
 									}
 							} else {
 								Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
 								Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-					    		stack = Math.min((stack + 1), 10);
-								ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
+								staminaTrueGain(0.5);
 							}
 						} else {
 				    		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
 				    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-				    		stack = Math.min((stack + 1), 10);
-							ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
+				    		staminaTrueGain(0.5);
 			    		}
 					} else if (onetime == false || !target.hasAbility()) {
 			   			Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
 			   			Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-			    		stack = Math.min((stack + 1), 10);
-			    		ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
+			   			staminaTrueGain(0.5);
 					}
 		   		}	
 			}
@@ -265,15 +349,35 @@ public class Dash extends AbilityBase {
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
     @SubscribeEvent(onlyRelevant = true)
+    public void onPlayerMove(PlayerMoveEvent e) {
+    	if (movepoint > 0) {
+    		movepoint = 0;
+    	}
+    }
+    
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && staminaupdater.isRunning()) {
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+		}
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+		}
+	}
+	
+    @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (stack >= 2) {
+    			if (inbattle.isRunning() ? stamina >= (2 * 1.25) : stamina >= 2) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
-            		stack = (stack - 2);
+        	    	staminaUse(2);
                 	dashing.start();
-        			ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 10 - stack)));
         		} else {
         			getPlayer().sendMessage("§f[§c!§f] §c스태미나가 부족합니다.");
         		}	
@@ -296,6 +400,12 @@ public class Dash extends AbilityBase {
 			target = getGame().getParticipant((Player) e.getEntity());
     		if (attacked.isRunning()) attacked.setCount(3);
     		else attacked.start();
+    		if (inbattle.isRunning()) inbattle.setCount(50);
+    		else inbattle.start();
+    	}
+    	if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
+    		if (inbattle.isRunning()) inbattle.setCount(50);
+    		else inbattle.start();
     	}
     }
     
@@ -332,16 +442,19 @@ public class Dash extends AbilityBase {
             			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
             				if (count < 50) {
             					getPlayer().addPotionEffect(normalspeed);
-                				Damages.damageMagic(p, getPlayer(), true, 2);
+                				Damages.damageMagic(p, getPlayer(), true, 1.5f);
                 				damagedcheck.add(p);
+                				staminaGain(0.2);
             				}
             			} else {
-            				Damages.damageMagic(p, getPlayer(), true, 2);
+            				Damages.damageMagic(p, getPlayer(), true, 1.5f);
             				damagedcheck.add(p);
+            				staminaGain(0.2);
             			}
     				} else {
-        				Damages.damageMagic(p, getPlayer(), true, 2);
+        				Damages.damageMagic(p, getPlayer(), true, 1.5f);
         				damagedcheck.add(p);
+        				staminaGain(0.2);
     				}
     			}
     		}

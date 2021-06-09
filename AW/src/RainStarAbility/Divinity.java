@@ -218,13 +218,6 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
-	
-    @SubscribeEvent
-    private void onBlockPlace(BlockPlaceEvent e) {
-    	if (getPlayer().equals(e.getPlayer()) && addcounter.isRunning()) {
-    		e.setCancelled(true);
-    	}
-    }
     
 	@SubscribeEvent
 	private void onPlayerJoin(final PlayerJoinEvent e) {

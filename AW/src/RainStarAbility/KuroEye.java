@@ -59,17 +59,12 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "쿠로「개안」", rank = Rank.S, species = Species.OTHERS, explain = {
-		"마안의 힘을 통제하지 못하는 §8어둠§f 속성의 검사다.",
-		"§7패시브 §8- §7이명 §2『§a어둠 군주§2』§f: 어둠에서 자라, 어둠의 힘을 사용하기에",
-		" 현재 내가 있는 위치가 어두우면 어두울수록 나의 스킬이 강력해진다.",
-		"§7검 들고 F §8- §7비기 §3『§b시간 절단§3』§f: 시간의 틈새에 참격을 끼워넣는 기술로,",
-		" 우선 검의 힘을 끌어모으기 위해 10초를 대기한다. 대기 이후에 내 주변으로",
-		" 거대한 참격을 날려 검의 힘을 모을 때부터 단 한 번이라도 과거에",
-		" 그 위치에서 존재했던 자들의 시간을 뒤틀어 큰 피해를 입힐 수 있다. $[COOLDOWN]",
-		" 검의 힘을 모으는 도중 다시 F를 누르는 것으로 즉시 발현도 가능하다.",
-		"§7패시브 §8- §4『§c마안 폭주§4』§f: 나는 저주받은 마안을 사용하기에,",
-		" 회복을 받을 수 없는 몸이 되었지만 회복을 하려 할 때마다 대신",
-		" 회복량의 10%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있다."
+		"§7패시브 §c- §8어둠 군주§f: 자신의 위치가 어두울수록 스킬 피해량이 강해집니다.",
+		"§7검 들고 F §8- §b시간 절단§f: 스킬 사용 후 모든 플레이어가 이동한",
+		" 시간의 흔적이 남고, 다시 능력을 사용 혹은 자동 중단할 때 범위 내의",
+		" 시간의 흔적의 주인들에게 피해를 입힙니다. $[COOLDOWN]",
+		"§7패시브 §8- §c마안 폭주§f: 회복 효과를 받을 수 없습니다.",
+		" 회복량의 10%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있습니다."
 		},
 		summarize = {
 		"체력 회복을 하지 못하는 대신 회복량의 10%만큼 추가 공격력을 획득합니다.",
@@ -273,7 +268,7 @@ public class KuroEye extends AbilityBase {
 				    			new BukkitRunnable() {
 				    				@Override
 				    				public void run() {
-				    					participant.getPlayer().damage(15 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4, getPlayer());
+				    					participant.getPlayer().damage(10 + ((15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4), getPlayer());
 				    					ParticleLib.ITEM_CRACK.spawnParticle(clock.getLocation().clone().add(0, 1, 0), 0, 0, 0, 10, 0.5f, MaterialX.CLOCK);
 				    					ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), 0.4, 0.5, 0.4, 50, 0.35, MaterialX.CLOCK);
 				    					SoundLib.ENTITY_ENDER_EYE_DEATH.playSound(clock.getLocation().clone().add(0, 1, 0), 1, 0.7f);
@@ -392,7 +387,5 @@ public class KuroEye extends AbilityBase {
     	}
 
 	}
-	
-	
 	
 }

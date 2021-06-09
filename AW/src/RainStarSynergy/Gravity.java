@@ -335,9 +335,9 @@ public class Gravity extends Synergy implements ActiveHandler {
 					}
 					if (type == 1) {
 						if (!(entity instanceof Projectile)) {
-							entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.9, -0.75, entity.getVelocity().getZ() * 0.9)));	
+							entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.9, -0.65, entity.getVelocity().getZ() * 0.9)));	
 						} else {
-							entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.75, -2, entity.getVelocity().getZ() * 0.75)));
+							entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.75, -2.5, entity.getVelocity().getZ() * 0.75)));
 						}
 						if (entity instanceof Damageable) {
 							stackMap.put((Damageable) entity, stackMap.containsKey(entity) ? stackMap.get(entity) + 1 : 1);
@@ -348,7 +348,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 						if (stackMap.containsKey(entity)) {
 							if (stackMap.get(entity) >= 40) {
 								if (stackMap.get(entity) % 20 == 0) {
-									Damages.damageFixed(entity, getPlayer(), (float) (stackMap.get(entity) * 0.05));
+									Damages.damageFixed(entity, getPlayer(), (float) (stackMap.get(entity) * 0.075));
 								}
 							}
 						}

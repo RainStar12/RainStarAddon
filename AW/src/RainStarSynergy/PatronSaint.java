@@ -235,7 +235,7 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 			PatronSaint.this.bullet = this;
 			this.shooter = shooter;
 			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
-			this.forward = arrowVelocity.multiply(2.75);
+			this.forward = arrowVelocity.multiply(2);
 			this.powerEnchant = powerEnchant;
 			this.damage = damage;
 			this.color = color;
@@ -309,8 +309,8 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 								Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant) + Math.min(5, stack * 0.5)) * 0.55));	
 							}
 							if (livingEntity instanceof Player) {
-								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(10 + (stack * 5), 60));
-								else Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, 10);
+								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(6 + (stack * 3), 60));
+								else Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, 6);
 							}
 							hitcheck.add(livingEntity);
 							checkhit = true;
@@ -389,7 +389,7 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 			PatronSaint.this.bullet2 = this;
 			this.shooter = shooter;
 			this.entity = new Bullet2.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
-			this.velocity = getPlayer().getLocation().add(0, 1, 0).clone().subtract(startLocation.clone()).toVector().normalize().multiply(0.8);
+			this.velocity = getPlayer().getLocation().add(0, 1, 0).clone().subtract(startLocation.clone()).toVector().normalize();
 			this.damage = damage;
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -465,8 +465,8 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 								Damages.damageArrow(livingEntity, shooter, (float) ((damage + Math.min(5, stack * 0.5)) * 1.1));	
 							}
 							if (livingEntity instanceof Player) {
-								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(5 + (stack * 2), 60));
-								else Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, 5);
+								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(4 + (stack * 1), 60));
+								else Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, 4);
 							}
 							hitcheck.add(livingEntity);	
 						}

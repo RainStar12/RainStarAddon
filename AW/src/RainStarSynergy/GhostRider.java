@@ -1,9 +1,11 @@
 package RainStarSynergy;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -46,6 +49,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -53,11 +57,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "고스트 라이더", rank = Rank.L, species = Species.HUMAN, explain = {
+		name = "고스트 라이더", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §c지옥불 질주§f: 매우 빠른 속도로 이동하며, 지나가는 자리를 불지릅니다.",
 		" 화염 계열 피해를 무시하고, 자신 주변 $[RANGE]칸 이내의 화염계 피해를 받는 생명체들은",
 		" 해당 화염 피해를 2배로 받습니다. 달리며 다른 플레이어를 스쳐 지나가면",
 		" 최대 3단계까지 더 빠르게 가속하고 대상이 가진 발화 시간을 1.5배로 늘립니다.",
+		" 물 위에서는 이동 속도 증가 버프를 받을 수 없습니다.",
 		"§7철괴 우클릭 §8- §c참회의 시선§f: 대상과 자신이 서로 마주보고 있을 때",
 		" 대상이 다른 플레이어에게 입힌 피해량에 비례해 대상을 피해입히고,",
 		" 대상이 죽인 다른 플레이어의 수에 비례해 대상을 기절시킵니다. $[COOLDOWN]",
@@ -174,17 +179,26 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	private final AbilityTimer speed = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
-			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
+			if (onWater) {
+				getPlayer().removePotionEffect(PotionEffectType.SPEED);
+			    getPlayer().setWalkSpeed(0.2F);
+			    getPlayer().setFlySpeed(0.1F);
+			} else {
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);	
+			}
 		}
 	}.register();
 
 	private Map<Player, Double> attackCounter = new HashMap<>();
 	private Map<Player, Integer> killCounter = new HashMap<>();
+	private Map<Player, List<Player>> killedwho = new HashMap<>();
 	
 	private final Deque<Block> blocks = new LinkedList<>();
 	private final Set<Block> blockSet = new HashSet<>();
 	private int range = RANGE.getValue();
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
+	
+	private boolean onWater = false;
 	
 	private LivingEntity pentity = null;
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -264,6 +278,11 @@ public class GhostRider extends Synergy implements ActiveHandler {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
+		if (BlockX.isWater(e.getTo().getBlock().getType())) {
+			onWater = true;
+		} else {
+			onWater = false;
+		}
 		final Block to = e.getTo().getBlock(), below = to.getRelative(BlockFace.DOWN);
 		if ((to.isEmpty() || to.getType() == Material.SNOW) && below.getType().isSolid()) {
 			to.setType(Material.FIRE);
@@ -331,8 +350,14 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		if (e.getEntity().getKiller() != null && !e.getEntity().getKiller().equals(getPlayer())) {
 			if (killCounter.containsKey(e.getEntity().getKiller())) {
 				killCounter.put(e.getEntity().getKiller(), killCounter.get(e.getEntity().getKiller()) + 1);
+				List<Player> list = killedwho.get(e.getEntity().getKiller());
+				list.add(e.getEntity());
+				killedwho.put(e.getEntity().getKiller(), list);
 			} else {
 				killCounter.put(e.getEntity().getKiller(), 1);
+				List<Player> list = new ArrayList<>();
+				list.add(e.getEntity());
+				killedwho.put(e.getEntity().getKiller(), list);
 			}
 		}
 	}

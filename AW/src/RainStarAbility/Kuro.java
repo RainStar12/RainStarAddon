@@ -39,6 +39,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import RainStarSynergy.DemonLord;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -74,8 +75,7 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "쿠로", rank = Rank.A, species = Species.HUMAN, explain = {
-		"마왕을 행세하는 §8어둠§f 속성의 중2병 검사, 쿠로.",
-		"§7패시브 §8- §8어둠의 추종자§f: 자신이 있는 위치가 어두울수록 스킬 피해량이 증가합니다.",
+		"§7패시브 §c- §8어둠의 추종자§f: 자신이 있는 위치가 어두울수록 스킬 피해량이 증가합니다.",
 		" 실명을 가진 적을 근접 공격하면 추가 피해를 입힙니다.",
 		"§7근접 타격 후 F §8- §5차원 절단§f: 바라보는 방향으로 빠르게 질주합니다.",
 		" 질주하며 지나간 공간을 절단시켜 주변 엔티티들을 끌어와 피해를 입히고",
@@ -231,12 +231,12 @@ public class Kuro extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
 		if (getPlayer().equals(e.getDamager())) {
@@ -535,6 +535,32 @@ public class Kuro extends AbilityBase {
 		private ActionbarChannel actionbarChannel;
 		private final GameMode originalMode;
 		
+		private final Predicate<Entity> demonlordexceptpredicate = new Predicate<Entity>() {
+			@Override
+			public boolean test(Entity entity) {
+				if (entity instanceof Player) {
+					Participant participant = getGame().getParticipant((Player) entity);
+					if (participant.hasAbility()) {
+						AbilityBase ab = participant.getAbility();
+						if (ab.getClass().equals(Mix.class)) {
+							Mix mix = (Mix) ab;
+							if (mix.hasSynergy()) {
+								if (mix.getSynergy().getClass().equals(DemonLord.class)) {
+									return false;
+								}
+							}
+						}
+					}
+				}
+				return true;
+			}
+
+			@Override
+			public boolean apply(@Nullable Entity arg0) {
+				return false;
+			}
+		};
+		
 		private NextDimension(Player player, GameMode originalMode) {
 			super(35);
 			setPeriod(TimeUnit.TICKS, 2);
@@ -551,18 +577,19 @@ public class Kuro extends AbilityBase {
     	protected void onStart() {
     		actionbarChannel = getGame().getParticipant(player).actionbar().newChannel();
     		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+    		getGame().getParticipant(player).attributes().TARGETABLE.setValue(false);
     	}
     	
     	@EventHandler
     	public void onPlayerMove(PlayerMoveEvent e) {
-    		if (e.getPlayer().equals(player)) {
+    		if (e.getPlayer().equals(player) && demonlordexceptpredicate.test(player)) {
     			e.setCancelled(true);
     		}
     	}
     	
     	@EventHandler
     	public void onPlayerTeleport(PlayerTeleportEvent e) {
-    		if (e.getPlayer().equals(player) && e.getCause() == TeleportCause.SPECTATE) {
+    		if (e.getPlayer().equals(player) && e.getCause() == TeleportCause.SPECTATE && demonlordexceptpredicate.test(player)) {
     			e.setCancelled(true);
     		}
     	}
@@ -570,7 +597,7 @@ public class Kuro extends AbilityBase {
     	@Override
     	protected void run(int count) {
     		player.setGameMode(GameMode.SPECTATOR);
-    		ParticleLib.SMOKE_LARGE.spawnParticle(player.getLocation(), 0, 0, 0, 3, 0);
+    		ParticleLib.SMOKE_LARGE.spawnParticle(player.getLocation().clone().add(0, 1, 0), 0, 0, 0, 3, 0);
     		actionbarChannel.update("§5차원의 저편§f: " + count / 10 + "초");
     	}
 		
@@ -584,6 +611,7 @@ public class Kuro extends AbilityBase {
 			HandlerList.unregisterAll(this);
 			nextMap.remove(player);
 			player.setGameMode(originalMode);
+			getGame().getParticipant(player).attributes().TARGETABLE.setValue(true);
 			actionbarChannel.unregister();
 		}
 		

@@ -28,7 +28,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		EffectType.COMBAT_RESTRICTION
 }, description = {
 		"이동, 공격, 능력 사용, 체력 회복이 불가합니다.",
-		"모든 피해를 90% 경감하여 받습니다."
+		"모든 피해를 80% 경감하여 받습니다."
 })
 public class Stiffen extends AbstractGame.Effect implements Listener {
 
@@ -50,7 +50,7 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 		hologram.setInvulnerable(true);
 		NMS.removeBoundingBox(hologram);
 		hologram.setCustomNameVisible(true);
-		hologram.setCustomName("§8{경직}");
+		hologram.setCustomName("§8경직!");
 		setPeriod(TimeUnit.TICKS, 2);
 	}
 	
@@ -71,7 +71,7 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (participant.getPlayer().equals(e.getEntity())) {
-			e.setDamage(e.getDamage() * 0.1);
+			e.setDamage(e.getDamage() * 0.2);
 		}
 	}
 	
@@ -104,12 +104,14 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 
 	@Override
 	protected void onEnd() {
+		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onEnd();
 	}
 
 	@Override
 	protected void onSilentEnd() {
+		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onSilentEnd();
 	}

@@ -126,7 +126,7 @@ public class HawkEye extends Synergy {
 				}
 				Arrow arrow = (Arrow) e.getProjectile();
 				new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
-				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
+				SoundLib.ENTITY_WITHER_BREAK_BLOCK.playSound(getPlayer().getLocation(), 7, 2);
 				final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 25.0) : 25;
 				reload = new AbilityTimer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
@@ -165,7 +165,7 @@ public class HawkEye extends Synergy {
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
-			this.forward = arrowVelocity.multiply(20);
+			this.forward = arrowVelocity.multiply(30);
 			this.powerEnchant = powerEnchant;
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -176,7 +176,7 @@ public class HawkEye extends Synergy {
 		@Override
 		protected void run(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
-			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 40); iterator.hasNext(); ) {
+			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 70); iterator.hasNext(); ) {
 				Location location = iterator.next();
 				entity.setLocation(location);
 				Block block = location.getBlock();

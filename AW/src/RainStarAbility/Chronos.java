@@ -93,7 +93,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	private int number = 3;
 	private static final RGB color = RGB.of(25, 147, 168);
 	private long worldtime = 0;
-	private static final Circle circle = Circle.of(5.5, 70);
+	private static final Circle circle = Circle.of(6, 70);
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 120,
@@ -164,7 +164,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     		if (!getPlayer().isDead()) {
     			if (isNight(getPlayer().getWorld().getTime())) {
     				for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, playerLoc, 6, 6, null)) {
-    					if (!projectile.isOnGround() && !myprojectiles.contains(projectile) && LocationUtil.isInCircle(playerLoc, projectile.getLocation(), 5)) {
+    					if (!projectile.isOnGround() && !myprojectiles.contains(projectile)) {
     						projectile.setVelocity(projectile.getVelocity().multiply(0.65));
     					}
     				}

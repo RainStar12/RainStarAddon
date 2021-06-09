@@ -95,6 +95,10 @@ public class Charm extends AbstractGame.Effect implements Listener {
 		return (getCount() * 20);
 	}
 	
+	public Player getApplier() {
+		return applyPlayer;
+	}
+	
 	@Override
 	protected void onEnd() {
 		HandlerList.unregisterAll(this);

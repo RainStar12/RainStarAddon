@@ -9,11 +9,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -31,7 +34,10 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -91,7 +97,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(LittleDevil.class,
-			"range", 7, "# 능력 범위") {
+			"range", 10, "# 능력 범위") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -101,6 +107,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	
 	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private Set<Player> playercount = new HashSet<>();
+	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(270), 0, 0);
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -149,15 +156,13 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 									|| itemStack.getType() == Material.GOLDEN_APPLE || itemStack.getType() == MaterialX.TOTEM_OF_UNDYING.getMaterial()) {
 								if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
 									itemStack.getType() == Material.SPLASH_POTION) {
-									getPlayer().getInventory().addItem(itemStack);
 									p.getInventory().removeItem(itemStack);
-									SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
+									new Stealing(itemStack, p.getLocation()).start();
 									playercount.add(p);
 									break;
 								} else {
-									ItemLib.addItem(getPlayer().getInventory(), itemStack.getType(), 1);
 									ItemLib.removeItem(p.getInventory(), itemStack.getType(), 1);
-									SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
+									new Stealing(itemStack, p.getLocation()).start();
 									playercount.add(p);
 									break;
 								}
@@ -188,11 +193,54 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 				cooldown.start();
 				return true;
 	    	} else {
-	    		getPlayer().sendMessage("주변 §6" + RANGE_CONFIG.getValue() + "칸§f 내에 장난을 칠 대상이 없습니다.");
+	    		getPlayer().sendMessage("§6[§e!§6] §f주변 §6" + RANGE_CONFIG.getValue() + "칸§f 내에 장난을 칠 대상이 없습니다.");
 	    		return false;
 	    	}
 	    }
 		return false;
+	}
+	
+	public class Stealing extends AbilityTimer {
+		
+		private final ItemStack item;
+		private final ArmorStand hologram;
+		private final Location startLocation;
+		
+		public Stealing(ItemStack item, Location startLocation) {
+			super(TaskType.REVERSE, 10);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.item = item;
+			this.startLocation = startLocation;
+			this.hologram = startLocation.getWorld().spawn(startLocation.clone(), ArmorStand.class);
+			hologram.setRightArmPose(DEFAULT_EULER_ANGLE);
+			hologram.setVisible(false);
+			hologram.setGravity(false);
+			hologram.setInvulnerable(true);
+			NMS.removeBoundingBox(hologram);
+			hologram.getEquipment().setItemInMainHand(item);
+			hologram.setCustomNameVisible(false);
+		}
+		
+		@Override
+		public void run(int count) {
+			hologram.teleport(startLocation.clone().add(Line.vectorAt(startLocation, getPlayer().getLocation(), 10, 10 - count)));
+			if (hologram.getLocation().distanceSquared(getPlayer().getLocation().clone().add(0, 1, 0)) <= 2) {
+				this.stop(false);
+			}
+		}
+		
+		@Override
+		public void onEnd() {
+			getPlayer().getInventory().addItem(item);
+			SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
+			hologram.remove();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			hologram.remove();
+		}
+		
 	}
 	
 }

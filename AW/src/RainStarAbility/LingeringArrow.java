@@ -145,6 +145,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 			.put(PotionEffectType.SATURATION, Pair.of("§e포만감", Color.fromRGB(254, 221, 115)))
 			.put(PotionEffectType.SLOW_DIGGING, Pair.of("§8채굴 피로", Color.fromRGB(93, 93, 93)))
 			.put(PotionEffectType.UNLUCK, Pair.of("§a불운", Color.fromRGB(206, 242, 121)))
+			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("§8저항", Color.fromRGB(1, 96, 106)))
 			.build();
 	
 	

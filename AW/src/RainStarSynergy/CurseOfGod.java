@@ -31,6 +31,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
@@ -41,10 +42,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "신의 저주", rank = Rank.S, species = Species.HUMAN, explain = {
+		name = "신의 저주", rank = Rank.S, species = Species.GOD, explain = {
 		"다른 플레이어를 13칸 내에서 철괴 우클릭 시 $[DURATION]초간 지속되는 분신을",
 		"소환해냅니다. 분신으로부터 6.5칸 내 모든 플레이어는 분신을 바라보며",
-		"분신을 타격할 때 50%의 피해량을 분신의 주인에게 입힙니다.",
+		"분신을 타격할 때 50%의 피해량을 분신의 주인에게 입히고 끌어옵니다.",
 		"다만 자신은 분신을 타격할 수 없습니다. $[COOLDOWN]",
 		"또한 분신이 있을 때 자신이 주는 피해량이 25% 감소합니다.",
 		"§b[§7아이디어 제공자§b] §ecommon_Mango"
@@ -214,7 +215,10 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
 			if (!e.getDamager().equals(getPlayer())) {
-				target.damage(e.getDamage() * 0.5, armorStand);
+				if (!target.isInvulnerable()) {
+					target.damage(e.getDamage() * 0.5, armorStand);
+					target.setVelocity(VectorUtil.validateVector(armorStand.getLocation().toVector().subtract(target.getLocation().toVector()).normalize()));	
+				}
 				if (e.getDamager() instanceof Player) {
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
 				}	

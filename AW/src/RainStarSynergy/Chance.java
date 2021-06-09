@@ -1,22 +1,41 @@
 package RainStarSynergy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.Configuration;
@@ -26,14 +45,19 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
+import net.md_5.bungee.api.ChatColor;
 
-@AbilityManifest(name = "±âÈ¸", rank = Rank.L, species = Species.GOD, explain = {
-		"Ä¡¸íÀûÀÎ ÇÇÇØ¸¦ ÀÔ¾úÀ» ¶§ ¸ğµç ´ë»óÀÇ ´É·ÂÀ»",
-		"°­Á¦·Î ÀçÃßÃ·ÇÏ°í Àı¹İÀÇ Ã¼·ÂÀ¸·Î ºÎÈ°ÇÕ´Ï´Ù.",
-		"¸¸ÀÏ ´ë»óÀÇ ´É·ÂÀÌ ½Ã³ÊÁö¶ó¸é ´Ù¸¥ ½Ã³ÊÁö ´É·ÂÀ¸·Î ±³Ã¼µË´Ï´Ù."})
+@AbilityManifest(name = "ê¸°íšŒ", rank = Rank.L, species = Species.GOD, explain = {
+		"ì¹˜ëª…ì ì¸ í”¼í•´ë¥¼ ì…ì—ˆì„ ë•Œ ëª¨ë“  ëŒ€ìƒì˜ ëŠ¥ë ¥ì„",
+		"ê°•ì œë¡œ ì¬ì¶”ì²¨í•˜ê³  ì ˆë°˜ì˜ ì²´ë ¥ìœ¼ë¡œ ë¶€í™œí•©ë‹ˆë‹¤.",
+		"ë§Œì¼ ëŒ€ìƒì˜ ëŠ¥ë ¥ì´ ì‹œë„ˆì§€ë¼ë©´ ë‹¤ë¥¸ ì‹œë„ˆì§€ ëŠ¥ë ¥ìœ¼ë¡œ êµì²´ë©ë‹ˆë‹¤."})
 
 public class Chance extends Synergy {
 	
@@ -81,7 +105,14 @@ public class Chance extends Synergy {
 
     public AbilityRegistration getRandomSynergy() {
 
-		Set<AbilityRegistration> synergies = SynergyFactory.getSynergies();
+		Set<AbilityRegistration> synergies = new HashSet<>();
+		
+        for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
+        	String name = synergy.getManifest().name();
+        	if (!Configuration.Settings.isBlacklisted(name) && !name.equals("ê¸°íšŒ")) {
+        		synergies.add(synergy);
+        	}
+        }
 		
         Random r = new Random();
         return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
@@ -101,18 +132,24 @@ public class Chance extends Synergy {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 			getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2);
-			Bukkit.broadcastMessage("¡×e" + getPlayer().getName() + "¡×f·Î ÀÎÇØ ¸ğµç ÇÃ·¹ÀÌ¾î¿¡°Ô ¡×b±âÈ¸¡×f°¡ ´Ù½Ã±İ ÁÖ¾îÁı´Ï´Ù...");
+			Bukkit.broadcastMessage("Â§e" + getPlayer().getName() + "Â§fë¡œ ì¸í•´ ëª¨ë“  í”Œë ˆì´ì–´ì—ê²Œ Â§bê¸°íšŒÂ§fê°€ ë‹¤ì‹œê¸ˆ ì£¼ì–´ì§‘ë‹ˆë‹¤...");
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
 			e.setCancelled(true);
 			getGame().getParticipants().forEach(participant -> {
 					try {
 						Mix mix = (Mix) participant.getAbility();
 						if (predicate.test(participant.getPlayer())) {
-							if (mix.hasSynergy()) {
-								AbilityRegistration synergy = getRandomSynergy();
-								mix.setAbility(SynergyFactory.getSynergyBase(synergy).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(synergy).getRight().getAbilityClass());
+							if (participant.getPlayer().equals(getPlayer())) {
+								new AbilitySelect().start();
 							} else {
-								mix.setAbility(getRandomAbility(), getRandomAbility());
+								if (mix.hasSynergy()) {
+									AbilityRegistration synergy = getRandomSynergy();
+									mix.setAbility(SynergyFactory.getSynergyBase(synergy).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(synergy).getRight().getAbilityClass());
+									participant.getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§fë‹¹ì‹ ì˜ ìƒˆ ëŠ¥ë ¥Â§7: Â§e" + synergy.getManifest().name());
+								} else {
+									mix.setAbility(getRandomAbility(), getRandomAbility());
+									participant.getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§fë‹¹ì‹ ì˜ ìƒˆ ëŠ¥ë ¥Â§7: Â§e" + mix.getFirst() + "Â§7, Â§e" + mix.getSecond());
+								}	
 							}	
 						}
 					} catch (ReflectiveOperationException e1) {
@@ -120,6 +157,161 @@ public class Chance extends Synergy {
 					}
 			});
 		}
+	}
+	
+	public class AbilitySelect extends AbilityTimer implements Listener {
+		
+		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(null).build();
+		
+		private final List<AbilityRegistration> values = new ArrayList<>();
+		private Set<AbilityRegistration> synergies = new HashSet<>();
+		
+		private Map<Integer, AbilityRegistration> slots = new HashMap<>();
+		
+		private AbilityRegistration selected;
+		
+		private final Inventory gui;
+		
+		public AbilitySelect() {
+			super(TaskType.REVERSE, 300);
+			setPeriod(TimeUnit.TICKS, 1);
+			gui = Bukkit.createInventory(null, 9, "Â§0ëŠ¥ë ¥ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
+		}
+		
+		protected void onStart() {
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			getPlayer().openInventory(gui);
+			for (int i = 0; i < 5; i++) {
+				AbilityRegistration randomSynergy = getRandomSynergy();
+				values.add(randomSynergy);
+				selected = randomSynergy;
+				synergies.add(randomSynergy);
+			}
+		}
+		
+		@Override
+		protected void run(int arg0) {
+			placeItem();
+			getPlayer().setGameMode(GameMode.SPECTATOR);
+			if (arg0 == 60) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 40) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 20) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			Mix mix = (Mix) getParticipant().getAbility();
+			try {
+				mix.setAbility(SynergyFactory.getSynergyBase(selected).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(selected).getRight().getAbilityClass());
+			} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
+				e1.printStackTrace();
+			}
+			HandlerList.unregisterAll(this);
+			getPlayer().setGameMode(GameMode.SURVIVAL);
+			getPlayer().closeInventory();
+		}
+		
+		private MaterialX getRankBlock(Rank rank) {
+			if (rank.equals(Rank.C)) {
+				return MaterialX.YELLOW_CONCRETE;
+			} else if (rank.equals(Rank.B)) {
+				return MaterialX.LIGHT_BLUE_CONCRETE;
+			} else if (rank.equals(Rank.A)) {
+				return MaterialX.LIME_CONCRETE;
+			} else if (rank.equals(Rank.S)) {
+				return MaterialX.MAGENTA_CONCRETE;
+			} else if (rank.equals(Rank.L)) {
+				return MaterialX.ORANGE_CONCRETE;
+			} else if (rank.equals(Rank.SPECIAL)) {
+				return MaterialX.RED_CONCRETE;
+			}
+			return null;
+		}
+		
+		private void placeItem() {
+			for (int i = 0; i < 5; i++) {
+				ItemStack item = new ItemBuilder(getRankBlock(values.get(i).getManifest().rank())).build();
+				ItemMeta meta = item.getItemMeta();
+				if (synergies.contains(values.get(i))) meta.addEnchant(Enchantment.LOOT_BONUS_BLOCKS, 1, true);
+				meta.setDisplayName(ChatColor.AQUA + values.get(i).getManifest().name());
+				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				if (values.get(i).hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "ì•¡í‹°ë¸Œ");
+				if (values.get(i).hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "íƒ€ê²ŒíŒ…");
+				if (values.get(i).hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "ë² íƒ€");
+				final List<String> lore = Messager.asList(
+						"Â§fë“±ê¸‰: " + values.get(i).getManifest().rank().getRankName(),
+						"Â§fì¢…ë¥˜: " + values.get(i).getManifest().species().getSpeciesName(),
+						joiner.toString(),
+						"");
+				for (final String line : values.get(i).getManifest().explain()) {
+					lore.add(ChatColor.WHITE.toString().concat(line));
+				}
+				lore.add("");
+				lore.add("Â§2Â» Â§fì´ ì‹œë„ˆì§€ë¥¼ ë¶€ì—¬í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.");
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+				switch(i) {
+				case 0:
+					gui.setItem(0, item);
+					slots.put(0, values.get(i));
+					break;
+				case 1:
+					gui.setItem(2, item);
+					slots.put(2, values.get(i));
+					break;
+				case 2:
+					gui.setItem(4, item);
+					slots.put(4, values.get(i));
+					break;
+				case 3:
+					gui.setItem(6, item);
+					slots.put(6, values.get(i));
+					break;
+				case 4:
+					gui.setItem(8, item);
+					slots.put(8, values.get(i));
+					break;
+				}
+				
+				for (int j = 0; j < 8; j++) {
+					if (gui.getItem(j) == null) {
+						gui.setItem(j, NULL);
+					}
+				}
+			}
+		}
+		
+		@EventHandler
+		private void onInventoryClose(InventoryCloseEvent e) {
+			if (e.getInventory().equals(gui)) stop(false);
+		}
+
+		@EventHandler
+		private void onQuit(PlayerQuitEvent e) {
+			if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) stop(false);
+		}
+		
+		@EventHandler
+		private void onPlayerMove(PlayerMoveEvent e) {
+			if (e.getPlayer().equals(getPlayer())) e.setCancelled(true);
+		}
+
+		@EventHandler
+		private void onInventoryClick(InventoryClickEvent e) {
+			if (e.getInventory().equals(gui)) {
+				e.setCancelled(true);
+				if (slots.containsKey(e.getSlot())) {
+					selected = slots.get(e.getSlot());
+					getPlayer().closeInventory();
+				}
+			}
+		}
+		
 	}
 	
 }

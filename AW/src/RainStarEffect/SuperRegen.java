@@ -13,19 +13,19 @@ import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
-import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "회복 불능", displayName = "§c회복 불능", method = ApplicationMethod.UNIQUE_LONGEST, type = {
-		EffectType.HEALING_BAN
+@EffectManifest(name = "초회복", displayName = "§d초회복", method = ApplicationMethod.MULTIPLE, type = {
 }, description = {
-		"모든 회복 효과를 받을 수 없습니다."
+		"다른 모든 회복 효과를 무시하는 대신",
+		"매 초마다 체력을 0.75 회복합니다.",
+		"회복 처리를 하지 않을 경우 무시하지 못합니다. §7ex) 유혹"
 })
-public class Irreparable extends AbstractGame.Effect implements Listener {
+public class SuperRegen extends AbstractGame.Effect implements Listener {
 
-	public static final EffectRegistration<Irreparable> registration = EffectRegistry.registerEffect(Irreparable.class);
+	public static final EffectRegistration<SuperRegen> registration = EffectRegistry.registerEffect(SuperRegen.class);
 
 	public static void apply(Participant participant, TimeUnit timeUnit, int duration) {
 		registration.apply(participant, timeUnit, duration);
@@ -33,7 +33,7 @@ public class Irreparable extends AbstractGame.Effect implements Listener {
 
 	private final Participant participant;
 
-	public Irreparable(Participant participant, TimeUnit timeUnit, int duration) {
+	public SuperRegen(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 20));
 		this.participant = participant;
 		setPeriod(TimeUnit.SECONDS, 1);
@@ -46,21 +46,17 @@ public class Irreparable extends AbstractGame.Effect implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerSetHealth(PlayerSetHealthEvent e) {
-		if (e.getPlayer().getUniqueId().equals(participant.getPlayer().getUniqueId())) {
-			if (e.getPlayer().getHealth() < e.getHealth()) {
-				ParticleLib.VILLAGER_ANGRY.spawnParticle(e.getPlayer().getLocation().add(0, 1.5, 0), 0, 0, 0, 10, 1);
-				e.setCancelled(true);	
-			}
-		}
-	}
-
-	@EventHandler
 	private void onEntityRegainHealth(final EntityRegainHealthEvent e) {
 		if (e.getEntity().getUniqueId().equals(participant.getPlayer().getUniqueId())) {
-			ParticleLib.VILLAGER_ANGRY.spawnParticle(e.getEntity().getLocation().add(0, 1.5, 0), 0, 0, 0, 10, 1);
 			e.setCancelled(true);
 		}
+	}
+	
+	@Override
+	protected void run(int count) {
+		ParticleLib.VILLAGER_HAPPY.spawnParticle(participant.getPlayer().getLocation().add(0, 1.5, 0), 0, 0, 0, 10, 1);
+		Healths.setHealth(participant.getPlayer(), participant.getPlayer().getHealth() + 0.75);
+		super.run(count);
 	}
 
 	@Override

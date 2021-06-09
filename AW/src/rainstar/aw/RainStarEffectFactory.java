@@ -4,9 +4,11 @@ import RainStarEffect.*;
 import daybreak.abilitywar.game.AbstractGame;
 
 public enum RainStarEffectFactory {
+	ADDICTION(Addiction.class),
     AGRO(Agro.class),
     BACKSEAT_GAMING(BackseatGaming.class),
     BINDING_SMOKE(BindingSmoke.class),
+    BURN(Burn.class),
     CHARM(Charm.class),
     CHILL(Chill.class),
     CONFUSION(Confusion.class),
@@ -17,6 +19,9 @@ public enum RainStarEffectFactory {
     IRREPARABLE(Irreparable.class),
     MADNESS(Madness.class),
     SNOWFLAKE_MARK(SnowflakeMark.class),
+    STIFFEN(Stiffen.class),
+    SUPERREGEN(SuperRegen.class),
+    TIME_DISTORTION(TimeDistortion.class),
     TIME_SLOWDOWN(TimeSlowdown.class);
 
     Class<? extends AbstractGame.Effect> clazz;

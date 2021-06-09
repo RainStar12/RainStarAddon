@@ -1,9 +1,9 @@
 package RainStarAbility;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -170,8 +170,8 @@ public class GlassCannon extends AbilityBase {
 					2, 0, amount, 1, MaterialX.GLASS);
 		}
 		
-		if (NMS.isArrow(e.getDamager())) {
-			Arrow arrow = (Arrow) e.getDamager();
+		if (e.getDamager() instanceof Projectile) {
+			Projectile arrow = (Projectile) e.getDamager();
 			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity
 					&& !e.getEntity().equals(getPlayer())) {
 				e.setDamage(e.getDamage() + damage);
@@ -179,7 +179,7 @@ public class GlassCannon extends AbilityBase {
 				ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 
 						2, 0, amount, 1, MaterialX.GLASS);
 			}
-			if (arrow.getShooter() instanceof Player && e.getEntity().equals(getPlayer())) {
+			if (arrow.getShooter() instanceof Player && e.getEntity().equals(getPlayer()) && !getPlayer().equals(arrow.getShooter())) {
 				e.setDamage(e.getDamage() + damage);
 				SoundLib.BLOCK_GLASS_BREAK.playSound((Player) arrow.getShooter(), 1, (float) speed);
 				ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 

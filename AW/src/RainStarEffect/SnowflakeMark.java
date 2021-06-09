@@ -11,6 +11,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
@@ -30,6 +32,7 @@ import daybreak.google.common.base.Strings;
 		EffectType.COMBAT_RESTRICTION
 }, description = {
 		"방어력을 레벨당 2씩 감소시킵니다.",
+		"화염계 피해를 받으면 피해를 줄이고 효과가 빠르게 사라집니다."
 })
 
 public class SnowflakeMark extends AbstractGame.Effect implements Listener {
@@ -47,9 +50,9 @@ public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 
 	@EffectConstructor(name = "with-level")
 	public SnowflakeMark(Participant participant, TimeUnit timeUnit, int duration, int level) {
-		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
+		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 2));
 		this.participant = participant;
-		setPeriod(TimeUnit.TICKS, 1);
+		setPeriod(TimeUnit.TICKS, 2);
 		final Location location = participant.getPlayer().getLocation();
 		this.hologram = location.getWorld().spawn(location.clone().add(0, 2.2, 0), ArmorStand.class);
 		hologram.setVisible(false);
@@ -59,14 +62,26 @@ public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 		hologram.setCustomNameVisible(true);
 		hologram.setCustomName(Strings.repeat("§b❄", level));
 		this.level = level;
-		setPeriod(TimeUnit.TICKS, 1);
 	}
 	
 	@EventHandler
 	private void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
-		if (e.getEffectType().equals(SnowflakeMark.registration)) {
-			if (e.getDuration() > this.getCount()) {
-				this.stop(false);
+		if (e.getParticipant().equals(participant)) {
+			if (e.getEffectType().equals(SnowflakeMark.registration)) {
+				if (e.getDuration() > this.getCount()) {
+					this.stop(false);
+				}
+			}	
+		}
+	}
+	
+	@EventHandler
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(participant.getPlayer())) {
+			if (e.getCause() == DamageCause.FIRE || e.getCause() == DamageCause.FIRE_TICK || 
+					e.getCause() == DamageCause.HOT_FLOOR || e.getCause() == DamageCause.LAVA) {
+				e.setDamage(e.getDamage() / 3);
+				this.setCount((int) (this.getCount() - (e.getFinalDamage() * 30)));
 			}
 		}
 	}
@@ -78,6 +93,7 @@ public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 	@Override
 	protected void run(int count) {
 		hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2, 0));
+		super.run(count);
 	}
 	
 	@Override

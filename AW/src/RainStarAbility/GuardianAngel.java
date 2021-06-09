@@ -21,7 +21,10 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -33,6 +36,7 @@ import org.bukkit.util.Vector;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -58,9 +62,11 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -70,56 +76,57 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "¼öÈ£Ãµ»ç", rank = Rank.S, species = Species.OTHERS, explain = {
-		"½ÅÀ» ÁöÅ°±â À§ÇØ °­¸²ÇÑ ¡×f¡×lºû¡×f ¼Ó¼ºÀÇ ¼öÈ£Ãµ»ç.",
-		"¡×7È° ¿ìÅ¬¸¯ ¡×8- ¡×cÀúÁö¸ÕÆ®¡×f: ¹Ù¶óº¸´Â ¹æÇâÀÇ ¼öÆòÀ¸·Î ¼º·ÉÀÇ È­»ìÀ» ¹ß»çÇÕ´Ï´Ù.",
-		" ¼º·ÉÀÇ È­»ìÀÌ ÀûÁßÇÒ ¶§ ´Ù½Ã Æ¨°Ü ½ÃÀüÀÚÀÇ À§Ä¡±îÁö µÇµ¹¾Æ¿À¸ç,",
-		" ¼öÈ£ ½ºÅÃ¿¡ ºñ·ÊÇØ ÀûÁß ´ë»óÀ» ±âÀı½ÃÅµ´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×b»ıÃò¾î¸®¡×f: $[DURATION]ÃÊ°£ °è¼ÓÇØ ´Ã¾î³ª´Â ¼º¿ªÀ» Àü°³ÇÕ´Ï´Ù.",
-		" ¼º¿ª ³»¿¡¼­ ÀÚ½ÅÀº Âü°¡ÀÚ Áß ½Å ´É·ÂÀÚÀÇ ¼ö¿¡ ºñ·ÊÇØ È¸º¹ È¿°ú¸¦ ¹Ş½À´Ï´Ù.",
-		" ´Ù¸¥ ÇÃ·¹ÀÌ¾îµµ ¾ğµ¥µå³ª ±âÅ¸ Á¾Á·ÀÌ ¾Æ´Ò ½Ã 50%·Î È¸º¹È¿°ú¸¦ ¹ŞÀ¸¸ç",
-		" ¾ğµ¥µåÀÇ °æ¿ì Áö¼ÓÀûÀ¸·Î ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù. $[COOLDOWN]",
-		" ÀÌ È¿°ú·Î Ã¼·ÂÀÌ 20% ÀÌÇÏ¿´´ø ÇÃ·¹ÀÌ¾î¸¦ È¸º¹ÇØ ÁÙ ¶§ ¼öÈ£ ½ºÅÃÀ» ¾ò½À´Ï´Ù."
+@AbilityManifest(name = "ìˆ˜í˜¸ì²œì‚¬", rank = Rank.S, species = Species.OTHERS, explain = {
+		"Â§7í™œ ìš°í´ë¦­ Â§8- Â§cì €ì§€ë¨¼íŠ¸Â§f: ë°”ë¼ë³´ëŠ” ë°©í–¥ì˜ ìˆ˜í‰ìœ¼ë¡œ ì„±ë ¹ì˜ í™”ì‚´ì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" ì„±ë ¹ì˜ í™”ì‚´ì´ ì ì¤‘í•  ë•Œ ë‹¤ì‹œ íŠ•ê²¨ ì‹œì „ìì˜ ìœ„ì¹˜ê¹Œì§€ ë˜ëŒì•„ì˜¤ë©°,",
+		" Â§dìˆ˜í˜¸ ìŠ¤íƒÂ§fì— ë¹„ë¡€í•´ ì ì¤‘ ëŒ€ìƒì„ Â§eê¸°ì ˆÂ§fì‹œí‚µë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bìƒì¸„ì–´ë¦¬Â§f: $[DURATION]ì´ˆê°„ ê³„ì†í•´ ëŠ˜ì–´ë‚˜ëŠ” ì„±ì—­ì„ ì „ê°œí•©ë‹ˆë‹¤.",
+		" ì„±ì—­ ë‚´ì—ì„œ ìì‹ ì€ ì°¸ê°€ì ì¤‘ ì‹  ëŠ¥ë ¥ìì˜ ìˆ˜ì— ë¹„ë¡€í•´ íšŒë³µ íš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.",
+		" ë‹¤ë¥¸ í”Œë ˆì´ì–´ë„ ì–¸ë°ë“œë‚˜ ê¸°íƒ€ ì¢…ì¡±ì´ ì•„ë‹ ì‹œ 50%ë¡œ íšŒë³µíš¨ê³¼ë¥¼ ë°›ìœ¼ë©°",
+		" ì–¸ë°ë“œì˜ ê²½ìš° ì§€ì†ì ìœ¼ë¡œ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´ íš¨ê³¼ë¡œ ì²´ë ¥ì´ 20% ì´í•˜ì˜€ë˜ í”Œë ˆì´ì–´ë¥¼ íšŒë³µí•´ ì¤„ ë•Œ Â§dìˆ˜í˜¸ ìŠ¤íƒÂ§fì„ ì–»ìŠµë‹ˆë‹¤.",
+		" ì„±ì—­ ì „ê°œê°€ ëë‚œ í›„ Â§3ì‹ ì„±í•œ ì¥ë§‰Â§fì„ íšë“í•˜ì—¬ ë‹¤ìŒ ì—”í‹°í‹°ì— ì˜í•œ í”¼í•´ë¥¼",
+		" ë”± í•œ ë²ˆ ë°©ì–´í•´ì£¼ê³ , ë§‰ì€ í”¼í•´ëŸ‰ì˜ 1.5ë°°ë§Œí¼ Â§eí¡ìˆ˜ ì²´ë ¥Â§fì„ ì—­íšŒë³µí•©ë‹ˆë‹¤.",
 		},
 		summarize = {
-		"¡×7È°À» ¿ìÅ¬¸¯ÇÏ¸é¡×f ÀåÀüÇÏÁö ¾Ê°í Áï½Ã ¼öÆòÀ¸·Î ¡×eÆ¯¼öÇÑ È­»ì¡×fÀ» ¹ß»çÇÕ´Ï´Ù.",
-		"ÀÌ ¡×eÅõ»çÃ¼¡×f´Â ¾îµò°¡¿¡ ÀûÁßÇÒ ¶§ Æ¨°Ü¼­ ³ª¿¡°Ô µÇµ¹¾Æ¿À¸ç,",
-		"¸ÂÈù ´ë»óÀ» ±âÀı½ÃÅµ´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ½Ã¡×f ÁÖº¯ ½Å Á¾Á· ´É·ÂÀÚÀÇ »ç¶÷¿¡ ºñ·ÊÇØ È¸º¹ È¿°ú¸¦ ¹Ş´Â",
-		"¡×b¼º¿ª¡×fÀ» ÆîÄ¨´Ï´Ù. ¡×b¼º¿ª¡×f ³»¿¡¼­ ¾ğµ¥µå Á¾Á·Àº ¹İ´ë·Î ÇÇÇØ¸¦ ¹Ş½À´Ï´Ù."
+		"Â§7í™œì„ ìš°í´ë¦­í•˜ë©´Â§f ì¥ì „í•˜ì§€ ì•Šê³  ì¦‰ì‹œ ìˆ˜í‰ìœ¼ë¡œ Â§eíŠ¹ìˆ˜í•œ í™”ì‚´Â§fì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		"ì´ Â§eíˆ¬ì‚¬ì²´Â§fëŠ” ì–´ë”˜ê°€ì— ì ì¤‘í•  ë•Œ íŠ•ê²¨ì„œ ë‚˜ì—ê²Œ ë˜ëŒì•„ì˜¤ë©°,",
+		"ë§íŒ ëŒ€ìƒì„ ê¸°ì ˆì‹œí‚µë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ ì‹œÂ§f ì£¼ë³€ ì‹  ì¢…ì¡± ëŠ¥ë ¥ìì˜ ì‚¬ëŒì— ë¹„ë¡€í•´ íšŒë³µ íš¨ê³¼ë¥¼ ë°›ëŠ”",
+		"Â§bì„±ì—­Â§fì„ í¼ì¹©ë‹ˆë‹¤. Â§bì„±ì—­Â§f ë‚´ì—ì„œ ì–¸ë°ë“œ ì¢…ì¡±ì€ ë°˜ëŒ€ë¡œ í”¼í•´ë¥¼ ë°›ìŠµë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "¼öÈ£Ãµ»ç´Â ±âÀıÀ» °Å´Â È° °ø°İ°ú Ã¼·Â È¸º¹ ÇÊµåÀÇ Àü°³·Î",
-        "¾ÈÁ¤ÀûÀ¸·Î µôÀ» ³ÖÀ» ¼ö ÀÖ´Â ¿ø°Å¸® µô·¯ÀÔ´Ï´Ù. ¼º·ÉÀÇ È­»ìÀº",
-        "¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ¼öÆòÀ¸·Î¸¸ ÀÌµ¿ÇÑ´Ù´Â °ÍÀÌ ´ÜÁ¡ÀÌÁö¸¸ ´ë½Å",
-        "È°½ÃÀ§¸¦ ´ç±æ ÇÊ¿ä ¾øÀÌ Áï¹ßÇÏ¸ç, ÀûÁß À§Ä¡¿¡¼­ ³»°Ô µ¹¾Æ¿À¸ç",
-        "1.2¹èÀÇ Ãß°¡ ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ´Ù´Â Á¡ÀÌ ¶Ù¾î³³´Ï´Ù.",
-        "¶ÇÇÑ ¼º¿ª ´É·ÂÀ¸·Î È¸º¹ ÇÊµå¸¦ Àü°³ÇØ, Ã¼·ÂÀ» È¸º¹ÇÏ°í ¾ğµ¥µå Á¾Á·¿¡°Ô",
-        "Áö¼ÓÀû ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ½À´Ï´Ù. ÀÌ·± ÀÌÀ¯·Î ¾Æ¹«ÂÉ·Ï ½Å ´É·Â",
-        "¼ÒÀ¯ÀÚµéÀ» Àß ÁöÄÑ¾ß ÇÏ´Â ¼öÈ£Ãµ»çÀÔ´Ï´Ù."
+        "ìˆ˜í˜¸ì²œì‚¬ëŠ” ê¸°ì ˆì„ ê±°ëŠ” í™œ ê³µê²©ê³¼ ì²´ë ¥ íšŒë³µ í•„ë“œì˜ ì „ê°œë¡œ",
+        "ì•ˆì •ì ìœ¼ë¡œ ë”œì„ ë„£ì„ ìˆ˜ ìˆëŠ” ì›ê±°ë¦¬ ë”œëŸ¬ì…ë‹ˆë‹¤. ì„±ë ¹ì˜ í™”ì‚´ì€",
+        "ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ìˆ˜í‰ìœ¼ë¡œë§Œ ì´ë™í•œë‹¤ëŠ” ê²ƒì´ ë‹¨ì ì´ì§€ë§Œ ëŒ€ì‹ ",
+        "í™œì‹œìœ„ë¥¼ ë‹¹ê¸¸ í•„ìš” ì—†ì´ ì¦‰ë°œí•˜ë©°, ì ì¤‘ ìœ„ì¹˜ì—ì„œ ë‚´ê²Œ ëŒì•„ì˜¤ë©°",
+        "1.2ë°°ì˜ ì¶”ê°€ í”¼í•´ë¥¼ ì…í ìˆ˜ ìˆë‹¤ëŠ” ì ì´ ë›°ì–´ë‚©ë‹ˆë‹¤.",
+        "ë˜í•œ ì„±ì—­ ëŠ¥ë ¥ìœ¼ë¡œ íšŒë³µ í•„ë“œë¥¼ ì „ê°œí•´, ì²´ë ¥ì„ íšŒë³µí•˜ê³  ì–¸ë°ë“œ ì¢…ì¡±ì—ê²Œ",
+        "ì§€ì†ì  í”¼í•´ë¥¼ ì…í ìˆ˜ ìˆìŠµë‹ˆë‹¤. ì´ëŸ° ì´ìœ ë¡œ ì•„ë¬´ìª¼ë¡ ì‹  ëŠ¥ë ¥",
+        "ì†Œìœ ìë“¤ì„ ì˜ ì§€ì¼œì•¼ í•˜ëŠ” ìˆ˜í˜¸ì²œì‚¬ì…ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "¿ø°Å¸®Àü", explain = {
-                "±âÀı ¹× ºü¸¥ °ø¼ÓÀ» °¡Áø ¼º·ÉÀÇ È­»ìÀº",
-                "¿ø°Å¸® µô¸µÀÇ ÇÙ½ÉÀÔ´Ï´Ù."
+        @Description(subject = "ì›ê±°ë¦¬ì „", explain = {
+                "ê¸°ì ˆ ë° ë¹ ë¥¸ ê³µì†ì„ ê°€ì§„ ì„±ë ¹ì˜ í™”ì‚´ì€",
+                "ì›ê±°ë¦¬ ë”œë§ì˜ í•µì‹¬ì…ë‹ˆë‹¤."
         }),
-        @Description(subject = "¸¹Àº ½Å Á¾Á·", explain = {
-                "°ÔÀÓ ³» ½Å Á¾Á·ÀÌ ¸¹À¸¸é ¸¹À»¼ö·Ï ¼º¿ªÀÇ",
-                "È¸º¹·Â ¹× ÇÇÇØ·®ÀÌ Áõ°¡ÇÕ´Ï´Ù."
+        @Description(subject = "ë§ì€ ì‹  ì¢…ì¡±", explain = {
+                "ê²Œì„ ë‚´ ì‹  ì¢…ì¡±ì´ ë§ìœ¼ë©´ ë§ì„ìˆ˜ë¡ ì„±ì—­ì˜",
+                "íšŒë³µë ¥ ë° í”¼í•´ëŸ‰ì´ ì¦ê°€í•©ë‹ˆë‹¤."
         }),
-        @Description(subject = "¾ğµ¥µå¿ÍÀÇ ÀüÅõ", explain = {
-                "¾ğµ¥µå¿¡°Ô´Â µôÀ» ÁÖ°í ³»°Ô´Â ÈúÀ» ÁÖ¸ç",
-                "¼º¿ªÀ» À¯¿ëÇÏ°Ô »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ì–¸ë°ë“œì™€ì˜ ì „íˆ¬", explain = {
+                "ì–¸ë°ë“œì—ê²ŒëŠ” ë”œì„ ì£¼ê³  ë‚´ê²ŒëŠ” íì„ ì£¼ë©°",
+                "ì„±ì—­ì„ ìœ ìš©í•˜ê²Œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "°íÀú Â÷ÀÌ°¡ ½ÉÇÑ ÁöÇü", explain = {
-                "¼öÈ£Ãµ»çÀÇ ¼º·ÉÀÇ È­»ìÀº ¿ÀÁ÷ ¼öÆòÀ¸·Î¸¸ ÀÌµ¿ÇØ",
-                "´Ù½Ã Æ¨°Ü µ¹¾Æ¿À±â±îÁö y¹æÇâÀ¸·Î ÀÌµ¿ÇÒ ¼ö ¾ø½À´Ï´Ù.",
-                "´ë»ó°ú ³ªÀÇ ³ôÀÌ Â÷ÀÌ´Â ¼öÈ£Ãµ»ç¿¡°Ô Å« °í³­ÀÔ´Ï´Ù."
+        @Description(subject = "ê³ ì € ì°¨ì´ê°€ ì‹¬í•œ ì§€í˜•", explain = {
+                "ìˆ˜í˜¸ì²œì‚¬ì˜ ì„±ë ¹ì˜ í™”ì‚´ì€ ì˜¤ì§ ìˆ˜í‰ìœ¼ë¡œë§Œ ì´ë™í•´",
+                "ë‹¤ì‹œ íŠ•ê²¨ ëŒì•„ì˜¤ê¸°ê¹Œì§€ yë°©í–¥ìœ¼ë¡œ ì´ë™í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+                "ëŒ€ìƒê³¼ ë‚˜ì˜ ë†’ì´ ì°¨ì´ëŠ” ìˆ˜í˜¸ì²œì‚¬ì—ê²Œ í° ê³ ë‚œì…ë‹ˆë‹¤."
         }),
-        @Description(subject = "È¸º¹ ÇÊµå Àü°³", explain = {
-                "50%·Î °¨¼ÒÇÏ±ä ÇÏÁö¸¸ ´Ù¸¥ ÇÃ·¹ÀÌ¾îµµ È¸º¹ÇÒ ¼ö",
-                "ÀÖ´Ù´Â Á¡À» ÁÖÀÇÇØ¾ß ÇÕ´Ï´Ù."
+        @Description(subject = "íšŒë³µ í•„ë“œ ì „ê°œ", explain = {
+                "50%ë¡œ ê°ì†Œí•˜ê¸´ í•˜ì§€ë§Œ ë‹¤ë¥¸ í”Œë ˆì´ì–´ë„ íšŒë³µí•  ìˆ˜",
+                "ìˆë‹¤ëŠ” ì ì„ ì£¼ì˜í•´ì•¼ í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.FOUR, survival = Level.THREE, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.HARD)
 
@@ -131,6 +138,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	}
 	
 	private static final Set<Material> bows;
+	private boolean holyshield = false;
 	private final Set<Participant> gods = new HashSet<>();
 	private final Set<Player> healed = new HashSet<>();
 	private Bullet bullet = null;
@@ -138,6 +146,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	private AbilityTimer reload = null;
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final ActionbarChannel ac = newActionbarChannel();
+	private final ActionbarChannel holyshieldac = newActionbarChannel();
 	private static final RGB COLOR = RGB.of(254, 252, 206);
 	private static final RGB COLOR2 = RGB.of(206, 237, 244);
 	private int stack = 0;
@@ -146,6 +155,21 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	private int sound = 0;
 	private static final Note F = Note.natural(0, Tone.F), FS = Note.sharp(0, Tone.F), HF = Note.natural(1, Tone.F), HGS = Note.sharp(1, Tone.G), HAS = Note.sharp(1, Tone.A), HC = Note.natural(1, Tone.C), HCS = Note.sharp(1, Tone.C),
 			HDS = Note.sharp(1, Tone.D), HFS = Note.sharp(2, Tone.F);
+	private static final RGB color = RGB.of(150, 254, 254);
+	private static final Circle circle = Circle.of(0.7, 30);
+	
+	private static final Points LAYER = Points.of(0.175, new boolean[][]{
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+		{true, true, true, true, true, true},
+		{true, true, true, true, true, true},
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+		{false, false, true, true, false, false},
+	});
 
 	static {
 		if (MaterialX.CROSSBOW.isSupported()) {
@@ -158,7 +182,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	checkgod.start();
-	    	ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+	    	ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
 	    }
 	}
 	
@@ -282,17 +306,21 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 							Mix mix = (Mix) ab;
 							final Mix myAbility = (Mix) getParticipant().getAbility();
 							if (GuardianAngel.this.equals(myAbility.getFirst())) {
-								if (player.equals(getPlayer()) || mix.getFirst().getSpecies().equals(Species.GOD) || mix.getFirst().getSpecies().equals(Species.SPECIAL)) SoundLib.CHIME.playInstrument(player, note);
-								if (mix.getFirst().getSpecies().equals(Species.DEMIGOD)) SoundLib.PIANO.playInstrument(player, note);
-								if (mix.getFirst().getSpecies().equals(Species.HUMAN)) SoundLib.BELL.playInstrument(player, note);
-								if (mix.getFirst().getSpecies().equals(Species.ANIMAL)) SoundLib.GUITAR.playInstrument(player, note);
-								if (mix.getFirst().getSpecies().equals(Species.UNDEAD)) SoundLib.BASS_GUITAR.playInstrument(player, note);
+								if (mix.getFirst() != null) {
+									if (player.equals(getPlayer()) || mix.getFirst().getSpecies().equals(Species.GOD) || mix.getFirst().getSpecies().equals(Species.SPECIAL)) SoundLib.CHIME.playInstrument(player, note);
+									if (mix.getFirst().getSpecies().equals(Species.DEMIGOD)) SoundLib.PIANO.playInstrument(player, note);
+									if (mix.getFirst().getSpecies().equals(Species.HUMAN)) SoundLib.BELL.playInstrument(player, note);
+									if (mix.getFirst().getSpecies().equals(Species.ANIMAL)) SoundLib.GUITAR.playInstrument(player, note);
+									if (mix.getFirst().getSpecies().equals(Species.UNDEAD)) SoundLib.BASS_GUITAR.playInstrument(player, note);	
+								} else SoundLib.CHIME.playInstrument(player, note);
 							} else if (GuardianAngel.this.equals(myAbility.getSecond())) {
-								if (player.equals(getPlayer()) || mix.getSecond().getSpecies().equals(Species.GOD)) SoundLib.CHIME.playInstrument(player, note);
-								if (mix.getSecond().getSpecies().equals(Species.DEMIGOD)) SoundLib.PIANO.playInstrument(player, note);
-								if (mix.getSecond().getSpecies().equals(Species.HUMAN)) SoundLib.BELL.playInstrument(player, note);
-								if (mix.getSecond().getSpecies().equals(Species.ANIMAL)) SoundLib.GUITAR.playInstrument(player, note);
-								if (mix.getSecond().getSpecies().equals(Species.UNDEAD)) SoundLib.BASS_GUITAR.playInstrument(player, note);
+								if (mix.getSecond() != null) {
+									if (player.equals(getPlayer()) || mix.getSecond().getSpecies().equals(Species.GOD)) SoundLib.CHIME.playInstrument(player, note);
+									if (mix.getSecond().getSpecies().equals(Species.DEMIGOD)) SoundLib.PIANO.playInstrument(player, note);
+									if (mix.getSecond().getSpecies().equals(Species.HUMAN)) SoundLib.BELL.playInstrument(player, note);
+									if (mix.getSecond().getSpecies().equals(Species.ANIMAL)) SoundLib.GUITAR.playInstrument(player, note);
+									if (mix.getSecond().getSpecies().equals(Species.UNDEAD)) SoundLib.BASS_GUITAR.playInstrument(player, note);	
+								} else SoundLib.CHIME.playInstrument(player, note);
 							}
 						} else {
 							if (player.equals(getPlayer()) || ab.getSpecies().equals(Species.GOD)) SoundLib.CHIME.playInstrument(player, note);
@@ -306,7 +334,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 			}
 			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, currentRadius, mainpredicate)) {
 				PotionEffects.GLOWING.addPotionEffect(player, 4, 0, true);
-				double health = Math.min(0.01 + (gods.size() * 0.01), 0.1);
+				double health = Math.min(0.02 + (gods.size() * 0.02), 0.2);
 				if (getGame().getParticipant(player.getUniqueId()).hasAbility()) {
 					AbilityBase ab = getGame().getParticipant(player.getUniqueId()).getAbility();
 					if (ab.getClass().equals(Mix.class)) {
@@ -326,7 +354,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		    						Healths.setHealth(player, (health / 2) + player.getHealth());
 		    						if (!healed.contains(player) && player.getHealth() <= (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 5)) {
 		    							stack++;
-		    							ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+		    							ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
 		    							healed.add(player);
 		    						}
 		    					}
@@ -347,7 +375,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		    						Healths.setHealth(player, (health / 2) + player.getHealth());
 		    						if (!healed.contains(player) && player.getHealth() <= (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 5)) {
 		    							stack++;
-		    							ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+		    							ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
 		    							healed.add(player);
 		    						}
 		    					}
@@ -369,7 +397,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	    						Healths.setHealth(player, (health / 2) + player.getHealth());
 	    						if (!healed.contains(player) && player.getHealth() <= (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 5)) {
 	    							stack++;
-	    							ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+	    							ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
 	    							healed.add(player);
 	    						}
 	    					}
@@ -391,13 +419,15 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 			sound = 0;
 			center = null;
 			healed.clear();
+			holyshield = true;
+			holyshieldac.update("Â§bâœ");
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1);
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"cooldown", 80, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 95, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -411,7 +441,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"duration", 10, "# Áö¼Ó ½Ã°£") {
+			"duration", 10, "# ì§€ì† ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -444,13 +474,13 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 							new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection().setY(0).normalize(), offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE), 10, COLOR).start();
 						}
 					} else {
-						getPlayer().sendMessage("È­»ìÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+						getPlayer().sendMessage("í™”ì‚´ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
 					}
 				} else {
-					getPlayer().sendMessage("¡×bÀçÀåÀü ¡×fÁßÀÔ´Ï´Ù.");
+					getPlayer().sendMessage("Â§bì¬ì¥ì „ Â§fì¤‘ì…ë‹ˆë‹¤.");
 				}
 			} else {
-				getPlayer().sendMessage("¡×b¼º·ÉÀÇ È­»ì¡×fÀÌ È¸¼öµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§bì„±ë ¹ì˜ í™”ì‚´Â§fì´ íšŒìˆ˜ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 			}
 		}
 	}
@@ -458,6 +488,60 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onEntityShootBow(EntityShootBowEvent e) {
 		e.setCancelled(true);
+	}
+	
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	private void onEntityDamageByEntitiy(EntityDamageByEntityEvent e) {
+		if (holyshield && e.getEntity().equals(getPlayer())) {
+			float yellowheart = NMS.getAbsorptionHearts(getPlayer());
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (!getPlayer().equals(projectile.getShooter())) {
+					e.setCancelled(true);
+					SoundLib.ENTITY_SPLASH_POTION_BREAK.playSound(getPlayer().getLocation(), 1, 1.15f);
+					if (yellowheart > 0) {
+						NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getDamage(DamageModifier.ABSORPTION) * -1.5)));
+					} else {
+						NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getFinalDamage() * 1.5)));	
+					}
+					SoundLib.ENTITY_EVOKER_PREPARE_SUMMON.playSound(getPlayer().getLocation(), 1, 2);
+		    		final Location headLocation = getPlayer().getEyeLocation().clone().add(0, 1.5, 0);
+		    		final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+					final float yaw = getPlayer().getLocation().getYaw();
+					for (Location loc : LAYER.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
+						ParticleLib.REDSTONE.spawnParticle(loc, color);
+					}
+					LAYER.rotateAroundAxisY(yaw);
+					for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+						ParticleLib.TOTEM.spawnParticle(loc.clone().add(0, 2, 0), 0, 0, 0, 1, 0);
+					}
+					holyshield = false;
+					holyshieldac.update(null);
+				}
+			} else {
+				e.setCancelled(true);
+				SoundLib.ENTITY_SPLASH_POTION_BREAK.playSound(getPlayer().getLocation(), 1, 1.15f);
+				if (yellowheart > 0) {
+					Bukkit.broadcastMessage("ë”œ: " + e.getDamage(DamageModifier.ABSORPTION));
+					NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getDamage(DamageModifier.ABSORPTION) * -1.5)));
+				} else {
+					NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getFinalDamage() * 1.5)));	
+				}
+				SoundLib.ENTITY_EVOKER_PREPARE_SUMMON.playSound(getPlayer().getLocation(), 1, 2);
+	    		final Location headLocation = getPlayer().getEyeLocation().clone().add(0, 1.5, 0);
+	    		final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+				final float yaw = getPlayer().getLocation().getYaw();
+				for (Location loc : LAYER.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
+					ParticleLib.REDSTONE.spawnParticle(loc, color);
+				}
+				LAYER.rotateAroundAxisY(yaw);
+				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+					ParticleLib.TOTEM.spawnParticle(loc.clone().add(0, 2, 0), 0, 0, 0, 1, 0);
+				}
+				holyshield = false;
+				holyshieldac.update(null);
+			}
+		}
 	}
 	
 	public class Bullet extends AbilityTimer {
@@ -701,7 +785,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 				@Override
 				protected void run(int count) {
 					progressBar.step();
-					actionbarChannel.update("ÀçÀåÀü: " + progressBar.toString());
+					actionbarChannel.update("ì¬ì¥ì „: " + progressBar.toString());
 				}
 
 				@Override

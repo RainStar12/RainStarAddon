@@ -1,4 +1,4 @@
-package RainStarAbility;
+package RainStarSynergy;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -37,16 +38,18 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -55,21 +58,20 @@ import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "주인공", rank = Rank.S, species = Species.HUMAN, explain = {
-		"당신은 이 능력자 전쟁의 §e주인공§f입니다.",
-		"체력이 적어 §c위기 상태§f가 될 때 다양한 §a주인공 버프§f를 받습니다.",
-		"또한 적을 처치할 때마다 매번 §d성장§f합니다.",
-		"§8[§7HIDDEN§8] §c이야기 쟁탈§f: 자, 이제 누가 주인공이지?"
+@AbilityManifest(name = "클리셰", rank = Rank.L, species = Species.HUMAN, explain = {
+		"§7패시브 §8- §b주인공 버프§f: 체력이 적어 §c위기 상태§f가 될 때 다양한 §b주인공 버프§f를",
+		" 받으며, 적을 처치할 때마다 매번 §d성장§f합니다.",
+		"§7패시브 §8- §a해치웠나?§f: 치명적 피해를 입을 때, §a불사의 토템 효과§f가 발동합니다.",
+		" §a불사의 토템§f은 $[PERIOD]초마다 재충전됩니다."
 		})
 
-public class Protagonist extends AbilityBase {
-	
-	public Protagonist(Participant participant) {
+public class Cliche extends Synergy {
+
+	public Cliche(Participant participant) {
 		super(participant);
 	}
 	
@@ -77,6 +79,7 @@ public class Protagonist extends AbilityBase {
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 20, 0, true, false);
 	private Set<Projectile> projectiles = new HashSet<>();
 	private final double firstMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * PERIOD.getValue() : PERIOD.getValue());
 	
 	private static final Set<Material> swords;
 	
@@ -88,6 +91,16 @@ public class Protagonist extends AbilityBase {
 		}
 	}
 
+	public static final SettingObject<Integer> PERIOD = synergySettings.new SettingObject<Integer>(Cliche.class,
+			"period", 60, "# 불사의 토템 재충전 시간", "# 쿨타임 감소가 50%까지 적용됩니다.") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
@@ -125,6 +138,14 @@ public class Protagonist extends AbilityBase {
 			return false;
 		}
 	};
+	
+    private final AbilityTimer periodtimer = new AbilityTimer(period * 20) {
+    	
+    	@Override
+		public void run(int count) {
+    	}
+    	
+    }.setPeriod(TimeUnit.TICKS, 1).register();
 	
     private final AbilityTimer attackcool = new AbilityTimer(40) {
     	
@@ -183,6 +204,16 @@ public class Protagonist extends AbilityBase {
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
     
+	@SubscribeEvent
+	public void onEntityResurrectEvent(EntityResurrectEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (!periodtimer.isRunning()) {
+				e.setCancelled(false);
+				periodtimer.start();
+			}
+		}
+	}
+    
 	@SubscribeEvent(onlyRelevant = true)
 	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
 		if (bufflevel >= 3) {
@@ -194,30 +225,8 @@ public class Protagonist extends AbilityBase {
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (e.getEntity().getKiller() != null) {
 			if (e.getEntity().getKiller().equals(getPlayer()) && predicate.test(e.getEntity())) {
-				Player player = e.getEntity();
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + (firstMaxHealth * 0.1));
-				AbilityBase ab = getGame().getParticipant(player).getAbility();
-				if (bufflevel >= 3) {
-					if (ab.getClass().equals(Mix.class)) {
-						Mix mix = (Mix) ab;
-						if (mix.hasAbility() && !mix.hasSynergy()) {
-							if (mix.getFirst().getClass().equals(Protagonist.class) || mix.getSecond().getClass().equals(Protagonist.class)) {
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f당신과는 다른 이야기의 주인공을 만나 §a주인공 버프§f를 받고 승리하였습니다.");
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c이야기 쟁탈§f을 달성하였습니다.");
-				    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-				    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));
-							}
-						}
-					} else if (ab.getClass().equals(Protagonist.class)) {
-						getPlayer().sendMessage("§8[§7HIDDEN§8] §f당신과는 다른 이야기의 주인공을 만나 §a주인공 버프§f를 받고 승리하였습니다.");
-		    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c이야기 쟁탈§f을 달성하였습니다.");
-		    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-		    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-		    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));
-					}	
-				}
 			}	
 		}
 	}
@@ -243,13 +252,13 @@ public class Protagonist extends AbilityBase {
     		switch(bufflevel) {
     		case 2:
     		case 3:
-    			e.setAmount(e.getAmount() * 1.15);
+    			e.setAmount(e.getAmount() * 1.25);
     			break;
     		case 4:
-    			e.setAmount(e.getAmount() * 1.35);
+    			e.setAmount(e.getAmount() * 1.5);
     			break;
     		case 5:
-    			e.setAmount(e.getAmount() * 1.5);
+    			e.setAmount(e.getAmount() * 2);
     			break;
     		}
     	}
@@ -272,13 +281,13 @@ public class Protagonist extends AbilityBase {
     			break;
     		case 2:
     		case 3:
-    			e.setDamage(e.getDamage() * 0.85);
+    			e.setDamage(e.getDamage() * 0.8);
     			break;
     		case 4:
-    			e.setDamage(e.getDamage() * 0.75);
+    			e.setDamage(e.getDamage() * 0.7);
     			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 0.7);
+    			e.setDamage(e.getDamage() * 0.65);
     			break;
     		}
     	}

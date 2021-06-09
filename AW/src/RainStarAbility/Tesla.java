@@ -270,7 +270,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			Projectile projectile = (Projectile) e.getDamager();
 			if (getPlayer().equals(projectile.getShooter()) && !player.equals(getPlayer())) {
 				if (predicate.test(player)) {
-					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 8));
+					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 7));
 					e.setDamage(0);	
 				}
 			}
@@ -279,7 +279,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			Player player = (Player) e.getEntity();
 			if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK) && !player.equals(getPlayer())) {
 				if (predicate.test(player)) {
-					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 8));
+					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 7));
 					e.setDamage(0);	
 				}
 			}

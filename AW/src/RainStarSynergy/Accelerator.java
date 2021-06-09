@@ -5,8 +5,12 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,6 +18,8 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -29,7 +35,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -40,26 +45,21 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
-import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "액셀러레이터", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향으로 짧게 대시합니다.",
-		" 대시 도중엔 무적 및 타게팅 불능이 되고, 스태미나를 2 소모합니다.",
-		" 스태미나는 5초마다 1씩 회복하며 15까지 보유 가능합니다.",
-		" 또한 낙하 대미지를 받지 않습니다.",
-		"§7공격 후 대시 §8- §e광속§f: 다른 플레이어를 근접 공격 후 0.15초 내에",
-		" 대시하였을 경우 최종 타격을 가한 대상에게 4초간 혼란 및 출혈 상태를 부여합니다.",
-		" 혼란 상태의 대상은 매 0.5초마다 무작위의 방향으로 튕겨나갑니다.",
-		" 또한 스태미나 1을 즉시 회복합니다.",
-		"§7패시브 §8- §b대시 잔상§f: 대시로 지나친 자리에 대시 잔상이 남아",
-		" 닿는 플레이어에게 원거리 피해를 입힙니다. 만약 대상이 혼란 도중이라면,",
-		" 대신 마법 피해를 주고 스태미나 1을 즉시 회복합니다.",
-		" 또한 대시 잔상이 여러 번 피해를 줄 수 있습니다."})
+		"§7패시브 §8- §b스태미나§f: 스태미나를 회복하여 총 5초에 1 게이지가 찹니다.",
+		" 스태미나는 전투 도중에는 더 적게 차오르고, 더 많이 소모합니다.",
+		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. §c소모 §7: §b3",
+		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
+		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. §d회복 §7: §b0.1",
+		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 4초간",
+		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. §d회복 §7: §b0.5"})
 
 public class Accelerator extends Synergy {
 
@@ -68,19 +68,19 @@ public class Accelerator extends Synergy {
 	}
 	
 	private static final Set<Material> swords;
-	private int stack = 15;
+	private double stamina = 20;
+	private BossBar bossBar = null;
 	
 	private Location startLocation;
 	private Participant target;
 	private static final Vector zerov = new Vector(0, 0, 0);
-	private ActionbarChannel ac = newActionbarChannel();
 	int timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 5 : 5);
 	private PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 3, 0, true, false);
 	private ItemStack[] armors;
 	
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	stackupdate.start();
+	    	staminaupdater.start();
 	      } 
 	}
 	
@@ -109,6 +109,14 @@ public class Accelerator extends Synergy {
 		}
 	};
 	
+	public void staminaUse(double value) {
+		stamina = Math.max(0, stamina - value);
+	}
+	
+	public void staminaGain(double value) {
+		stamina = Math.min(20, stamina + value);
+	}
+	
 	private final AbilityTimer attacked = new AbilityTimer(3) {
 		
 		@Override
@@ -117,17 +125,38 @@ public class Accelerator extends Synergy {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer stackupdate = new AbilityTimer() {
+	private final AbilityTimer staminaupdater = new AbilityTimer() {
 		
-		@Override
+    	@Override
+    	public void onStart() {
+    		bossBar = Bukkit.createBossBar("스태미나", BarColor.BLUE, BarStyle.SEGMENTED_20);
+    		bossBar.setProgress(stamina * 0.05);
+    		bossBar.addPlayer(getPlayer());
+    		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
+    	}
+    	
+    	@Override
 		public void run(int count) {
-			if (stack < 15) {
-				stack++;
-				ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
-			}
+    		if (timer == 0) {
+    			staminaGain(0.75);
+    			bossBar.setProgress(stamina * 0.05);
+    		} else {
+    			staminaGain((double) 1 / (timer * 20));
+    			bossBar.setProgress(stamina * 0.05);	
+    		}
+    	}
+    	
+		@Override
+		public void onEnd() {
+			bossBar.removeAll();
+		}
+
+		@Override
+		public void onSilentEnd() {
+			bossBar.removeAll();
 		}
 		
-	}.setPeriod(TimeUnit.SECONDS, timer).register();
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private final AbilityTimer dashing = new AbilityTimer(1) {
 		
@@ -138,10 +167,9 @@ public class Accelerator extends Synergy {
 	    	getPlayer().getInventory().setArmorContents(null);
 			getParticipant().attributes().TARGETABLE.setValue(false);
 	    	if (attacked.isRunning()) {
-		   		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 4);
-		    	Confusion.apply(target, TimeUnit.SECONDS, 4, 10);
-		    	stack = Math.min((stack + 1), 15);
-		    	ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
+		   		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+		    	Confusion.apply(target, TimeUnit.SECONDS, 2, 10);
+		    	staminaGain(0.5);
 			}
 	   	}
 	 
@@ -185,12 +213,11 @@ public class Accelerator extends Synergy {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (stack >= 2) {
+    			if (stamina >= 3) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
-            		stack = (stack - 2);
+            		staminaUse(3);
                 	dashing.start();
-        			ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
         		} else {
         			getPlayer().sendMessage("§f[§c!§f] §c스태미나가 부족합니다.");
         		}	
@@ -226,6 +253,20 @@ public class Accelerator extends Synergy {
     	onEntityDamage(e);
     }
     
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && staminaupdater.isRunning()) {
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+		}
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+		}
+	}
+    
     public class AfterImage extends AbilityTimer {
     	
     	Set<Damageable> damagedcheck = new HashSet<>();
@@ -253,9 +294,8 @@ public class Accelerator extends Synergy {
     				if (p instanceof Player) {
     					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
             				if (count < 55) {
-            				Damages.damageMagic(p, getPlayer(), true, 3);
-        			   		stack = Math.min((stack + 1), 15);
-        			    	ac.update(Strings.repeat("§b⋙", stack).concat(Strings.repeat("§f⋙", 15 - stack)));
+            				Damages.damageMagic(p, getPlayer(), true, 1);
+            				staminaGain(0.1);
 	        			    	new AbilityTimer(10) {
 	        			    			
 	        			    		@Override
@@ -276,7 +316,8 @@ public class Accelerator extends Synergy {
 	        			    	}.setPeriod(TimeUnit.TICKS, 1);
             				}
             			} else {
-            				Damages.damageMagic(p, getPlayer(), true, 3);
+            				Damages.damageMagic(p, getPlayer(), true, 1);
+            				staminaGain(0.1);
         			    	new AbilityTimer(10) {
     			    			
         			    		@Override
@@ -297,7 +338,8 @@ public class Accelerator extends Synergy {
         			    	}.setPeriod(TimeUnit.TICKS, 1);
             			}
     				} else {
-        				Damages.damageMagic(p, getPlayer(), true, 3);
+        				Damages.damageMagic(p, getPlayer(), true, 1);
+        				staminaGain(0.1);
     			    	new AbilityTimer(10) {
 			    			
     			    		@Override
