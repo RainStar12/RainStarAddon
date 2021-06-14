@@ -51,10 +51,10 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "베르세르크", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"철괴 우클릭 시 초당 체력 한 칸 반을 §3소모§f하여 체력이 반 칸 남을 때까지",
+		"철괴 우클릭 시 초당 최대 체력의 10%를 §3소모§f하여 체력이 반 칸 남을 때까지",
 		"§c광전사 모드§f가 되어 §b무적 및 이속, 공속 증가 효과§f를 받고 근접 공격만 가능하며,",
 		"주는 모든 피해량이 내 남은 체력에 반비례하여 §c추가 피해§f를 입힙니다.",
-		"이때 누군가를 처치할 시 체력을 $[HEAL_AMOUNT]만큼 §d회복§f합니다. $[COOLDOWN]",
+		"이때 누군가를 처치할 시 체력을 최대 체력의 1/3만큼 §d회복§f합니다. $[COOLDOWN]",
 		"§c광전사 모드§f가 해제될 때 §d회복력§f이 빨라지고, §c광전사 모드§f 돌입 때의",
 		"체력으로 회복되기 전까지 이동력과 공격 속도, 공격력이 급감합니다."
 		})
@@ -77,16 +77,6 @@ public class Berserk extends Synergy implements ActiveHandler {
 		@Override
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
-		}
-
-	};
-	
-	public static final SettingObject<Integer> HEAL_AMOUNT = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"heal-amount", 10, "# 회복량(1당 반칸)") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 1;
 		}
 
 	};
@@ -125,7 +115,6 @@ public class Berserk extends Synergy implements ActiveHandler {
 	};
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
-	private final int healamount = HEAL_AMOUNT.getValue();
 	private final int maxDamage = MAX_DAMAGE.getValue();
 	private final int minDamage = MIN_DAMAGE.getValue();
 	private boolean jumped = false;
@@ -146,13 +135,6 @@ public class Berserk extends Synergy implements ActiveHandler {
 		} else {
 			bows = ImmutableSet.of(MaterialX.BOW.getMaterial());
 		}
-	}
-	
-	protected void onUpdate(Update update) {
-	    if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
-	    	getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).getDefaultValue());
-	    	getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getDefaultValue());
-	    } 
 	}
 	
 	@Override
@@ -245,7 +227,8 @@ public class Berserk extends Synergy implements ActiveHandler {
 					
 					@Override
 					protected void onEnd() {
-						Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+						double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+						Healths.setHealth(getPlayer(), getPlayer().getHealth() + (maxHealth / 3));
 						SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.5f);	
 					}
 					
@@ -299,7 +282,7 @@ public class Berserk extends Synergy implements ActiveHandler {
     			stop(false);
     		} else {
     			if (count % 10 == 0) {
-                	getPlayer().setHealth(Math.max(1, getPlayer().getHealth() - 1.5));
+                	getPlayer().setHealth(Math.max(1, getPlayer().getHealth() - (maxHealth / 20)));
                 	if (getPlayer().getHealth() <= 4.5) {
                 		SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 0.75f, 1.3f);
                 		SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 0.75f, 1f);
@@ -359,10 +342,11 @@ public class Berserk extends Synergy implements ActiveHandler {
     		if (getPlayer().getHealth() >= startHealth) {
     			stop(false);
     		} else {
-    			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.075, RegainReason.REGEN);
+    			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+    			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), maxHealth * 0.0025, RegainReason.REGEN);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-	            	Healths.setHealth(getPlayer(), getPlayer().getHealth() + 0.075);		
+	            	Healths.setHealth(getPlayer(), getPlayer().getHealth() + maxHealth * 0.0025);		
 				}
     		}
 			

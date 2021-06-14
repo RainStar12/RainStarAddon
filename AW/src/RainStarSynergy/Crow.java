@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -338,8 +339,15 @@ public class Crow extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void onStart() {
-			ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, new MaterialData(Material.GRAVEL));
-			ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, new MaterialData(Material.DRAGON_EGG));
+			if (ServerVersion.getVersion() >= 13) {
+				BlockData gravel = MaterialX.GRAVEL.getMaterial().createBlockData();
+				BlockData dragonegg = MaterialX.DRAGON_EGG.getMaterial().createBlockData();
+				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, gravel);
+				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, dragonegg);
+			} else {
+				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, new MaterialData(Material.GRAVEL));
+				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, new MaterialData(Material.DRAGON_EGG));	
+			}
 			SoundLib.ENTITY_PIG_SADDLE.playSound(getPlayer().getLocation(), 1, 0.85f);
 			bossBar1 = Bukkit.createBossBar("¡×7¼¨µµ¿ì ½ºÅÜ", BarColor.WHITE, BarStyle.SOLID);
 			bossBar1.setProgress(1);

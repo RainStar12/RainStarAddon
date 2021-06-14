@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -36,6 +37,8 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -212,7 +215,12 @@ public class Recall extends Synergy {
     	@Override
     	public void onStart() {
     		length = projectile.getVelocity().length();
-			ParticleLib.FALLING_DUST.spawnParticle(projectile.getLocation().clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
+    		if (ServerVersion.getVersion() >= 13) {
+    			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
+    			ParticleLib.FALLING_DUST.spawnParticle(projectile.getLocation().clone(), 0.1, 0.1, 0.1, 15, 0, diamond);
+    		} else {
+    			ParticleLib.FALLING_DUST.spawnParticle(projectile.getLocation().clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
+    		}
 			SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(projectile.getLocation(), 1.5f, 0.75f);
     	}
     	

@@ -2,6 +2,7 @@ package RainStarEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -22,6 +23,8 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
@@ -75,8 +78,15 @@ public class Chill extends AbstractGame.Effect implements Listener {
 				}
 			}
 		}
-		ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, new MaterialData(Material.ICE));
-		ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, new MaterialData(Material.DIAMOND_BLOCK));
+		if (ServerVersion.getVersion() >= 13) {
+			BlockData ice = MaterialX.ICE.getMaterial().createBlockData();
+			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
+			ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, ice);
+			ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, diamond);
+		} else {
+			ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, new MaterialData(Material.ICE));
+			ParticleLib.FALLING_DUST.spawnParticle(participant.getPlayer().getLocation(), 0.2, 1, 0.2, 1, 0, new MaterialData(Material.DIAMOND_BLOCK));	
+		}
 		super.run(count);
 	}
 

@@ -100,7 +100,7 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "마왕", rank = Rank.L, species = Species.OTHERS, explain = {
-		"§7최초 부여 §8- §c강림§f: 마왕 능력을 배정받을 때로부터 30초간 §3차원의 너머§f 속에서",
+		"§7최초 부여 §8- §c강림§f: 마왕 능력을 배정받을 때로부터 45초간 §3차원의 너머§f 속에서",
 		" 자유롭게 이동할 수 있습니다. 도중에 빙의를 시도할 경우 대상 위에서 강림합니다.",
 		" 강림 시 주변 일대를 15초간 §7어둠 지대§f로 만들어 지대 위 플레이어를 지속적으로",
 		" 실명시키고 본인은 비행하며 §7어둠 지대§f 위에서 §8암전§f 효과가 상시 발동합니다.",
@@ -171,7 +171,7 @@ public class DemonLord extends Synergy {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(DemonLord.class,
-			"cooldown", 60, "# 시공간 절단 쿨타임",
+			"cooldown", 30, "# 시공간 절단 쿨타임",
 			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -348,7 +348,7 @@ public class DemonLord extends Synergy {
 		}
 	}
 	
-	private final AbilityTimer dimensionBeyond = new AbilityTimer(TaskType.REVERSE, 600) {
+	private final AbilityTimer dimensionBeyond = new AbilityTimer(TaskType.REVERSE, 900) {
 		
 		@Override
 		public void onStart() {
@@ -375,13 +375,13 @@ public class DemonLord extends Synergy {
 	   		if (getPlayer().getSpectatorTarget() != null) {
 		   		getY = getPlayer().getSpectatorTarget().getLocation().getY() + 3;
 		   		getPlayer().teleport(getPlayer().getSpectatorTarget().getLocation().clone().add(0, 250, 0).setDirection(new Vector(0, 0, 0)), TeleportCause.PLUGIN);	
-				getPlayer().setGameMode(GameMode.SURVIVAL);
 		   		descending.start();
 	   		}
+	   		getPlayer().setGameMode(GameMode.SURVIVAL);
 			dimensionac.update(null);
 	   	}
 	
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private final AbilityTimer descending = new AbilityTimer() {
 		

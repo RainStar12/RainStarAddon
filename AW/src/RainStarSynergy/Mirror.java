@@ -84,7 +84,7 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> REGEN = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"regen", 25, "# 회복량", "# 단위: %") {
+			"regen", 12, "# 회복량", "# 단위: %") {
 		
 		@Override
 		public boolean condition(Integer value) {

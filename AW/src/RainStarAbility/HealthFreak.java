@@ -62,7 +62,7 @@ public class HealthFreak extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> MAX_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "max-damage", 7,
+			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "max-damage", 5,
 			"# 최대 대미지",
 			"# 최대 대미지가 늘어나는 만큼",
 			"# 회복 속도도 같이 늘어납니다.") {
@@ -91,7 +91,6 @@ public class HealthFreak extends AbilityBase {
 		}
 		if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
 			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(movespeed);
-			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getDefaultValue());
 		}
 	}
 	
