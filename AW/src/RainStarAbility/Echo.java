@@ -126,7 +126,7 @@ public class Echo extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(Line.vectorAt(getPlayer().getLocation(), target.getPlayer().getLocation(), 30, count - 1)), color);
+			ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(Line.vectorAt(getPlayer().getLocation(), target.getPlayer().getLocation(), 3, count - 1)), color);
 		}
 		
 		@Override

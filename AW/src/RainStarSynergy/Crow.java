@@ -77,6 +77,7 @@ import kotlin.ranges.RangesKt;
 		name = "크로우", rank = Rank.L, species = Species.ANIMAL, explain = {
 		"§7철괴 우클릭 §c- §8섀도우 스텝§f: 순간 §b무적 및 투명, 타게팅 불능 상태§f가 되어",
 		" 이동 속도가 매우 높아지고 다른 생명체를 지나칠 수 있습니다. $[COOLDOWN]",
+		" 이때 주변에 그림자 장막이 깔려 주변 7.5칸 내 플레이어를 매우 느리게 만듭니다.",
 		" 이후 지속시간이 끝나면 지나친 생명체들에게 강력한 피해를 입히고 §c출혈§f시키며,",
 		" 피해 입힌 대상 한 명당 §c추가 공격력§f을 §c2§f씩 최대 §c12§f까지 획득할 수 있습니다.",
 		" 이 §c추가 공격력§f은 지속적으로 §c0§f이 될 때까지 감소합니다.",
@@ -156,6 +157,9 @@ public class Crow extends Synergy implements ActiveHandler {
 	private static final Circle circle = Circle.of(0.25, 50);
 	private final Crescent crescent = Crescent.of(1.25, 10);
 	
+	private static final RGB color1 = RGB.of(12, 90, 107);
+	private static final Circle circle1 = Circle.of(10, 120);
+	
 	protected void onUpdate(AbilityBase.Update update) {
 		if (update == AbilityBase.Update.RESTRICTION_SET || update == AbilityBase.Update.ABILITY_DESTROY) {
 			getPlayer().setSprinting(false);
@@ -166,9 +170,9 @@ public class Crow extends Synergy implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer()) && shadowstep.isRunning()) {
-			for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, getPlayer(), predicate)) {
-				damagedEntity.add(livingEntity);
-				onetimeEntity.add(livingEntity);
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 2, 2, predicate)) {
+				if (!damagedEntity.contains(livingEntity)) damagedEntity.add(livingEntity);
+				if (!onetimeEntity.contains(livingEntity)) onetimeEntity.add(livingEntity);
 				SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), (float) 0.5, 2);
 				if (!(livingEntity instanceof Player)) livingEntityLocation.put(livingEntity, livingEntity.getLocation());
 				new BukkitRunnable() {
@@ -362,8 +366,14 @@ public class Crow extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 10, 10, predicate)) {
+				if (!livingEntity.equals(getPlayer())) livingEntity.setVelocity(livingEntity.getVelocity().multiply(0.35));
+			}
 			if (count % 2 == 0) {
-				log.add(getPlayer().getLocation());	
+				log.add(getPlayer().getLocation());
+				for (Location loc : circle1.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color1);
+				}
 			}
 			timer++;
 			bossBar1.setProgress(RangesKt.coerceIn((double) count / 40, 0, 1));

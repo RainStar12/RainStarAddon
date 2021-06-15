@@ -16,6 +16,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -57,11 +58,12 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "거울", rank = Rank.S, species = Species.OTHERS, explain = {
-		"§7패시브 §8- §2리턴§f: 어떠한 피해를 입던 방어된 만큼의 피해량을",
+		"§7패시브 §8- §2리턴§f: 어떠한 피해를 입던 방어된 만큼의 피해량의 $[RETURN]%를",
 		" 피해를 입힌 대상에게 1초 후 다시 되돌려줍니다.",
 		" 이후 §c반격§f으로 입힌 피해의 $[REGEN]%만큼 §d체력을 회복§f합니다.",
 		"§7검 휘두르기 §8- §3에코§f: 발사체를 바라보고 튕겨낼 수 있습니다.",
-		" $[COUNT]번 튕겨낼 때마다 방어 계열 버프 중 하나를 무작위로 얻습니다.",
+		" $[ARROW_COUNT]번 튕겨낼 때마다 방어 계열 버프 중 하나를 무작위로 얻습니다.",
+		" 혹은 근접 피해를 빠르게 $[DAMAGE_COUNT]번 되받아칠 때에도 이 효과를 얻습니다.",
 		" §7저항 1 15초§f, §3방어력 3칸 10초 상승§f, §e흡수 체력 2.5칸 영구 증가§f,",
 		" §c화염 저항 1분§f, §b다음 피해 1회 무시§f, §a30초 내 불사의 토템 1회 발동,§f",
 		" §6상태이상 즉시 해제 및 다음 상태이상 1회 무시"
@@ -73,8 +75,18 @@ public class Mirror extends Synergy {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"count", 2, "# 버프 조건") {
+	public static final SettingObject<Integer> ARROW_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"arrow-count", 2, "# 화살을 튕겨내는 횟수") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"damage-count", 3, "# 근접 공격을 반격하는 횟수") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -84,7 +96,17 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> REGEN = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"regen", 12, "# 회복량", "# 단위: %") {
+			"regen", 15, "# 회복량", "# 단위: %") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> RETURN = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"return", 75, "# 반격 피해량", "# 단위: %") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -99,15 +121,20 @@ public class Mirror extends Synergy {
 		}
 	}
 	
-	private int count = 0;
-	private final static int needCount = COUNT.getValue();
+	private int arrowcount = 0;
+	private int damagecount = 0;
+	private final static int needArrowCount = ARROW_COUNT.getValue();
+	private final static int needDamageCount = DAMAGE_COUNT.getValue();
 	private boolean block = false;
 	private boolean effectblock = false;
 	private PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 300, 0, false, true);
 	private PotionEffect fireresistance = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 0, false, true);
 	private int stack = 0;
+	private final int returns = RETURN.getValue();
 	private final int regen = REGEN.getValue();
 	private ActionbarChannel ac = newActionbarChannel();
+	
+	private Player target;
 	
 	private static final Set<Material> swords;
 	
@@ -147,6 +174,10 @@ public class Mirror extends Synergy {
 	private final AbilityTimer undying = new AbilityTimer(600) {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer counter = new AbilityTimer(10) {
+		
+    }.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private final AbilityTimer defenceUp = new AbilityTimer(10) {
 		
@@ -335,6 +366,20 @@ public class Mirror extends Synergy {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityEvent(e);
+		if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
+			target = (Player) e.getDamager();
+			counter.start();
+		}
+		if (target != null) {
+			if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
+				damagecount++;
+				if (damagecount >= needDamageCount) {
+					roulette.start();
+					damagecount = 0;
+				}
+				SoundLib.BLOCK_ANVIL_LAND.playSound(target.getLocation(), 1, 2f);
+			}
+		}
 		if (e.getEntity().equals(getPlayer()) && e.getDamager() != null) {
 			if (e.getDamager() instanceof Projectile) {
 				Projectile p = (Projectile) e.getDamager();
@@ -380,7 +425,7 @@ public class Mirror extends Synergy {
 					@Override
 					public void onSilentEnd() {
 						if (d != null) {
-							d.damage(returnDamage, getPlayer());
+							d.damage((returnDamage * ((double) returns / 100)), getPlayer());
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled() && !getPlayer().isDead()) {
@@ -434,10 +479,10 @@ public class Mirror extends Synergy {
 			projectile.setMetadata("flector", new FixedMetadataValue(AbilityWar.getPlugin(), getPlayer().getUniqueId()));
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(projectile.getLocation());
-			count++;
-			if (count >= needCount) {
+			arrowcount++;
+			if (arrowcount >= needArrowCount) {
 				roulette.start();
-				count = 0;
+				arrowcount = 0;
 			}
 			return true;
 		}
@@ -449,10 +494,10 @@ public class Mirror extends Synergy {
 			deflectable.onDeflect(getParticipant(), playerDirection ? getPlayer().getLocation().getDirection().multiply(2.2 * NMS.getAttackCooldown(getPlayer())) : deflectable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(deflectable.getDirection().multiply(-1)));
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(deflectable.getLocation());
-			count++;
-			if (count >= needCount) {
+			arrowcount++;
+			if (arrowcount >= needArrowCount) {
 				roulette.start();
-				count = 0;
+				arrowcount = 0;
 			}
 			return true;
 		}

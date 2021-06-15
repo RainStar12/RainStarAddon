@@ -15,6 +15,7 @@ import RainStarAbility.Dash;
 import RainStarAbility.DefileGak;
 import RainStarAbility.Detection;
 import RainStarAbility.Divinity;
+import RainStarAbility.DualPersonality;
 import RainStarAbility.Echo;
 import RainStarAbility.Empty;
 import RainStarAbility.Executioner;

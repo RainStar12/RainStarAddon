@@ -110,7 +110,7 @@ public class Recall extends Synergy {
 			}
 			if (count % 2 == 0) {
 				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-					ParticleLib.REDSTONE.spawnParticle(loc, color);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
 				}
 			}
     	}

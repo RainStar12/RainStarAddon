@@ -62,7 +62,7 @@ import daybreak.google.common.base.Predicate;
 		" 화염 계열 피해를 무시하고, 자신 주변 $[RANGE]칸 이내의 화염계 피해를 받는 생명체들은",
 		" 해당 화염 피해를 2배로 받습니다. 달리며 다른 플레이어를 스쳐 지나가면",
 		" 최대 3단계까지 더 빠르게 가속하고 대상이 가진 발화 시간을 1.5배로 늘립니다.",
-		" 물 위에서는 이동 속도 증가 버프를 받을 수 없습니다.",
+		" 물에 들어가면 축축함 효과가 생겨 2초간 빨라지지 못합니다.",
 		"§7철괴 우클릭 §8- §c참회의 시선§f: 대상과 자신이 서로 마주보고 있을 때",
 		" 대상이 다른 플레이어에게 입힌 피해량에 비례해 대상을 피해입히고,",
 		" 대상이 죽인 다른 플레이어의 수에 비례해 대상을 기절시킵니다. $[COOLDOWN]",
@@ -74,6 +74,8 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	public GhostRider(Participant participant) {
 		super(participant);
 	}
+	
+	private final Wet wet = new Wet(2);
 	
 	@Override
 	protected void onUpdate(Update update) {
@@ -179,7 +181,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	private final AbilityTimer speed = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
-			if (onWater) {
+			if (wet.isRunning()) {
 				getPlayer().removePotionEffect(PotionEffectType.SPEED);
 			    getPlayer().setWalkSpeed(0.2F);
 			    getPlayer().setFlySpeed(0.1F);
@@ -198,8 +200,6 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	private int range = RANGE.getValue();
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	
-	private boolean onWater = false;
-	
 	private LivingEntity pentity = null;
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	
@@ -212,7 +212,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 				if (LocationUtil.getEntityLookingAt(Player.class, player, 30, subpredicate) != null) {
 					if (LocationUtil.getEntityLookingAt(Player.class, player, 30, subpredicate).equals(getPlayer())) {
 						if (killCounter.containsKey(player)) {
-							Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, killCounter.get(player) * 50);
+							Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, killCounter.get(player) * 40);
 						}
 						if (attackCounter.containsKey(player)) {
 							player.damage(Math.min(20, (attackCounter.get(player) * 0.05)), getPlayer());
@@ -233,25 +233,27 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	private final AbilityTimer running = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
-			if (getPlayer().isSprinting()) {
-				attacking.start();
-			} else if (!getPlayer().isSprinting() && attacking.isRunning() && attacking.stack >= 1) {
-				attacking.stack--;
-				attacking.stop(true);
-				actionbarChannel.update("§3가속 §b" + attacking.stack + "§3단계, §6지속 시간§f: §f종료");
-				if (attacking.stack == 0) {
-					getPlayer().setWalkSpeed(0.3f);
-					getPlayer().setFlySpeed(0.2f);
-				} else if (attacking.stack == 1) {
-					getPlayer().setWalkSpeed(0.35f);
-					getPlayer().setFlySpeed(0.25f);
-				} else if (attacking.stack == 2) {
-					getPlayer().setWalkSpeed(0.4f);
-					getPlayer().setFlySpeed(0.3f);
-				} else if (attacking.stack == 3) {
-					getPlayer().setWalkSpeed(0.45f);
-					getPlayer().setFlySpeed(0.35f);
-				}
+			if (!wet.isRunning()) {
+				if (getPlayer().isSprinting()) {
+					attacking.start();
+				} else if (!getPlayer().isSprinting() && attacking.isRunning() && attacking.stack >= 1) {
+					attacking.stack--;
+					attacking.stop(true);
+					actionbarChannel.update("§3가속 §b" + attacking.stack + "§3단계, §6지속 시간§f: §f종료");
+					if (attacking.stack == 0) {
+						getPlayer().setWalkSpeed(0.3f);
+						getPlayer().setFlySpeed(0.2f);
+					} else if (attacking.stack == 1) {
+						getPlayer().setWalkSpeed(0.35f);
+						getPlayer().setFlySpeed(0.25f);
+					} else if (attacking.stack == 2) {
+						getPlayer().setWalkSpeed(0.4f);
+						getPlayer().setFlySpeed(0.3f);
+					} else if (attacking.stack == 3) {
+						getPlayer().setWalkSpeed(0.45f);
+						getPlayer().setFlySpeed(0.35f);
+					}
+				}	
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
@@ -279,9 +281,9 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
 		if (BlockX.isWater(e.getTo().getBlock().getType())) {
-			onWater = true;
-		} else {
-			onWater = false;
+			if (wet.isRunning()) {
+				wet.reset();
+			} else wet.start();
 		}
 		final Block to = e.getTo().getBlock(), below = to.getRelative(BlockFace.DOWN);
 		if ((to.isEmpty() || to.getType() == Material.SNOW) && below.getType().isSolid()) {
@@ -431,5 +433,35 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		protected void onSilentEnd() {
 		}	
 	}
+	
+	private class Wet extends AbilityTimer {
+
+		private final ActionbarChannel actionbarChannel = newActionbarChannel();
+
+		private Wet(final int seconds) {
+			super(seconds * 5);
+			setPeriod(TimeUnit.TICKS, 4);
+		}
+
+		@Override
+		protected void run(int count) {
+			actionbarChannel.update("§b축축함§f: " + (getCount() / 5.0) + "초");
+		}
+
+		private void reset() {
+			setCount(getMaximumCount());
+		}
+
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+
+		@Override
+		protected void onSilentEnd() {
+			actionbarChannel.update(null);
+		}
+	}
+
 	
 }

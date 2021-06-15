@@ -82,7 +82,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "cooldown", 80,
 			"# ÄðÅ¸ÀÓ") {
 
 		@Override

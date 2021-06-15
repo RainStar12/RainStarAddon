@@ -73,7 +73,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(
 		name = "페어리", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7철괴 우클릭 §8- §b결정화§f: 주변 $[RANGE]칸 내의 모든 플레이어를 $[DURATION]초간 §b결정화§f시킵니다.",
-		" 결정화된 플레이어의 §d회복 효과§f는 대신 자신이 1.5배의 §e흡수 체력§f으로 변환해",
+		" 결정화된 플레이어의 §d회복 효과§f는 대신 자신이 2배의 §e흡수 체력§f으로 변환해",
 		" 최대 자신의 최대 체력만큼까지 소지할 수 있으며 이미 최대치일 경우",
 		" 일반 체력이 §d회복§f됩니다. $[COOLDOWN]",
 		"§7활 발사 §8- §a결정 화살§f: §3더 빠르고 무조건 치명타가 발동하는 화살§f을 발사합니다.",
@@ -714,7 +714,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 						if (maxHealth <= yellowHeart) {
 							Healths.setHealth(getPlayer(), getPlayer().getHealth() + e.getAmount());
 						} else {
-							NMS.setAbsorptionHearts(getPlayer(), (float) (yellowHeart + (e.getAmount() * 1.5)));
+							NMS.setAbsorptionHearts(getPlayer(), (float) (yellowHeart + (e.getAmount() * 2)));
 						}
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
 					}

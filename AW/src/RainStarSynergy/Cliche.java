@@ -58,6 +58,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
@@ -143,6 +144,12 @@ public class Cliche extends Synergy {
     	
     	@Override
 		public void run(int count) {
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.75f);
+    		getPlayer().sendMessage("§a[§e!§a] §f위기 탈출 기회가 다시 생겨났습니다.");
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -252,13 +259,13 @@ public class Cliche extends Synergy {
     		switch(bufflevel) {
     		case 2:
     		case 3:
-    			e.setAmount(e.getAmount() * 1.25);
+    			e.setAmount(e.getAmount() * 1.2);
     			break;
     		case 4:
-    			e.setAmount(e.getAmount() * 1.5);
+    			e.setAmount(e.getAmount() * 1.4);
     			break;
     		case 5:
-    			e.setAmount(e.getAmount() * 2);
+    			e.setAmount(e.getAmount() * 1.65);
     			break;
     		}
     	}
@@ -281,13 +288,13 @@ public class Cliche extends Synergy {
     			break;
     		case 2:
     		case 3:
-    			e.setDamage(e.getDamage() * 0.8);
+    			e.setDamage(e.getDamage() * 0.85);
     			break;
     		case 4:
-    			e.setDamage(e.getDamage() * 0.7);
+    			e.setDamage(e.getDamage() * 0.8);
     			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 0.65);
+    			e.setDamage(e.getDamage() * 0.75);
     			break;
     		}
     	}

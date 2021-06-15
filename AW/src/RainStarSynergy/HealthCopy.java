@@ -46,7 +46,7 @@ import daybreak.google.common.base.Predicate;
 		" 내 흡수 체력량이 내 최대 체력의 절반을 상회하지 않는다면",
 		" 회복 효과만큼의 흡수 체력을 매번 추가 획득합니다.",
 		"§7패시브 §8- §a체력을 삽으로 퍼서 배포하고 있잖아§f: 어떤 식으로던 피해를 입을 때마다",
-		" 1.5배의 피해를 입습니다. 자연 회복 속도가 매우 빨라집니다.",
+		" 1.3배의 피해를 입습니다. 자연 회복 속도가 매우 빨라집니다.",
 		"§7철괴 우클릭 §8- §4피가 복사가 된다고§f: 상대를 바라보고 이 능력을 사용하면",
 		" 대상에게서 체력을 반 칸 흡혈합니다. $[COOLDOWN_CONFIG]",
 		" 또한 체력이 가득 있을 경우 한 칸 소모해 대상에게 추가 피해를 입힙니다."
@@ -110,10 +110,10 @@ public class HealthCopy extends Synergy implements ActiveHandler {
     		if (!cancelled) {
     			final double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
     			if (getPlayer().getHealth() < maxHP) {
-    				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.03, RegainReason.CUSTOM);
+    				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.05, RegainReason.CUSTOM);
     				Bukkit.getPluginManager().callEvent(event);
     				if (!event.isCancelled()) {
-    					getPlayer().setHealth(Math.min(getPlayer().getHealth() + 0.03, maxHP));
+    					getPlayer().setHealth(Math.min(getPlayer().getHealth() + 0.05, maxHP));
     				}
     			}	
     		}
@@ -152,7 +152,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 		if (e.getEntity().equals(getPlayer()) && !getPlayer().isDead()) {
-			e.setDamage(e.getDamage() * 1.5);
+			e.setDamage(e.getDamage() * 1.3);
 			if (getPlayer().getHealth() - e.getFinalDamage() > 0) {
 	    		float yellowheart = NMS.getAbsorptionHearts(getPlayer());
 	    		if (yellowheart >= 2) {

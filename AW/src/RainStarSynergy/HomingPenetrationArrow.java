@@ -62,7 +62,7 @@ import java.util.function.Predicate;
 		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 1.5초간 재장전하며,",
 		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
 		"탄약을 쏠 때마다 0.5초의 §3대기시간§f을 가지며, 이 §3대기시간§f은 매번 0.25초씩 3초까지",
-		"늘어납니다. 30초간 발사를 중단하면, §3대기시간§f이 다시 0.5초로 초기화됩니다.",
+		"늘어납니다. 15초간 발사를 중단하면, §3대기시간§f이 다시 0.5초로 초기화됩니다.",
 		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
 		"§5중력§f: 대상을 0.5초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
 		"§e풍월§f: 대상을 멀리 밀쳐냅니다."
@@ -176,7 +176,7 @@ public class HomingPenetrationArrow extends Synergy {
 					shotdelay.start();
 					delay = Math.min(3, delay + 0.25);
 					if (resetcount.isRunning()) {
-						resetcount.setCount(600);
+						resetcount.setCount(300);
 					} else {
 						resetcount.start();
 					}
@@ -202,11 +202,12 @@ public class HomingPenetrationArrow extends Synergy {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer resetcount = new AbilityTimer(600) {
+	private final AbilityTimer resetcount = new AbilityTimer(300) {
 		
 		@Override
 		public void onEnd() {
 			delay = 0.5;
+			getPlayer().sendMessage("§c[§5!§e] §3대기시간§f이 초기화되었습니다.");
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();

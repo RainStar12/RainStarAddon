@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "광란", displayName = "§5광란", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "광란", displayName = "§5광란", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.MOVEMENT_INTERRUPT, EffectType.COMBAT_RESTRICTION
 }, description = {
 		"상하전후좌우의 무작위 방향으로 튕겨나갑니다.",
