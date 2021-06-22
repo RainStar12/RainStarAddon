@@ -127,6 +127,9 @@ public class Recall extends Synergy {
 				projectile.setVelocity(new Vector(0, 0, 0));
 			}
 			if (recallMap.containsKey(e.getDamager()) && shooterMap.containsKey(e.getDamager())) {
+				if (e.getEntity().equals(getPlayer())) {
+					e.setCancelled(true);
+				}
 				if (!shooterMap.get(e.getDamager()).equals(e.getEntity())) {
 					e.setDamage(e.getDamage() * 1.5);
 				}
@@ -261,12 +264,14 @@ public class Recall extends Synergy {
 		protected void onStart() {
 			stoppedprojectile.add(projectile);
 			velocityMap.put(projectile, projectile.getVelocity());
+			projectile.setGlowing(true);
 			projectile.setGravity(false);
 			projectile.setVelocity(zerov);
 		}
 		
 		@Override
 		protected void onEnd() {
+			projectile.setGlowing(false);
 			projectile.setGravity(true);
 			projectile.setVelocity(velocityMap.get(projectile));
 			antigravityMap.remove(projectile);
@@ -274,6 +279,7 @@ public class Recall extends Synergy {
 		
 		@Override
 		protected void onSilentEnd() {
+			projectile.setGlowing(false);
 			projectile.setGravity(true);
 			projectile.setVelocity(velocityMap.get(projectile));
 			antigravityMap.remove(projectile);

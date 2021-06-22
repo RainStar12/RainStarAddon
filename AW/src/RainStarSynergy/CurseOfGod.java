@@ -1,5 +1,8 @@
 package RainStarSynergy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -17,6 +20,8 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.util.Vector;
 
+import RainStarEffect.BindingSmoke;
+import RainStarEffect.Cursed;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -43,11 +48,15 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
 		name = "신의 저주", rank = Rank.S, species = Species.GOD, explain = {
-		"다른 플레이어를 13칸 내에서 철괴 우클릭 시 $[DURATION]초간 지속되는 분신을",
-		"소환해냅니다. 분신으로부터 6.5칸 내 모든 플레이어는 분신을 바라보며",
-		"분신을 타격할 때 50%의 피해량을 분신의 주인에게 입히고 끌어옵니다.",
-		"다만 자신은 분신을 타격할 수 없습니다. $[COOLDOWN]",
-		"또한 분신이 있을 때 자신이 주는 피해량이 25% 감소합니다.",
+		"§7철괴 타게팅 §8- §c신벌§f: 다른 플레이어를 13칸 내에서 철괴 우클릭 시",
+		" $[DURATION]초간 지속되는 대상의 §b분신§f을 소환해냅니다. $[COOLDOWN]",
+		" §b분신§f으로부터 6.5칸 내 모든 플레이어는 §b분신§f을 바라보며 §b분신§f을 타격할 때",
+		" 50%의 피해량을 §b분신§f의 주인에게 입히고, §5저주§f 상태이상을 걸며 끌어옵니다.",
+		" 이후 그들이 분신에게 입힌 피해량에 비례해 속박당합니다.",
+		" §b분신§f이 있을 때, 자신이 주는 피해량이 25% 감소합니다.",
+		"§7상태이상 §8- §5저주§f: 상태이상이 지속되는 동안 갑옷에 §c귀속 저주§f가 부여됩니다.",
+		" §5저주§f를 제외한 받게 될 모든 상태이상 지속시간이 2배 증가합니다.",
+		" 이 효과는 중복으로 받으면 지속 시간이 계속해서 쌓이게 됩니다.",
 		"§b[§7아이디어 제공자§b] §ecommon_Mango"
 		})
 
@@ -109,11 +118,12 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 
-	private static final RGB BLACK = RGB.of(1, 1, 1);
-
+	private final RGB BLACK = RGB.of(1, 1, 1);
+	
 	private Player target = null;
 	private ArmorStand armorStand = null;
 	private static final Sphere sphere = Sphere.of(6.5, 14);
+	private Map<Player, Double> damages = new HashMap<>();
 
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
@@ -179,6 +189,11 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void onDurationEnd() {
+			if (damages.size() > 0) {
+				for (Player p : damages.keySet()) {
+					BindingSmoke.apply(getGame().getParticipant(p), TimeUnit.TICKS, (int) (damages.get(p) * 7.5));
+				}
+			}
 			target = null;
 			armorStand.remove();
 			armorStand = null;
@@ -213,18 +228,17 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	@SubscribeEvent
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
+			if (e.getDamager() instanceof Player && !e.getDamager().equals(getPlayer())) damages.put((Player) e.getDamager(), e.getDamage());
 			e.setCancelled(true);
-			if (!e.getDamager().equals(getPlayer())) {
-				if (!target.isInvulnerable()) {
-					target.damage(e.getDamage() * 0.5, armorStand);
-					target.setVelocity(VectorUtil.validateVector(armorStand.getLocation().toVector().subtract(target.getLocation().toVector()).normalize()));	
-				}
-				if (e.getDamager() instanceof Player) {
-					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
-				}	
-			} else {
-				getPlayer().sendMessage("§3[§b!§3] §c당신은 분신을 공격할 수 없습니다.");
+			if (!target.isInvulnerable()) {
+				target.damage(e.getDamage() * 0.5, armorStand);
+				target.setVelocity(VectorUtil.validateVector(armorStand.getLocation().toVector().subtract(target.getLocation().toVector()).normalize()));	
+				Participant participant = getGame().getParticipant(target);
+				Cursed.apply(participant, TimeUnit.TICKS, 60);
 			}
+			if (e.getDamager() instanceof Player) {
+				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
+			}	
 		}
 		if (skill.isRunning()) {
 			if (e.getDamager().equals(getPlayer())) {

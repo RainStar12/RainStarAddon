@@ -62,7 +62,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(DeusExMachina.class,
-			"duration", 5, "# 능력 지속시간") {
+			"duration", 4, "# 능력 지속시간") {
 		
 		@Override
 		public boolean condition(Integer value) {

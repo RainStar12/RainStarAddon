@@ -201,6 +201,7 @@ public class Chance extends Synergy {
 		@Override
 		protected void onEnd() {
 			onSilentEnd();
+			HandlerList.unregisterAll(this);
 		}
 		
 		@Override

@@ -50,6 +50,7 @@ import RainStarAbility.Stop;
 import RainStarAbility.Teabagging;
 import RainStarAbility.Tesla;
 import RainStarAbility.TimeStop;
+import RainStarAbility.HeadtoHead;
 import RainStarAbility.Yuki;
 import RainStarSynergy.ASAP;
 import RainStarSynergy.Accelerator;
@@ -208,6 +209,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(HealthFreak.class);
 		AbilityFactory.registerAbility(Citrus.class);
 		AbilityList.registerAbility(Citrus.class);
+		AbilityFactory.registerAbility(HeadtoHead.class);
+		AbilityList.registerAbility(HeadtoHead.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -263,7 +266,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f40개 §7/ §d시너지 §f38개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f41개 §7/ §d시너지 §f38개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -273,7 +276,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f40개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f41개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f38개 적용 완료.");
 		}

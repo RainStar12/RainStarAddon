@@ -375,9 +375,11 @@ public class DemonLord extends Synergy {
 	   		if (getPlayer().getSpectatorTarget() != null) {
 		   		getY = getPlayer().getSpectatorTarget().getLocation().getY() + 3;
 		   		getPlayer().teleport(getPlayer().getSpectatorTarget().getLocation().clone().add(0, 250, 0).setDirection(new Vector(0, 0, 0)), TeleportCause.PLUGIN);	
+		   		getPlayer().setGameMode(GameMode.SURVIVAL);
 		   		descending.start();
+	   		} else {
+		   		getPlayer().setGameMode(GameMode.SURVIVAL);	
 	   		}
-	   		getPlayer().setGameMode(GameMode.SURVIVAL);
 			dimensionac.update(null);
 	   	}
 	
