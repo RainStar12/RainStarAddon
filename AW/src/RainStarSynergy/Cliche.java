@@ -67,7 +67,8 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §8- §b주인공 버프§f: 체력이 적어 §c위기 상태§f가 될 때 다양한 §b주인공 버프§f를",
 		" 받으며, 적을 처치할 때마다 매번 §d성장§f합니다.",
 		"§7패시브 §8- §a해치웠나?§f: 치명적 피해를 입을 때, §a불사의 토템 효과§f가 발동합니다.",
-		" §a불사의 토템§f은 $[PERIOD]초마다 재충전됩니다."
+		" §a불사의 토템§f은 $[PERIOD]초마다 재충전됩니다.",
+		" §a불사의 토템§f이 재충전되기 전까지, §b주인공 버프§f를 얻을 수 없습니다."
 		})
 
 public class Cliche extends Synergy {
@@ -79,7 +80,9 @@ public class Cliche extends Synergy {
 	private int bufflevel = 0;
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 20, 0, true, false);
 	private Set<Projectile> projectiles = new HashSet<>();
-	private final double firstMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+	private boolean onetime = false;
+	private double firstMaxHealth;
+	private double nowMaxHealth = 0;
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * PERIOD.getValue() : PERIOD.getValue());
 	
 	private static final Set<Material> swords;
@@ -106,9 +109,16 @@ public class Cliche extends Synergy {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			buffchecker.start();
+			if (!onetime) {
+				firstMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				onetime = true;
+			}
+			if (nowMaxHealth != 0) {
+				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(nowMaxHealth);	
+			}
 		}
 		if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
-			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(firstMaxHealth);	
+			if (firstMaxHealth >= 1) getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(firstMaxHealth);		
 		}
 	}
 	
@@ -168,19 +178,23 @@ public class Cliche extends Synergy {
 		public void run(int count) {
     		double nowHealth = getPlayer().getHealth();
     		double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-    		if (nowHealth > maxHealth * 0.6) {
+			if (!periodtimer.isRunning()) {
+	    		if (nowHealth > maxHealth * 0.6) {
+	    			bufflevel = 0;
+	    		} else if (nowHealth <= maxHealth * 0.6 && nowHealth > maxHealth * 0.5) {
+	    			bufflevel = 1;
+	    		} else if (nowHealth <= maxHealth * 0.5 && nowHealth > maxHealth * 0.4) {
+	    			bufflevel = 2;
+	    		} else if (nowHealth <= maxHealth * 0.4 && nowHealth > maxHealth * 0.3) {
+	    			bufflevel = 3;
+	    		} else if (nowHealth <= maxHealth * 0.3 && nowHealth > maxHealth * 0.2) {
+	    			bufflevel = 4;
+	    		} else if (nowHealth <= maxHealth * 0.2) {
+	    			bufflevel = 5;
+	    		}	
+			} else {
     			bufflevel = 0;
-    		} else if (nowHealth <= maxHealth * 0.6 && nowHealth > maxHealth * 0.5) {
-    			bufflevel = 1;
-    		} else if (nowHealth <= maxHealth * 0.5 && nowHealth > maxHealth * 0.4) {
-    			bufflevel = 2;
-    		} else if (nowHealth <= maxHealth * 0.4 && nowHealth > maxHealth * 0.3) {
-    			bufflevel = 3;
-    		} else if (nowHealth <= maxHealth * 0.3 && nowHealth > maxHealth * 0.2) {
-    			bufflevel = 4;
-    		} else if (nowHealth <= maxHealth * 0.2) {
-    			bufflevel = 5;
-    		}
+			}
     		if (bufflevel >= 1) {
     			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 7, 7, predicate)) {
     				if (!getPlayer().equals(projectile.getShooter()) && !projectiles.contains(projectile)) {
@@ -215,7 +229,9 @@ public class Cliche extends Synergy {
 	public void onEntityResurrectEvent(EntityResurrectEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			if (!periodtimer.isRunning()) {
+				ItemStack leftHand = getPlayer().getInventory().getItemInOffHand();
 				e.setCancelled(false);
+				getPlayer().getInventory().setItemInOffHand(leftHand);
 				periodtimer.start();
 			}
 		}
@@ -234,6 +250,7 @@ public class Cliche extends Synergy {
 			if (e.getEntity().getKiller().equals(getPlayer()) && predicate.test(e.getEntity())) {
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + (firstMaxHealth * 0.1));
+				nowMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			}	
 		}
 	}
@@ -281,20 +298,39 @@ public class Cliche extends Synergy {
     	if (getPlayer().equals(e.getEntity())) {
     		switch(bufflevel) {
     		case 0:
-    			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
-    				e.setCancelled(true);
-    				Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25);
+    			if (!periodtimer.isRunning()) {
+        			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+        				e.setCancelled(true);
+        				Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25);
+        			}	
     			}
     			break;
     		case 2:
     		case 3:
-    			e.setDamage(e.getDamage() * 0.85);
-    			break;
-    		case 4:
     			e.setDamage(e.getDamage() * 0.8);
     			break;
+    		case 4:
+    			e.setDamage(e.getDamage() * 0.7);
+    			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 0.75);
+    			e.setDamage(e.getDamage() * 0.65);
+    			break;
+    		}
+    	}
+    	if (getPlayer().equals(e.getDamager())) {
+    		switch(bufflevel) {
+    		case 0:
+    			e.setDamage(e.getDamage() * 1.05);
+    			break;
+    		case 2:
+    		case 3:
+    			e.setDamage(e.getDamage() * 1.1);
+    			break;
+    		case 4:
+    			e.setDamage(e.getDamage() * 1.15);
+    			break;
+    		case 5:
+    			e.setDamage(e.getDamage() * 1.2);
     			break;
     		}
     	}

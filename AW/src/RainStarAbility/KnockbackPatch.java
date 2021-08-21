@@ -1,11 +1,17 @@
 package RainStarAbility;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import RainStarEffect.Chill;
 import RainStarEffect.Irreparable;
 import RainStarEffect.SnowflakeMark;
+import RainStarEffect.TimeInterrupt;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
@@ -16,6 +22,11 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.SoundLib;
 
 @Beta
 
@@ -34,11 +45,37 @@ public class KnockbackPatch extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		e.getPlayer().getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(0);
+		TimeInterrupt.apply(getParticipant(), TimeUnit.TICKS, 100);
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager().equals(getPlayer())) {
+			LivingEntity l = (LivingEntity) e.getEntity();
+			new AbilityTimer(TaskType.NORMAL, 10) {
+				@Override
+				public void run(int count) {
+					l.setNoDamageTicks(0);
+					if (count == 7) {
+						NMS.swingHand(getPlayer(), Hand.OFF_HAND);
+						SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation());
+						l.damage(2);	
+					}
+					if (count == 10) {
+						NMS.swingHand(getPlayer(), Hand.OFF_HAND);
+						SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation());
+						l.damage(2);
+					}
+				}
+			}.setPeriod(TimeUnit.TICKS, 1).start();
+		}
 	}
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
-			SnowflakeMark.apply(getParticipant(), TimeUnit.SECONDS, 200, 1);
+			for (Participant participant : getGame().getParticipants()) {
+				Chill.apply(participant, TimeUnit.TICKS, 200);
+			}
 			return true;
 		}
 		return false;

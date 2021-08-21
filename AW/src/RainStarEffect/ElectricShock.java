@@ -20,12 +20,12 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
-@EffectManifest(name = "°¨Àü", displayName = "¡×d°¨Àü", method = ApplicationMethod.UNIQUE_STACK, type = {
+@EffectManifest(name = "ê°ì „", displayName = "Â§dê°ì „", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.MOVEMENT_RESTRICTION
 }, description = {
-		"¸Å 2ÃÊ¸¶´Ù 0.5ÃÊ°£ ±âÀıÇÕ´Ï´Ù. °¨Àü µµÁß¿¡ ±âÀı È¿°ú°¡",
-		"»õ·ÎÀÌ µé¾î¿Ã ¶§¸¶´Ù È¹µæÇÑ ±âÀıÀÇ ½Ã°£¿¡ ºñ·ÊÇØ",
-		"0.5ÃÊ´ç 1ÀÇ ÇÇÇØ¸¦ ³¡³¯ ¶§ ÀÔ½À´Ï´Ù."
+		"ë§¤ 2ì´ˆë§ˆë‹¤ 0.5ì´ˆê°„ ê¸°ì ˆí•©ë‹ˆë‹¤. ê°ì „ ë„ì¤‘ì— ê¸°ì ˆ íš¨ê³¼ê°€",
+		"ìƒˆë¡œì´ ë“¤ì–´ì˜¬ ë•Œë§ˆë‹¤ íšë“í•œ ê¸°ì ˆì˜ ì‹œê°„ì— ë¹„ë¡€í•´",
+		"0.5ì´ˆë‹¹ 1ì˜ í”¼í•´ë¥¼ ëë‚  ë•Œ ì…ìŠµë‹ˆë‹¤."
 })
 public class ElectricShock extends AbstractGame.Effect implements Listener {
 
@@ -50,9 +50,12 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 	@Override
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		armorstand = participant.getPlayer().getWorld().spawn(participant.getPlayer().getLocation().clone().add(200, 0, 200), ArmorStand.class);
+		armorstand = participant.getPlayer().getWorld().spawn(participant.getPlayer().getLocation().clone(), ArmorStand.class);
 		armorstand.setVisible(false);
-		armorstand.setCustomName("¡×d°¨Àü¡×f");
+		armorstand.setCustomName("Â§bâš¡ Â§dê°ì „Â§f Â§bâš¡");
+		armorstand.setGravity(false);
+		armorstand.setInvulnerable(true);
+		armorstand.setCustomNameVisible(true);
 		NMS.removeBoundingBox(armorstand);
 	}
 
@@ -63,11 +66,14 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 			stun = true;
 		}
 		if (stun) {
+			armorstand.setCustomName("Â§bÂ§lâš¡ Â§eê°ì „Â§f Â§bÂ§lâš¡");
 			checking++;
 			if (checking >= 5) {
 				stun = false;
 				checking = 0;
 			}
+		} else {
+			armorstand.setCustomName("Â§7Â§lâš¡ Â§dê°ì „Â§f Â§7Â§lâš¡");
 		}
 		super.run(count);
 	}

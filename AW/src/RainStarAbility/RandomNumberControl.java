@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -33,9 +35,10 @@ import kotlin.ranges.RangesKt;
 
 @AbilityManifest(
 		name = "난수 조절", rank = Rank.L, species = Species.HUMAN, explain = {
-		"$[PERIOD]초마다 $[DURATION]초간 §a수치를 조정§f하여, §c공격§f과 §b방어§f값을 조절합니다.",
+		"$[DURATION]초간 §a수치를 조정§f하여, §c공격§f과 §b방어§f값을 조절합니다.",
 		"§c공격§f은 게임 도중에 세운 §c역대 최고치의 입힌 피해량§f 이하로 §e떨어지지 않으며§f,",
-		"§b방어§f는 게임 도중에 세운 §b역대 최소치의 받은 피해량§f 이상으로 §e올라가지 않습니다§f."
+		"§b방어§f는 게임 도중에 세운 §b역대 최소치의 받은 피해량§f 이상으로 §e올라가지 않습니다§f.",
+		"능력은 $[PERIOD]초마다 충전되어 적에게 피해를 입힐 때 발동합니다."
 		})
 
 public class RandomNumberControl extends AbilityBase {
@@ -72,6 +75,7 @@ public class RandomNumberControl extends AbilityBase {
 	    } 
 	}
 	
+	private boolean available = false;
 	private BossBar bossBar = null;
 	private ActionbarChannel acAttack = newActionbarChannel();
 	private ActionbarChannel acDefence = newActionbarChannel();
@@ -129,15 +133,17 @@ public class RandomNumberControl extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			if (period == 0) {
-				if (skill.isRunning()) skill.setCount(duration * 20);
-				else skill.start();
-			} else {
-				if (count % (period * 20) == 0) {
-					if (skill.isRunning()) skill.setCount(duration * 20);
-					else skill.start();
-				}	
+			if (period == 0) stop(false);
+			else if (count % (period * 20) == 0) stop(false);	
+		}
+		
+		@Override
+		public void onEnd() {
+			if (period != 0) {
+				getPlayer().sendMessage("§2[§a!§2] §f난수 조절을 사용 가능합니다.");
+				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));	
 			}
+			available = true;
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -175,6 +181,12 @@ public class RandomNumberControl extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (!e.isCancelled()) {
 			if (e.getDamager().equals(getPlayer())) {
+				if (available) {
+					if (skill.isRunning()) skill.setCount(duration * 20);
+					else skill.start();
+					available = false;
+					periodtimer.start();
+				}
 				boolean over = false, control = false;
 				double startDamage = 0;
 				if (topDamage < e.getDamage()) {
@@ -195,6 +207,12 @@ public class RandomNumberControl extends AbilityBase {
 			if (e.getDamager() instanceof Projectile) {
 				Projectile projectile = (Projectile) e.getDamager();
 				if (getPlayer().equals(projectile.getShooter())) {
+					if (available) {
+						if (skill.isRunning()) skill.setCount(duration * 20);
+						else skill.start();
+						available = false;
+						periodtimer.start();
+					}
 					boolean over = false, control = false;
 					double startDamage = 0;
 					if (topDamage < e.getDamage()) {

@@ -10,8 +10,10 @@ import javax.annotation.Nullable;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,10 +41,11 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "반중력", rank = Rank.C, species = Species.OTHERS, explain = {
-		"자신이 발사하는 모든 발사체가 1틱 후 정지합니다.",
+		"자신이 발사하는 모든 발사체가 1틱 후 §b정지§f합니다.",
 		"정지된 발사체가 화살일 때 나 이외의 존재가 닿으면 정지가 해제됩니다.",
-		"철괴 좌클릭 시, 정지된 모든 발사체를 정지 해제합니다.",
-		"철괴를 들고 웅크린 채 휠로 정지까지 걸리는 시간을 조절 가능합니다."
+		"§7철괴 좌클릭 시§f, 정지된 모든 발사체를 정지 해제합니다.",
+		"§7철괴를 들고 웅크린 채 휠§f로 정지까지 걸리는 시간을 조절 가능합니다.",
+		"내 발사체에 맞은 적은 기본 무적 시간이 §c초기화§f됩니다."
 		})
 
 @Tips(tip = {
@@ -192,6 +195,18 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 			NMS.clearTitle(getPlayer());
 		}
 	}.setPeriod(TimeUnit.TICKS, 4);
+	
+	@SubscribeEvent
+	public void onProjectileHit(ProjectileHitEvent e) {
+		if (e.getHitBlock() == null) {
+			if (getPlayer().equals(e.getEntity().getShooter())) {
+				if (e.getHitEntity() instanceof LivingEntity) {
+					LivingEntity l = (LivingEntity) e.getHitEntity();
+					l.setNoDamageTicks(0);
+				}
+			}
+		}
+	}
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {

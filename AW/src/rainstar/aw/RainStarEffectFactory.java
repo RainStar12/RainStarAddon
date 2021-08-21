@@ -14,15 +14,18 @@ public enum RainStarEffectFactory {
     CONFUSION(Confusion.class),
     CORROSION(Corrosion.class),
     DIMENSION_DISTORTION(DimensionDistortion.class),
+    DREAM(Dream.class),
     ELECTRIC_SHOCK(ElectricShock.class),
     FROZEN_HEART(FrozenHeart.class),
     IRREPARABLE(Irreparable.class),
     MADNESS(Madness.class),
+    PARALYSIS(Paralysis.class),
+    POISON(Poison.class),
     SNOWFLAKE_MARK(SnowflakeMark.class),
     STIFFEN(Stiffen.class),
     SUPERREGEN(SuperRegen.class),
     TIME_DISTORTION(TimeDistortion.class),
-    TIME_SLOWDOWN(TimeSlowdown.class);
+    TIME_INTERRUPT(TimeInterrupt.class);
 
     Class<? extends AbstractGame.Effect> clazz;
 

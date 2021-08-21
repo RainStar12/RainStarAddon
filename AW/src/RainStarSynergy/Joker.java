@@ -187,9 +187,6 @@ public class Joker extends Synergy implements ActiveHandler {
 				Madness.apply(getGame().getParticipant(p), TimeUnit.MINUTES, 3, 20);	
 			}
 			updateTime(getPlayer().getWorld());
-			if (e.getDamager() != null) {
-				
-			}
 			new BukkitRunnable() {
 				@Override
 				public void run() {

@@ -124,54 +124,9 @@ public class DemonLord extends Synergy {
 		super(participant);
 	}
 	
-	private boolean descend = false;
-	private boolean falldamagecancel = true;
-	private boolean explosioncancel = true;
-	private final DecimalFormat df = new DecimalFormat("0");
-	private final DecimalFormat df2 = new DecimalFormat("0.0");
-	private final ActionbarChannel dimensionac = newActionbarChannel();
-	private static final Vector zerov = new Vector(0, 0, 0);
-	private static final Vector downv = new Vector(0, -5, 0);
-	private final Circle[] circles = newCircleArray(2);
-	private static final Circle circle1 = Circle.of(1, 5);
-	private static final Circle circle2 = Circle.of(2, 10);
-	private static final Circle circle3 = Circle.of(3, 15);
-	private static final Circle bindingpoint = Circle.of(5, 3);
-	private static final Circle bindingcircle = Circle.of(0.35, 20);
-	private final DescendingParticles descendingparticles = new DescendingParticles();
-	private Player target;
-	private double getY;
-	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
-	private Set<Player> blinded = new HashSet<>();
-	private PotionEffect blindness = new PotionEffect(PotionEffectType.BLINDNESS, 300, 2, true, false);
-	private PotionEffect lightblindness = new PotionEffect(PotionEffectType.BLINDNESS, 50, 1, true, false);
-	private PotionEffect confusionsight = new PotionEffect(PotionEffectType.CONFUSION, 140, 1, true, false);
-	private static final Set<Material> swords;
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "시공간 절단", CooldownDecrease._50);
-	private static final Circle circle = Circle.of(6, 70);
-	private Map<Player, LogParticle> logMap = new HashMap<>();
-	private Set<Player> damaged = new HashSet<>();
-	private final Crescent crescent = Crescent.of(3, 50);
-	private static final Crescent crescent2 = Crescent.of(2, 35);
-	private Map<Player, OverDimension> overMap = new HashMap<>(); 
-	private int stack;
-	private final ActionbarChannel ac = newActionbarChannel();
-	private double addDamage;
-	private int particleSide = 45;
-	private Location darkcenter;
-	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
-	
-	static {
-		if (MaterialX.NETHERITE_SWORD.isSupported()) {
-			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
-		} else {
-			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
-		}
-	}
-	
 	public static final SettingObject<Integer> COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(DemonLord.class,
-			"cooldown", 30, "# 시공간 절단 쿨타임",
+			"cooldown", 40, "# 시공간 절단 쿨타임",
 			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -183,6 +138,85 @@ public class DemonLord extends Synergy {
 			return Formatter.formatCooldown(getValue());
 		}
 	};
+	
+	public static final SettingObject<Integer> DAMAGE 
+	= synergySettings.new SettingObject<Integer>(DemonLord.class,
+			"damage", 12, "# 시공간 절단 피해량") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_INCREASE 
+	= synergySettings.new SettingObject<Integer>(DemonLord.class,
+			"damage-increase", 40, "# 밝기가 1단계 낮을수록 증가하는 피해량", "# 단위: %", "# 밝기는 15단계로, 최소 밝기인 0일 경우 40%의 기준", "# 15 * 0.4 = 6의 추댐을 가집니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	private boolean descend = false;
+	private boolean falldamagecancel = true;
+	private boolean explosioncancel = true;
+	
+	private final DecimalFormat df = new DecimalFormat("0");
+	private final DecimalFormat df2 = new DecimalFormat("0.0");
+	
+	private final ActionbarChannel dimensionac = newActionbarChannel();
+	
+	private static final Vector zerov = new Vector(0, 0, 0);
+	private static final Vector downv = new Vector(0, -5, 0);
+	
+	private final Circle[] circles = newCircleArray(2);
+	
+	private static final Circle circle1 = Circle.of(1, 5);
+	private static final Circle circle2 = Circle.of(2, 10);
+	private static final Circle circle3 = Circle.of(3, 15);
+	private static final Circle bindingpoint = Circle.of(5, 3);
+	private static final Circle bindingcircle = Circle.of(0.35, 20);
+	
+	private final DescendingParticles descendingparticles = new DescendingParticles();
+	private Player target;
+	private double getY;
+	
+	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
+	private Map<Player, LogParticle> logMap = new HashMap<>();
+	private Set<Player> blinded = new HashSet<>();
+	
+	private PotionEffect blindness = new PotionEffect(PotionEffectType.BLINDNESS, 300, 2, true, false);
+	private PotionEffect lightblindness = new PotionEffect(PotionEffectType.BLINDNESS, 50, 1, true, false);
+	private PotionEffect confusionsight = new PotionEffect(PotionEffectType.CONFUSION, 140, 1, true, false);
+	
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "시공간 절단", CooldownDecrease._50);
+	private final int damage = DAMAGE.getValue();
+	private final int increase = DAMAGE_INCREASE.getValue();
+	
+	private static final Circle circle = Circle.of(6, 70);
+
+	private Set<Player> damaged = new HashSet<>();
+	private final Crescent crescent = Crescent.of(3, 50);
+	private static final Crescent crescent2 = Crescent.of(2, 35);
+	private Map<Player, OverDimension> overMap = new HashMap<>(); 
+	
+	private int stack;
+	private final ActionbarChannel ac = newActionbarChannel();
+	private double addDamage;
+	private int particleSide = 45;
+	private Location darkcenter;
+	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
+	
+	private static final Set<Material> swords;
+	static {
+		if (MaterialX.NETHERITE_SWORD.isSupported()) {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
+		} else {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
+		}
+	}
 	
 	private static Circle[] newCircleArray(final int maxAmount) {
 		final Circle[] circles = new Circle[maxAmount];
@@ -296,6 +330,7 @@ public class DemonLord extends Synergy {
 		@Override
 		public boolean test(Entity entity) {
 			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -700,7 +735,7 @@ public class DemonLord extends Synergy {
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (blockData.containsKey(e.getBlock())) {
-			e.setCancelled(true);
+			if (skill.isRunning()) e.setCancelled(true);
 		}
 	}
 
@@ -1000,11 +1035,16 @@ public class DemonLord extends Synergy {
 				    			new BukkitRunnable() {
 				    				@Override
 				    				public void run() {
-				    					if (LocationUtil.isInCircle(darkcenter, getPlayer().getLocation(), 20)) {
-				    						participant.getPlayer().damage(12 + ((15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4), getPlayer());	
-				    					} else {
-				    						participant.getPlayer().damage(18, getPlayer());
-				    					}
+				    					getPlayer().sendMessage("밝기: " + getPlayer().getLocation().clone().add(0, 1, 0).getBlock().getLightLevel());
+			    						double skillDamage = damage + ((15 - getPlayer().getLocation().clone().add(0, 1, 0).getBlock().getLightLevel()) * (increase * 0.01));
+			    						double maxDamage = damage + (15 * (increase * 0.01));
+				    					if (darkfield.isRunning()) {
+				    						if (!LocationUtil.isInCircle(darkcenter, getPlayer().getLocation(), 20)) {
+					    						participant.getPlayer().damage(skillDamage, getPlayer());	
+					    					} else {
+					    						participant.getPlayer().damage(maxDamage, getPlayer());
+					    					}	
+				    					} else participant.getPlayer().damage(skillDamage, getPlayer());
 				    					ParticleLib.ITEM_CRACK.spawnParticle(clock.getLocation().clone().add(0, 1, 0), 0, 0, 0, 10, 0.5f, MaterialX.CLOCK);
 				    					ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), 0.4, 0.5, 0.4, 50, 0.35, MaterialX.CLOCK);
 				    					SoundLib.ENTITY_ENDER_EYE_DEATH.playSound(clock.getLocation().clone().add(0, 1, 0), 1, 0.7f);

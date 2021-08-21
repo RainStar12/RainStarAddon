@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -51,7 +52,7 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 		" 흡수 체력량이 최대 체력의 절반 이하여야 사용 가능합니다.",
 		"§7활 발사 §8- §b수정 화살§f: 화살 두 발을 소모해 수정 화살을 발사합니다.",
 		" 수정 화살은 반드시 크리티컬이고, 나아가는 거리에 비례하여 거리 비례 대미지 및",
-		" 타격한 적을 최대 4초간 구속시킵니다. 만약 다이아몬드가 있다면 하나를 소모해",
+		" 타격한 적을 최대 5초간 구속시킵니다. 만약 다이아몬드가 있다면 하나를 소모해",
 		" 수정 화살을 강화하여 더 빨리 날아가고 대상을 강하게 밀쳐냅니다.",
 		"§7패시브 §8- §3수정 방벽§f: 흡수 체력을 가지고 있을 때 흡수 체력량을 넘는",
 		" 피해량이 들어온다면, 오직 흡수 체력만이 소진됩니다.",
@@ -89,6 +90,7 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.NINE, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.NORMAL)
 
+@SuppressWarnings("deprecation")
 public class Crystal extends AbilityBase implements ActiveHandler {
 
 	public Crystal(Participant participant) {
@@ -133,10 +135,13 @@ public class Crystal extends AbilityBase implements ActiveHandler {
     	if (e.getEntity().equals(getPlayer()) && !getPlayer().isDead()) {
     		float yellowheart = NMS.getAbsorptionHearts(getPlayer());
     		if (yellowheart != 0) {
-        		if (e.getFinalDamage() > 0) {
-        			e.setDamage(0);
-                	NMS.setAbsorptionHearts(getPlayer(), 0);
-            	}
+    			float lostyellow = (float) e.getDamage(DamageModifier.ABSORPTION);
+        		if (yellowheart + lostyellow == 0) {
+            		if (e.getFinalDamage() > 0) {
+            			e.setDamage(0);
+                    	NMS.setAbsorptionHearts(getPlayer(), 0);
+                	}
+        		}
     		}
     	}
 	}
@@ -160,13 +165,16 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 20, 0, true);
 	    			} else if (dist < 100) {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 40, 0, true);
-	    				e.setDamage(e.getDamage() + 1);
+	    				e.setDamage(e.getDamage() * 1.1);
 	    			} else if (dist < 625) {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 60, 0, true);
-	    				e.setDamage(e.getDamage() + 2);
-	    			} else if (dist < 10000) {
+	    				e.setDamage(e.getDamage() * 1.2);
+	    			} else if (dist < 1600) {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 80, 0, true);
-	    				e.setDamage(e.getDamage() + 3);
+	    				e.setDamage(e.getDamage() * 1.3);
+	    			} else if (dist < 10000) {
+	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 100, 0, true);
+	    				e.setDamage(e.getDamage() * 1.4);
 	    			} else if (dist >= 10000) {
 	    				AbilityBase ab = getParticipant().getAbility();
 	    				if (ab.getClass().equals(Mix.class)) {

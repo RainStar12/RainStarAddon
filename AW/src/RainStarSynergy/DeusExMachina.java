@@ -37,6 +37,7 @@ import kotlin.ranges.RangesKt;
 @AbilityManifest(name = "데우스 엑스 마키나", rank = Rank.L, species = Species.GOD, explain = {
 		"철괴 우클릭 시 $[DURATION]초간 §c공격력§7(ATK)§f, §3방어력§7(DEF)§f, §d회복력§7(REC)§f의 §a수치를 조작§f하여",
 		"게임 내에 있었던 §b최고 기록치§f를 불러옵니다. $[COOLDOWN]",
+		"능력을 사용하고 나면 §b최고 기록치§f가 초기화됩니다.",
 		"§b[§7아이디어 제공자§b] §dhorn1111"
 })
 
@@ -70,6 +71,14 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 		}
 		
 	};
+	
+	protected void onUpdate(Update update) {
+	    if (update == Update.RESTRICTION_CLEAR) {
+	    	acAttack.update("§cATK§7: §e" + df.format(topDamage));
+	    	acDefence.update("§bDEF§7: §e" + df.format(topDefence));
+	    	acRecovery.update("§aREC§7: §e" + df.format(topRecovery));
+	    } 
+	}
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private BossBar bossBar = null;
@@ -163,9 +172,6 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 		
 		@Override
     	public void onStart() {
-			attackActionbarUpdater.start();
-			defenceActionbarUpdater.start();
-			recoveryActionbarUpdater.start();
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 0.9f);
     		bossBar = Bukkit.createBossBar("§b난수 조절 중", BarColor.GREEN, BarStyle.SOLID);
     		bossBar.setProgress(1);
@@ -188,12 +194,12 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 
 		@Override
 		public void onSilentEnd() {
-			acAttack.update(null);
-			acDefence.update(null);
-			acRecovery.update(null);
-			lastTopDamage = 0;
-			lastTopDefence = 99999;
-			lastTopRecovery = 0;
+			topDamage = 0;
+			topDefence = 99999;
+			topRecovery = 0;
+	    	acAttack.update("§cATK§7: §e§k" + 0.00);
+	    	acDefence.update("§bDEF§7: §e§k" + 0.00);
+	    	acRecovery.update("§aREC§7: §e§k" + 0.00);
 			bossBar.removeAll();
 			cool.start();
 		}
@@ -208,10 +214,8 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 			if (topRecovery < e.getAmount()) {
 				lastTopRecovery = topRecovery;
 				topRecovery = e.getAmount();
-				if (skill.isRunning()) {
-					if (recoveryActionbarUpdater.isRunning()) recoveryActionbarUpdater.stop(false);
-					recoveryActionbarUpdater.start();	
-				}
+				if (recoveryActionbarUpdater.isRunning()) recoveryActionbarUpdater.stop(false);
+				recoveryActionbarUpdater.start();	
 			}
 			if (e.getEntity().equals(getPlayer())) {
 				if (skill.isRunning() && e.getAmount() < topRecovery) {
@@ -234,10 +238,8 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 			if (topDamage < e.getDamage()) {
 				lastTopDamage = topDamage;
 				topDamage = e.getDamage();
-				if (skill.isRunning()) {
-					if (attackActionbarUpdater.isRunning()) attackActionbarUpdater.stop(false);
-			    	attackActionbarUpdater.start();	
-				}
+				if (attackActionbarUpdater.isRunning()) attackActionbarUpdater.stop(false);
+			    attackActionbarUpdater.start();	
 			}
 			
 			if (e.getDamager().equals(getPlayer())) {
@@ -266,10 +268,8 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 						if (topDefence > e.getDamage()) {
 							lastTopDefence = topDefence;
 							topDefence = e.getDamage();
-							if (skill.isRunning()) {
-								if (defenceActionbarUpdater.isRunning()) defenceActionbarUpdater.stop(false);
-								defenceActionbarUpdater.start();	
-							}
+							if (defenceActionbarUpdater.isRunning()) defenceActionbarUpdater.stop(false);
+							defenceActionbarUpdater.start();	
 						}
 					}
 					if (e.getEntity().equals(getPlayer())) {
@@ -288,10 +288,8 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 					if (topDefence > e.getDamage()) {
 						lastTopDefence = topDefence;
 						topDefence = e.getDamage();
-						if (skill.isRunning()) {
-							if (defenceActionbarUpdater.isRunning()) defenceActionbarUpdater.stop(false);
-							defenceActionbarUpdater.start();	
-						}
+						if (defenceActionbarUpdater.isRunning()) defenceActionbarUpdater.stop(false);
+						defenceActionbarUpdater.start();	
 					}
 				}
 				if (e.getEntity().equals(getPlayer())) {

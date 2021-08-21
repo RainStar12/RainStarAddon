@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -18,6 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -25,7 +28,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -43,10 +45,12 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
+import daybreak.google.common.collect.ImmutableSet;
 import daybreak.google.common.collect.Iterables;
 
 @AbilityManifest(
@@ -63,6 +67,7 @@ import daybreak.google.common.collect.Iterables;
 		" 게이지가 차오르는 동안은 이동할 수 없습니다."
 		})
 
+@SuppressWarnings("serial")
 public class TeslaPlasma extends Synergy {
 
 	public TeslaPlasma(Participant participant) {
@@ -71,10 +76,20 @@ public class TeslaPlasma extends Synergy {
 	
 	private boolean charged = false;
 	private int chargestack = 0;
+	@SuppressWarnings("unused")
 	private Bullet bullet = null;
 	private int timer = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * 20 : 20);
 	private static final Circle CIRCLE = Circle.of(0.5, 15);
 	private final ActionbarChannel ac = newActionbarChannel();
+	private static final Set<Material> bows;
+	
+	static {
+		if (MaterialX.CROSSBOW.isSupported()) {
+			bows = ImmutableSet.of(MaterialX.BOW.getMaterial(), MaterialX.CROSSBOW.getMaterial());
+		} else {
+			bows = ImmutableSet.of(MaterialX.BOW.getMaterial());
+		}
+	}
 	
 	@Override
 	protected void onUpdate(Update update) {
@@ -104,7 +119,13 @@ public class TeslaPlasma extends Synergy {
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 				SoundLib.ENTITY_WITHER_HURT.playSound(getPlayer().getLocation(), 7, 1.4f);
 				Arrow arrow = (Arrow) e.getProjectile();
-				new Bullet(getPlayer(), arrow.getVelocity(), arrow.getLocation()).start();
+				if (bows.contains(getPlayer().getInventory().getItemInMainHand().getType())) {
+					final ItemStack mainhand = getPlayer().getInventory().getItemInMainHand();
+					new Bullet(getPlayer(), arrow.getVelocity(), arrow.getLocation(), mainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE)).start();	
+				} else if (bows.contains(getPlayer().getInventory().getItemInOffHand().getType())) {
+					final ItemStack offhand = getPlayer().getInventory().getItemInOffHand();
+					new Bullet(getPlayer(), arrow.getVelocity(), arrow.getLocation(), offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE)).start();
+				}
 				getPlayer().setVelocity(getPlayer().getLocation().getDirection().setY((getPlayer().getLocation().getDirection().getY() * 0.3)).multiply(-2));
 				charged = false;
 				charging.stop(false);
@@ -177,6 +198,7 @@ public class TeslaPlasma extends Synergy {
 		private Vector forward;
 		private int stacks = 0;
 		private boolean turns = true;
+		private int powerEnchant = 0;
 
 		private RGB shootgradationA;
 		private RGB shootgradationB;
@@ -216,7 +238,7 @@ public class TeslaPlasma extends Synergy {
 		
 		private Location lastLocation;
 		
-		private Bullet(LivingEntity shooter, Vector arrowVelocity, Location startLocation) {
+		private Bullet(LivingEntity shooter, Vector arrowVelocity, Location startLocation, int powerEnchant) {
 			super(20);
 			setPeriod(TimeUnit.TICKS, 1);
 			TeslaPlasma.this.bullet = this;
@@ -226,6 +248,7 @@ public class TeslaPlasma extends Synergy {
 			this.twist2 = Iterables.cycle(CIRCLE.clone().rotateAroundAxisY(-shooter.getLocation().getYaw()).rotateAroundAxis(VectorUtil.rotateAroundAxisY(shooter.getLocation().getDirection().setY(0).normalize(), 90), -(shooter.getLocation().getPitch() + 90))).iterator();
 			this.forward = arrowVelocity.multiply(7);
 			this.lastLocation = startLocation;
+			this.powerEnchant = powerEnchant;
 			this.predicate = new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
@@ -282,9 +305,9 @@ public class TeslaPlasma extends Synergy {
 				if (type.isSolid()) {
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
 					if (getGame().getParticipant((Player) shooter).hasEffect(Stun.registration)) {
-						shooter.getWorld().createExplosion(entity.getLocation(), 4.5f, false, true);
+						shooter.getWorld().createExplosion(entity.getLocation(), (float) (4.5 + (powerEnchant * 0.75)), false, false);
 					} else {
-						shooter.getWorld().createExplosion(entity.getLocation(), 3f, false, true);	
+						shooter.getWorld().createExplosion(entity.getLocation(), (float) (3 + (powerEnchant * 0.75)), false, false);	
 					}
 					for (Player players : LocationUtil.getEntitiesInCircle(Player.class, entity.getLocation(), 6.5, predicate)) {
 						Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, 30);
@@ -297,9 +320,9 @@ public class TeslaPlasma extends Synergy {
 					if (!shooter.equals(player)) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
 						if (getGame().getParticipant((Player) shooter).hasEffect(Stun.registration)) {
-							shooter.getWorld().createExplosion(entity.getLocation(), 4.5f, false, true);
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) (4.5f + (powerEnchant * 0.75)), false, false);
 						} else {
-							shooter.getWorld().createExplosion(entity.getLocation(), 3f, false, true);	
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) (3 + (powerEnchant * 0.75)), false, false);	
 						}
 						for (Player players : LocationUtil.getEntitiesInCircle(Player.class, entity.getLocation(), 6.5, predicate)) {
 							Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, 30);
@@ -354,7 +377,7 @@ public class TeslaPlasma extends Synergy {
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
 				Player deflectedPlayer = deflector.getPlayer();
-				new Bullet(deflectedPlayer, newDirection, lastLocation).start();
+				new Bullet(deflectedPlayer, newDirection, lastLocation, powerEnchant).start();
 			}
 			
 			@Override

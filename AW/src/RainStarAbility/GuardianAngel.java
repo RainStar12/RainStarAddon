@@ -80,12 +80,12 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7활 우클릭 §8- §c저지먼트§f: 바라보는 방향의 수평으로 성령의 화살을 발사합니다.",
 		" 성령의 화살이 적중할 때 다시 튕겨 시전자의 위치까지 되돌아오며,",
 		" §d수호 스택§f에 비례해 적중 대상을 §e기절§f시킵니다.",
+		" 생명체에게 적중했을 경우 $[MORE_MOVE]초간 더 나아간 후 돌아옵니다.",
 		"§7철괴 우클릭 §8- §b생츄어리§f: $[DURATION]초간 계속해 늘어나는 성역을 전개합니다.",
-		" 성역 내에서 자신은 참가자 중 신 능력자의 수에 비례해 회복 효과를 받습니다.",
-		" 다른 플레이어도 언데드나 기타 종족이 아닐 시 50%로 회복효과를 받으며",
-		" 언데드의 경우 지속적으로 피해를 입힙니다. $[COOLDOWN]",
+		" 성역 내에 있는 신 종족의 수에 비례해 회복 효과를 받습니다. $[COOLDOWN]",
+		" 자신은 회복 효과가 2배이며, 언데드는 회복 효과 대신 피해를 입습니다.",
 		" 이 효과로 체력이 20% 이하였던 플레이어를 회복해 줄 때 §d수호 스택§f을 얻습니다.",
-		" 성역 전개가 끝난 후 §3신성한 장막§f을 획득하여 다음 엔티티에 의한 피해를",
+		"§7지속 후 패시브 §8- §b신성한 장막§f: 성역의 지속이 끝나면 생명체에 의한 피해를",
 		" 딱 한 번 방어해주고, 막은 피해량의 1.5배만큼 §e흡수 체력§f을 역회복합니다.",
 		},
 		summarize = {
@@ -137,7 +137,39 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private static final Set<Material> bows;
+	public static final SettingObject<Integer> COOLDOWN 
+	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
+			"cooldown", 95, "# 쿨타임") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	public static final SettingObject<Integer> DURATION 
+	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
+			"duration", 10, "# 지속 시간") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+
+	public static final SettingObject<Double> MORE_MOVE 
+	= abilitySettings.new SettingObject<Double>(GuardianAngel.class,
+			"more-move", 0.25, "# 추가 이동 시간") {
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+	};
+	
+	private final double moremove = MORE_MOVE.getValue();
 	private boolean holyshield = false;
 	private final Set<Participant> gods = new HashSet<>();
 	private final Set<Player> healed = new HashSet<>();
@@ -170,7 +202,9 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		{false, false, true, true, false, false},
 		{false, false, true, true, false, false},
 	});
-
+	
+	private static final Set<Material> bows;
+	
 	static {
 		if (MaterialX.CROSSBOW.isSupported()) {
 			bows = ImmutableSet.of(MaterialX.BOW.getMaterial(), MaterialX.CROSSBOW.getMaterial());
@@ -425,29 +459,6 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1);
 	
-	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"cooldown", 95, "# 쿨타임") {
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-	};
-	
-	public static final SettingObject<Integer> DURATION 
-	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
-			"duration", 10, "# 지속 시간") {
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-	};
-	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) &&
 	    		!cool.isCooldown() && !sanctuary.isDuration()) {
@@ -522,7 +533,6 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 				e.setCancelled(true);
 				SoundLib.ENTITY_SPLASH_POTION_BREAK.playSound(getPlayer().getLocation(), 1, 1.15f);
 				if (yellowheart > 0) {
-					Bukkit.broadcastMessage("딜: " + e.getDamage(DamageModifier.ABSORPTION));
 					NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getDamage(DamageModifier.ABSORPTION) * -1.5)));
 				} else {
 					NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + (e.getFinalDamage() * 1.5)));	
@@ -622,19 +632,19 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				if (type.isSolid()) {
-					SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer());
 					checkhit = true;
 					stop(false);
 					return;
 				}
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
-						Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)) * 0.75));
+						Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)) * 0.6));
 						if (livingEntity instanceof Player) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(10 + (stack * 5), 60));
-						checkhit = true;
-						SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer());
-						stop(false);
-						return;
+						if (!checkhit) {
+							checkhit = true;
+							this.setCount((int) (moremove * 20));
+							SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1f, 1.5f);
+						}
 					}
 				}
 				ParticleLib.REDSTONE.spawnParticle(location, color);
@@ -645,6 +655,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			if (checkhit) {
+				SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1f, 1f);
 				new Bullet2(getPlayer(), entity.getLocation(), (float) (EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)), COLOR2).start();
 				checkhit = false;
 			}
@@ -764,8 +775,8 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 				entity.setLocation(location);
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
-						Damages.damageArrow(livingEntity, shooter, (float) (damage * 1.25));
-						if (livingEntity instanceof Player) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(5 + (stack * 2), 60));
+						Damages.damageArrow(livingEntity, shooter, (float) (damage * 0.6));
+						if (livingEntity instanceof Player) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(10 + (stack * 5), 60));
 					} else if (livingEntity.equals(shooter)) {
 						stop(false);
 						return;

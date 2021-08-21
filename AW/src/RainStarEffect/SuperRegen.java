@@ -54,7 +54,7 @@ public class SuperRegen extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void run(int count) {
-		ParticleLib.VILLAGER_HAPPY.spawnParticle(participant.getPlayer().getLocation().add(0, 1.5, 0), 0, 0, 0, 10, 1);
+		ParticleLib.VILLAGER_HAPPY.spawnParticle(participant.getPlayer().getLocation().add(0, 1, 0), 0, 0, 0, 10, 1);
 		Healths.setHealth(participant.getPlayer(), participant.getPlayer().getHealth() + 0.75);
 		super.run(count);
 	}

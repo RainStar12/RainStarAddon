@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -49,6 +51,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
@@ -88,6 +91,7 @@ public class Accelerator extends Synergy {
 		@Override
 		public boolean test(Entity entity) {
 			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -187,13 +191,14 @@ public class Accelerator extends Synergy {
 	    public void onSilentEnd() {
 			getPlayer().setVelocity(zerov);
 			getPlayer().getInventory().setArmorContents(armors);
+			ItemStack sword = getPlayer().getInventory().getItemInMainHand();
 	   		SoundLib.ENTITY_FIREWORK_ROCKET_BLAST.playSound(getPlayer().getLocation());
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			new BukkitRunnable() {
 				
 				@Override
 				public void run() {
-					new AfterImage().start();
+					new AfterImage(sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL)).start();
 				}
 				
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
@@ -272,10 +277,12 @@ public class Accelerator extends Synergy {
     	Set<Damageable> damagedcheck = new HashSet<>();
     	Location saveloc1;
     	Location saveloc2;
+    	private final int sharpness;
     	
-    	private AfterImage() {
+    	private AfterImage(int sharpness) {
     		super(TaskType.REVERSE, 60);
     		setPeriod(TimeUnit.TICKS, 1);
+    		this.sharpness = sharpness;
     	}
     	
     	@Override
@@ -294,7 +301,7 @@ public class Accelerator extends Synergy {
     				if (p instanceof Player) {
     					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
             				if (count < 55) {
-            				Damages.damageMagic(p, getPlayer(), true, 1);
+            				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(5f, sharpness) * 0.75));
             				staminaGain(0.1);
 	        			    	new AbilityTimer(10) {
 	        			    			
@@ -316,7 +323,7 @@ public class Accelerator extends Synergy {
 	        			    	}.setPeriod(TimeUnit.TICKS, 1);
             				}
             			} else {
-            				Damages.damageMagic(p, getPlayer(), true, 1);
+            				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
             				staminaGain(0.1);
         			    	new AbilityTimer(10) {
     			    			
@@ -338,7 +345,7 @@ public class Accelerator extends Synergy {
         			    	}.setPeriod(TimeUnit.TICKS, 1);
             			}
     				} else {
-        				Damages.damageMagic(p, getPlayer(), true, 1);
+        				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
         				staminaGain(0.1);
     			    	new AbilityTimer(10) {
 			    			

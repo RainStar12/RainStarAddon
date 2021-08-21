@@ -368,6 +368,7 @@ public class Kuro extends AbilityBase {
 		
     	@Override
     	protected void run(int count) {
+    		if (startLoc.equals(endLoc)) stop(false);
         	if (locations.size() == count) {
         		stop(false);
         	} else {
@@ -426,7 +427,7 @@ public class Kuro extends AbilityBase {
     	
     	@Override
     	protected void onSilentEnd() {
-    		for (Location loc : Line.between(startLoc, endLoc, (int) Math.min(15, Math.sqrt(startLoc.distanceSquared(endLoc)))).toLocations(startLoc)) {
+    		for (Location loc : Line.between(startLoc, endLoc, (int) Math.max(1, Math.min(15, Math.sqrt(startLoc.distanceSquared(endLoc))))).toLocations(startLoc)) {
     			ArmorStand armorstand = loc.getWorld().spawn(loc, ArmorStand.class);
     			armorstand.setRightArmPose(new EulerAngle(Math.toRadians(80), 0, 0));
             	armorstand.setMetadata("DimensionCutter", new FixedMetadataValue(AbilityWar.getPlugin(), null));

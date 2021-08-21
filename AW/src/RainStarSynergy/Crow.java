@@ -20,6 +20,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -77,10 +78,11 @@ import kotlin.ranges.RangesKt;
 		name = "크로우", rank = Rank.L, species = Species.ANIMAL, explain = {
 		"§7철괴 우클릭 §c- §8섀도우 스텝§f: 순간 §b무적 및 투명, 타게팅 불능 상태§f가 되어",
 		" 이동 속도가 매우 높아지고 다른 생명체를 지나칠 수 있습니다. $[COOLDOWN]",
-		" 이때 주변에 그림자 장막이 깔려 주변 10칸 내 플레이어를 매우 느리게 만듭니다.",
 		" 이후 지속시간이 끝나면 지나친 생명체들에게 강력한 피해를 입히고 §c출혈§f시키며,",
-		" 피해 입힌 대상 한 명당 §c추가 공격력§f을 §c2§f씩 최대 §c12§f까지 획득할 수 있습니다.",
-		" 이 §c추가 공격력§f은 지속적으로 §c0§f이 될 때까지 감소합니다.",
+		" 지속적으로 §c0§f이 될 때까지 감소하는 추가 공격력을 §c12§f만큼 얻습니다.",
+		" 피해 입힌 대상 한 명당 §c추가 공격력§f의 감소 속도가 늦춰집니다.",
+		"§7능력 지속 중 패시브 §c- §3섀도우 커튼§f: 자신의 주변에 그림자 장막이 깔려",
+		" 10칸 내 플레이어를 매우 느리게 만듭니다.",
 		"§7패시브 §c- §9섀도우 이터§f: 출혈 중인 대상에게 피해를 입히면 잠시간",
 		" 추가 공격력의 감소 속도가 느려지고, §8섀도우 스텝§f의 쿨타임이 줄어듭니다.",
 		" 또한 대상의 남은 출혈 지속시간에 비례해 체력을 회복할 수 있습니다."
@@ -98,6 +100,7 @@ public class Crow extends Synergy implements ActiveHandler {
 		public boolean test(Entity entity) {
 			if (onetimeEntity.contains(entity)) return false;
 			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -119,6 +122,16 @@ public class Crow extends Synergy implements ActiveHandler {
 		}
 	};
 	
+	public static final SettingObject<Integer> DAMAGE = synergySettings.new SettingObject<Integer>(Crow.class, "damage", 9,
+			"# 섀도우 스텝의 기본 대미지") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Crow.class, "right-cooldown", 50,
 			"# 철괴 우클릭 쿨타임") {
 
@@ -135,6 +148,7 @@ public class Crow extends Synergy implements ActiveHandler {
 	};
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
+	private final int skillDamage = DAMAGE.getValue();
 	
 	private double addDamage = 0;
 	private int damagingCount = 0;
@@ -179,7 +193,7 @@ public class Crow extends Synergy implements ActiveHandler {
 					@Override
 					public void run() {
 						damagedEntity.remove(livingEntity);
-						damagingCount = Math.min(6, damagingCount + 1);
+						damagingCount = Math.min(5, damagingCount + 1);
 						livingEntity.damage(1.5);
 						for (Location loc : circle.toLocations(livingEntity.getLocation()).floor(livingEntity.getLocation().getY())) {
 							ParticleLib.SMOKE_LARGE.spawnParticle(loc, 0.15, 0.1, 0.15, 1, 0);
@@ -317,10 +331,11 @@ public class Crow extends Synergy implements ActiveHandler {
     	
     	@Override
 		public void run(int count) {
+    		double decreaseSpeed = (6 - damagingCount);
     		if (slower.isRunning()) {
-        		addDamage = Math.max(0, (addDamage - (0.0075 + ((addDamage / 12) * 0.025))));
+        		addDamage = Math.max(0, (addDamage - (0.0075 + ((addDamage / 12) * 0.025)) * decreaseSpeed));
     		} else {
-        		addDamage = Math.max(0, (addDamage - (0.0125 + ((addDamage / 12) * 0.04))));	
+        		addDamage = Math.max(0, (addDamage - (0.0125 + ((addDamage / 12) * 0.04)) * decreaseSpeed));	
     		}
     		bossBar2.setTitle("§c추가 피해량 §7: §e" + df.format(addDamage));
 			bossBar2.setProgress(RangesKt.coerceIn(addDamage / 12, 0, 1));
@@ -330,11 +345,13 @@ public class Crow extends Synergy implements ActiveHandler {
 		@Override
 		public void onEnd() {
 			bossBar2.removeAll();
+			damagingCount = 0;
 		}
 
 		@Override
 		public void onSilentEnd() {
 			bossBar2.removeAll();
+			damagingCount = 0;
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -511,19 +528,19 @@ public class Crow extends Synergy implements ActiveHandler {
     			listIterator.previous();
     			listIterator.previous();
     		}
-			addDamage = Math.min(12, (damagingCount * 2) + addDamage);
+			if (damagingCount > 0) addDamage = 12;
+			else addDamage = 0;
 			if (!damageAdder.isRunning()) damageAdder.start();
     		SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer().getLocation(), 1, 1.77f);
     		for (LivingEntity livingEntity : getPlayer().getWorld().getLivingEntities()) {
     			if (onetimeEntity.contains(livingEntity)) {
-    				livingEntity.damage(9, getPlayer());
+    				livingEntity.damage(skillDamage, getPlayer());
     				ParticleLib.ITEM_CRACK.spawnParticle(livingEntity.getLocation(), .5f, 1f, .5f, 100, 0.35, MaterialX.REDSTONE);
 					Bleed.apply(getGame(), livingEntity, TimeUnit.TICKS, 80);
     			}
     		}
 			livingEntityLocation.clear();
 			onetimeEntity.clear();
-			damagingCount = 0;
     		particlerun = false;
     		log.clear();
     		getlog.clear();

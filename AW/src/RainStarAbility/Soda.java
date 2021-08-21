@@ -329,7 +329,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !cooldown.isCooldown()) {
 	    	if (!skill.isDuration()) {
 	    		getPlayer().teleport(LocationUtil.floorY(getPlayer().getLocation(), blockpredicate).subtract(0, 1, 0));
-	    		skill.start();
+	    		return skill.start();
 	    	} else {
 	    		skill.stop(false);
 	    	}

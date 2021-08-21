@@ -81,7 +81,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> RIGHT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"right-cooldown", 60, "# 과거 쿨타임",
+			"right-cooldown", 45, "# 과거 쿨타임",
 			"# 쿨타임 감소 효과를 50%까지만 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -95,7 +95,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> LEFT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"left-cooldown", 60, "# 미래 쿨타임",
+			"left-cooldown", 45, "# 미래 쿨타임",
 			"# 쿨타임 감소 효과를 50%까지만 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {

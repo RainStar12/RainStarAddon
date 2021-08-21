@@ -267,7 +267,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 						getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
 						getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + target.getAbility().getDisplayName() + "§f입니다.");
 						target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + target.getAbility().getDisplayName() + "§f" + KoreanUtil.getJosa(target.getAbility().getDisplayName(), Josa.이가) + " 되었습니다.");
-						new AbilityTimer(100) {
+						new AbilityTimer(150) {
 
 							private ActionbarChannel actionbarChannel;
 
@@ -326,7 +326,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 								getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
 								getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getFirst().getDisplayName() + "§f입니다.");
 								target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
-								new AbilityTimer(100) {
+								new AbilityTimer(150) {
 
 									private ActionbarChannel actionbarChannel;
 
@@ -380,7 +380,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 								getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
 								getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getSecond().getDisplayName() + "§f입니다.");
 								target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
-								new AbilityTimer(100) {
+								new AbilityTimer(150) {
 
 									private ActionbarChannel actionbarChannel;
 
@@ -496,7 +496,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 	
 	public class AbilitySelect extends AbilityTimer implements Listener {
 		
-		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(null).build();
+		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(" ").build();
 		
 		private final List<AbilityRegistration> values = new ArrayList<>();
 		private Set<AbilityRegistration> synergies = new HashSet<>();

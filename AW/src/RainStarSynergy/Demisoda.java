@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -53,13 +54,13 @@ import daybreak.google.common.base.Predicate;
 		" 가집니다. 또한 신발을 신고 물 속에 들어갈 때 물갈퀴 인챈트를 자동 획득합니다.",
 		"§7패시브 §8- §a무슨 맛으로?§f: 피해를 입을 때마다 $[CHANCE_CONFIG]% 확률로 현재 내 탄산음료의 맛에",
 		" 따른 제각기의 버프를 $[BUFF_DURATION]초간 획득합니다.",
+		" 이 효과가 발동하면, 무작위의 맛으로 교체됩니다.",
 		" §c자몽 맛§7: §c재생 §7| §6오렌지 맛§7: §6힘 §7| §e레몬 맛§7: §e흡수",
 		" §a사과 맛§7: §a저항 §7| §b청포도 맛§7: §b신속 §7| §d복숭아 맛§7: §d치유",
 		"§7철괴 좌클릭 §8- §b리프레쉬§f: $[DURATION_CONFIG]초간 탄산음료가 되어, 타게팅 불능 및 무적 상태가 됩니다.",
 		" 탄산음료가 된 동안 지면에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 ",
 		" 탄산음료 상태가 해제되고 주변 $[RANGE_CONFIG]칸 내 적에게 $[EFFECT_DURATION]초간",
-		" 부식 상태이상을 겁니다. $[COOLDOWN_CONFIG]",
-		" 또한 탄산음료의 맛이 무작위로 변경됩니다.",
+		" 부식 상태이상을 걸고 $[NO_CHANGE_DURATION]초간 현재의 맛을 고정시킵니다. $[COOLDOWN_CONFIG]",
 		"§7상태이상 §8- §7부식§f: 철 광물을 사용하는 모든 아이템을 사용할 수 없습니다.",
 		" 또한 갑옷의 방어력이 착용 광물에 비례해 희귀성이 낮을수록 더 많이 감소합니다."
 		})
@@ -102,7 +103,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CHANCE_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"chance", 20, "# 피격시 버프를 받을 확률",
+			"chance", 30, "# 피격시 버프를 받을 확률",
 			"# 30 = 30%") {
 
 		@Override
@@ -115,6 +116,16 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	public static final SettingObject<Integer> RANGE_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
 			"range", 5, "# 부식 범위") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> NO_CHANGE_DURATION 
+	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+			"no-change-duration", 10, "# 맛 고정 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -140,6 +151,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 		@Override
 		public boolean test(Entity entity) {
 			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -200,6 +212,10 @@ public class Demisoda extends Synergy implements ActiveHandler {
 		return block.getType().name().endsWith("WATER");
 	}
 	
+	private final AbilityTimer nochange = new AbilityTimer(NO_CHANGE_DURATION.getValue()) {
+		
+	}.setPeriod(TimeUnit.SECONDS, 1).register();
+	
 	private final AbilityTimer passive = new AbilityTimer() {
 		
     	@Override
@@ -231,22 +247,22 @@ public class Demisoda extends Synergy implements ActiveHandler {
     		}
     		switch(taste) {
     		case 0:
-    			ac.update("§c자몽 맛");
+    			ac.update((nochange.isRunning() ? "§c§l" : "§c") + "자몽 맛");
     			break;
     		case 1:
-    			ac.update("§6오렌지 맛");
+    			ac.update((nochange.isRunning() ? "§6§l" : "§6") + "오렌지 맛");
     			break;
     		case 2:
-    			ac.update("§e레몬 맛");
+    			ac.update((nochange.isRunning() ? "§e§l" : "§e") + "레몬 맛");
     			break;
     		case 3:
-    			ac.update("§a사과 맛");
+    			ac.update((nochange.isRunning() ? "§a§l" : "§a") + "사과 맛");
     			break;
     		case 4:
-    			ac.update("§b청포도 맛");
+    			ac.update((nochange.isRunning() ? "§b§l" : "§b") + "청포도 맛");
     			break;
     		case 5:
-    			ac.update("§d복숭아 맛");
+    			ac.update((nochange.isRunning() ? "§d§l" : "§d") + "복숭아 맛");
     			break;
     		}
     	}
@@ -303,6 +319,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 			}
 			negative.increaseWeight(5);
 			positive.resetWeight();
+			if (!nochange.isRunning()) taste = new Random().nextInt(6);
 		} else {
 			positive.increaseWeight(5);
 			negative.resetWeight();
@@ -354,7 +371,8 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	    	if (!skill.isDuration()) {
 	    		getPlayer().teleport(LocationUtil.floorY(getPlayer().getLocation(), blockpredicate).subtract(0, 1, 0));
 	    		skill.start();
-				taste = new Random().nextInt(6);
+	    		nochange.start();
+	    		return true;
 	    	} else {
 	    		skill.stop(false);
 	    	}

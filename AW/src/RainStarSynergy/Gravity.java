@@ -53,23 +53,24 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "그래비티", rank = Rank.A, species = Species.OTHERS, explain = {
 		"철괴 우클릭 시 특수한 §d중력 탄환§f을 장전하여 다음 활 발사시",
 		"적중한 위치의 바닥으로부터 $[DURATION]초간 7칸의 중력장을 생성해냅니다. $[COOLDOWN]",
 		"자신의 신체는 중력장의 영향과 낙하 피해를 무시합니다.",
+		"자신이 중력장 안에 있을 때 중력장에 따른 버프를 받습니다.",
 		"§5가중력§7: §f점프력과 이동 속도가 급격하게 낮아지며, 모든 엔티티가",
-		" 지면으로 강하게 끌어당겨집니다. 오래 있으면 피해를 입습니다.",
+		" 지면으로 강하게 끌어당겨집니다. 오래 있으면 피해를 입습니다. §a버프 §f: §6힘 1",
 		"§2반중력§7: §f모든 투사체가 멈춥니다. 반중력장이 해제될 때 투사체들의 정지도 해제되며",
-		" 엔티티들은 반중력장의 중심으로부터 밀려납니다.",
+		" 엔티티들은 반중력장의 중심으로부터 밀려납니다. §a버프 §f: §c재생 1",
 		"§3무중력§7: §f모든 엔티티의 중력이 해제됩니다. 무중력장이 해제되기 전까진",
-		" 무중력장을 벗어나도 유지됩니다."
+		" 무중력장을 벗어나도 유지됩니다. §a버프 §f: §3저항 2"
 })
 
 public class Gravity extends Synergy implements ActiveHandler {
@@ -120,7 +121,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Gravity.class,
-			"cooldown", 60, "# 쿨타임") {
+			"cooldown", 30, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -133,7 +134,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Gravity.class,
-			"duration", 8, "# 지속 시간") {
+			"duration", 10, "# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -286,6 +287,19 @@ public class Gravity extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void run(int count) {
+			if (LocationUtil.isInCircle(location, getPlayer().getLocation(), range)) {
+				switch(type) {
+				case 1:
+					PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 0, true);
+					break;
+				case 2:
+					PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 20, 0, true);
+					break;
+				case 3:
+					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 20, 1, true);
+					break;
+				}
+			}
 			if (count <= 26) {
 				if (count % 2 == 0) {
 					Sphere uppersphere = Sphere.of(count * 0.25, (int) (1 + (count * 0.5)));
@@ -346,10 +360,8 @@ public class Gravity extends Synergy implements ActiveHandler {
 							gravityMap.put(entity, entity.hasGravity());	
 						}
 						if (stackMap.containsKey(entity)) {
-							if (stackMap.get(entity) >= 40) {
-								if (stackMap.get(entity) % 20 == 0) {
-									Damages.damageFixed(entity, getPlayer(), (float) (stackMap.get(entity) * 0.075));
-								}
+							if (stackMap.get(entity) >= 40 && stackMap.get(entity) % 20 == 0) {
+								if (entity instanceof Damageable) ((Damageable) entity).damage(stackMap.get(entity) * 0.075);
 							}
 						}
 						entity.setGravity(true);

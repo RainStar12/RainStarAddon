@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -61,6 +62,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §8- §2리턴§f: 어떠한 피해를 입던 방어된 만큼의 피해량의 $[RETURN]%를",
 		" 피해를 입힌 대상에게 1초 후 다시 되돌려줍니다.",
 		" 이후 §c반격§f으로 입힌 피해의 $[REGEN]%만큼 §d체력을 회복§f합니다.",
+		" 반격 대상이 존재하지 않는 자연적 피해는 내게 다시 §c반격§f됩니다.",
 		"§7검 휘두르기 §8- §3에코§f: 발사체를 바라보고 튕겨낼 수 있습니다.",
 		" $[ARROW_COUNT]번 튕겨낼 때마다 방어 계열 버프 중 하나를 무작위로 얻습니다.",
 		" 혹은 근접 피해를 빠르게 $[DAMAGE_COUNT]번 되받아칠 때에도 이 효과를 얻습니다.",
@@ -204,7 +206,9 @@ public class Mirror extends Synergy {
 	@SubscribeEvent
 	public void onEntityResurrectEvent(EntityResurrectEvent e) {
 		if (undying.isRunning() && e.getEntity().equals(getPlayer())) {
+			ItemStack leftHand = getPlayer().getInventory().getItemInOffHand();
 			e.setCancelled(false);
+			getPlayer().getInventory().setItemInOffHand(leftHand);
 			undying.stop(false);
 		}
 	}
@@ -221,10 +225,32 @@ public class Mirror extends Synergy {
 	
 	@SubscribeEvent
 	public void onEntityEvent(EntityDamageEvent e) {
-		if (block && e.getEntity().equals(getPlayer())) {
-			SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer().getLocation());
-			e.setCancelled(true);
-			block = false;
+		if (e.getEntity().equals(getPlayer())) {
+			if (block) {
+				SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer().getLocation());
+				e.setCancelled(true);
+				block = false;	
+			} else {
+				if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK) &&
+						!e.getCause().equals(DamageCause.MAGIC) && !e.getCause().equals(DamageCause.PROJECTILE)) {
+					new AbilityTimer(20) {
+						
+						@Override
+						public void onEnd() {
+							onSilentEnd();
+						}
+						
+						@Override
+						public void onSilentEnd() {
+							getPlayer().setNoDamageTicks(0);
+							getPlayer().damage(e.getDamage(), getPlayer());
+							ParticleLib.SWEEP_ATTACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0));
+							SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation());
+						}
+						
+					}.setPeriod(TimeUnit.TICKS, 1).start();	
+				}
+			}
 		}
 	}
 	
@@ -366,78 +392,80 @@ public class Mirror extends Synergy {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityEvent(e);
-		if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
-			target = (Player) e.getDamager();
-			counter.start();
-		}
-		if (target != null) {
-			if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
-				damagecount++;
-				if (damagecount >= needDamageCount) {
-					roulette.start();
-					damagecount = 0;
-				}
-				SoundLib.BLOCK_ANVIL_LAND.playSound(target.getLocation(), 1, 2f);
+		if (!getPlayer().equals(e.getDamager())) {
+			if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
+				target = (Player) e.getDamager();
+				counter.start();	
 			}
-		}
-		if (e.getEntity().equals(getPlayer()) && e.getDamager() != null) {
-			if (e.getDamager() instanceof Projectile) {
-				Projectile p = (Projectile) e.getDamager();
-				if (p.getShooter() != null) {
-					if (p.getShooter() instanceof Damageable && !getPlayer().equals(p.getShooter())) {
-						Damageable d = (Damageable) p.getShooter();
-						double returnDamage = (e.getDamage() - e.getFinalDamage());
-						new AbilityTimer(20) {
-							
-							@Override
-							public void onEnd() {
-								onSilentEnd();
-							}
-							
-							@Override
-							public void onSilentEnd() {
-								if (d != null) {
-									if (e.getCause().equals(DamageCause.MAGIC)) Damages.damageMagic(d, getPlayer(), true, (float) returnDamage);
-									else Damages.damageArrow(d, getPlayer(), (float) returnDamage);
-									final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
-									Bukkit.getPluginManager().callEvent(event);
-									if (!event.isCancelled() && !getPlayer().isDead()) {
-										Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
-									}
-									ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
-									SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
-								}
-							}
-							
-						}.setPeriod(TimeUnit.TICKS, 1).start();	
+			if (target != null) {
+				if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
+					damagecount++;
+					if (damagecount >= needDamageCount) {
+						roulette.start();
+						damagecount = 0;
 					}
+					SoundLib.BLOCK_ANVIL_LAND.playSound(target.getLocation(), 1, 2f);
 				}
-			} else if (e.getDamager() instanceof Damageable) {
-				Damageable d = (Damageable) e.getDamager();
-				double returnDamage = (e.getDamage() - e.getFinalDamage());
-				new AbilityTimer(20) {
-					
-					@Override
-					public void onEnd() {
-						onSilentEnd();
-					}
-					
-					@Override
-					public void onSilentEnd() {
-						if (d != null) {
-							d.damage((returnDamage * ((double) returns / 100)), getPlayer());
-							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
-							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled() && !getPlayer().isDead()) {
-								Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
-							}
-							ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
-							SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
+			}
+			if (e.getEntity().equals(getPlayer()) && e.getDamager() != null) {
+				if (e.getDamager() instanceof Projectile) {
+					Projectile p = (Projectile) e.getDamager();
+					if (p.getShooter() != null) {
+						if (p.getShooter() instanceof Damageable && !getPlayer().equals(p.getShooter())) {
+							Damageable d = (Damageable) p.getShooter();
+							double returnDamage = (e.getDamage() - e.getFinalDamage());
+							new AbilityTimer(20) {
+								
+								@Override
+								public void onEnd() {
+									onSilentEnd();
+								}
+								
+								@Override
+								public void onSilentEnd() {
+									if (d != null) {
+										if (e.getCause().equals(DamageCause.MAGIC)) Damages.damageMagic(d, getPlayer(), true, (float) returnDamage);
+										else Damages.damageArrow(d, getPlayer(), (float) returnDamage);
+										final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
+										Bukkit.getPluginManager().callEvent(event);
+										if (!event.isCancelled() && !getPlayer().isDead()) {
+											Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+										}
+										ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
+										SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
+									}
+								}
+								
+							}.setPeriod(TimeUnit.TICKS, 1).start();	
 						}
 					}
-					
-				}.setPeriod(TimeUnit.TICKS, 1).start();	
-			}
+				} else if (e.getDamager() instanceof Damageable) {
+					Damageable d = (Damageable) e.getDamager();
+					double returnDamage = (e.getDamage() - e.getFinalDamage());
+					new AbilityTimer(20) {
+						
+						@Override
+						public void onEnd() {
+							onSilentEnd();
+						}
+						
+						@Override
+						public void onSilentEnd() {
+							if (d != null) {
+								d.damage((returnDamage * ((double) returns / 100)), getPlayer());
+								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
+								Bukkit.getPluginManager().callEvent(event);
+								if (!event.isCancelled() && !getPlayer().isDead()) {
+									Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+								}
+								ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
+								SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
+							}
+						}
+						
+					}.setPeriod(TimeUnit.TICKS, 1).start();	
+				}
+			}	
 		}
 	}
 	

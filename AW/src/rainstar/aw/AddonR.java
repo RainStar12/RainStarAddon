@@ -8,30 +8,34 @@ import org.bukkit.scheduler.BukkitRunnable;
 import RainStarAbility.Alice;
 import RainStarAbility.AntiGravity;
 import RainStarAbility.Butcher;
-import RainStarAbility.Chronos;
+import RainStarAbility.Butterfly;
 import RainStarAbility.Citrus;
 import RainStarAbility.Crystal;
 import RainStarAbility.Dash;
 import RainStarAbility.DefileGak;
 import RainStarAbility.Detection;
+import RainStarAbility.Dinosaur;
 import RainStarAbility.Divinity;
-import RainStarAbility.DualPersonality;
 import RainStarAbility.Echo;
 import RainStarAbility.Empty;
 import RainStarAbility.Executioner;
 import RainStarAbility.Flex;
+import RainStarAbility.FoxCrystalBall;
 import RainStarAbility.GlassCannon;
 import RainStarAbility.GuardianAngel;
 import RainStarAbility.HealthFreak;
+import RainStarAbility.HuntingDog;
 import RainStarAbility.KnockbackPatch;
 import RainStarAbility.Indecision;
 import RainStarAbility.Inferno;
+import RainStarAbility.IslandRabbit;
 import RainStarAbility.Kairos;
 import RainStarAbility.Kuro;
 import RainStarAbility.KuroEye;
 import RainStarAbility.LightningCounter;
 import RainStarAbility.LingeringArrow;
 import RainStarAbility.LittleDevil;
+import RainStarAbility.Megalodon;
 import RainStarAbility.Mira;
 import RainStarAbility.Moros;
 import RainStarAbility.MultiHit;
@@ -39,12 +43,17 @@ import RainStarAbility.NineTailFox;
 import RainStarAbility.NineTailFoxC;
 import RainStarAbility.NineTailFoxCP;
 import RainStarAbility.OneShotOneKill;
+import RainStarAbility.Panda;
+import RainStarAbility.Penguin;
+import RainStarAbility.Phoenix;
 import RainStarAbility.PrecisionAiming;
 import RainStarAbility.Protagonist;
 import RainStarAbility.RainStar;
 import RainStarAbility.RandomNumberControl;
 import RainStarAbility.Revenger;
+import RainStarAbility.SkyWhale;
 import RainStarAbility.Soda;
+import RainStarAbility.Squirrel;
 import RainStarAbility.Stella;
 import RainStarAbility.Stop;
 import RainStarAbility.Teabagging;
@@ -52,6 +61,7 @@ import RainStarAbility.Tesla;
 import RainStarAbility.TimeStop;
 import RainStarAbility.HeadtoHead;
 import RainStarAbility.Yuki;
+import RainStarAbility.chronos.Chronos;
 import RainStarSynergy.ASAP;
 import RainStarSynergy.Accelerator;
 import RainStarSynergy.AkashicRecords;
@@ -60,6 +70,7 @@ import RainStarSynergy.BadManner;
 import RainStarSynergy.Berserk;
 import RainStarSynergy.Chance;
 import RainStarSynergy.Cliche;
+import RainStarSynergy.CowardlyMatch;
 import RainStarSynergy.Crow;
 import RainStarSynergy.CurseOfGod;
 import RainStarSynergy.Demisoda;
@@ -80,6 +91,7 @@ import RainStarSynergy.MagicShow;
 import RainStarSynergy.Mirror;
 import RainStarSynergy.MomentaryTrip;
 import RainStarSynergy.MovingSkill;
+import RainStarSynergy.NaturalScienceStudent;
 import RainStarSynergy.NineTailFoxSynergy;
 import RainStarSynergy.PatronSaint;
 import RainStarSynergy.Recall;
@@ -103,6 +115,7 @@ import daybreak.abilitywar.ability.list.DiceGod;
 import daybreak.abilitywar.ability.list.EnergyBlocker;
 import daybreak.abilitywar.ability.list.Ferda;
 import daybreak.abilitywar.ability.list.Flector;
+import daybreak.abilitywar.ability.list.Loki;
 import daybreak.abilitywar.ability.list.Magician;
 import daybreak.abilitywar.ability.list.PenetrationArrow;
 import daybreak.abilitywar.ability.list.Reverse;
@@ -211,6 +224,28 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Citrus.class);
 		AbilityFactory.registerAbility(HeadtoHead.class);
 		AbilityList.registerAbility(HeadtoHead.class);
+		AbilityFactory.registerAbility(HuntingDog.class);
+		AbilityList.registerAbility(HuntingDog.class);
+		AbilityFactory.registerAbility(Phoenix.class);
+		AbilityList.registerAbility(Phoenix.class);
+		AbilityFactory.registerAbility(Penguin.class);
+		AbilityList.registerAbility(Penguin.class);
+		AbilityFactory.registerAbility(Megalodon.class);
+		AbilityList.registerAbility(Megalodon.class);
+		AbilityFactory.registerAbility(Butterfly.class);
+		AbilityList.registerAbility(Butterfly.class);
+		AbilityFactory.registerAbility(IslandRabbit.class);
+		AbilityList.registerAbility(IslandRabbit.class);
+		AbilityFactory.registerAbility(Dinosaur.class);
+		AbilityList.registerAbility(Dinosaur.class);
+		AbilityFactory.registerAbility(Panda.class);
+		AbilityList.registerAbility(Panda.class);
+		AbilityFactory.registerAbility(Squirrel.class);
+		AbilityList.registerAbility(Squirrel.class);
+		AbilityFactory.registerAbility(FoxCrystalBall.class);
+		AbilityList.registerAbility(FoxCrystalBall.class);
+		AbilityFactory.registerAbility(SkyWhale.class);
+		AbilityList.registerAbility(SkyWhale.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -251,6 +286,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(HealthFreak.class, Teabagging.class, FingerExersize.class);
 		SynergyFactory.registerSynergy(Protagonist.class, SurvivalInstinct.class, Cliche.class);
 		SynergyFactory.registerSynergy(Flector.class, Stop.class, HumanBaseball.class);
+		SynergyFactory.registerSynergy(HeadtoHead.class, Loki.class, CowardlyMatch.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -258,6 +294,7 @@ public class AddonR extends Addon implements Listener {
 			public void run() {
 				try {
 					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.DataMining"), AkashicRecords.class);
+					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.Cokes"), Citrus.class, NaturalScienceStudent.class);
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("me.breakofday.yeomryo.abilities.Kaiji"), Moros.class, Sharper.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
@@ -266,7 +303,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f41개 §7/ §d시너지 §f38개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f52개 §7/ §d시너지 §f40개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -276,9 +313,9 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f41개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f52개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f38개 적용 완료.");
+			e.addCredit("§d시너지 §f40개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

@@ -10,12 +10,15 @@ import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.util.Vector;
 
+import RainStarEffect.BackseatGaming;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -28,7 +31,8 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(
 		name = "티배깅", rank = Rank.C, species = Species.HUMAN, explain = {
 		"누군가가 나를 보고 있을 때 웅크리기를 연타할 경우 피해를 줍니다.",
-		"만일 상대가 내 뒷모습을 보고 있을 때는 피해량이 더 강해집니다."
+		"만일 상대가 내 뒷모습을 보고 있을 때는 피해량이 더 강해집니다.",
+		"나를 죽인 대상은 §c훈수§f 상태이상을 받습니다."
 		})
 
 public class Teabagging extends AbilityBase {
@@ -107,6 +111,13 @@ public class Teabagging extends AbilityBase {
 	
 	private Map<Player, Integer> teabaggingcount = new HashMap<>();
 	private Set<Player> bagged = new HashSet<>();
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0 && e.getDamager() instanceof Player) {
+			BackseatGaming.apply(getGame().getParticipant((Player) e.getDamager()), TimeUnit.SECONDS, 1);
+		}
+	}
 	
     private final AbilityTimer passive = new AbilityTimer() {
     	

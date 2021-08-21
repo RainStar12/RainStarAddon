@@ -7,9 +7,13 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -19,7 +23,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
@@ -27,16 +33,21 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.customentity.CustomEntitySetLocationEvent;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -46,12 +57,12 @@ import daybreak.google.common.base.Predicate;
 @SuppressWarnings("deprecation")
 @AbilityManifest(
 		name = "리콜", rank = Rank.B, species = Species.HUMAN, explain = {
-		"자신의 §b투사체§f에 피해입지 않습니다.",
-		"내 §b투사체§f를 제외한 §b투사체§f가 나로부터 3칸 내 거리에 들어오면",
-		"§b투사체§f가 2초간 제자리에서 멈추게 됩니다.",
-		"0.3초 이상 체공 중이던 50칸 내의 §b투사체§f를 바라보면 해당 §b투사체§f는",
-		"자신의 주인 쪽으로 방향을 되돌립니다. 멈춘 §b투사체§f는 풀립니다.",
-		"되돌아가는 화살에 피격되는 주인 외 생명체는 §c1.5배의 피해§f를 입힙니다."
+		"일반 투사체를 바라보면 투사체를 쏜 주인에게 되돌아갑니다.",
+		"되돌아가는 투사체는 주인에게 §c2배의 피해§f를 입힙니다.",
+		"원거리 투사체들을 방어해주는 §b50HP§f의 실드를 가지고 있습니다.",
+		"실드는 일반 투사체에 §c-$[LOSS_NORMAL]HP§f, 특수 투사체에 §c-$[LOSS_SPECIAL]HP§f를 잃습니다.",
+		"싫드에 닿는 일반 투사체는 2초간 정지, 특수 투사체는 되돌려보냅니다.",
+		"§bHP§f가 §c0§f 이하가 되면 쿨타임을 가집니다. $[COOLDOWN]"
 		})
 
 public class Recall extends Synergy {
@@ -59,6 +70,38 @@ public class Recall extends Synergy {
 	public Recall(Participant participant) {
 		super(participant);
 	}
+	
+	public static final SettingObject<Integer> COOLDOWN
+	= synergySettings.new SettingObject<Integer>(Recall.class,
+			"cooldown", 75, "# 쿨타임") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	public static final SettingObject<Integer> LOSS_NORMAL
+	= synergySettings.new SettingObject<Integer>(Recall.class,
+			"loss-normal", 2, "# 일반 투사체 체력 감소") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> LOSS_SPECIAL
+	= synergySettings.new SettingObject<Integer>(Recall.class,
+			"loss-special", 5, "# 특수 투사체 체력 감소") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -87,35 +130,105 @@ public class Recall extends Synergy {
 	
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
-	    	passive.start();
+	    	shield.start();
 	    }
 	}
 	
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private int shieldHP = 50;
+	private final int lossNormal = LOSS_NORMAL.getValue();
+	private final int lossSpecial = LOSS_SPECIAL.getValue();
+	
+	private BossBar bossBar = null;
+	private Set<CustomEntity> flected = new HashSet<>();
 	private Map<Projectile, Player> shooterMap = new HashMap<>();
 	private Map<Projectile, Recalling> recallMap = new HashMap<>();
 	private Set<Projectile> myprojectiles = new HashSet<>(); 
 	private Set<Projectile> stoppedprojectile = new HashSet<>(); 
 	private final Map<Projectile, AntiGravitied> antigravityMap = new HashMap<>();
-	private static final Circle circle = Circle.of(5, 50);
+	private static final Circle circle = Circle.of(6, 60);
 	private RGB color = RGB.of(72, 254, 254);
 	
-    private final AbilityTimer passive = new AbilityTimer() {
+	private boolean deflect(Deflectable deflectable) {
+		if (deflectable != null && !getPlayer().equals(deflectable.getShooter())) {
+			deflectable.onDeflect(getParticipant(), deflectable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(deflectable.getDirection().multiply(-1)));
+    		if (ServerVersion.getVersion() >= 13) {
+    			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
+    			ParticleLib.FALLING_DUST.spawnParticle(deflectable.getLocation().clone(), 0.1, 0.1, 0.1, 15, 0, diamond);
+    		} else {
+    			ParticleLib.FALLING_DUST.spawnParticle(deflectable.getLocation().clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
+    		}
+			SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(deflectable.getLocation(), 1.5f, 0.75f);
+			return true;
+		}
+		return false;
+	}
+	
+	private final AbilityTimer shield = new AbilityTimer() {
+		
+    	@Override
+    	public void onStart() {
+    		bossBar = Bukkit.createBossBar("§b실드 체력§7: §d" + shieldHP, BarColor.BLUE, BarStyle.SEGMENTED_10);
+    		bossBar.setProgress(shieldHP * 0.02);
+    		bossBar.addPlayer(getPlayer());
+    		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
+    	}
     	
     	@Override
 		public void run(int count) {
-			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 5, 5, null)) {
-				if (!projectile.isOnGround() && !myprojectiles.contains(projectile) && !stoppedprojectile.contains(projectile)) {
-					new AntiGravitied(projectile).start();
-				}
-			}
-			if (count % 2 == 0) {
-				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
-				}
-			}
+    		if (shieldHP <= 0) cooldown.start();
+    		if (cooldown.isRunning()) {
+    			if (flected.size() > 0) flected.clear();
+    			shieldHP = 50;
+    			bossBar.setVisible(false);
+    		} else {
+    			bossBar.setVisible(true);
+    			bossBar.setTitle("§b실드 체력§7: §d" + shieldHP);
+    			bossBar.setColor(BarColor.BLUE);
+        		bossBar.setProgress(shieldHP * 0.02);
+        		
+    			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 6, 6, null)) {
+    				if (!projectile.isOnGround() && !myprojectiles.contains(projectile) && !stoppedprojectile.contains(projectile)) {
+    					SoundLib.ITEM_SHIELD_BLOCK.playSound(projectile.getLocation(), 1, 1.5f);
+    					new AntiGravitied(projectile).start();
+    					shieldHP = Math.max(0, shieldHP - lossNormal);
+    				}
+    			}
+    			if (count % 2 == 0) {
+    				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+    					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
+    				}
+    			}
+    		}
     	}
     	
-    }.setPeriod(TimeUnit.TICKS, 1).register();
+		@Override
+		public void onEnd() {
+			bossBar.removeAll();
+		}
+
+		@Override
+		public void onSilentEnd() {
+			bossBar.removeAll();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+    
+	@SubscribeEvent
+	private void onCustomEntitySetLocation(final CustomEntitySetLocationEvent e) {
+		if (cooldown.isRunning()) return;
+		final CustomEntity customEntity = e.getCustomEntity();
+		if (customEntity instanceof Deflectable && customEntity.getWorld() == getPlayer().getWorld() && customEntity.getLocation().distanceSquared(getPlayer().getLocation()) <= 36) {
+			final Deflectable deflectable = (Deflectable) customEntity;
+			if (!deflectable.getShooter().equals(getPlayer()) && !flected.contains(customEntity)) {
+				flected.add(customEntity);
+				SoundLib.ITEM_SHIELD_BLOCK.playSound(deflectable.getLocation(), 1, 1.5f);
+				deflect(deflectable);
+				shieldHP = Math.max(0, shieldHP - lossSpecial);	
+			}
+		}
+	}
+
     
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -131,7 +244,7 @@ public class Recall extends Synergy {
 					e.setCancelled(true);
 				}
 				if (!shooterMap.get(e.getDamager()).equals(e.getEntity())) {
-					e.setDamage(e.getDamage() * 1.5);
+					e.setDamage(e.getDamage() * 2);
 				}
 			}
 		}
@@ -171,6 +284,20 @@ public class Recall extends Synergy {
     		}
     	}
     }
+    
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && shield.isRunning()) {
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+		}
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+		}
+	}
     
     public class Flight extends AbilityTimer implements Listener {
     	

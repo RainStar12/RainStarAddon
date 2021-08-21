@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.util.Vector;
 
@@ -22,6 +23,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -39,6 +41,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
+@SuppressWarnings("deprecation")
 @AbilityManifest(name = "피가 복사가 된다고", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §e크리스탈은 무적이다§f: 흡수 체력을 한 칸 이상 가지고 있을 때 흡수", 
 		" 체력량을 넘는 피해량이 들어온다면, 오직 흡수 체력만이 소진됩니다.",
@@ -129,7 +132,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 			Note.sharp(0, Tone.G), Note.natural(0, Tone.B)
 	};
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (getPlayer().getHealth() - e.getFinalDamage() > 0) {
 			new AbilityTimer(5) {
@@ -154,12 +157,15 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer()) && !getPlayer().isDead()) {
 			e.setDamage(e.getDamage() * 1.3);
 			if (getPlayer().getHealth() - e.getFinalDamage() > 0) {
-	    		float yellowheart = NMS.getAbsorptionHearts(getPlayer());
+				float yellowheart = NMS.getAbsorptionHearts(getPlayer());
 	    		if (yellowheart >= 2) {
-	        		if (e.getFinalDamage() > 0) {
-	        			e.setDamage(0);
-	                	NMS.setAbsorptionHearts(getPlayer(), 0);
-	            	}
+	    			float lostyellow = (float) e.getDamage(DamageModifier.ABSORPTION);
+	        		if (yellowheart + lostyellow == 0) {
+	            		if (e.getFinalDamage() > 0) {
+	            			e.setDamage(0);
+	                    	NMS.setAbsorptionHearts(getPlayer(), 0);
+	                	}
+	        		}
 	    		}	
 			}
 		}

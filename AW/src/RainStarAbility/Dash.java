@@ -8,9 +8,11 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -56,6 +59,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
@@ -110,7 +114,7 @@ public class Dash extends AbilityBase {
 	}
 	
 	private static final Set<Material> swords;
-	private double stamina = 0;
+	private double stamina = 5;
 	private BossBar bossBar = null;
 	private ActionbarChannel ac = newActionbarChannel();
 	
@@ -174,7 +178,7 @@ public class Dash extends AbilityBase {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer inbattle = new AbilityTimer(50) {
+	private final AbilityTimer inbattle = new AbilityTimer(100) {
 		
 		@Override
 		public void onStart() {
@@ -244,14 +248,14 @@ public class Dash extends AbilityBase {
 		if (!inbattle.isRunning()) {
 			stamina = Math.max(0, stamina - value);
 		} else {
-			stamina = Math.max(0, stamina - (value * 1.25));	
+			stamina = Math.max(0, stamina - (value * 1.5));	
 		}
 	}
 	
 	public void staminaGain(double value) {
 		if (!inbattle.isRunning()) {
 			if (movepoint > 1) {
-				stamina = Math.min(10, stamina + (value * 1.25));	
+				stamina = Math.min(10, stamina + (value * 1.75));	
 			} else {
 				stamina = Math.min(10, stamina + value);
 			}
@@ -334,13 +338,14 @@ public class Dash extends AbilityBase {
 	    public void onSilentEnd() {
 			getPlayer().setVelocity(zerov);
 			getPlayer().getInventory().setArmorContents(armors);
+			ItemStack sword = getPlayer().getInventory().getItemInMainHand();
 	   		SoundLib.ENTITY_FIREWORK_ROCKET_BLAST.playSound(getPlayer().getLocation());
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			new BukkitRunnable() {
 				
 				@Override
 				public void run() {
-					new AfterImage().start();
+					new AfterImage(sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL)).start();
 				}
 				
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
@@ -373,7 +378,7 @@ public class Dash extends AbilityBase {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (inbattle.isRunning() ? stamina >= (2 * 1.25) : stamina >= 2) {
+    			if (inbattle.isRunning() ? stamina >= (2 * 1.5) : stamina >= 2) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
         	    	staminaUse(2);
@@ -419,44 +424,50 @@ public class Dash extends AbilityBase {
     	private Set<Damageable> damagedcheck = new HashSet<>();
     	private Location saveloc1;
     	private Location saveloc2;
+    	private final int sharpness;
     	
-    	private AfterImage() {
+    	private AfterImage(int sharpness) {
     		super(TaskType.REVERSE, 60);
     		setPeriod(TimeUnit.TICKS, 1);
+    		this.sharpness = sharpness;
     	}
     	
     	@Override
     	protected void onStart() {
-	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(getPlayer().getLocation()))))).toLocations(startLocation)) {
-	   			ParticleLib.END_ROD.spawnParticle(loc.add(0, 1, 0), 0, 0, 0, 1, 0);
-	   			saveloc1 = startLocation;
-	   			saveloc2 = getPlayer().getLocation();
-	   		}
+    		if (!startLocation.equals(getPlayer().getLocation())) {
+    	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(getPlayer().getLocation()))))).toLocations(startLocation)) {
+    	   			ParticleLib.END_ROD.spawnParticle(loc.add(0, 1, 0), 0, 0, 0, 1, 0);
+    	   			saveloc1 = startLocation;
+    	   			saveloc2 = getPlayer().getLocation();
+    	   		}	
+    		} else stop(false);
     	}
     	
     	@Override
     	protected void run(int count) {
-    		for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
-    			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-    				if (p instanceof Player) {
-            			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
-            				if (count < 50) {
-            					getPlayer().addPotionEffect(normalspeed);
-                				Damages.damageMagic(p, getPlayer(), true, 1.5f);
+    		if (!saveloc1.equals(saveloc2)) {
+    			for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
+        			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
+        				if (p instanceof Player) {
+                			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
+                				if (count < 50) {
+                					getPlayer().addPotionEffect(normalspeed);
+                    				Damages.damageMagic(p, getPlayer(), true, (EnchantLib.getDamageWithSharpnessEnchantment(2f, sharpness) * 2));
+                    				damagedcheck.add(p);
+                    				staminaGain(0.2);
+                				}
+                			} else {
+                				Damages.damageMagic(p, getPlayer(), true, (EnchantLib.getDamageWithSharpnessEnchantment(1f, sharpness) * 2));
                 				damagedcheck.add(p);
                 				staminaGain(0.2);
-            				}
-            			} else {
-            				Damages.damageMagic(p, getPlayer(), true, 1.5f);
+                			}
+        				} else {
+            				Damages.damageMagic(p, getPlayer(), true, (EnchantLib.getDamageWithSharpnessEnchantment(1f, sharpness) * 2));
             				damagedcheck.add(p);
             				staminaGain(0.2);
-            			}
-    				} else {
-        				Damages.damageMagic(p, getPlayer(), true, 1.5f);
-        				damagedcheck.add(p);
-        				staminaGain(0.2);
-    				}
-    			}
+        				}
+        			}
+        		}	
     		}
     	}
     	

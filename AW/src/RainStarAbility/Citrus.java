@@ -8,23 +8,18 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SplashPotion;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -42,7 +37,6 @@ import RainStarEffect.Charm;
 import RainStarEffect.Confusion;
 import RainStarEffect.Madness;
 import RainStarEffect.SnowflakeMark;
-import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -59,11 +53,12 @@ import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.BlockX;
@@ -78,18 +73,18 @@ import daybreak.google.common.collect.ImmutableSet;
 @AbilityManifest(name = "시트러스", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§a풀 속성§f의 미스터리 연금술사, 시트러스.",
 		"§7철괴 좌클릭 §8- §2엘릭서§f: §a긍정 포션 효과§f의 계수를 §e1단계§f 높여서 받습니다.",
-		" §c부정 포션 효과§f의 경우 계수 조절 없이 상반되는 §a긍정 효과§f로 대체됩니다.",
-		" 이 효과로 강화, 교체된 수에 비례해 다음 쿨타임이 감소합니다. $[COOLDOWN]",
-		"§7타게팅 §8- §3케미컬 쓰로워§f: 기본적으로 비주류 손을 사용하지 못합니다.",
+		" 이 효과로 강화된 수에 비례해 다음 쿨타임이 감소합니다. $[COOLDOWN]",
+		"§7패시브 §8- §3케미컬 쓰로워§f: 기본적으로 비주류 손을 사용하지 못합니다.",
 		" 비주류 손에 §a$[RESTOCK]§f초마다 재충전되는 §c부정 투척형 포션§f이 생깁니다.",
-		" 10칸 내에서 대상을 바라보고 우클릭하면 해당 포션을 멀리 던집니다.",
-		" 또한 타게팅 대상이 4개 이상의 포션 효과를 갖고 있다면 §5포션 중독§f을 일으켜",
+		" 10칸 내에 플레이어가 있다면 해당 포션을 멀리 던질 수 있습니다.",
+		" 또한 10칸 내 대상이 4개 이상의 포션 효과를 갖고 있다면 §5포션 중독§f을 일으켜",
 		" 대상이 가진 §c부정 계열 포션 효과§f를 7초간 §e1단계§f 높입니다.",
 		"§7패시브 §8- §5케미컬 콜랩스§f: 비주류 손에 §4즉시 피해 포션§f이 있을 경우에",
-		" 상태이상 효과를 받는다면 무시하고 포션에 해당 상태이상을 주입합니다."
+		" 상태이상 효과를 받는다면 무시하고 포션에 해당 상태이상을 주입합니다.",
+		" §c부정 포션 효과§f를 받으면 상반되는 §a긍정 효과§f로 대체됩니다."
 		}, summarize = {
 		"§7철괴 좌클릭으로 §f받고 있는 §a긍정 포션효과§f를 강화하고 §c부정 포션효과§f를 교체합니다.",
-		"계속 재충전되는 §c부정형 투척 포션§f은 다른 플레이어를 봐야 던질 수 있습니다.",
+		"계속 재충전되는 §c부정형 투척 포션§f은 다른 플레이어가 10칸 내에 있어야 던질 수 있습니다.",
 		"비주류 손에 §4즉시 피해 포션§f이 있으면 상태이상을 받을 때 포션에 주입합니다."
 		})
 
@@ -126,7 +121,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POISON_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "poison-duration", 11,
+			abilitySettings.new SettingObject<Integer>(Citrus.class, "poison-duration", 14,
 			"# 독 지속시간 (단위: 초)") {
 
 		@Override
@@ -137,7 +132,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> WEAKNESS_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "weakness-duration", 15,
+			abilitySettings.new SettingObject<Integer>(Citrus.class, "weakness-duration", 17,
 			"# 나약함 지속시간 (단위: 초)") {
 
 		@Override
@@ -148,7 +143,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SLOWNESS_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "slowness-duration", 20,
+			abilitySettings.new SettingObject<Integer>(Citrus.class, "slowness-duration", 23,
 			"# 구속 지속시간 (단위: 초)") {
 
 		@Override
@@ -159,7 +154,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 
 	public static final SettingObject<Integer> WITHER_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "wither-duration", 17,
+			abilitySettings.new SettingObject<Integer>(Citrus.class, "wither-duration", 19,
 			"# 시듦 지속시간 (단위: 초)") {
 
 		@Override
@@ -181,7 +176,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CONFUSION_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "confusion-duration", 16,
+			abilitySettings.new SettingObject<Integer>(Citrus.class, "confusion-duration", 14,
 			"# 멀미 지속시간 (단위: 초)") {
 
 		@Override
@@ -345,6 +340,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	restock.start();
+	    	passive.start();
 	    }
 	}
 	
@@ -353,6 +349,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	private boolean converted = false;
 	private PotionEffectType offhandPotion;
 	private static final Set<Material> bows;
+	private static final Circle circle = Circle.of(10, 70);
+	private final RGB purple = RGB.of(171, 18, 151);
 	
 	private int effectduration;
 	private EffectRegistration<?> effecttype;
@@ -377,10 +375,32 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 		return material.name().contains("POTION");
 	}
 	
+	private final AbilityTimer passive = new AbilityTimer() {
+	
+		@Override
+		public void run(int count) {
+			for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
+				if (POTION_TYPES_BAD.containsKey(pe.getType())) {
+					PotionEffect newpe = new PotionEffect(POTION_REVERSE.get(pe.getType()), pe.getDuration(), pe.getAmplifier(), false, true);
+					getPlayer().sendMessage("§6[§a!§e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "§f 효과를 교체시켜 " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "§f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.이가) + " 되었습니다.");
+					getPlayer().removePotionEffect(pe.getType());
+					getPlayer().addPotionEffect(newpe);
+				}	
+			}
+    		if (count % 2 == 0) {
+				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, purple);
+				}
+    		}
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	private final AbilityTimer restock = new AbilityTimer(restocktimer * 20) {
 		
     	@Override
 		public void onEnd() {
+    		converted = false;
     		ItemStack item = new ItemStack(Material.SPLASH_POTION, 1);
     		PotionMeta meta = (PotionMeta) item.getItemMeta();
     		
@@ -390,6 +410,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
     		meta.addCustomEffect(new PotionEffect(offhandPotion, POTION_DURATION.get(offhandPotion) * 20, 1), true);
     		meta.setColor(POTION_TYPES_BAD.get(offhandPotion).getRight());
     		meta.setDisplayName("§f투척용 " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "§f의 포션");
+    		
+    		getPlayer().sendMessage("§6[§a!§e] §f투척용 " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "§f의 포션을 만들어냈습니다.");
     		
     		item.setItemMeta(meta);
     		
@@ -411,12 +433,6 @@ public class Citrus extends AbilityBase implements ActiveHandler {
     			if (POTION_TYPES_GOOD.containsKey(pe.getType())) {
     				PotionEffect newpe = new PotionEffect(pe.getType(), pe.getDuration(), pe.getAmplifier() + 1, false, true);
     				getPlayer().sendMessage("§6[§a!§e] " + POTION_TYPES_GOOD.get(pe.getType()).getLeft() + "§f 효과를 강화시켜 계수가 §e" + (newpe.getAmplifier() + 1) + "§f" + KoreanUtil.getJosa("" + newpe.getAmplifier() + 1, Josa.이가) + " 되었습니다.");
-    				getPlayer().removePotionEffect(pe.getType());
-    				getPlayer().addPotionEffect(newpe);
-    				changedcounter++;
-    			} else if (POTION_TYPES_BAD.containsKey(pe.getType())) {
-    				PotionEffect newpe = new PotionEffect(POTION_REVERSE.get(pe.getType()), pe.getDuration(), pe.getAmplifier(), false, true);
-    				getPlayer().sendMessage("§6[§a!§e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "§f 효과를 교체시켜 " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "§f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.이가) + " 되었습니다.");
     				getPlayer().removePotionEffect(pe.getType());
     				getPlayer().addPotionEffect(newpe);
     				changedcounter++;
@@ -450,6 +466,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 				meta.setLore(lores);
 				item.setItemMeta(meta);
 				converted = true;
+				getPlayer().sendMessage("§6[§a!§e] 포션 효과에 " + effecttype.getManifest().displayName() + "§f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.을를) + " 추가했습니다.");
 				e.setCancelled(true);
 			}
 		}
@@ -463,13 +480,22 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 					&& converted && e.getEntity() instanceof Player) {
 				Player player = (Player) e.getEntity();
 				Participant p = getGame().getParticipant(player);
-				if (effecttype.equals(Agro.registration)) Agro.apply(p, TimeUnit.TICKS, effectduration, getPlayer(), 2);
-				else if (effecttype.equals(Charm.registration)) Charm.apply(p, TimeUnit.TICKS, effectduration, getPlayer(), 55, 35);
-				else if (effecttype.equals(Confusion.registration)) Confusion.apply(p, TimeUnit.TICKS, effectduration, 10);
-				else if (effecttype.equals(Madness.registration)) Madness.apply(p, TimeUnit.TICKS, effectduration, 10);
-				else if (effecttype.equals(SnowflakeMark.registration)) SnowflakeMark.apply(p, TimeUnit.TICKS, effectduration, 1);
-				else effecttype.apply(p, TimeUnit.TICKS, effectduration);
+				if (!getPlayer().equals(player)) {
+					if (effecttype.equals(Agro.registration)) Agro.apply(p, TimeUnit.TICKS, effectduration, getPlayer(), 2);
+					else if (effecttype.equals(Charm.registration)) Charm.apply(p, TimeUnit.TICKS, effectduration, getPlayer(), 55, 35);
+					else if (effecttype.equals(Confusion.registration)) Confusion.apply(p, TimeUnit.TICKS, effectduration, 10);
+					else if (effecttype.equals(Madness.registration)) Madness.apply(p, TimeUnit.TICKS, effectduration, 10);
+					else if (effecttype.equals(SnowflakeMark.registration)) SnowflakeMark.apply(p, TimeUnit.TICKS, effectduration, 1);
+					else effecttype.apply(p, TimeUnit.TICKS, effectduration);	
+				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	private void onProjectileLaunch(ProjectileLaunchEvent e) {
+		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof SplashPotion) {
+			e.getEntity().setVelocity(e.getEntity().getVelocity().multiply(1.35));
 		}
 	}
 	
@@ -484,14 +510,6 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			if (e.getSlot() == 40) {
 				e.setCancelled(true);
 			}
-		}
-	}
-	
-	@SubscribeEvent
-	private void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof SplashPotion) {
-			e.getEntity().setVelocity(e.getEntity().getVelocity().multiply(1.65));
-			new Homing(e.getEntity(), e.getEntity().getVelocity().length());
 		}
 	}
 	
@@ -512,14 +530,14 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			if (getPlayer().getInventory().getItemInOffHand().getType().equals(Material.SPLASH_POTION)) {
 				if (getPlayer().getInventory().getItemInMainHand().getType().isBlock()) {
 					if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
-						if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 10, predicate) != null) {
-							Player target = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 10, predicate);
-							int potions = 0;
-					    	for (@SuppressWarnings("unused") PotionEffect pe : target.getPlayer().getActivePotionEffects()) {
-					    		potions++;
-					    	}
-					    	if (potions >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
-					    	restock.start();
+						if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+							for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
+						    	if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+								for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+									ParticleLib.SPELL_WITCH.spawnParticle(loc);
+								}
+						    	restock.start();
+							}
 						} else e.setCancelled(true);
 					} else {
 						e.setCancelled(true);
@@ -544,69 +562,17 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 						!isApple(getPlayer().getInventory().getItemInMainHand().getType()) &&
 						!isPotion(getPlayer().getInventory().getItemInMainHand().getType()) &&
 						!isBucket(getPlayer().getInventory().getItemInMainHand().getType())) {
-					if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 10, predicate) != null) {
-						Player target = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 10, predicate);
-						int potions = 0;
-				    	for (@SuppressWarnings("unused") PotionEffect pe : target.getPlayer().getActivePotionEffects()) {
-				    		potions++;
-				    	}
-				    	if (potions >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
-				    	restock.start();
+					if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+						for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
+					    	if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+							for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+								ParticleLib.SPELL_WITCH.spawnParticle(loc);
+							}
+					    	restock.start();
+						}
 					} else e.setCancelled(true);
 				}	
 			}
-		}
-	}
-	
-	class Homing extends AbilityTimer implements Listener {
-		
-		private Projectile projectile;
-		private double lengths;
-		
-		private Homing(Projectile projectile, Double length) {
-			super(TaskType.REVERSE, 50);
-			setPeriod(TimeUnit.TICKS, 1);
-			this.projectile = projectile;
-			this.lengths = length;
-		}
-		
-		@Override
-		protected void onStart() {
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		}
-		
-		@Override
-		protected void run(int arg0) {
-			if (projectile != null) {
-				Damageable d = LocationUtil.getNearestEntity(Damageable.class, projectile.getLocation(), predicate);
-				if (d != null) {
-					if (projectile.getLocation().distanceSquared(d.getLocation().clone().add(0, 1, 0)) <= 5) {
-						projectile.setGravity(false);
-						projectile.setVelocity(VectorUtil.validateVector((d.getLocation().clone().add(0, 1, 0).toVector()
-									.subtract(projectile.getLocation().toVector())).normalize().multiply(lengths)));	
-					} else {
-						projectile.setGravity(true);
-					}
-				}
-			}
-		}
-		
-		@EventHandler
-		public void onProjectileHit(ProjectileHitEvent e) {
-			if (e.getEntity().equals(projectile)) {
-				stop(false);
-			}
-		}
-		
-		@Override
-		protected void onEnd() {
-			HandlerList.unregisterAll(this);
-			projectile.setGravity(true);
-		}
-		
-		@Override
-		protected void onSilentEnd() {
-			onEnd();
 		}
 	}
 	

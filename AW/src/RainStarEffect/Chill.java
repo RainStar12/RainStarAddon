@@ -29,7 +29,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "냉기", displayName = "§9냉기", method = ApplicationMethod.UNIQUE_LONGEST, type = {
-		EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_REDUCTION
+		EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.COMBAT_RESTRICTION
 }, description = {
 		"이동 속도 및 공격 속도가 감소합니다.",
 		"회복 효과가 25% 감소합니다.",

@@ -27,7 +27,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -49,6 +52,8 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -127,6 +132,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		@Override
 		public boolean test(Entity entity) {
 			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -213,6 +219,8 @@ public class GhostRider extends Synergy implements ActiveHandler {
 					if (LocationUtil.getEntityLookingAt(Player.class, player, 30, subpredicate).equals(getPlayer())) {
 						if (killCounter.containsKey(player)) {
 							Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, killCounter.get(player) * 40);
+							int killedsize = killedwho.get(player).size();
+							new HeadRotate(player, Math.min(5, killedsize)).start();
 						}
 						if (attackCounter.containsKey(player)) {
 							player.damage(Math.min(20, (attackCounter.get(player) * 0.05)), getPlayer());
@@ -362,6 +370,59 @@ public class GhostRider extends Synergy implements ActiveHandler {
 				killedwho.put(e.getEntity().getKiller(), list);
 			}
 		}
+	}
+	
+	public class HeadRotate extends AbilityTimer {
+		
+		private final Player player;
+		private final ArmorStand[] spirits;
+		private int kills;
+		
+		private HeadRotate(Player player, int kills) {
+			super(50);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.player = player;
+			this.kills = kills;
+			spirits = new ArmorStand[kills];
+			ItemStack[] spirits_head = new ItemStack[kills];
+			for (int a = 0; a < kills; a++) {
+				spirits[a] = player.getWorld().spawn(player.getLocation().clone(), ArmorStand.class);
+				spirits[a].setVisible(false);
+				spirits[a].setInvulnerable(true);
+				spirits[a].setSmall(true);
+				spirits[a].setGravity(false);
+				NMS.removeBoundingBox(spirits[a]);
+				spirits_head[a] = Skulls.createSkull(killedwho.get(player).get(a).getName());
+				
+				EntityEquipment equipment = spirits[a].getEquipment();
+				
+				equipment.setHelmet(spirits_head[a]);
+			}
+		}
+		
+		@Override
+		public void run(int count) {
+			for (int iteration = 0; iteration < kills; iteration++) {
+                double angle = Math.toRadians((360.0D / kills) * iteration + (count * 6));
+                double x = Math.cos(angle);
+                double z = Math.sin(angle);
+                Vector direction = player.getEyeLocation().toVector().subtract(spirits[iteration].getEyeLocation().toVector());
+                spirits[iteration].teleport(player.getLocation().clone().add(x, 2.5, z).setDirection(direction));            
+            }
+		}
+		
+		@Override
+		public void onEnd() {
+			for (ArmorStand stand : spirits) {
+				stand.remove();
+			}
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			onEnd();
+		}
+		
 	}
 	
 	private class Attacking extends AbilityTimer {

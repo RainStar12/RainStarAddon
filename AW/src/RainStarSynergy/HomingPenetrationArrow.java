@@ -29,7 +29,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Note;
@@ -58,13 +57,13 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "유도 관통화살", rank = Rank.L, species = Species.OTHERS, explain = {
 		"활을 쏘면 벽과 생명체를 통과하며 특수한 능력이 있는 발사체를 쏩니다.",
 		"발사체는 가장 가까운 대상에게 유도되며, 대상이 피격 시 제외하고 다음으로",
-		"가장 가까운 대상에게 다시 유도됩니다. 화살은 1.5초간 지속됩니다.",
+		"가장 가까운 대상에게 다시 유도됩니다. 화살은 1.15초간 지속됩니다.",
 		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 1.5초간 재장전하며,",
 		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
 		"탄약을 쏠 때마다 0.5초의 §3대기시간§f을 가지며, 이 §3대기시간§f은 매번 0.25초씩 3초까지",
 		"늘어납니다. 15초간 발사를 중단하면, §3대기시간§f이 다시 0.5초로 초기화됩니다.",
 		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
-		"§5중력§f: 대상을 0.5초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
+		"§5중력§f: 대상을 $[GRAVITY_STUN]초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
 		"§e풍월§f: 대상을 멀리 밀쳐냅니다."
 })
 public class HomingPenetrationArrow extends Synergy {
@@ -78,6 +77,41 @@ public class HomingPenetrationArrow extends Synergy {
 		}
 
 	};
+	
+	public static final SettingObject<Integer> CUT_DAMAGE = synergySettings.new SettingObject<Integer>(HomingPenetrationArrow.class, "ammo-size", 7,
+			"# 절단 추가 피해량") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> GRAVITY_STUN = synergySettings.new SettingObject<Integer>(HomingPenetrationArrow.class, "gravity-stun", 20,
+			"# 중력 기절 시간(단위: 틱, 20틱 = 1초)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+	
+	public static final SettingObject<Double> WIND_KNOCKBACK = synergySettings.new SettingObject<Double>(HomingPenetrationArrow.class, "wind-knockback", 2.3,
+			"# 풍월 넉백력(2.0은 2배율입니다).") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 1;
+		}
+
+	};
+	
+	private final static int cutdamage = CUT_DAMAGE.getValue();
+	private final static int gravitystun = GRAVITY_STUN.getValue();
+	private final static double windknockback = WIND_KNOCKBACK.getValue();
+	
 	private static final RGB RED = new RGB(219, 64, 66);
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
@@ -241,7 +275,7 @@ public class HomingPenetrationArrow extends Synergy {
 				if (victim instanceof LivingEntity) {
 					((LivingEntity) victim).setNoDamageTicks(0);
 				}
-				victim.damage(5, damager);
+				victim.damage(cutdamage, damager);
 			}
 		};
 		OnHitBehavior GRAVITY = new OnHitBehavior() {
@@ -253,6 +287,7 @@ public class HomingPenetrationArrow extends Synergy {
 				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, new Predicate<Entity>() {
 					@Override
 					public boolean test(Entity entity) {
+						if (entity instanceof ArmorStand) return false;
 						if (entity.equals(damager)) return false;
 						if (entity instanceof Player) {
 							if (!ability.getGame().isParticipating(entity.getUniqueId())
@@ -273,7 +308,7 @@ public class HomingPenetrationArrow extends Synergy {
 				}
 				final Participant participant = ability.getGame().getParticipant(victim.getUniqueId());
 				if (participant != null) {
-					Stun.apply(participant, TimeUnit.TICKS, 10);
+					Stun.apply(participant, TimeUnit.TICKS, gravitystun);
 				}
 			}
 		};
@@ -282,7 +317,7 @@ public class HomingPenetrationArrow extends Synergy {
 			public void onHit(HomingPenetrationArrow ability, Damageable damager, Damageable victim) {
 				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
 				if (vector.length() > 0.01) {
-					vector.normalize().multiply(2);
+					vector.normalize().multiply(windknockback);
 				}
 				victim.setVelocity(vector.setY(0));
 			}
@@ -294,6 +329,7 @@ public class HomingPenetrationArrow extends Synergy {
 	private abstract static class ArrowType {
 
 		private final ChatColor color;
+		@SuppressWarnings("unused")
 		private final String name;
 
 		private ArrowType(ChatColor color, String name) {
@@ -319,7 +355,7 @@ public class HomingPenetrationArrow extends Synergy {
 		private final Set<Damageable> attacked = new HashSet<>();
 		private Location lastLocation;
 		private Parabola(LivingEntity shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, RGB color) {
-			super(30);
+			super(23);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.onHitBehavior = onHitBehavior;

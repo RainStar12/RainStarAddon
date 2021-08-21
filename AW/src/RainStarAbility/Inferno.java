@@ -43,18 +43,18 @@ import daybreak.google.common.base.Predicate;
 		"§c불 속성§f의 화염 검사, 인페르노.",
 		"§7패시브 §8- §c업화의 주인§f: 화염이 붙은 적을 타격하면 §4불꽃§f을 획득해",
 		" §4불꽃§f이 자신의 화염 피해를 대체하고, 하나당 화염 피해를 10% 더 입습니다.",
-		"§7검 공격 §8- §c열화폭참§f: 자신이 타격한 대상을 1초간 추가 발화시킵니다.",
-		" 대상이 이미 2초 이상 발화 도중이면 대신 대상에게 추가 피해를 입힙니다.",
-		" §7추가 피해량§f: §e(대상이 가진 화염 지속시간 * 0.2) + (§4불꽃§e * 0.15)",
+		"§7검 공격 §8- §c열화폭참§f: 자신이 타격한 대상을 2초간 추가 발화시킵니다.",
+		" 대상이 이미 5초 이상 발화 도중이면 대신 대상에게 추가 피해를 입힙니다.",
+		" §7추가 피해량§f: §e(§c대상이 가진 화염 지속시간§e + §4불꽃§e × 0.15)",
 		"§7철괴 우클릭 §8- §c화력전개§f: 나와 $[RANGE]칸 이내의 모든 플레이어를 $[DURATION]초간 추가 발화시키고,",
 		" 나를 제외한 모든 대상에게 §4화상§f 상태이상을 겁니다. $[COOLDOWN]",
 		"§7상태이상 §8- §4화상§f: 모든 화염 계열 피해를 무시할 수 없으며 2.5배로 입습니다.",
 		" 화염이 꺼질 때 꺼지기 전의 화염 지속시간에 비례해 피해를 입습니다."},
 		summarize = {
-		"§7근접 공격 시§f 2초 이하 발화중 대상에게 1초간 추가 §c발화§f시킵니다.",
-		"2초 이상 §c발화§f중인 대상에게는 추가 피해를 입힐 수 있습니다.",
+		"§7근접 공격 시§f 5초 이하 발화중 대상에게 2초간 추가 §c발화§f시킵니다.",
+		"5초 이상 §c발화§f중인 대상에게는 추가 피해를 입힐 수 있습니다.",
 		"기본적으로 화염계 피해를 무시하지만 §c발화 중인 대상§f을 타격하면 §c발화§f합니다.",
-		"§7철괴 우클릭 시§f 나와 주변 대상들을 7초 추가 발화시키며, 적에게는 §4화상§f을 겁니다.",
+		"§7철괴 우클릭 시§f 나와 주변 대상들을 $[DURATION]초 추가 발화시키며, 적에게는 §4화상§f을 겁니다.",
 		"§4화상§f에 걸린 적은 화염계 피해를 무조건 받으며 2.5배로 입습니다."
 		})
 
@@ -87,7 +87,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Inferno.class, "duration", 7,
+			abilitySettings.new SettingObject<Integer>(Inferno.class, "duration", 10,
             "# 지속시간") {
         @Override
         public boolean condition(Integer value) {
@@ -224,17 +224,17 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     	onEntityDamage(e);
     	if (e.getDamager().equals(getPlayer())) {
     		if (e.getEntity().getFireTicks() > 0) {
-    			flameSet((int) (e.getEntity().getFireTicks() * 0.05));
+    			flameSet((int) (e.getEntity().getFireTicks() * 0.025));
     			new CutParticle(particleSide).start();
     			particleSide *= -1;
     		}
-    		if (e.getEntity().getFireTicks() >= 40) {
-    			e.setDamage(e.getDamage() + Math.min(5, (e.getEntity().getFireTicks() * 0.01)) + (burningflame * 0.15));
+    		if (e.getEntity().getFireTicks() >= 100) {
+    			e.setDamage(e.getDamage() + Math.min(10, (e.getEntity().getFireTicks() * 0.0075)) + (burningflame * 0.15));
     		} else {
     			if (e.getEntity().getFireTicks() <= 0) {
-        			e.getEntity().setFireTicks(e.getEntity().getFireTicks() + 40);
+        			e.getEntity().setFireTicks(e.getEntity().getFireTicks() + 60);
     			} else {
-        			e.getEntity().setFireTicks(e.getEntity().getFireTicks() + 20);	
+        			e.getEntity().setFireTicks(e.getEntity().getFireTicks() + 40);	
     			}
     		}
     	}
@@ -246,7 +246,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 				p.setFireTicks(p.getFireTicks() + (duration * 20));
 				Burn.apply(getGame().getParticipant(p), TimeUnit.SECONDS, duration);
 			}
-			flameOverSet(7);
+			flameOverSet(duration);
 			if (circle.isRunning()) {
 				circle.stop(false);
 			}

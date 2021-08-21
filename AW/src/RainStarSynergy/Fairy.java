@@ -22,6 +22,7 @@ import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -407,6 +408,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 			public boolean test(Entity entity) {
 				if (crystalized.containsKey(entity.getUniqueId())) return false;
 				if (entity.equals(getPlayer())) return false;
+				if (entity instanceof ArmorStand) return false;
 				if (entity instanceof Player) {
 					if (!getGame().isParticipating(entity.getUniqueId())
 							|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))

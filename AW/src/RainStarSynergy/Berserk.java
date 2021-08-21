@@ -82,7 +82,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> MAX_DAMAGE = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"add-max-damage", 7, "# 스킬 지속 중", "# 최대 체력 반비례 추가 피해량 최대치", "# 7일 경우 최대 7까지 대미지가 증가합니다.") {
+			"add-max-damage", 9, "# 스킬 지속 중", "# 최대 체력 반비례 추가 피해량 최대치", "# 7일 경우 최대 7까지 대미지가 증가합니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -195,6 +195,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 				SoundLib.ENTITY_POLAR_BEAR_WARNING.playSound(getPlayer().getLocation(), 1f, 0.95f);
     			new CutParticle(particleSide).start();
     			particleSide *= -1;
+    			e.getEntity().getWorld().strikeLightningEffect(e.getEntity().getLocation());
 			} else if (risk.isRunning()) {
 				e.setDamage(Math.max(1, e.getDamage() - ((1 / (maxHealth - nowHealth)) * minDamage)));	
 			}

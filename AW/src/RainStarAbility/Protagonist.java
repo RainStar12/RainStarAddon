@@ -33,7 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
@@ -51,7 +50,6 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
-import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -76,7 +74,9 @@ public class Protagonist extends AbilityBase {
 	private int bufflevel = 0;
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 20, 0, true, false);
 	private Set<Projectile> projectiles = new HashSet<>();
-	private final double firstMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+	private boolean onetime = false;
+	private double firstMaxHealth;
+	private double nowMaxHealth = 0;
 	
 	private static final Set<Material> swords;
 	
@@ -92,9 +92,16 @@ public class Protagonist extends AbilityBase {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			buffchecker.start();
+			if (!onetime) {
+				firstMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				onetime = true;
+			}
+			if (nowMaxHealth != 0) {
+				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(nowMaxHealth);	
+			}
 		}
 		if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
-			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(firstMaxHealth);	
+			if (firstMaxHealth >= 1) getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(firstMaxHealth);	
 		}
 	}
 	
@@ -193,10 +200,11 @@ public class Protagonist extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (e.getEntity().getKiller() != null) {
-			if (e.getEntity().getKiller().equals(getPlayer()) && predicate.test(e.getEntity())) {
+			if (e.getEntity().getKiller().equals(getPlayer())) {
 				Player player = e.getEntity();
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + (firstMaxHealth * 0.1));
+				nowMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				AbilityBase ab = getGame().getParticipant(player).getAbility();
 				if (bufflevel >= 3) {
 					if (ab.getClass().equals(Mix.class)) {
@@ -279,6 +287,19 @@ public class Protagonist extends AbilityBase {
     			break;
     		case 5:
     			e.setDamage(e.getDamage() * 0.7);
+    			break;
+    		}
+    	}
+    	if (getPlayer().equals(e.getDamager())) {
+    		switch(bufflevel) {
+    		case 3:
+    			e.setDamage(e.getDamage() * 1.05);
+    			break;
+    		case 4:
+    			e.setDamage(e.getDamage() * 1.1);
+    			break;
+    		case 5:
+    			e.setDamage(e.getDamage() * 1.15);
     			break;
     		}
     	}
@@ -443,27 +464,10 @@ public class Protagonist extends AbilityBase {
 			entity.remove();
 		}
 
-		public class ArrowEntity extends CustomEntity implements Deflectable {
+		public class ArrowEntity extends CustomEntity {
 
 			public ArrowEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
-			}
-
-			@Override
-			public Vector getDirection() {
-				return forward.clone();
-			}
-
-			@Override
-			public void onDeflect(Participant deflector, Vector newDirection) {
-				stop(false);
-				final Player deflectedPlayer = deflector.getPlayer();
-				new Bullet(deflectedPlayer, lastLocation, newDirection, sharpnessEnchant, damage).start();
-			}
-
-			@Override
-			public ProjectileSource getShooter() {
-				return shooter;
 			}
 
 			@Override

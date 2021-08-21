@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.util.Vector;
 
@@ -60,6 +61,13 @@ public class Madness extends AbstractGame.Effect implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (participant.getPlayer().equals(e.getEntity())) {
+			this.stop(false);
+		}
+	}
+	
 	@Override
 	protected void run(int count) {
 		participant.getPlayer().setVelocity(VectorUtil.validateVector(new Vector((((random.nextDouble() * 2) - 1) * 0.9), (((random.nextDouble() * 2) - 1) * 0.5), (((random.nextDouble() * 2) - 1)) * 0.9)));
@@ -82,4 +90,5 @@ public class Madness extends AbstractGame.Effect implements Listener {
 		HandlerList.unregisterAll(this);
 		super.onSilentEnd();
 	}
+	
 }

@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
@@ -34,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 @AbilityManifest(name = "[ ]", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§a---------------------------------",
@@ -41,7 +43,8 @@ import org.bukkit.entity.Player;
 		"§a---------------------------------",
 		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 30초간 복제합니다. $[MIN_COOLDOWN]",
 		"이후 [  ]으로 되돌아옵니다. 되돌아올 때 복제한 능력이",
-		"쿨타임일 경우, 절반의 시간만큼 [  ]의 쿨타임을 더합니다."
+		"쿨타임일 경우, 절반의 시간만큼 [  ]의 §c쿨타임§f을 더합니다.",
+		"복제한 능력의 주인을 죽일 때마다 총 §c쿨타임§f이 25%씩 감소합니다."
 })
 
 @Tips(tip = {
@@ -73,7 +76,7 @@ import org.bukkit.entity.Player;
                 "진행하는 편이 좋습니다."
         }),
         @Description(subject = "짧은 지속시간", explain = {
-                "복제한 능력을 사용 가능한 시간은 20초밖에 채 되지 않아,",
+                "복제한 능력을 사용 가능한 시간은 30초밖에 채 되지 않아,",
                 "대부분의 액티브 능력은 기껏해야 한 번 사용할 수 있습니다.",
                 "또한 복제한 능력의 쿨타임을 절반 가지므로",
                 "빠르고 신중한 판단력을 요합니다."
@@ -117,6 +120,21 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	private AbilityBase ability;
+	private int killcount = 0;
+	private Player killtarget;
+	private ActionbarChannel ac = newActionbarChannel();
+	
+	@SubscribeEvent
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (getPlayer().equals(e.getEntity().getKiller())) {
+			if (killtarget != null) {
+				if (killtarget.equals(e.getEntity())) {
+					killcount++;
+					ac.update("§c킬 카운트§7: §f" + killcount);
+				}
+			}
+		}
+	}
 
 	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
@@ -157,8 +175,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (!cooldown.isCooldown()) {
 					Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate);
 					if (player != null) {
-						final Player entityPlayer = (Player) player;
-						final Participant target = getGame().getParticipant(entityPlayer);
+						final Participant target = getGame().getParticipant(player);
 						if (target.hasAbility() && !target.getAbility().isRestricted()) {
 							final AbilityBase targetAbility = target.getAbility();
 							if (getGame() instanceof AbstractMix) {
@@ -169,6 +186,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
 											this.ability.setRestricted(false);
 											getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+											killtarget = player;
 											new ReturnTimer();
 										} catch (ReflectiveOperationException e) {
 											e.printStackTrace();
@@ -201,6 +219,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 										this.ability = AbilityBase.create(clazz, getParticipant());
 										this.ability.setRestricted(false);
 										getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
+										killtarget = player;
 										new ReturnTimer();
 									} else {
 										getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
@@ -247,6 +266,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
+			ac.update("§c킬 카운트§7: §f" + killcount);
 			if (ability != null) {
 				ability.setRestricted(false);
 			}
@@ -287,9 +307,10 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 					Empty.this.ability.destroy();
 				}
 				Empty.this.ability = null;
+				killtarget = null;
 				getParticipant().getPlayer().sendMessage("§b당신의 능력이 §f[  ]§b으로 되돌아왔습니다.");
 				actionbarChannel.update(null);
-				cooldown.setCooldown(minCooldown + (cooltimeSum / 2));
+				cooldown.setCooldown((int) ((minCooldown + (cooltimeSum / 2)) * (Math.pow(0.75, killcount))));
 				cooldown.start();
 			} catch (Exception e) {
 				e.printStackTrace();

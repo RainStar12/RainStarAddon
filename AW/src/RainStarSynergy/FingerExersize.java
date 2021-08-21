@@ -39,7 +39,7 @@ public class FingerExersize extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DURATION = 
-			synergySettings.new SettingObject<Integer>(FingerExersize.class, "duration", 10,
+			synergySettings.new SettingObject<Integer>(FingerExersize.class, "duration", 12,
 			"# 추가 공격력의 지속 시간") {
 
 		@Override

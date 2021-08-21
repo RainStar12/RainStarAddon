@@ -26,6 +26,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Strings;
+
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
@@ -45,9 +47,9 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -59,16 +61,17 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "¼öÈ£½Å", rank = Rank.L, species = Species.GOD, explain = {
-		"¡×7È° ¿ìÅ¬¸¯ ¡×8- ¡×c½ÉÆÇ¡×f: ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ºûÀÇ È­»ìÀ» ¹ß»çÇÕ´Ï´Ù.",
-		" ºûÀÇ È­»ìÀº °üÅë È¿°ú°¡ ÀÖ°í, ºí·Ï¿¡ ÀûÁßÇÒ ¶§ ´Ù½Ã Æ¨°Ü ½ÃÀüÀÚÀÇ À§Ä¡±îÁö",
-		" µÇµ¹¾Æ¿À°í ¼öÈ£ ½ºÅÃ¿¡ ºñ·ÊÇØ ÀûÁß ´ë»óÀ» ±âÀı½ÃÅ°°í ´ë¹ÌÁö°¡ Áõ°¡ÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×b»ç¸í¡×f: »ì¾ÆÀÖ´Â ½Å ´É·ÂÀÚ ÇÑ ¸í´ç ¼öÈ£ ½ºÅÃÀ» ¾ò½À´Ï´Ù.",
-		" ¼öÈ£ ½ºÅÃÀ¸·Î ¾òÀº È¿°ú´Â ½Å Á¾Á·¿¡°Ô ¿µÇâÀ» ÁÖÁö ¸øÇÏ¸ç,",
-		" ³¯ ÇÇÇØÀÔÈù ´ë»óÀÌ ½Å Á¾Á·ÀÏ °æ¿ì ´ë¹ÌÁö°¡ 20% °æ°¨µË´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×eÅëÂû¡×f: $[DurationConfig]ÃÊ°£ Æ¨°ÜÁø È­»ìÀÌ È­»ì·ÎºÎÅÍ °¡Àå °¡±î¿î ´ë»ó¿¡°Ô·Î",
-		" À¯µµ È¿°ú¸¦ Áö´Ï°Ô µË´Ï´Ù. ´ë»óÀÌ ÇÇÇØ¸¦ ÀÔ¾ú´Ù¸é ´ë»óÀ» À¯µµ Ç¥Àû¿¡¼­",
-		" Á¦¿Ü½ÃÅµ´Ï´Ù. $[CooldownConfig]"
+@AbilityManifest(name = "ìˆ˜í˜¸ì‹ ", rank = Rank.L, species = Species.GOD, explain = {
+		"Â§7í™œ ìš°í´ë¦­ Â§8- Â§cì‹¬íŒÂ§f: ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ë¹›ì˜ í™”ì‚´ì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" ë¹›ì˜ í™”ì‚´ì€ ê´€í†µ íš¨ê³¼ê°€ ìˆê³ , ë¸”ë¡ì— ì ì¤‘í•  ë•Œ ë‹¤ì‹œ íŠ•ê²¨ ì‹œì „ìì˜ ìœ„ì¹˜ê¹Œì§€",
+		" ë˜ëŒì•„ì˜¤ê³  ìˆ˜í˜¸ ìŠ¤íƒì— ë¹„ë¡€í•´ ì ì¤‘ ëŒ€ìƒì„ Â§eê¸°ì ˆÂ§fì‹œí‚¤ê³  ëŒ€ë¯¸ì§€ê°€ ì¦ê°€í•©ë‹ˆë‹¤.",
+		" ë¹›ì˜ í™”ì‚´ì€ ìµœëŒ€ Â§b$[MAX_ARROW]Â§fë°œê¹Œì§€ í•œ ë²ˆì— ë°œì‚¬ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bì‚¬ëª…Â§f: ì‚´ì•„ìˆëŠ” ì‹  ëŠ¥ë ¥ì í•œ ëª…ë‹¹ ìˆ˜í˜¸ ìŠ¤íƒì„ ì–»ìŠµë‹ˆë‹¤.",
+		" ìˆ˜í˜¸ ìŠ¤íƒìœ¼ë¡œ ì–»ì€ íš¨ê³¼ëŠ” ì‹  ì¢…ì¡±ì—ê²Œ ì˜í–¥ì„ ì£¼ì§€ ëª»í•˜ë©°,",
+		" ë‚  í”¼í•´ì…íŒ ëŒ€ìƒì´ ì‹  ì¢…ì¡±ì¼ ê²½ìš° ëŒ€ë¯¸ì§€ê°€ 20% ê²½ê°ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§eí†µì°°Â§f: $[DURATION]ì´ˆê°„ íŠ•ê²¨ì§„ í™”ì‚´ì´ í™”ì‚´ë¡œë¶€í„° ê°€ì¥ ê°€ê¹Œìš´ ëŒ€ìƒì—ê²Œë¡œ",
+		" ìœ ë„ íš¨ê³¼ë¥¼ ì§€ë‹ˆê²Œ ë©ë‹ˆë‹¤. ëŒ€ìƒì´ í”¼í•´ë¥¼ ì…ì—ˆë‹¤ë©´ ëŒ€ìƒì„ ìœ ë„ í‘œì ì—ì„œ",
+		" ì œì™¸ì‹œí‚µë‹ˆë‹¤. $[COOLDOWN]"
 		})
 
 public class PatronSaint extends Synergy implements ActiveHandler {
@@ -79,9 +82,9 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 	
 	private static final Set<Material> bows;
 	private final Set<Player> gods = new HashSet<>();
-	private Bullet bullet = null;
-	private Bullet2 bullet2 = null;
-	private AbilityTimer reload = null;
+	private final int maxbullet = MAX_ARROW.getValue();
+	private int bullets = 0;
+	private final ActionbarChannel reloadac = newActionbarChannel();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final ActionbarChannel ac = newActionbarChannel();
 	private static final RGB COLOR = RGB.of(254, 252, 206);
@@ -99,9 +102,27 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	if (!checkgod.isRunning()) checkgod.start();
-	    	ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+	    	ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
+	    	actionbarChannel.update(Strings.repeat("Â§7â–", bullets).concat(Strings.repeat("Â§eâ–", maxbullet - bullets)));
+	    	actionbartimer.start();
 	    }
 	}
+	
+	private final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.75) * 35) : 35;
+	private AbilityTimer reload = new AbilityTimer(TaskType.NORMAL, reloadCount) {
+
+		@Override
+		protected void run(int count) {
+			int progress = (int) (((double) count / reloadCount) * 15);
+			reloadac.update("ì¬ì¥ì „: " + Strings.repeat("Â§a|", progress).concat(Strings.repeat("Â§7|", 15 - progress)));
+		}
+
+		@Override
+		protected void onEnd() {
+			reloadac.update(null);
+			SoundLib.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON.playSound(getPlayer());
+		}
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 2);
 	
     private final AbilityTimer checkgod = new AbilityTimer() {
     	
@@ -109,7 +130,7 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		public void run(int count) {
 			if (gods.size() != stack) {
 				stack = gods.size();
-		    	ac.update("¡×b¼öÈ£ ½ºÅÃ¡×f: " + stack);
+		    	ac.update("Â§bìˆ˜í˜¸ ìŠ¤íƒÂ§f: " + stack);
 			}
 			for (Participant participants : getGame().getParticipants()) {
 				if (participants.hasAbility()) {
@@ -134,9 +155,18 @@ public class PatronSaint extends Synergy implements ActiveHandler {
     
     }.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	
-	private final Duration insight = new Duration(DurationConfig.getValue() * 20, cool) {
+	private final AbilityTimer actionbartimer = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			actionbarChannel.update(Strings.repeat("Â§7â–", bullets).concat(Strings.repeat("Â§eâ–", maxbullet - bullets)));
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final Duration insight = new Duration(DURATION.getValue() * 20, cool) {
 
 		@Override
 		public void onDurationProcess(int arg0) {
@@ -145,9 +175,9 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1);
 	
-	public static final SettingObject<Integer> CooldownConfig 
+	public static final SettingObject<Integer> COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(PatronSaint.class,
-			"Cooldown", 60, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -159,9 +189,18 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DurationConfig 
+	public static final SettingObject<Integer> DURATION 
 	= synergySettings.new SettingObject<Integer>(PatronSaint.class,
-			"Duration", 10, "# Áö¼Ó ½Ã°£") {
+			"duration", 15, "# ì§€ì† ì‹œê°„") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> MAX_ARROW 
+	= synergySettings.new SettingObject<Integer>(PatronSaint.class,
+			"max-arrow", 3, "# ë¹›ì˜ í™”ì‚´ ìµœëŒ€ ê°œìˆ˜") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -192,8 +231,8 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 	private void onPlayerInteract(PlayerInteractEvent e) {
 		if ((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && bows.contains(e.getItem().getType())) {
 			getPlayer().updateInventory();
-			if (bullet == null && bullet2 == null) {
-				if (reload == null) {
+			if (bullets < maxbullet) {
+				if (!reload.isRunning()) {
 					if (bows.contains(getPlayer().getInventory().getItemInMainHand().getType())) {
 						final ItemStack mainhand = getPlayer().getInventory().getItemInMainHand();
 						new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection(), mainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE), 10, COLOR).start();
@@ -202,10 +241,10 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 						new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection(), offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE), 10, COLOR).start();
 					}
 				} else {
-					getPlayer().sendMessage("¡×bÀçÀåÀü ¡×fÁßÀÔ´Ï´Ù.");
+					getPlayer().sendMessage("Â§bì¬ì¥ì „ Â§fì¤‘ì…ë‹ˆë‹¤.");
 				}
 			} else {
-				getPlayer().sendMessage("¡×eºûÀÇ È­»ì¡×fÀÌ È¸¼öµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§eë¹›ì˜ í™”ì‚´Â§fì´ íšŒìˆ˜ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 			}
 		}
 	}
@@ -232,7 +271,7 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, double damage, RGB color) {
 			super(60);
 			setPeriod(TimeUnit.TICKS, 1);
-			PatronSaint.this.bullet = this;
+			bullets++;
 			this.shooter = shooter;
 			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(2);
@@ -303,10 +342,10 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 					if (!shooter.equals(livingEntity)) {
 						if (!hitcheck.contains(livingEntity)) {
 							if (livingEntity instanceof Player) {
-								if (!gods.contains((Player) livingEntity)) Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant) + Math.min(5, stack * 0.5)) * 0.55));	
-								else Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)) * 0.55));
+								if (!gods.contains((Player) livingEntity)) Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant) + Math.min(5, stack * 0.5)) * 0.45));	
+								else Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)) * 0.45));
 							} else {
-								Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant) + Math.min(5, stack * 0.5)) * 0.55));	
+								Damages.damageArrow(livingEntity, shooter, (float) ((EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant) + Math.min(5, stack * 0.5)) * 0.45));	
 							}
 							if (livingEntity instanceof Player) {
 								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(6 + (stack * 3), 60));
@@ -327,17 +366,15 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 			if (checkhit) {
 				new Bullet2(getPlayer(), entity.getLocation(), (float) (EnchantLib.getDamageWithPowerEnchantment(damage, powerEnchant)), COLOR2).start();
 				checkhit = false;
-			}
+			} else bullets--;
 			hitcheck.clear();
 			entity.remove();
-			PatronSaint.this.bullet = null;
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			hitcheck.clear();
 			entity.remove();
-			PatronSaint.this.bullet = null;
 		}
 
 		public class ArrowEntity extends CustomEntity implements Deflectable {
@@ -386,7 +423,6 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		private Bullet2(LivingEntity shooter, Location startLocation, double damage, RGB color) {
 			super(1200);
 			setPeriod(TimeUnit.TICKS, 1);
-			PatronSaint.this.bullet2 = this;
 			this.shooter = shooter;
 			this.entity = new Bullet2.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.velocity = getPlayer().getLocation().add(0, 1, 0).clone().subtract(startLocation.clone()).toVector().normalize();
@@ -459,10 +495,10 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 					if (!shooter.equals(livingEntity)) {
 						if (!hitcheck.contains(livingEntity)) {
 							if (livingEntity instanceof Player) {
-								if (!gods.contains((Player) livingEntity)) Damages.damageArrow(livingEntity, shooter, (float) ((damage + Math.min(5, stack * 0.5)) * 1.1));	
-								else Damages.damageArrow(livingEntity, shooter, (float) (damage * 1.1));
+								if (!gods.contains((Player) livingEntity)) Damages.damageArrow(livingEntity, shooter, (float) ((damage + Math.min(5, stack * 0.5)) * 0.55));	
+								else Damages.damageArrow(livingEntity, shooter, (float) (damage * 0.55));
 							} else {
-								Damages.damageArrow(livingEntity, shooter, (float) ((damage + Math.min(5, stack * 0.5)) * 1.1));	
+								Damages.damageArrow(livingEntity, shooter, (float) ((damage + Math.min(5, stack * 0.5)) * 0.55));	
 							}
 							if (livingEntity instanceof Player) {
 								if (!gods.contains((Player) livingEntity)) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, Math.min(4 + (stack * 1), 60));
@@ -482,33 +518,18 @@ public class PatronSaint extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void onEnd() {
-			final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 20) : 20;
-			reload = new AbilityTimer(reloadCount) {
-				private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
-
-				@Override
-				protected void run(int count) {
-					progressBar.step();
-					actionbarChannel.update("ÀçÀåÀü: " + progressBar.toString());
-				}
-
-				@Override
-				protected void onEnd() {
-					PatronSaint.this.reload = null;
-					actionbarChannel.update(null);
-					SoundLib.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON.playSound(getPlayer());
-				}
-			}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 2);
-			reload.start();
+			if (reload.isRunning()) reload.setCount(1); 
+			else reload.start();
+			hitcheck.clear();
 			entity.remove();
-			PatronSaint.this.bullet2 = null;
+			bullets--;
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			hitcheck.clear();
 			entity.remove();
-			PatronSaint.this.bullet2 = null;
+			bullets--;
 		}
 
 		public class ArrowEntity extends CustomEntity {

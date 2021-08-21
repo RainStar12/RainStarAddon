@@ -1,8 +1,11 @@
 package RainStarEffect;
 
+import javax.swing.JTable.PrintMode;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -68,7 +71,7 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (participant.getPlayer().equals(e.getEntity())) {
 			e.setDamage(e.getDamage() * 0.2);

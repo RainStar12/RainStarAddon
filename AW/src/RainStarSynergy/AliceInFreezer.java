@@ -67,7 +67,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			synergySettings.new SettingObject<Integer>(AliceInFreezer.class, "cooldown", 23,
+			synergySettings.new SettingObject<Integer>(AliceInFreezer.class, "cooldown", 17,
             "# Ã¶±« ¿ìÅ¬¸¯ ÄðÅ¸ÀÓ", "# ´ÜÀ§: ÃÊ") {
         @Override
         public boolean condition(Integer value) {
@@ -396,6 +396,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
 								new Bullet(shooter, entity.getLocation(), loc).start();
 							}
 						}
+						cool.setCount((int) Math.max(cool.getCount() * 0.25, cool.getCount() - 2));	
 						stop(false);
 					}
 				}

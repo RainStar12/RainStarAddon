@@ -75,7 +75,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DAMAGE_BY_ENTITY 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"damage-by-entity", 7, "# 생명체에 부딪힐 때 양쪽의 피해", "# 피해 타입은 발사체입니다.") {
+			"damage-by-entity", 12, "# 생명체에 부딪힐 때 양쪽의 피해", "# 피해 타입은 발사체입니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -84,7 +84,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DAMAGE_BY_WALL 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"damage-by-wall", 2, "# 벽에 부딪힐 때 피해", "# 피해 타입은 방어력 무시 근접입니다.") {
+			"damage-by-wall", 3, "# 벽에 부딪힐 때 피해", "# 피해 타입은 방어력 무시 근접입니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -93,7 +93,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> STUN_DURATION 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"stun-duration", 20, "# 벽에 부딪힐 때 기절 시간 (단위: 틱)", "# 20틱 = 1초, 1틱 = 0.05초") {
+			"stun-duration", 40, "# 벽에 부딪힐 때 기절 시간 (단위: 틱)", "# 20틱 = 1초, 1틱 = 0.05초") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -105,6 +105,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	private final int damagebyentity = DAMAGE_BY_ENTITY.getValue();
 	private final int damagebywall = DAMAGE_BY_WALL.getValue();
 	private final int stunduration = STUN_DURATION.getValue();
+	private Set<Player> blowSet = new HashSet<>();
 	
 	private final AbilityTimer stun = new AbilityTimer(100) {
 		
@@ -150,7 +151,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 			player.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().getDirection().normalize().multiply(new Vector(2.5, 1.5, 2.5))));
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation());
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer().getLocation(), 1, 1.25f);
-			new Blow(player).start();
+			if (!blowSet.contains(player)) new Blow(player).start();
 		}
 	}
 	
@@ -205,6 +206,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 			super();
 			setPeriod(TimeUnit.TICKS, 1);
 			this.player = player;
+			blowSet.add(player);
 		}
 		
 		@EventHandler

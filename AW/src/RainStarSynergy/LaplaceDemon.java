@@ -1,7 +1,10 @@
 package RainStarSynergy;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -17,10 +20,13 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "라플라스의 악마", rank = Rank.S, species = Species.UNDEAD, explain = {
 		"§7철괴 우클릭 §8- §c결정론§f: 주사위를 굴려 현재 상황에서 가장 필요한 값을",
@@ -29,7 +35,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 		" 최근 5초 내 내가 근접 공격했을 경우 §7- §6힘",
 		" 최근 5초 내 내가 피해입었을 경우 §7- §8저항",
 		" 최근 5초 내 내가 화염 피해를 입었을 경우 §7- §c화염 저항",
-		" 주변 5칸 내 다른 플레이어가 있을 경우 §7- §b신속",
+		" 주변 9칸 내 다른 플레이어가 있을 경우 §7- §b신속",
 		" 해당사항이 없을 경우 §7- §e성급함",
 		})
 
@@ -58,6 +64,31 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
             return Formatter.formatCooldown(getValue());
         }
     };
+    
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
 		
 	@Override
 	protected void onUpdate(Update update) {
@@ -72,10 +103,8 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 		public void run(int count) {
 			if (getPlayer().getHealth() <= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3) regeneration = true;
 			else regeneration = false;
-			for (Player p : getPlayer().getWorld().getPlayers()) {
-				if (LocationUtil.isInCircle(getPlayer().getLocation(), p.getLocation(), 5) && !p.equals(getPlayer())) speed = true;
-				else speed = false;
-			}
+			if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 9, 9, predicate).size() > 0) speed = true;
+			else speed = false;
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -169,22 +198,22 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK && !cool.isCooldown()) {
 			if (!getPlayer().hasPotionEffect(PotionEffectType.REGENERATION) && regeneration == true) {
 				getPlayer().sendMessage("§d재생 §f효과를 받습니다.");
-				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 250, 1, true);
+				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 300, 1, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) && power == true) {
 				getPlayer().sendMessage("§6힘 §f효과를 받습니다.");
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 250, 1, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 300, 1, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) && resistance == true) {
 				getPlayer().sendMessage("§8저항 §f효과를 받습니다.");
-				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 250, 1, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 300, 1, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.FIRE_RESISTANCE) && fireimmune == true) {
 				getPlayer().sendMessage("§c화염 저항 §f효과를 받습니다.");
-				PotionEffects.FIRE_RESISTANCE.addPotionEffect(getPlayer(), 250, 2, true);
+				PotionEffects.FIRE_RESISTANCE.addPotionEffect(getPlayer(), 300, 1, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.SPEED) && speed == true) {
 				getPlayer().sendMessage("§b신속 §f효과를 받습니다.");
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 250, 2, true);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 300, 1, true);
 			} else {
 				getPlayer().sendMessage("§e성급함 §f효과를 받습니다.");
-				PotionEffects.FAST_DIGGING.addPotionEffect(getPlayer(), 250, 2, true);
+				PotionEffects.FAST_DIGGING.addPotionEffect(getPlayer(), 300, 1, true);
 			}
 			return cool.start();
 		}

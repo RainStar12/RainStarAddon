@@ -33,7 +33,8 @@ import daybreak.google.common.base.Strings;
 		name = "속전속결", rank = Rank.B, species = Species.HUMAN, explain = {
 		"§c주는 대미지 §f및 §c받는 대미지§f가 기본적으로 0이 됩니다.",
 		"같은 대상을 7회 타격 시 대상은 §c사망§f합니다.",
-		"같은 대상에게서 7회 피격 시 즉시 §c사망§f합니다."
+		"같은 대상에게서 7회 피격 시 즉시 §c사망§f합니다.",
+		"이 효과로 §c사망§f한 적은 부활 효과를 무시합니다."
 		})
 
 public class ASAP extends Synergy {
