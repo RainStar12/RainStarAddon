@@ -89,7 +89,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> BUFF_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 10, "# 조작으로 얻는 기본 버프 지속시간") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 7, "# 조작으로 얻는 기본 버프 지속시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -109,7 +109,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 120, "# 쿨타임") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 140, "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;

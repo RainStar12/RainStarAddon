@@ -72,7 +72,7 @@ import kotlin.ranges.RangesKt;
 		"§7패시브 §8- §c버스트§f: 적에게 근접 피해를 입히거나 피해를 받을 때마다",
 		" 대미지에 비례하여 §4버스트 아웃§f의 게이지가 차차 차오릅니다.",
 		" 게이지를 가득 채우면, §c12.15초§f간 §4버스트 아웃§f 상태가 되어 주변에 액체를 흩뿌린 뒤",
-		" 추가 공격력과 추가 피해를 얻고, 타격한 대상을 매번 §c출혈§f시킵니다.",
+		" 추가 공격력과 추가 피해를 얻고, 타격한 대상을 §c출혈§f시킵니다.",
 		" 이때 대미지를 입힐 때마다 §c버스트 아웃§f이 조금 더 지속할 수 있습니다,",
 		"§b[§7아이디어 제공자§b] §cHSRD"
 		})
@@ -407,7 +407,7 @@ public class Megalodon extends AbilityBase {
 							if (e.getEntity() instanceof Player) {
 								Player player = (Player) e.getEntity();
 								if (!getGame().getParticipant(player).hasEffect(Bleed.registration)) {
-									Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 30, 10);	
+									Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 200, 15);	
 								}
 							}
 							nowDamage = Math.min(addDamage, nowDamage + (addDamage / 15));
@@ -420,7 +420,7 @@ public class Megalodon extends AbilityBase {
 						if (e.getEntity() instanceof Player) {
 							Player player = (Player) e.getEntity();
 							if (!getGame().getParticipant(player).hasEffect(Bleed.registration)) {
-								Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 30, 10);	
+								Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 200, 15);		
 							}
 						}
 						nowDamage = Math.min(addDamage, nowDamage + (addDamage / 40));

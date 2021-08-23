@@ -81,7 +81,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> PIERCE_DAMAGE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"pierce-damage", 10, "# 관통의 대미지") {
+			"pierce-damage", 12, "# 관통의 대미지") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -538,7 +538,7 @@ public class FoxCrystalBall extends AbilityBase {
 			shotDelay =+ 129;
 			break;
 		case 4:
-			shotDelay =+ 69;
+			shotDelay =+ 39;
 			break;
 		}
 	}

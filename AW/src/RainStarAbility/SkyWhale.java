@@ -144,7 +144,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> HEAL_PERCENT = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "heal-percent", 85, "# 영역이 끝난 후 회복량 (단위: %)") {
+			SkyWhale.class, "heal-percent", 70, "# 영역이 끝난 후 회복량 (단위: %)") {
 
 		@Override
 		public boolean condition(Integer value) {

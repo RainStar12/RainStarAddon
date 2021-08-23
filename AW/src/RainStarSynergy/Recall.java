@@ -58,7 +58,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(
 		name = "리콜", rank = Rank.B, species = Species.HUMAN, explain = {
 		"일반 투사체를 바라보면 투사체를 쏜 주인에게 되돌아갑니다.",
-		"되돌아가는 투사체는 주인에게 §c2배의 피해§f를 입힙니다.",
+		"되돌아가는 투사체는 주인에게 §c2.5배의 피해§f를 입힙니다.",
 		"원거리 투사체들을 방어해주는 §b50HP§f의 실드를 가지고 있습니다.",
 		"실드는 일반 투사체에 §c-$[LOSS_NORMAL]HP§f, 특수 투사체에 §c-$[LOSS_SPECIAL]HP§f를 잃습니다.",
 		"싫드에 닿는 일반 투사체는 2초간 정지, 특수 투사체는 되돌려보냅니다.",
@@ -244,7 +244,7 @@ public class Recall extends Synergy {
 					e.setCancelled(true);
 				}
 				if (!shooterMap.get(e.getDamager()).equals(e.getEntity())) {
-					e.setDamage(e.getDamage() * 2);
+					e.setDamage(e.getDamage() * 2.5);
 				}
 			}
 		}

@@ -1,6 +1,8 @@
 package RainStarAbility;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -19,7 +21,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.util.Vector;
 
@@ -43,7 +44,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -56,6 +56,7 @@ import daybreak.google.common.base.Predicate;
 		" 혹은 $[LONGEST_WAIT]초가 지나도 자동으로 풀려납니다.",
 		"§7철괴 좌클릭 §8- §2압도적인 힘으로§f: 조금 떠오른 뒤 바라보는 방향으로 찍어내립니다.",
 		" 이를 §2$[COUNT]§f회, §2$[DAMAGE]§f의 피해로 반복합니다. $[COOLDOWN]",
+		" 이후 대미지를 입힌 사람 수에 비례해 §e흡수 체력§f을 천천히 획득합니다.",
 		"§b[§7아이디어 제공자§b] §2ehdgh141"
 		})
 
@@ -116,7 +117,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ABSORTION_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 200,
+			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 150,
 			"# 획득하는 흡수 체력", "# 단위는 %로, 최대 체력에 비례합니다.") {
 
 		@Override
@@ -161,11 +162,16 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	private Item egg;
 	private Location teleLoc;
 	private ActionbarChannel ac2 = newActionbarChannel();
+	private boolean onetime = true;
+	private Set<Player> damagecounter = new HashSet<>();
 	
 	@Override
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	fossil.start();
+	    	if (onetime) {
+		    	fossil.start();
+		    	onetime = false;
+	    	}
 	    	if (getPlayer().getLocation().getY() > 4) teleLoc = getPlayer().getLocation().clone().add(0, -3, 0);
 	    	else teleLoc = getPlayer().getLocation();
 	    } else if (update == Update.RESTRICTION_SET) {
@@ -239,6 +245,16 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		
 	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();
 	
+	private AbilityTimer absortionAdd = new AbilityTimer(2) {
+		
+		@Override
+		public void run(int count) {
+			float yellowheart = NMS.getAbsorptionHearts(getPlayer());
+			NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + 1));
+		}
+		
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 30).register();
+	
 	@SubscribeEvent
 	public void onEntityPickup(EntityPickupItemEvent e) {
 		if (egg != null) {
@@ -250,7 +266,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	}
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && !cooldown.isCooldown()) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && !cooldown.isCooldown() && !fossil.isRunning()) {
 			if (!skill.isRunning()) {
 				if (skillstack > 1) {
 					getPlayer().sendMessage("§2[§6!§2] §c아직 능력이 지속 중입니다.");
@@ -319,6 +335,9 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 				ac2.update(null);
 				skillstack = 0;
 				cooldown.start();
+				absortionAdd.start();
+				absortionAdd.setCount(absortionAdd.getCount() + (damagecounter.size() * 3));
+				damagecounter.clear();
 			}
 		}
 
@@ -341,7 +360,11 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(LocationUtil.floorY(center));
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(LocationUtil.floorY(center));
 			for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, predicate)) {
-				if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
+				if (d instanceof Player) {
+					Player p = (Player) d;
+					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(p);
+					damagecounter.add(p);
+				}
 				d.damage(skilldamage, getPlayer());
 				d.setVelocity(center.toVector().subtract(d.getLocation().toVector()).multiply(-0.5).setY(0.8));
 			}
