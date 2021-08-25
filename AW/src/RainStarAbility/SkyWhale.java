@@ -370,14 +370,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (skill.isRunning()) {
 			if (LocationUtil.isInCircle(center, e.getFrom(), 15) && !LocationUtil.isInCircle(center, e.getTo(), 15)) {
-				if (e.getPlayer().equals(getPlayer())) {
-					Vector beside = center.toVector().clone().subtract(e.getFrom().toVector().clone());
-					Location goTo = center.clone().add(beside);
-					goTo.setY(e.getFrom().getY());
-					e.setTo(goTo.setDirection(getPlayer().getLocation().getDirection()));
-				} else {
-					e.setTo(e.getFrom());
-				}	
+				e.setTo(e.getFrom());
 			}
 		}
 	}
