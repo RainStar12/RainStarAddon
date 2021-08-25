@@ -143,7 +143,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> SLOT_COOLDOWN
 	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"slot-cooldown", 90, "# 슬롯머신 능력 쿨타임") {
+			"slot-cooldown", 60, "# 슬롯머신 능력 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -386,6 +386,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	    }
 	}
 	
+	private int messagestack = 0;
     private final SlotMachineTimer slot = new SlotMachineTimer();
 	private final double slotadddamage = SLOT_ADD_DAMAGE.getValue();
 	private final double slotreducedamage = SLOT_REDUCE_DAMAGE.getValue();
@@ -552,7 +553,11 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 								ParticleLib.SPELL_WITCH.spawnParticle(loc);
 							}
 						    restock.start();
-						} else e.setCancelled(true);
+						} else {
+							messagestack++;
+							e.setCancelled(true);
+							if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+						}
 					} else {
 						e.setCancelled(true);
 						ItemStack item =  getPlayer().getInventory().getItemInMainHand();
@@ -581,7 +586,11 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 							ParticleLib.SPELL_WITCH.spawnParticle(loc);
 						}
 					    restock.start();
-					} else e.setCancelled(true);
+					} else {
+						messagestack++;
+						e.setCancelled(true);
+						if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+					}
 				}	
 			}
 		}
@@ -759,6 +768,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
             }
 
             public void onDurationEnd() {
+            	if (!slotcooldown.isRunning()) slotcooldown.start();
                 HandlerList.unregisterAll(SlotMachineTimer.this);
             }
 

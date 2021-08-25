@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
@@ -58,6 +59,11 @@ public class Charm extends AbstractGame.Effect implements Listener {
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		super.onStart();
+	}
+	
+	@EventHandler
+	private void onPlayerDeath(PlayerDeathEvent e) {
+		if (e.getEntity().equals(applyPlayer)) this.stop(false);
 	}
 
 	@EventHandler

@@ -109,7 +109,7 @@ public class LightningCounter extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(
-			LightningCounter.class, "damage", 1.0, "# 대미시 상승량") {
+			LightningCounter.class, "damage-increase", 1.0, "# 대미시 상승량") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;

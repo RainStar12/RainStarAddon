@@ -60,6 +60,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import net.md_5.bungee.api.ChatColor;
@@ -137,6 +138,15 @@ public class Chance extends Synergy implements ActiveHandler, TargetHandler {
         
         return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
     }
+    
+    private AbilityTimer passive = new AbilityTimer() {
+    	
+    	@Override
+    	public void run(int count) {
+    		PotionEffects.GLOWING.addPotionEffect(getPlayer(), 50, 0, true);
+    	}
+    	
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();
     
     private AbilityTimer deathTimer = new AbilityTimer(300) {
     	
@@ -216,6 +226,7 @@ public class Chance extends Synergy implements ActiveHandler, TargetHandler {
 							e1.printStackTrace();
 						}
 				});
+				passive.start();
 			} else {
 				Bukkit.broadcastMessage("§b[§e!§b] §a기회§f가 사망하여 모든 플레이어의 능력이 제자리로 돌아옵니다...");
 				Bukkit.broadcastMessage("§b[§e!§b] §c15초§f 후 기회의 주인 §e" + getPlayer().getName() + "§f님이 사망합니다.");

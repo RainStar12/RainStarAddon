@@ -27,7 +27,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
@@ -36,7 +35,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
@@ -170,22 +168,11 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 		public void run(int count) {
 			if (!cooldown.isRunning()) {
 				ac.update("§d도망 가능§7: " + df.format(this.getCount() * 0.1) + "초");
-				Block lastEmpty = null;
-				try {
-					Vector vector = target.getLocation().clone().subtract(getPlayer().getLocation().toVector()).toVector();
-					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), 
-							vector.setY(0), 1, (int) (vector.length() * 2)); iterator.hasNext(); ) {
-						final Block block = iterator.next();
-						if (!block.getType().isSolid()) {
-							lastEmpty = block;
-						}
-					}
-				} catch (IllegalStateException ignored) {}
-				if (lastEmpty != null) {
-					for (Location loc : circle.toLocations(lastEmpty.getLocation()).floor(lastEmpty.getLocation().getY())) {
-						ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
-					}	
-				}	
+				Vector vector = target.getLocation().clone().subtract(getPlayer().getLocation().toVector()).toVector();
+				Location location = getPlayer().getLocation().add(vector.multiply(2));
+				for (Location loc : circle.toLocations(location).floor(location.getY())) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
+				}		
 			}
 		}
 		

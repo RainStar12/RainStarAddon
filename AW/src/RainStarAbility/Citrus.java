@@ -344,6 +344,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	    }
 	}
 	
+	private int messagestack = 0;
 	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(30) * RESTOCK.getValue() : RESTOCK.getValue());
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private boolean converted = false;
@@ -538,7 +539,11 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 								}
 						    	restock.start();
 							}
-						} else e.setCancelled(true);
+						} else {
+							messagestack++;
+							e.setCancelled(true);
+							if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+						}
 					} else {
 						e.setCancelled(true);
 						ItemStack item =  getPlayer().getInventory().getItemInMainHand();
@@ -570,7 +575,11 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 							}
 					    	restock.start();
 						}
-					} else e.setCancelled(true);
+					} else {
+						messagestack++;
+						e.setCancelled(true);
+						if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+					}
 				}	
 			}
 		}

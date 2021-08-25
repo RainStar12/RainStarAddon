@@ -18,7 +18,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -78,7 +77,9 @@ public class CowardlyMatch extends Synergy {
 	private Location behindTeleport(Entity teleporter, Entity target) {
 		final Location targetLoc = target.getLocation();
 		final Vector targetDir = targetLoc.getDirection();
-		return LocationUtil.floorY(targetLoc.clone().add(targetDir.multiply(-.75)));
+		Location backLoc = targetLoc.clone().add(targetDir.multiply(-.75));
+		backLoc.setY(target.getLocation().getY());
+		return backLoc;
 	}
 	
 	@Override
@@ -118,12 +119,12 @@ public class CowardlyMatch extends Synergy {
 				getPlayer().teleport(behindTeleport(getPlayer(), e.getEntity()));
 			} else if (teleportable) {
 				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
-				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 0.25, 0.25, 0.25, 50, 0);
 				teleportable = false;
 				ac.update(null);
 				getPlayer().teleport(behindTeleport(getPlayer(), e.getEntity()));
 				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
-				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 0.25, 0.25, 0.25, 50, 0);
 				periodtimer.start();
 			}
 		}
@@ -131,12 +132,12 @@ public class CowardlyMatch extends Synergy {
 			Projectile projectile = (Projectile) e.getDamager();
 			if (getPlayer().equals(projectile.getShooter()) && teleportable) {
 				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
-				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 0.25, 0.25, 0.25, 50, 0);
 				teleportable = false;
 				ac.update(null);
 				getPlayer().teleport(behindTeleport(getPlayer(), e.getEntity()));
 				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
-				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 0.25, 0.25, 0.25, 50, 0);
 				periodtimer.start();
 			}
 		}
