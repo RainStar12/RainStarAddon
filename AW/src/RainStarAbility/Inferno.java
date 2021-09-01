@@ -2,6 +2,7 @@ package RainStarAbility;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -9,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.util.Vector;
 
 import RainStarEffect.Burn;
@@ -34,6 +37,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -45,17 +49,19 @@ import daybreak.google.common.base.Predicate;
 		" §4불꽃§f이 자신의 화염 피해를 대체하고, 하나당 화염 피해를 10% 더 입습니다.",
 		"§7검 공격 §8- §c열화폭참§f: 자신이 타격한 대상을 2초간 추가 발화시킵니다.",
 		" 대상이 이미 5초 이상 발화 도중이면 대신 대상에게 추가 피해를 입힙니다.",
-		" §7추가 피해량§f: §e(§c대상이 가진 화염 지속시간§e + §4불꽃§e × 0.15)",
+		" §7추가 피해량§f: §e(§7(§c대상이 가진 화염 지속시간§e + §4불꽃§e§7) × §b0.2§e)",
 		"§7철괴 우클릭 §8- §c화력전개§f: 나와 $[RANGE]칸 이내의 모든 플레이어를 $[DURATION]초간 추가 발화시키고,",
-		" 나를 제외한 모든 대상에게 §4화상§f 상태이상을 겁니다. $[COOLDOWN]",
+		" 나를 포함한 모든 대상에게 §4화상§f 상태이상을 겁니다. $[COOLDOWN]",
+		" §4화상§f이 지속하는 동안, 자신은 화염계 피해를 절반만큼 역으로 회복합니다.",
 		"§7상태이상 §8- §4화상§f: 모든 화염 계열 피해를 무시할 수 없으며 2.5배로 입습니다.",
 		" 화염이 꺼질 때 꺼지기 전의 화염 지속시간에 비례해 피해를 입습니다."},
 		summarize = {
 		"§7근접 공격 시§f 5초 이하 발화중 대상에게 2초간 추가 §c발화§f시킵니다.",
 		"5초 이상 §c발화§f중인 대상에게는 추가 피해를 입힐 수 있습니다.",
 		"기본적으로 화염계 피해를 무시하지만 §c발화 중인 대상§f을 타격하면 §c발화§f합니다.",
-		"§7철괴 우클릭 시§f 나와 주변 대상들을 $[DURATION]초 추가 발화시키며, 적에게는 §4화상§f을 겁니다.",
-		"§4화상§f에 걸린 적은 화염계 피해를 무조건 받으며 2.5배로 입습니다."
+		"§7철괴 우클릭 시§f 나와 주변 대상들을 $[DURATION]초 추가 발화시키며, §4화상§f을 겁니다.",
+		"§4화상§f에 걸린 적은 화염계 피해를 무조건 받으며 2.5배로 입습니다.",
+		"본인은 화상 지속시간 동안 화염계 피해를 역회복합니다."
 		})
 
 public class Inferno extends AbilityBase implements ActiveHandler {
@@ -203,6 +209,14 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 					e.getCause() == DamageCause.LAVA || e.getCause() == DamageCause.HOT_FLOOR) {
     			if (burningflame >= 1) {
     				e.setDamage(e.getDamage() + (e.getDamage() * (burningflame * 0.1)));
+    				if (getParticipant().hasEffect(Burn.registration)) {
+    					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getDamage() * 0.5, RegainReason.CUSTOM);
+    					Bukkit.getPluginManager().callEvent(event);
+    					if (!event.isCancelled()) {
+    						Healths.setHealth(getPlayer(), getPlayer().getHealth() + (e.getDamage() * 0.5));
+    					}
+    					e.setDamage(0);
+    				}
     			} else {
     				e.setCancelled(true);
     			}
@@ -224,12 +238,12 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     	onEntityDamage(e);
     	if (e.getDamager().equals(getPlayer())) {
     		if (e.getEntity().getFireTicks() > 0) {
-    			flameSet((int) (e.getEntity().getFireTicks() * 0.025));
+    			flameSet((int) (e.getEntity().getFireTicks() * 0.0125));
     			new CutParticle(particleSide).start();
     			particleSide *= -1;
     		}
     		if (e.getEntity().getFireTicks() >= 100) {
-    			e.setDamage(e.getDamage() + Math.min(10, (e.getEntity().getFireTicks() * 0.0075)) + (burningflame * 0.15));
+    			e.setDamage(e.getDamage() + Math.min(10, (e.getEntity().getFireTicks() * 0.01)) + (burningflame * 0.2));
     		} else {
     			if (e.getEntity().getFireTicks() <= 0) {
         			e.getEntity().setFireTicks(e.getEntity().getFireTicks() + 60);
@@ -243,9 +257,10 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cool.isCooldown()) {
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
-				p.setFireTicks(p.getFireTicks() + (duration * 20));
 				Burn.apply(getGame().getParticipant(p), TimeUnit.SECONDS, duration);
+				p.setFireTicks(p.getFireTicks() + (duration * 20));
 			}
+			Burn.apply(getParticipant(), TimeUnit.SECONDS, duration);
 			flameOverSet(duration);
 			if (circle.isRunning()) {
 				circle.stop(false);

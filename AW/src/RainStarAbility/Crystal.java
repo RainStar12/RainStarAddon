@@ -100,7 +100,6 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 	private Player target;
 	private double dist = 0;
 	private final Set<Player> checktarget = new HashSet<>();
-	private final Set<Arrow> myarrow = new HashSet<>();
 	private final Map<Arrow, Location> arrowlocation = new HashMap<>();
 	private int stack = 0;
     
@@ -159,8 +158,8 @@ public class Crystal extends AbilityBase implements ActiveHandler {
     		Arrow arrow = (Arrow) e.getDamager();
     		if (arrow != null) {    		
     			if (getPlayer().equals(arrow.getShooter()) && !e.getEntity().equals(getPlayer())) {
-    				if (arrowlocation != null) dist = target.getLocation().distanceSquared(arrowlocation.get(arrow));
-    				else dist = 50;
+    				if (arrowlocation.get(arrow) != null) dist = target.getLocation().distanceSquared(arrowlocation.get(arrow));
+    				else dist = target.getLocation().distanceSquared(getPlayer().getLocation());
 	    			if (dist < 25) {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 20, 0, true);
 	    			} else if (dist < 100) {
@@ -217,8 +216,7 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 	public void onProjectileHit(ProjectileHitEvent e) {
 		if (NMS.isArrow(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getEntity();
-			if (myarrow.contains(arrow)) {
-				myarrow.remove(arrow);
+			if (getPlayer().equals(e.getEntity().getShooter())) {
 	    		ParticleLib.ITEM_CRACK.spawnParticle(arrow.getLocation(), 0, 0, 0, 35, 0.2, MaterialX.PRISMARINE_CRYSTALS);
 	    		ParticleLib.ITEM_CRACK.spawnParticle(arrow.getLocation(), 0, 0, 0, 15, 0.2, MaterialX.DIAMOND);
 			}	
@@ -232,7 +230,6 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
     	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		Arrow arrow = (Arrow) e.getEntity();
-    		myarrow.add(arrow);
     		arrow.setCritical(true);
     		arrowlocation.put(arrow, getPlayer().getLocation());
     		if (getPlayer().getInventory().contains(Material.DIAMOND)) {

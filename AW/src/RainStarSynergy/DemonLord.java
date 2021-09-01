@@ -1035,7 +1035,6 @@ public class DemonLord extends Synergy {
 				    			new BukkitRunnable() {
 				    				@Override
 				    				public void run() {
-				    					getPlayer().sendMessage("¹à±â: " + getPlayer().getLocation().clone().add(0, 1, 0).getBlock().getLightLevel());
 			    						double skillDamage = damage + ((15 - getPlayer().getLocation().clone().add(0, 1, 0).getBlock().getLightLevel()) * (increase * 0.01));
 			    						double maxDamage = damage + (15 * (increase * 0.01));
 				    					if (darkfield.isRunning()) {

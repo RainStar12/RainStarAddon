@@ -3,8 +3,8 @@ package RainStarAbility;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -42,8 +42,8 @@ public class Butcher extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity (EntityDamageByEntityEvent e) {	
-		if (NMS.isArrow(e.getDamager())) {
-		    Arrow arrow = (Arrow) e.getDamager();
+		if (e.getDamager() instanceof Projectile) {
+		    Projectile arrow = (Projectile) e.getDamager();
 		    if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity) {
 		    	final LivingEntity target = (LivingEntity) e.getEntity();
 		    	double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
@@ -103,4 +103,4 @@ public class Butcher extends AbilityBase {
 			}.setPeriod(TimeUnit.TICKS, 2).start();
 		}
 	}
-};
+}

@@ -55,6 +55,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -73,7 +74,6 @@ import kotlin.ranges.RangesKt;
 		" 대미지에 비례하여 §4버스트 아웃§f의 게이지가 차차 차오릅니다.",
 		" 게이지를 가득 채우면, §c12.15초§f간 §4버스트 아웃§f 상태가 되어 주변에 액체를 흩뿌린 뒤",
 		" 추가 공격력과 추가 피해를 얻고, 타격한 대상을 §c출혈§f시킵니다.",
-		" 이때 대미지를 입힐 때마다 §c버스트 아웃§f이 조금 더 지속할 수 있습니다,",
 		"§b[§7아이디어 제공자§b] §cHSRD"
 		})
 
@@ -133,24 +133,24 @@ public class Megalodon extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(Megalodon.class, "damage", 5,
+	public static final SettingObject<Double> DAMAGE = 
+			abilitySettings.new SettingObject<Double>(Megalodon.class, "damage", 5.0,
             "# 추가 피해량", "# 추가 피해량의 1/2만큼 자신도 추가 피해를 입습니다.") {
 
         @Override
-        public boolean condition(Integer value) {
-            return value >= 0; 
+        public boolean condition(Double value) {
+            return value >= 0.1; 
         }
 
     };
     
-	public static final SettingObject<Integer> REQUEST_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(Megalodon.class, "request-damage", 25,
+	public static final SettingObject<Double> REQUEST_DAMAGE = 
+			abilitySettings.new SettingObject<Double>(Megalodon.class, "request-damage", 25.0,
             "# 버스트 아웃의 요구 피해량의 총합") {
 
         @Override
-        public boolean condition(Integer value) {
-            return value >= 0;
+        public boolean condition(Double value) {
+            return value >= 0.1;
         }
 
     };
@@ -161,7 +161,7 @@ public class Megalodon extends AbilityBase {
 
         @Override
         public boolean condition(Integer value) {
-            return value >= 0;
+            return value >= 1;
         }
 
     };
@@ -389,16 +389,16 @@ public class Megalodon extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent(priority = 4)
+	@SubscribeEvent
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent(priority = 4)
+	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
 		if (burstout.isRunning()) {
-			if (!e.getEntity().isInvulnerable() && !e.isCancelled()) {
+			if (Damages.canDamage(e.getEntity(), DamageCause.ENTITY_ATTACK, e.getDamage() + nowDamage) && !e.isCancelled()) {
 				if (e.getDamager() instanceof Projectile) {
 					Projectile p = (Projectile) e.getDamager();
 					if (getPlayer().equals(p.getShooter()) && projectileMap.containsKey(p)) {
@@ -410,7 +410,6 @@ public class Megalodon extends AbilityBase {
 									Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 200, 15);	
 								}
 							}
-							nowDamage = Math.min(addDamage, nowDamage + (addDamage / 15));
 							ParticleLib.ITEM_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 0, 0, 35, 0.35, MaterialX.NETHER_WART);
 						}
 					}
@@ -423,7 +422,6 @@ public class Megalodon extends AbilityBase {
 								Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, 200, 15);		
 							}
 						}
-						nowDamage = Math.min(addDamage, nowDamage + (addDamage / 40));
 						new CutParticle(getPlayer(), particleSide).start();
 						particleSide *= -1;
 					}
@@ -435,6 +433,7 @@ public class Megalodon extends AbilityBase {
 		} else {
 			if (e.getEntity() instanceof Player) {
 				if (e.getEntity().equals(getPlayer()) || e.getDamager().equals(getPlayer())) {
+					Bukkit.broadcastMessage("버스트아웃");
 					damagestack = Math.min(requestDamage, damagestack + e.getFinalDamage());
 				}	
 			}

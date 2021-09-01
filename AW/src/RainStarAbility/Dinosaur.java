@@ -186,6 +186,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onStart() {
 			getPlayer().setGameMode(GameMode.SPECTATOR);
+			getParticipant().attributes().TARGETABLE.setValue(false);
 			ItemStack eggcreate;
 			if (ServerVersion.getVersion() >= 13) eggcreate = new ItemStack(Material.ZOMBIE_VILLAGER_SPAWN_EGG);
 			else {
@@ -217,6 +218,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		public void onSilentEnd() {
 			getPlayer().teleport(LocationUtil.floorY(egg.getLocation()));
 			getPlayer().setGameMode(GameMode.SURVIVAL);
+			getParticipant().attributes().TARGETABLE.setValue(true);
 			absortionUp.start();
 			ac.update(null);
 			egg.remove();

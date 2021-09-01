@@ -167,6 +167,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			ac.update("¡×b²Þ ·¹º§¡×f: ¡×a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
+			if (isSkillRunning == true) isSkillRunning = false;
 		}
 	}
 
@@ -595,7 +596,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			lostHealth = 0;
 		}
 	
-	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 	
 	public class Wave extends AbilityTimer {
 		

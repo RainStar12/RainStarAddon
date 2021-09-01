@@ -350,6 +350,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 
 									@Override
 									protected void onSilentEnd() {
+										inv.remove(target.getPlayer().getUniqueId());
 										if (actionbarChannel != null)
 											actionbarChannel.unregister();
 									}
@@ -404,6 +405,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 
 									@Override
 									protected void onSilentEnd() {
+										inv.remove(target.getPlayer().getUniqueId());
 										if (actionbarChannel != null)
 											actionbarChannel.unregister();
 									}
