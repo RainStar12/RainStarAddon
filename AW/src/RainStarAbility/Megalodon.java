@@ -433,7 +433,6 @@ public class Megalodon extends AbilityBase {
 		} else {
 			if (e.getEntity() instanceof Player) {
 				if (e.getEntity().equals(getPlayer()) || e.getDamager().equals(getPlayer())) {
-					Bukkit.broadcastMessage("¹ö½ºÆ®¾Æ¿ô");
 					damagestack = Math.min(requestDamage, damagestack + e.getFinalDamage());
 				}	
 			}
