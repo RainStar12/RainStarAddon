@@ -23,6 +23,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -38,14 +39,14 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "판다", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"웅크리기를 시작하면 §3방어 상태§f가 됩니다. $[COOLDOWN]",
+		"웅크린 채 철괴를 우클릭하면 §3방어 상태§f가 됩니다. $[COOLDOWN]",
 		"웅크리기를 풀거나 §79.15초§f를 넘으면 §3방어 상태§f는 자동 해제됩니다.",
 		"§3방어 상태§f간 모든 대미지 감소 효과(방어력, 저항 등)를 2배로 받습니다.",
-		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 1.5배를 반격합니다.",
+		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 $[COUNTER_DAMAGE_MULTIPLY]배를 반격합니다.",
 		"§b[§7아이디어 제공자§b] §7PaintingSF"
 		})
 
-public class Panda extends AbilityBase {
+public class Panda extends AbilityBase implements ActiveHandler {
 
 	public Panda(Participant participant) {
 		super(participant);
@@ -68,6 +69,16 @@ public class Panda extends AbilityBase {
 
 	};
 	
+	private static final SettingObject<Double> COUNTER_DAMAGE_MULTIPLY = abilitySettings.new SettingObject<Double>(Panda.class,
+			"counter-damage-multiply", 1.5, "# 반격 대미지 배율") {
+
+		@Override
+		public boolean condition(Double arg0) {
+			return arg0 >= 0.1;
+		}
+
+	};
+	
 	@Override
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
@@ -75,7 +86,8 @@ public class Panda extends AbilityBase {
 	    }	
 	}
 	
-	private Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private final double counter = COUNTER_DAMAGE_MULTIPLY.getValue();
 	private final DecimalFormat df = new DecimalFormat("0.00");
 	private Map<LivingEntity, Double> damageMap = new HashMap<>();
 	private Map<LivingEntity, Stack> stackMap = new HashMap<>();
@@ -212,6 +224,15 @@ public class Panda extends AbilityBase {
 		{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}
 		});
 	
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
+	    	if (getPlayer().isSneaking() && !protecting.isRunning() && !cooldown.isCooldown()) {
+				return protecting.start();
+			}
+	    }
+		return false;
+	}
+	
 	private final AbilityTimer isSneaking = new AbilityTimer() {
 		
 		@Override
@@ -220,12 +241,6 @@ public class Panda extends AbilityBase {
 				if (!getPlayer().isSneaking()) {
 					protecting.stop(false);
 				}
-			} else {
-				if (getPlayer().isSneaking()) {
-					if (!cooldown.isRunning()) {
-						protecting.start();
-					}
-				}	
 			}
 		}
 		
@@ -258,7 +273,7 @@ public class Panda extends AbilityBase {
 			ac.update(null);
 			cooldown.start();
 			for (LivingEntity l : damageMap.keySet()) {
-				l.damage(damageMap.get(l) * 1.5, getPlayer());
+				l.damage(damageMap.get(l) * counter, getPlayer());
 				stackMap.get(l).stop(false);
 			}
 			damageMap.clear();
@@ -459,7 +474,7 @@ public class Panda extends AbilityBase {
 					livingEntity.getLocation().getY() + livingEntity.getEyeHeight() + 0.6, livingEntity.getLocation().getZ(), 
 					livingEntity.getLocation().getYaw(), 0);
 			if (damageMap.containsKey(livingEntity)) {
-				hologram.setText("§c§l" + df.format(damageMap.get(livingEntity) * 1.5));
+				hologram.setText("§c§l" + df.format(damageMap.get(livingEntity) * counter));
 			}
 		}
 		

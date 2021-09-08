@@ -1,7 +1,5 @@
 package RainStarEffect;
 
-import javax.swing.JTable.PrintMode;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;

@@ -79,7 +79,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> TRUE_DAMAGE = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
-			"true-damage", 20, "# 강타 효과의 트루 대미지 비율", "# 단위: 퍼센트") {
+			"true-damage", 25, "# 강타 효과의 트루 대미지 비율", "# 단위: 퍼센트") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

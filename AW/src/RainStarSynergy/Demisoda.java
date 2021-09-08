@@ -103,7 +103,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CHANCE_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"chance", 30, "# 피격시 버프를 받을 확률",
+			"chance", 22, "# 피격시 버프를 받을 확률",
 			"# 30 = 30%") {
 
 		@Override

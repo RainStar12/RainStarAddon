@@ -38,6 +38,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -61,7 +62,8 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴 좌클릭 §8- §c불사의 힘§f: $[DURATION]초간 §c불사의 힘§f이 몸에 깃듭니다.",
 		" §c불사의 힘§f이 깃들고 있는 동안은 사망 위기에 빠져도 주변 적을 §b7.9초§f만큼",
 		" 추가로 불태우며 계속해 다시 되살아날 수 있으며, 천천히 §b비행§f할 수 있습니다.",
-		" 이 능력은 단 한 번 사용 가능하며, §3최대 체력의 절반을 소모§f합니다.",
+		" 이 능력은 단 한 번 사용 가능하며, §3최대 체력의 1/3을 소모§f합니다.",
+		" 이후 근접 공격 §c추가 대미지§8(§7$[MAX_DAMAGE] - 부활한 횟수 * $[DECREASE_DAMAGE]§8)§f를 영구적으로 얻습니다.",
 		"§7패시브 §8- §c최후§f: 게임 내 참가자가 자신을 포함해 단 둘이 남았을 때",
 		" §c불사의 힘§f을 대가 없이 절반의 시간으로 다시 한 번 사용할 수 있습니다.",
 		"§b[§7아이디어 제공자§b] §fLotear"
@@ -72,6 +74,26 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	public Phoenix(Participant participant) {
 		super(participant);
 	}
+	
+	private static final SettingObject<Double> MAX_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
+			"max-damage", 4.0, "# 최대 추가 공격력") {
+
+		@Override
+		public boolean condition(Double arg0) {
+			return arg0 >= 1;
+		}
+
+	};
+	
+	private static final SettingObject<Double> DECREASE_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
+			"decrease-damage", 0.8, "# 부활 시마다 공격력 감소") {
+
+		@Override
+		public boolean condition(Double arg0) {
+			return arg0 >= 0.1;
+		}
+
+	};
 	
 	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(Phoenix.class,
 			"health", 50, "# 하얀 새의 기본 체력") {
@@ -84,7 +106,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"heal-amount", 4, "# 응원의 체력 회복량") {
+			"heal-amount", 5, "# 응원의 체력 회복량") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -104,7 +126,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"chance", 60, "# 적 공격 시 조언 확률", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
+			"chance", 20, "# 적 공격 시 조언 확률", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -113,7 +135,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ADD_CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"add-chance", 20, "# 조언 실패시 증가 확률치", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
+			"add-chance", 15, "# 조언 실패시 증가 확률치", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -126,15 +148,20 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	private boolean activeOnetime = true;
 	private boolean onemorechance = false;
 	private boolean revive = false;
+	private ActionbarChannel ac = newActionbarChannel();
 	
-	private static final Vector up = new Vector(0, 1.75, 0);
+	private static final Vector up = new Vector(0, 1.5, 0);
 	
 	private Parrot parrot;
+	private final double maxDamage = MAX_DAMAGE.getValue();
+	private final double decDamage = DECREASE_DAMAGE.getValue();
 	private final int birdHealth = HEALTH.getValue();
 	private final int healAmount = HEAL_AMOUNT.getValue();
 	private final int defaultChance = CHANCE.getValue();
 	private final int addChance = ADD_CHANCE.getValue();
 	private int chance = defaultChance;
+	private int revivecount = 0;
+	private double addDamage = 0;
 	private double firstMaxHealth;
 	private double nowMaxHealth = 0;
 	
@@ -262,6 +289,8 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 				parrot.setVariant(Variant.GRAY);
 				parrot.setAdult();
 				parrot.setTamed(true);
+				parrot.setCustomName("§e" + getPlayer().getName() + "§f의 새");
+				parrot.setCustomNameVisible(true);
 				parrot.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Math.max(1, birdHealth));
 				parrot.setHealth(Math.max(1, birdHealth));
 				onetime = false;
@@ -276,7 +305,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 			}
 		}
 		if (update == Update.ABILITY_DESTROY) {
-			if (parrot != null) parrot.remove();
+			if (parrot != null) parrot.setHealth(0);
 		}
 	}
 	
@@ -313,7 +342,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 			this.rightWing3 = WING_LIGHT.getRight().clone();
 			if (!onemorechance) {
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth / 2);
+				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth * 2 / 3);
 				nowMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();	
 			} else {
     			onemorechance = false;
@@ -453,6 +482,9 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationSilentEnd() {
 			revive = false;
+			addDamage = Math.max(0, addDamage + (maxDamage - (decDamage * revivecount)));
+			ac.update("§c추가 공격력§7: §e" + df.format(addDamage));
+			revivecount = 0;
 			getPlayer().setAllowFlight(getPlayer().getGameMode() != GameMode.SURVIVAL && getPlayer().getGameMode() != GameMode.ADVENTURE);
 			getPlayer().setFlying(getPlayer().getGameMode() != GameMode.SURVIVAL && getPlayer().getGameMode() != GameMode.ADVENTURE);
 		}
@@ -476,6 +508,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 				}
 				ParticleLib.FLAME.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 250, 0.15);
 				revive = true;
+				revivecount++;
 			}
 		}
 	}
@@ -511,7 +544,6 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 				}	
 			}
 		}
-		
 	}
 	
 	@SubscribeEvent
@@ -522,101 +554,97 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player && !parrot.isDead()) {
-			Player p = (Player) e.getEntity();
-			Random random = new Random();
-			if ((random.nextInt(100) + 1) <= chance) {
-				SoundLib.ENTITY_PARROT_AMBIENT.playSound(getPlayer().getLocation());
-				switch(random.nextInt(10)) {
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-					getPlayer().sendMessage("§b하얀 새§7 > §f적은 §c♥ " + df.format(p.getHealth() - e.getFinalDamage()) + "§f의 체력이 남은 것 같아.");
-					break;
-				case 5:
-					if (getGame().getParticipant(p).hasAbility()) {
-						AbilityBase ab = getGame().getParticipant(p).getAbility();
-						if (ab.getClass().equals(Mix.class)) {
-							Mix mix = (Mix) ab;
-							AbilityBase first = mix.getFirst();
-							AbilityBase second = mix.getSecond();
-							getPlayer().sendMessage("§b하얀 새§7 > §f적의 §e능력§f은 " + first.getRank().getRankName() + " " + first.getSpecies().getSpeciesName() + "§f + " +
-							second.getRank().getRankName() + " " + second.getSpecies().getSpeciesName() + "§f이야.");
-						} else getPlayer().sendMessage("§b하얀 새§7 > §f적의 §e능력§f은 " + ab.getRank().getRankName() + " " + ab.getSpecies().getSpeciesName() + "§f이야.");	
-					} else getPlayer().sendMessage("§b하얀 새§7 > §f적은 §e능력§f이 없어.");
-					break;
-				case 6:
-				case 7:
-					Inventory inventory = p.getPlayer().getInventory();
-					List<ItemStack> list = new CopyOnWriteArrayList<>(inventory.getContents());
-					int potioncount = 0;
-					int applecount = 0;
-					int pearlcount = 0;
-					int totemcount = 0;
-					for (ItemStack itemStack : list) {
-						if (itemStack == null) {
-							continue;
-						}
-						if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
-								itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.ENDER_PEARL
-								|| itemStack.getType() == Material.GOLDEN_APPLE || itemStack.getType() == MaterialX.TOTEM_OF_UNDYING.getMaterial()) {
-							if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
-								itemStack.getType() == Material.SPLASH_POTION) {
-								potioncount++;
-								list.remove(itemStack);	
-							} else if (itemStack.getType() == Material.ENDER_PEARL) {
-								pearlcount++;
-								list.remove(itemStack);	
-							} else if (itemStack.getType() == Material.GOLDEN_APPLE) {
-								applecount++;
-								list.remove(itemStack);	
-							} else if (itemStack.getType() == Material.TOTEM_OF_UNDYING) {
-								totemcount++;
-								list.remove(itemStack);	
-							}
-						}
-					}
-					if (potioncount == 0 && applecount == 0 && pearlcount == 0 && totemcount == 0) getPlayer().sendMessage("§b하얀 새§7 > §f적은 아무런 §3소모성 아이템§f을 가지고 있지 않아.");
-					else getPlayer().sendMessage("§b하얀 새§7 > §f적은 §d" + potioncount + "§f개의 §d포션§f, §e" + applecount + "§f개의 §e황금 사과§f, §3"
-							+ pearlcount + "§f개의 §3엔더 진주§f, §a" + totemcount + "§f개의 §a불사의 토템§f을 가지고 있어.");
-					break;
-				case 8:
-				case 9:
-					getPlayer().sendMessage("§b하얀 새§7 > §f힘내!");
-					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 0.75f, 1.45f);
-					switch(random.nextInt(4)) {
+		if (e.getDamager().equals(getPlayer())) {
+			e.setDamage(e.getDamage() + addDamage);
+			if (e.getEntity() instanceof Player && !parrot.isDead()) {
+				Player p = (Player) e.getEntity();
+				Random random = new Random();
+				if ((random.nextInt(100) + 1) <= chance) {
+					SoundLib.ENTITY_PARROT_AMBIENT.playSound(getPlayer().getLocation());
+					switch(random.nextInt(5)) {
 					case 0:
-						getPlayer().sendMessage("§b[§e!§b] §a체력이 일부 회복됩니다.");
-						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healAmount, RegainReason.CUSTOM);
-						Bukkit.getPluginManager().callEvent(event);
-						if (!event.isCancelled()) {
-							Healths.setHealth(getPlayer(), getPlayer().getHealth() + healAmount);
-						}
+						getPlayer().sendMessage("§b하얀 새§7 > §f적은 §c♥ " + df.format(p.getHealth() - e.getFinalDamage()) + "§f의 체력이 남은 것 같아.");
 						break;
 					case 1:
-						getPlayer().sendMessage("§b[§e!§b] §b잠시간 신속 버프를 받습니다.");
-						PotionEffects.SPEED.addPotionEffect(getPlayer(), 350, 1, true);
+						if (getGame().getParticipant(p).hasAbility()) {
+							AbilityBase ab = getGame().getParticipant(p).getAbility();
+							if (ab.getClass().equals(Mix.class)) {
+								Mix mix = (Mix) ab;
+								AbilityBase first = mix.getFirst();
+								AbilityBase second = mix.getSecond();
+								getPlayer().sendMessage("§b하얀 새§7 > §f적의 §e능력§f은 " + first.getRank().getRankName() + " " + first.getSpecies().getSpeciesName() + "§f + " +
+								second.getRank().getRankName() + " " + second.getSpecies().getSpeciesName() + "§f이야.");
+							} else getPlayer().sendMessage("§b하얀 새§7 > §f적의 §e능력§f은 " + ab.getRank().getRankName() + " " + ab.getSpecies().getSpeciesName() + "§f이야.");	
+						} else getPlayer().sendMessage("§b하얀 새§7 > §f적은 §e능력§f이 없어.");
 						break;
 					case 2:
-						getPlayer().sendMessage("§b[§e!§b] §8잠시간 저항 버프를 받습니다.");
-						PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 200, 1, true);
+						Inventory inventory = p.getPlayer().getInventory();
+						List<ItemStack> list = new CopyOnWriteArrayList<>(inventory.getContents());
+						int potioncount = 0;
+						int applecount = 0;
+						int pearlcount = 0;
+						int totemcount = 0;
+						for (ItemStack itemStack : list) {
+							if (itemStack == null) {
+								continue;
+							}
+							if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
+									itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.ENDER_PEARL
+									|| itemStack.getType() == Material.GOLDEN_APPLE || itemStack.getType() == MaterialX.TOTEM_OF_UNDYING.getMaterial()) {
+								if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.LINGERING_POTION ||
+									itemStack.getType() == Material.SPLASH_POTION) {
+									potioncount++;
+									list.remove(itemStack);	
+								} else if (itemStack.getType() == Material.ENDER_PEARL) {
+									pearlcount++;
+									list.remove(itemStack);	
+								} else if (itemStack.getType() == Material.GOLDEN_APPLE) {
+									applecount++;
+									list.remove(itemStack);	
+								} else if (itemStack.getType() == Material.TOTEM_OF_UNDYING) {
+									totemcount++;
+									list.remove(itemStack);	
+								}
+							}
+						}
+						if (potioncount == 0 && applecount == 0 && pearlcount == 0 && totemcount == 0) getPlayer().sendMessage("§b하얀 새§7 > §f적은 아무런 §3소모성 아이템§f을 가지고 있지 않아.");
+						else getPlayer().sendMessage("§b하얀 새§7 > §f적은 §d" + potioncount + "§f개의 §d포션§f, §e" + applecount + "§f개의 §e황금 사과§f, §3"
+								+ pearlcount + "§f개의 §3엔더 진주§f, §a" + totemcount + "§f개의 §a불사의 토템§f을 가지고 있어.");
 						break;
 					case 3:
-						getPlayer().sendMessage("§b[§e!§b] §c해당 피해량을 2배로 입혔습니다.");
-						e.setDamage(e.getDamage() * 2);
+					case 4:
+						getPlayer().sendMessage("§b하얀 새§7 > §f힘내!");
+						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 0.75f, 1.45f);
+						switch(random.nextInt(4)) {
+						case 0:
+							getPlayer().sendMessage("§b[§e!§b] §a체력이 일부 회복됩니다.");
+							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healAmount, RegainReason.CUSTOM);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) {
+								Healths.setHealth(getPlayer(), getPlayer().getHealth() + healAmount);
+							}
+							break;
+						case 1:
+							getPlayer().sendMessage("§b[§e!§b] §b잠시간 신속 버프를 받습니다.");
+							PotionEffects.SPEED.addPotionEffect(getPlayer(), 350, 1, true);
+							break;
+						case 2:
+							getPlayer().sendMessage("§b[§e!§b] §8잠시간 저항 버프를 받습니다.");
+							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 200, 1, true);
+							break;
+						case 3:
+							getPlayer().sendMessage("§b[§e!§b] §c해당 피해량을 2배로 입혔습니다.");
+							e.setDamage(e.getDamage() * 2);
+							break;
+						}
 						break;
 					}
-					break;
-				}
-				chance = defaultChance;
-			} else {
-				chance =+ addChance;
+					chance = defaultChance;
+				} else {
+					chance += addChance;
+				}	
 			}
 		}
 	}
-	
-	
 	
 }

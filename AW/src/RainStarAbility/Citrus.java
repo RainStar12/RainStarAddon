@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -97,7 +98,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	public static final SettingObject<Integer> RESTOCK = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "restock", 13,
 			"# 포션 재충전 시간",
-			"# 쿨타임 감소 효과를 30%까지 받습니다.") {
+			"# 쿨타임 감소 효과를 40%까지 받습니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -345,7 +346,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	}
 	
 	private int messagestack = 0;
-	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(30) * RESTOCK.getValue() : RESTOCK.getValue());
+	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(40) * RESTOCK.getValue() : RESTOCK.getValue());
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private boolean converted = false;
 	private PotionEffectType offhandPotion;
@@ -397,7 +398,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer restock = new AbilityTimer(restocktimer * 20) {
+	private AbilityTimer restock = new AbilityTimer(restocktimer * 20) {
 		
     	@Override
 		public void onEnd() {
@@ -533,11 +534,11 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 					if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
 						if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
 							for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
-						    	if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+								if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
 								for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 									ParticleLib.SPELL_WITCH.spawnParticle(loc);
 								}
-						    	restock.start();
+								restock.start();
 							}
 						} else {
 							messagestack++;
@@ -549,31 +550,69 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 						ItemStack item =  getPlayer().getInventory().getItemInMainHand();
 						Block air = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
 						Material block = item.getType();
-						air.setType(block);
-						short data = item.getDurability();
-						BlockX.setDirection(air, e.getBlockFace());
-						if (ServerVersion.getVersion() < 13 && data != 0) {
-							try {
-								SET_DATA.invoke(air, (byte) data);
-							} catch (IllegalAccessException | InvocationTargetException ignored) {
+						if (air.isEmpty() || air.isLiquid()) {
+							air.setType(block);
+							short data = item.getDurability();
+							BlockX.setDirection(air, e.getBlockFace());
+							if (ServerVersion.getVersion() < 13 && data != 0) {
+								try {
+									SET_DATA.invoke(air, (byte) data);
+								} catch (IllegalAccessException | InvocationTargetException ignored) {
+								}
 							}
+							if (!getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+								item.setAmount(item.getAmount() - 1);
+							}	
 						}
-						if (!getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-							item.setAmount(item.getAmount() - 1);
+					}
+				} else if (isBucket(getPlayer().getInventory().getItemInMainHand().getType())) {
+					if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+						if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+							for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
+								if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+								for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+									ParticleLib.SPELL_WITCH.spawnParticle(loc);
+								}
+								restock.start();
+							}
+						} else {
+							messagestack++;
+							e.setCancelled(true);
+							if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+						}
+					} else if (getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET)) {
+						Block block = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
+						boolean returnwhat = false;
+						if (block.isLiquid() && block.getData() == (byte) 0) {
+							returnwhat = true;
+						}
+						if (!returnwhat) {
+							if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+								for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
+									if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+									for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+										ParticleLib.SPELL_WITCH.spawnParticle(loc);
+									}
+									restock.start();
+								}
+							} else {
+								messagestack++;
+								e.setCancelled(true);
+								if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+							}
 						}
 					}
 				} else if (!bows.contains(getPlayer().getInventory().getItemInMainHand().getType()) &&
 						!getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL) &&
 						!isApple(getPlayer().getInventory().getItemInMainHand().getType()) &&
-						!isPotion(getPlayer().getInventory().getItemInMainHand().getType()) &&
-						!isBucket(getPlayer().getInventory().getItemInMainHand().getType())) {
+						!isPotion(getPlayer().getInventory().getItemInMainHand().getType())) {
 					if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
 						for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
-					    	if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
+							if (target.getPlayer().getActivePotionEffects().size() >= 4) Addiction.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 7);
 							for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 								ParticleLib.SPELL_WITCH.spawnParticle(loc);
 							}
-					    	restock.start();
+							restock.start();
 						}
 					} else {
 						messagestack++;

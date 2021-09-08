@@ -296,33 +296,56 @@ public class Accelerator extends Synergy {
     	
     	@Override
     	protected void run(int count) {
-    		for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
-    			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-    				if (p instanceof Player) {
-    					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
-            				if (count < 55) {
-            				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(5f, sharpness) * 0.75));
-            				staminaGain(0.1);
-	        			    	new AbilityTimer(10) {
-	        			    			
-	        			    		@Override
-	        			    		protected void onStart() {
-	        			    			damagedcheck.add(p);
-	        			    		}
-	        			    		
-	        			    		@Override
-	        			    		protected void onEnd() {
-	        			    			onSilentEnd();
-	        			    		}
-	        			    			
-	        			    		@Override
-	        			    		protected void onSilentEnd() {
-	        			    			damagedcheck.remove(p);
-	        			    		}
-	        			    			
-	        			    	}.setPeriod(TimeUnit.TICKS, 1);
-            				}
-            			} else {
+    		if (!saveloc1.equals(saveloc2)) {
+    			for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
+        			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
+        				if (p instanceof Player) {
+        					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
+                				if (count < 55) {
+                				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(5f, sharpness) * 0.75));
+                				staminaGain(0.1);
+    	        			    	new AbilityTimer(10) {
+    	        			    			
+    	        			    		@Override
+    	        			    		protected void onStart() {
+    	        			    			damagedcheck.add(p);
+    	        			    		}
+    	        			    		
+    	        			    		@Override
+    	        			    		protected void onEnd() {
+    	        			    			onSilentEnd();
+    	        			    		}
+    	        			    			
+    	        			    		@Override
+    	        			    		protected void onSilentEnd() {
+    	        			    			damagedcheck.remove(p);
+    	        			    		}
+    	        			    			
+    	        			    	}.setPeriod(TimeUnit.TICKS, 1);
+                				}
+                			} else {
+                				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
+                				staminaGain(0.1);
+            			    	new AbilityTimer(10) {
+        			    			
+            			    		@Override
+            			    		protected void onStart() {
+            			    			damagedcheck.add(p);
+            			    		}
+            			    		
+            			    		@Override
+            			    		protected void onEnd() {
+            			    			onSilentEnd();
+            			    		}
+            			    			
+            			    		@Override
+            			    		protected void onSilentEnd() {
+            			    			damagedcheck.remove(p);
+            			    		}
+            			    			
+            			    	}.setPeriod(TimeUnit.TICKS, 1);
+                			}
+        				} else {
             				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
             				staminaGain(0.1);
         			    	new AbilityTimer(10) {
@@ -343,30 +366,9 @@ public class Accelerator extends Synergy {
         			    		}
         			    			
         			    	}.setPeriod(TimeUnit.TICKS, 1);
-            			}
-    				} else {
-        				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
-        				staminaGain(0.1);
-    			    	new AbilityTimer(10) {
-			    			
-    			    		@Override
-    			    		protected void onStart() {
-    			    			damagedcheck.add(p);
-    			    		}
-    			    		
-    			    		@Override
-    			    		protected void onEnd() {
-    			    			onSilentEnd();
-    			    		}
-    			    			
-    			    		@Override
-    			    		protected void onSilentEnd() {
-    			    			damagedcheck.remove(p);
-    			    		}
-    			    			
-    			    	}.setPeriod(TimeUnit.TICKS, 1);
-    				}
-    			}
+        				}
+        			}
+        		}	
     		}
     	}
     	

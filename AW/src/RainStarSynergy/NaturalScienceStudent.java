@@ -2,6 +2,7 @@ package RainStarSynergy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +108,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RESTOCK
 	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"restock", 13, "# 포션 재충전 시간", "# 쿨타임 감소 효과를 30%까지 받습니다.") {
+			"restock", 13, "# 포션 재충전 시간", "# 쿨타임 감소 효과를 40%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -116,7 +117,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_ADD_DAMAGE
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-add-damage", 1.5, "# 슬롯머신 <코> 추가 대미지") {
+			"slot-add-damage", 1.6, "# 슬롯머신 <코> 추가 대미지") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -125,7 +126,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_REDUCE_DAMAGE
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-reduce-damage", 1.5, "# 슬롯머신 <크> 대미지 감소") {
+			"slot-reduce-damage", 2.5, "# 슬롯머신 <크> 대미지 감소") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -134,7 +135,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_HEAL
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-heal", 0.5, "# 슬롯머신 <스> 초당 회복량") {
+			"slot-heal", 0.7, "# 슬롯머신 <스> 초당 회복량") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -391,7 +392,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	private final double slotadddamage = SLOT_ADD_DAMAGE.getValue();
 	private final double slotreducedamage = SLOT_REDUCE_DAMAGE.getValue();
 	private final double slotheal = SLOT_HEAL.getValue();
-	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(30) * RESTOCK.getValue() : RESTOCK.getValue());
+	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(40) * RESTOCK.getValue() : RESTOCK.getValue());
 	private final Cooldown slotcooldown = new Cooldown(SLOT_COOLDOWN.getValue(), "슬롯머신");
 	private PotionEffectType offhandPotion;
 	private static final Set<Material> bows;
@@ -400,6 +401,8 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	private int effectduration;
 	private EffectRegistration<?> effecttype;
+	
+	private final DecimalFormat df = new DecimalFormat("0.0");
 	
 	static {
 		if (MaterialX.CROSSBOW.isSupported()) {
@@ -442,7 +445,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer restock = new AbilityTimer(restocktimer * 20) {
+	private AbilityTimer restock = new AbilityTimer(restocktimer * 20) {
 		
     	@Override
 		public void onEnd() {
@@ -563,24 +566,56 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 						ItemStack item =  getPlayer().getInventory().getItemInMainHand();
 						Block air = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
 						Material block = item.getType();
-						air.setType(block);
-						short data = item.getDurability();
-						BlockX.setDirection(air, e.getBlockFace());
-						if (ServerVersion.getVersion() < 13 && data != 0) {
-							try {
-								SET_DATA.invoke(air, (byte) data);
-							} catch (IllegalAccessException | InvocationTargetException ignored) {
+						if (air.isEmpty() || air.isLiquid()) {
+							air.setType(block);
+							short data = item.getDurability();
+							BlockX.setDirection(air, e.getBlockFace());
+							if (ServerVersion.getVersion() < 13 && data != 0) {
+								try {
+									SET_DATA.invoke(air, (byte) data);
+								} catch (IllegalAccessException | InvocationTargetException ignored) {
+								}
 							}
+							if (!getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+								item.setAmount(item.getAmount() - 1);
+							}	
 						}
-						if (!getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-							item.setAmount(item.getAmount() - 1);
+					}
+				} else if (isBucket(getPlayer().getInventory().getItemInMainHand().getType())) {
+					if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+						if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+							for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+								ParticleLib.SPELL_WITCH.spawnParticle(loc);
+							}
+						    restock.start();
+						} else {
+							messagestack++;
+							e.setCancelled(true);
+							if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+						}
+					} else if (getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET)) {
+						Block block = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
+						boolean returnwhat = false;
+						if (block.isLiquid() && block.getData() == (byte) 0) {
+							returnwhat = true;
+						}
+						if (!returnwhat) {
+							if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
+								for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+									ParticleLib.SPELL_WITCH.spawnParticle(loc);
+								}
+							    restock.start();
+							} else {
+								messagestack++;
+								e.setCancelled(true);
+								if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
+							}
 						}
 					}
 				} else if (!bows.contains(getPlayer().getInventory().getItemInMainHand().getType()) &&
 						!getPlayer().getInventory().getItemInMainHand().getType().equals(Material.ENDER_PEARL) &&
 						!isApple(getPlayer().getInventory().getItemInMainHand().getType()) &&
-						!isPotion(getPlayer().getInventory().getItemInMainHand().getType()) &&
-						!isBucket(getPlayer().getInventory().getItemInMainHand().getType())) {
+						!isPotion(getPlayer().getInventory().getItemInMainHand().getType())) {
 					if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate).size() >= 1) {
 						for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 							ParticleLib.SPELL_WITCH.spawnParticle(loc);
@@ -591,7 +626,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 						e.setCancelled(true);
 						if (messagestack % 5 == 0) getPlayer().sendMessage("§4[§c!§4] §f원 안에 플레이어가 있어야 포션을 던질 수 있습니다.");
 					}
-				}	
+				}
 			}
 		}
 	}
@@ -736,13 +771,13 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
             }
 
             if (results.get("§c<코>") != 0) {
-                getPlayer().sendMessage("주는 대미지 §c" + results.get("§c<코>") * slotadddamage + "§f 증가");
+                getPlayer().sendMessage("주는 대미지 §c" + df.format(results.get("§c<코>") * slotadddamage) + "§f 증가");
             }
             if (results.get("§6<크>") != 0) {
-                getPlayer().sendMessage("받는 대미지 §3" + results.get("§6<크>") * slotreducedamage + "§f 감소");
+                getPlayer().sendMessage("받는 대미지 §3" + df.format(results.get("§6<크>") * slotreducedamage) + "§f 감소");
             }
             if (results.get("§e<스>") != 0) {
-                getPlayer().sendMessage("초당 HP §d" + results.get("§e<스>") * slotheal + "§f 회복");
+                getPlayer().sendMessage("초당 HP §d" + df.format(results.get("§e<스>") * slotheal) + "§f 회복");
             }
 
             SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
@@ -780,7 +815,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
         @EventHandler
         public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
             if (e.getEntity().equals(getPlayer())) {
-                e.setDamage(e.getDamage() - (results.get("§6<크>") * slotreducedamage));
+                e.setDamage(Math.max(0, e.getDamage() - (results.get("§6<크>") * slotreducedamage)));
             }
 
             Entity attacker = e.getDamager();

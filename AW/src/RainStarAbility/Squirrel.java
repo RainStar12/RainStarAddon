@@ -56,7 +56,7 @@ import daybreak.google.common.base.Predicate;
 		" §6도토리§f는 최대 §e22개§f까지 수집 가능합니다. §6도토리§f를 소모하여",
 		" 스킬을 사용 가능하고, 두 스킬은 쿨타임을 공유합니다. $[COOLDOWN]",
 		"§7철괴 우클릭 §8- §a냠냠§f: 비어 있는 체력의 $[HEAL_AMOUNT]%를 회복합니다. $[EAT_CONSUME]",
-		"§7철괴 좌클릭 §8- §b람쥐썬더§f: 잠시간 이동 불가 상태가 되고, 내 현재 위치에서",
+		"§7철괴 좌클릭 §8- §b람쥐썬더§f: $[CHANNELING]초간 이동 불가 상태가 되고, 내 현재 위치에서",
 		" 퍼져나가는 번개를 떨어뜨려 적들을 감전시킵니다. $[THUNDER_CONSUME]",
 		"§b[§7아이디어 제공자§b] §eLessso"
 		})
@@ -105,6 +105,17 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Double> CHANNELING 
+	= abilitySettings.new SettingObject<Double>(Squirrel.class,
+			"channeling", 1.5, "# 람쥐썬더의 채널링 시간(이동 불가 지속시간)") {
+		
+		@Override
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 		
@@ -175,6 +186,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	private final int eatconsume = EAT_CONSUME.getValue();
 	private final int thunderconsume = THUNDER_CONSUME.getValue();
 	private final int healamount = HEAL_AMOUNT.getValue();
+	private final double channeling = CHANNELING.getValue();
 	private Random r = new Random();
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
@@ -182,7 +194,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 			if (!cool.isCooldown()) {
 				if (clickType == ClickType.LEFT_CLICK) {
 					if (acornstack >= thunderconsume) {
-						Rooted.apply(getParticipant(), TimeUnit.TICKS, 60);
+						Rooted.apply(getParticipant(), TimeUnit.TICKS, (int) (channeling * 20));
 						if (getPlayer().getName().equals("Lessso") || r.nextInt(10) < 2) {
 							isThunder = getPlayer().getWorld().hasStorm();
 							if (!isThunder) {
@@ -193,7 +205,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 							}	
 							used = true;
 						}
-						new AbilityTimer(60) {
+						new AbilityTimer((int) (channeling * 20)) {
 							
 							@Override
 							public void onEnd() {

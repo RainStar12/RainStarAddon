@@ -19,6 +19,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -50,6 +51,7 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 	private boolean resistance = false;
 	private boolean fireimmune = false;
 	private boolean speed = false;
+	private ActionbarChannel ac = newActionbarChannel();
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	
 	public static final SettingObject<Integer> COOLDOWN = 
@@ -105,6 +107,20 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 			else regeneration = false;
 			if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 9, 9, predicate).size() > 0) speed = true;
 			else speed = false;
+			
+			if (!getPlayer().hasPotionEffect(PotionEffectType.REGENERATION) && regeneration == true) {
+				ac.update("§d재생");
+			} else if (!getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) && power == true) {
+				ac.update("§6힘");
+			} else if (!getPlayer().hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) && resistance == true) {
+				ac.update("§8저항");
+			} else if (!getPlayer().hasPotionEffect(PotionEffectType.FIRE_RESISTANCE) && fireimmune == true) {
+				ac.update("§c화염 저항");
+			} else if (!getPlayer().hasPotionEffect(PotionEffectType.SPEED) && speed == true) {
+				ac.update("§b신속");
+			} else {
+				ac.update("§e성급함");
+			}
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();

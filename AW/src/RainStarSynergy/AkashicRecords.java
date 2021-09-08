@@ -55,8 +55,8 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 			.put(Rank.SPECIAL, "¡×c")
 			.build();
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(AkashicRecords.class,
-			"Cooldown", 60, "# ÄðÅ¸ÀÓ") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AkashicRecords.class,
+			"cooldown", 60, "# ÄðÅ¸ÀÓ") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

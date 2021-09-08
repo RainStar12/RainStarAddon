@@ -50,7 +50,7 @@ public class AbilitySelectChance extends GameTimer implements Listener {
 		
         for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
         	String name = synergy.getManifest().name();
-        	if (!Configuration.Settings.isBlacklisted(name)) {
+        	if (!Configuration.Settings.isBlacklisted(name) && !name.equals("기회")) {
         		synergies.add(synergy);
         	}
         }

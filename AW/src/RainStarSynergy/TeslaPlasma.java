@@ -28,6 +28,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -57,11 +58,11 @@ import daybreak.google.common.collect.Iterables;
 		name = "테슬라<플라즈마>", rank = Rank.S, species = Species.HUMAN, explain = {
 		"고화력 플라즈마 건을 난사하는 §e전기 속성§f의 천재 과학자, 테슬라.",
 		"§7패시브 §8- §e변류§f: 기절 효과를 받을 때 기절의 지속을 절반으로 줄입니다.",
-		" 기절 중에는 플라즈마 탄환의 폭발 위력이 1.5배 강력해집니다.",
+		" 기절 중에는 플라즈마 탄환의 폭발 위력이 1.3배 강력해집니다.",
 		"§7활 장전 §8- §d플라즈마 건§f: 플라즈마 건이 장전되기 전까진 활을 쏠 수 없습니다.",
 		" 장전 후 발사시 바라보는 방향으로 매우 빠르고 일직선으로 나아가는",
 		" 강력한 플라즈마 탄환이 날아가, 적중 위치에 큰 폭발을 일으키며",
-		" 폭발에 휘말린 모든 플레이어를 1.5초간 기절시킵니다.",
+		" 폭발에 휘말린 모든 플레이어를 $[STUN_DURATION]초간 기절시킵니다.",
 		" 발사할 때 큰 반동이 따르고, 자신도 폭발 피해를 입을 수 있습니다.",
 		" 재장전에 걸리는 시간은 10초이며, 쿨타임 감소 효과를 받습니다.",
 		" 게이지가 차오르는 동안은 이동할 수 없습니다."
@@ -74,6 +75,39 @@ public class TeslaPlasma extends Synergy {
 		super(participant);
 	}
 	
+	public static final SettingObject<Double> EXPLOSIVE_NORMAL = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+			"explosive-normal", 3.3, "# 폭발의 기본 위력") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0.1;
+		}
+
+	};
+	
+	public static final SettingObject<Double> POWER_ENCHANT_MULTIPLY = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+			"power-enchant-multiply", 0.5, "# 힘 1당 추가 위력") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0.1;
+		}
+
+	};
+	
+	public static final SettingObject<Double> STUN_DURATION = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+			"stun-duration", 2.0, "# 기절 지속시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0.1;
+		}
+
+	};
+	
+	private final double damage = EXPLOSIVE_NORMAL.getValue();
+	private final double multiply = POWER_ENCHANT_MULTIPLY.getValue();
+	private final double stunduration = STUN_DURATION.getValue();
 	private boolean charged = false;
 	private int chargestack = 0;
 	@SuppressWarnings("unused")
@@ -305,12 +339,12 @@ public class TeslaPlasma extends Synergy {
 				if (type.isSolid()) {
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
 					if (getGame().getParticipant((Player) shooter).hasEffect(Stun.registration)) {
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) (4.5 + (powerEnchant * 0.75)), false, false);
+						shooter.getWorld().createExplosion(entity.getLocation(), (float) ((damage + (powerEnchant * multiply)) * 1.3), false, false);
 					} else {
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) (3 + (powerEnchant * 0.75)), false, false);	
+						shooter.getWorld().createExplosion(entity.getLocation(), (float) (damage + (powerEnchant * multiply)), false, false);	
 					}
 					for (Player players : LocationUtil.getEntitiesInCircle(Player.class, entity.getLocation(), 6.5, predicate)) {
-						Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, 30);
+						Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, (int) (stunduration * 20));
 						players.getWorld().strikeLightningEffect(players.getLocation());
 					}
 					stop(false);
@@ -320,12 +354,12 @@ public class TeslaPlasma extends Synergy {
 					if (!shooter.equals(player)) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
 						if (getGame().getParticipant((Player) shooter).hasEffect(Stun.registration)) {
-							shooter.getWorld().createExplosion(entity.getLocation(), (float) (4.5f + (powerEnchant * 0.75)), false, false);
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) ((damage + (powerEnchant * multiply)) * 1.3), false, false);
 						} else {
-							shooter.getWorld().createExplosion(entity.getLocation(), (float) (3 + (powerEnchant * 0.75)), false, false);	
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) (damage + (powerEnchant * multiply)), false, false);	
 						}
 						for (Player players : LocationUtil.getEntitiesInCircle(Player.class, entity.getLocation(), 6.5, predicate)) {
-							Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, 30);
+							Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, (int) (stunduration * 20));
 							players.getWorld().strikeLightningEffect(players.getLocation());
 						}
 						stop(false);

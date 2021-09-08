@@ -775,6 +775,7 @@ public class DemonLord extends Synergy {
 	
 	private class DescendingParticles extends AbilityTimer {
 
+		@SuppressWarnings("serial")
 		private final List<DescendingParticle> dparticles = new ArrayList<DescendingParticle>() {
 			@Override
 			public boolean add(DescendingParticle o) {
@@ -838,6 +839,7 @@ public class DemonLord extends Synergy {
 				Bgradation16 = RGB.of(143, 1, 64), Bgradation17 = RGB.of(176, 38, 43), Bgradation18 = RGB.of(209, 77, 22),
 				Bgradation19 = RGB.of(242, 115, 1), Bgradation20 = RGB.of(249, 153, 1), Bgradation21 = RGB.of(254, 191, 1);
 
+		@SuppressWarnings("serial")
 		private List<RGB> Agradations = new ArrayList<RGB>() {
 			{
 				add(Agradation1);
@@ -864,6 +866,7 @@ public class DemonLord extends Synergy {
 			}
 		};
 			
+		@SuppressWarnings("serial")
 		private List<RGB> Bgradations = new ArrayList<RGB>() {
 			{
 				add(Bgradation21);

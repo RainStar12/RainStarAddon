@@ -81,7 +81,7 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 	@EventHandler
 	private void onParticipantEffectApply(final ParticipantEffectApplyEvent e) {
 		if (e.getParticipant().equals(participant) && e.getEffectType().equals(Stun.registration)) {
-			damagecounter += (e.getDuration() / 10);
+			damagecounter += (e.getDuration() / 4);
 		}
 	}
 	

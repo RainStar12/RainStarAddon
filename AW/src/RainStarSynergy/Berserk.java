@@ -43,6 +43,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -51,12 +52,17 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "베르세르크", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"철괴 우클릭 시 초당 최대 체력의 10%를 §3소모§f하여 체력이 반 칸 남을 때까지",
-		"§c광전사 모드§f가 되어 §b무적 및 이속, 공속 증가 효과§f를 받고 근접 공격만 가능하며,",
-		"주는 모든 피해량이 내 남은 체력에 반비례하여 §c추가 피해§f를 입힙니다.",
-		"이때 누군가를 처치할 시 체력을 최대 체력의 1/3만큼 §d회복§f합니다. $[COOLDOWN]",
-		"§c광전사 모드§f가 해제될 때 §d회복력§f이 빨라지고, §c광전사 모드§f 돌입 때의",
-		"체력으로 회복되기 전까지 이동력과 공격 속도, 공격력이 급감합니다."
+		"§7철괴 우클릭 §8- §6전사의 힘§f: 광전사 모드에 돌입합니다. $[COOLDOWN]",
+		" 마지막으로 사용했을 때 당시의 체력까지 복구해야 사용 가능합니다.",
+		"§7모드 §8- §c광전사§f: 체력이 반칸이 되기 전까지 계속하여 유지됩니다.",
+		" 매 초 내 최대 체력의 10%를 §3소모§f하고, 회복 효과를 받을 수 없습니다.",
+		" §b무적 상태§f가 되고 §b이동 속도, 공격 속도가 대폭 증가§f합니다.",
+		" 내 남은 체력에 반비례하여 추가 피해량이 최대 $[MAX_DAMAGE]까지 증가합니다.",
+		" 근접 공격만 가능합니다.",
+		"§7적 처치 §4- §c버서크§f: 최대 체력의 1/3만큼 체력을 특수 §d회복§f합니다.",
+		" 또한 특수 회복한 회복량의 절반만큼 §e흡수 체력§f을 획득합니다.",
+		"§7모드 종료 §8- §b부작용§f: 광전사 모드 돌입 전 체력으로 복구하기 전까지",
+		" §d회복력§f이 증가하나 이동력과 공격 속도, 공격력이 급감합니다."
 		})
 
 @SuppressWarnings("deprecation")
@@ -229,7 +235,8 @@ public class Berserk extends Synergy implements ActiveHandler {
 					@Override
 					protected void onEnd() {
 						double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-						Healths.setHealth(getPlayer(), getPlayer().getHealth() + (maxHealth / 3));
+						double healed = Healths.setHealth(getPlayer(), getPlayer().getHealth() + (maxHealth / 3));
+						NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + (healed / 2)));
 						SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.5f);	
 					}
 					

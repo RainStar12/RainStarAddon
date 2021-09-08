@@ -89,6 +89,7 @@ import daybreak.google.common.collect.Iterables;
 		"§d감전 효과§f가 끝날 때 기절 시간에 비례해 피해를 입습니다."
 		})
 
+@SuppressWarnings("serial")
 public class Tesla extends AbilityBase implements ActiveHandler {
 	
 	public Tesla(Participant participant) {
@@ -137,7 +138,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 	private static final Set<Material> nocheck;
 	private Location targetblock;
 	private PotionEffect levitation = new PotionEffect(PotionEffectType.LEVITATION, 80, 4, true, false);
-	private Bullet bullet = null;
 	private static final Circle circle = Circle.of(7, 120);
 	private static final Circle explosioncircle = Circle.of(2.5, 7);
 	private static final RGB color = new RGB(107, 102, 254);
@@ -459,7 +459,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		private Bullet(LivingEntity shooter, Vector arrowVelocity, Location startLocation) {
 			super(60);
 			setPeriod(TimeUnit.TICKS, 1);
-			Tesla.this.bullet = this;
 			this.shooter = shooter;
 			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.twist = Iterables.cycle(CIRCLE.clone().rotateAroundAxisY(-shooter.getLocation().getYaw()).rotateAroundAxis(VectorUtil.rotateAroundAxisY(shooter.getLocation().getDirection().setY(0).normalize(), 90), shooter.getLocation().getPitch() + 90)).iterator();
@@ -576,7 +575,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		protected void onSilentEnd() {
 			hitcheck.clear();
 			entity.remove();
-			Tesla.this.bullet = null;
 		}
 
 		public class ArrowEntity extends CustomEntity {

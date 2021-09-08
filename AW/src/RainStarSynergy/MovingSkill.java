@@ -66,11 +66,11 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 스태미나가 3 이상일 때 어떠한 이동에 관한 제약이라도 받지 않으며,",
 		" 능력을 사용한 것이 아닌 이동에 있어 스태미나는 더 빨리 차오릅니다.",
 		" 스태미나가 1 이하가 될 때 3초간 회복하지 못하며 1초 후 1.5초간 기절합니다.",
-		"§7검 들고 F §8- §3대시§f: 바라보는 방향으로 매우 빠르게 대시합니다. §c소모 §7: §b2",
+		"§7검 들고 F §8- §3대시§f: 바라보는 방향으로 매우 빠르게 대시합니다. §c소모 §7: §b2.75",
 		" 대시로 지나간 위치엔 대시 잔상이 남아 닿은 개체에게 피해를 입히고, §e기절§f시킵니다.",
 		" 대시 시작부터 1초간 무적 및 타게팅 불능 상태가 됩니다.",
 		" 공격 후 대시를 시전할 경우 대상을 §6혼란§f 및 §c출혈§f시킵니다.",
-		"§7허공에서 웅크리기 §8- §a이단 점프§f: 공중에서 한 번 더 점프합니다. §c소모 §7: §b1",
+		"§7허공에서 웅크리기 §8- §a이단 점프§f: 공중에서 한 번 더 점프합니다. §c소모 §7: §b1.25",
 		" 착지 전까지 적에게 피해를 입힐 때마다 대상은 2초간 §a이동 불능§f이 됩니다.",
 		"§7패시브 §8- §b앞지르기§f: 이동 관련 상태 이상을 보유한 적에게 피해를 입히면",
 		" 1.2배로 입히고, 스태미나를 소량 회복합니다."
@@ -179,7 +179,7 @@ public class MovingSkill extends Synergy {
     			getParticipant().removeEffects(effectpredicate);
     		}
     		if (timer == 0) {
-    			staminaGain(0.5);
+    			staminaGain(0.3);
     			bossBar.setProgress(stamina * 0.1);
     		} else {
     			staminaGain((double) 1 / (timer * 20));
@@ -296,10 +296,10 @@ public class MovingSkill extends Synergy {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (stamina >= 2) {
+    			if (stamina >= 2.75) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
-            		staminaUse(2);
+            		staminaUse(2.75);
                 	dashing.start();
                 	jumptimer.pause();
                 	if (dashinv.isRunning()) {
@@ -319,9 +319,9 @@ public class MovingSkill extends Synergy {
     public void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
 			if (!e.getPlayer().isOnGround() && !jumptimer.isRunning()) {
-				if (stamina >= 1) {
+				if (stamina >= 1.25) {
 					if (e.getPlayer().isSneaking()) {
-						staminaUse(1);
+						staminaUse(1.25);
 						e.getPlayer().setVelocity(VectorUtil.validateVector(new Vector(e.getPlayer().getVelocity().getX() * 1.25, 1, e.getPlayer().getVelocity().getZ() * 1.25)));
 						ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0.5, 0.1, 0.5, 100, 0);
 						SoundLib.BLOCK_SNOW_FALL.playSound(getPlayer().getLocation(), 1, 0.7f);
@@ -339,7 +339,7 @@ public class MovingSkill extends Synergy {
     		if (stamina < 10) {
     			final Location from = e.getFrom(), to = e.getTo();
     			if (to == null || (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ())) return;
-    			staminaGain(0.02);
+    			staminaGain(0.0125);
     		}
     	}
     }
@@ -365,7 +365,7 @@ public class MovingSkill extends Synergy {
     			if (effect.getEffectType().contains(EffectType.MOVEMENT_INTERRUPT) || effect.getEffectType().contains(EffectType.MOVEMENT_RESTRICTION)) {
     				if (target.hasEffect(effect)) {
     					e.setDamage(e.getDamage() * 1.2);
-    					staminaGain(0.5);
+    					staminaGain(0.3);
     				}
     			}
     		}
@@ -383,7 +383,7 @@ public class MovingSkill extends Synergy {
         			if (effect.getEffectType().contains(EffectType.MOVEMENT_INTERRUPT) || effect.getEffectType().contains(EffectType.MOVEMENT_RESTRICTION)) {
         				if (target.hasEffect(effect)) {
         					e.setDamage(e.getDamage() * 1.2);
-        					staminaGain(0.5);
+        					staminaGain(0.3);
         				}
         			}
         		}	
@@ -432,25 +432,27 @@ public class MovingSkill extends Synergy {
     	
     	@Override
     	protected void run(int count) {
-    		for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
-    			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-    				if (p instanceof Player) {
-    					Stun.apply(getGame().getParticipant((Player) p), TimeUnit.TICKS, 4);
-            			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
-            				if (count < 50) {
-            					getPlayer().addPotionEffect(normalspeed);
+    		if (!saveloc1.equals(saveloc2)) {
+    			for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
+        			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
+        				if (p instanceof Player) {
+        					Stun.apply(getGame().getParticipant((Player) p), TimeUnit.TICKS, 4);
+                			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
+                				if (count < 50) {
+                					getPlayer().addPotionEffect(normalspeed);
+                    				Damages.damageMagic(p, getPlayer(), true, 2);
+                    				damagedcheck.add(p);
+                				}
+                			} else {
                 				Damages.damageMagic(p, getPlayer(), true, 2);
                 				damagedcheck.add(p);
-            				}
-            			} else {
+                			}
+        				} else {
             				Damages.damageMagic(p, getPlayer(), true, 2);
             				damagedcheck.add(p);
-            			}
-    				} else {
-        				Damages.damageMagic(p, getPlayer(), true, 2);
-        				damagedcheck.add(p);
-    				}
-    			}
+        				}
+        			}
+        		}
     		}
     	}
     	
