@@ -17,11 +17,11 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "ÃÊÈ¸º¹", displayName = "¡×dÃÊÈ¸º¹", method = ApplicationMethod.MULTIPLE, type = {
+@EffectManifest(name = "ì´ˆíšŒë³µ", displayName = "Â§dì´ˆíšŒë³µ", method = ApplicationMethod.MULTIPLE, type = {
 }, description = {
-		"´Ù¸¥ ¸ğµç È¸º¹ È¿°ú¸¦ ¹«½ÃÇÏ´Â ´ë½Å",
-		"¸Å ÃÊ¸¶´Ù Ã¼·ÂÀ» 0.75 È¸º¹ÇÕ´Ï´Ù.",
-		"È¸º¹ Ã³¸®¸¦ ÇÏÁö ¾ÊÀ» °æ¿ì ¹«½ÃÇÏÁö ¸øÇÕ´Ï´Ù. ¡×7ex) À¯È¤"
+		"ë‹¤ë¥¸ ëª¨ë“  íšŒë³µ íš¨ê³¼ë¥¼ ë¬´ì‹œí•˜ëŠ” ëŒ€ì‹ ",
+		"ë§¤ ì´ˆë§ˆë‹¤ ì²´ë ¥ì„ 0.75 íšŒë³µí•©ë‹ˆë‹¤.",
+		"íšŒë³µ ì²˜ë¦¬ë¥¼ í•˜ì§€ ì•Šì„ ê²½ìš° ë¬´ì‹œí•˜ì§€ ëª»í•©ë‹ˆë‹¤. Â§7ex) ìœ í˜¹"
 })
 public class SuperRegen extends AbstractGame.Effect implements Listener {
 

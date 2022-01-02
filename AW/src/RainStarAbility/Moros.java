@@ -47,23 +47,23 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "¸ğ·Î½º", rank = Rank.S, species = Species.GOD, explain = {
-		"ÇÇÇÒ ¼ö ¾ø´Â ¿î¸íÀÇ ½Å, ¸ğ·Î½º.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÇÊ¸ê¡×f: 5ÃÊ ÀÌ³»¿¡ °ø°İÇß´ø ´ë»óÀÌ »ç¸Á À§±â¿¡ Ã³ÇßÀ» ¶§,",
-		" ´ë»óÀº ±× ¾î¶°ÇÑ ¹æ¹ıÀ¸·Îµµ Á×À½À» È¸ÇÇÇÒ ¼ö ¾ø½À´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×3°øµµµ¿¸Á¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ Ã¶±«·Î ¿ìÅ¬¸¯ÇÏ¸é",
-		" ´ë»ó°úÀÇ ¡×e¿î¸í°øµ¿Ã¼¡×f°¡ µË´Ï´Ù. µÎ ÇÃ·¹ÀÌ¾î´Â ¹Ş´Â ÇÇÇØ·®ÀÌ ¡×c75%¡×f°¡ µÇ°í,",
-		" ¾î´À ÇÏ³ª°¡ ¡×cÇÇÇØÀÔ°Å³ª ¡×dÈ¸º¹ È¿°ú¡×f¸¦ ¹ŞÀ»¶§ ´Ù¸¥ »ç¶÷µµ ¿µÇâÀ» ¹Ş½À´Ï´Ù.",
-		" ¶ÇÇÑ µÎ ÇÃ·¹ÀÌ¾î´Â ½½·ÔÀ» ¹Ù²Ü ¶§¸¶´Ù 5ÃÊÀÇ ÁÖµµ±ÇÀ» °¡Áø Ã¤ °°Àº ½½·Ô¸¸À»",
-		" µé ¼ö ÀÖ°Ô µÇ°í, ÀÚ½ÅÀÇ ÁÖµµ±ÇÀÌ ³Ñ¾î°¡¸é ´ÙÀ½ ÁÖµµ±ÇÀº ¹«Á¶°Ç »ó´ë°¡ µË´Ï´Ù.",
-		" ³»°¡ ¾Æ´Ñ ¡×e¿î¸í°øµ¿Ã¼¡×f°¡ »ç¸Á ½Ã ¸ğµç È¿°ú°¡ ÇØÁ¦µË´Ï´Ù. $[RIGHT_COOLDOWN]",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×3¿î¸í°³Âù¡×f: $[DURATION]ÃÊ°£ ÀÚ½ÅÀÇ ¿î¸íÀ» °³ÂùÇØ ¹ß»çÃ¼ ¹×",
-		" ´Ù¸¥ ´É·ÂÀÇ Å¸°ÔÆÃÀ» Èê·Áº¸³À´Ï´Ù. $[LEFT_COOLDOWN]"
+		name = "ëª¨ë¡œìŠ¤", rank = Rank.S, species = Species.GOD, explain = {
+		"í”¼í•  ìˆ˜ ì—†ëŠ” ìš´ëª…ì˜ ì‹ , ëª¨ë¡œìŠ¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cí•„ë©¸Â§f: 5ì´ˆ ì´ë‚´ì— ê³µê²©í–ˆë˜ ëŒ€ìƒì´ ì‚¬ë§ ìœ„ê¸°ì— ì²˜í–ˆì„ ë•Œ,",
+		" ëŒ€ìƒì€ ê·¸ ì–´ë– í•œ ë°©ë²•ìœ¼ë¡œë„ ì£½ìŒì„ íšŒí”¼í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§3ê³µë„ë™ë§Â§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ì² ê´´ë¡œ ìš°í´ë¦­í•˜ë©´",
+		" ëŒ€ìƒê³¼ì˜ Â§eìš´ëª…ê³µë™ì²´Â§fê°€ ë©ë‹ˆë‹¤. ë‘ í”Œë ˆì´ì–´ëŠ” ë°›ëŠ” í”¼í•´ëŸ‰ì´ Â§c75%Â§fê°€ ë˜ê³ ,",
+		" ì–´ëŠ í•˜ë‚˜ê°€ Â§cí”¼í•´ì…ê±°ë‚˜ Â§díšŒë³µ íš¨ê³¼Â§fë¥¼ ë°›ì„ë•Œ ë‹¤ë¥¸ ì‚¬ëŒë„ ì˜í–¥ì„ ë°›ìŠµë‹ˆë‹¤.",
+		" ë˜í•œ ë‘ í”Œë ˆì´ì–´ëŠ” ìŠ¬ë¡¯ì„ ë°”ê¿€ ë•Œë§ˆë‹¤ 5ì´ˆì˜ ì£¼ë„ê¶Œì„ ê°€ì§„ ì±„ ê°™ì€ ìŠ¬ë¡¯ë§Œì„",
+		" ë“¤ ìˆ˜ ìˆê²Œ ë˜ê³ , ìì‹ ì˜ ì£¼ë„ê¶Œì´ ë„˜ì–´ê°€ë©´ ë‹¤ìŒ ì£¼ë„ê¶Œì€ ë¬´ì¡°ê±´ ìƒëŒ€ê°€ ë©ë‹ˆë‹¤.",
+		" ë‚´ê°€ ì•„ë‹Œ Â§eìš´ëª…ê³µë™ì²´Â§fê°€ ì‚¬ë§ ì‹œ ëª¨ë“  íš¨ê³¼ê°€ í•´ì œë©ë‹ˆë‹¤. $[RIGHT_COOLDOWN]",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§3ìš´ëª…ê°œì°¬Â§f: $[DURATION]ì´ˆê°„ ìì‹ ì˜ ìš´ëª…ì„ ê°œì°¬í•´ ë°œì‚¬ì²´ ë°",
+		" ë‹¤ë¥¸ ëŠ¥ë ¥ì˜ íƒ€ê²ŒíŒ…ì„ í˜ë ¤ë³´ëƒ…ë‹ˆë‹¤. $[LEFT_COOLDOWN]"
 		},
 		summarize = {
-		"¡×7´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô Ã¶±« ¿ìÅ¬¸¯¡×fÇÏ¸é ´ë»ó°ú ¡×3¿î¸í °øµ¿Ã¼¡×f°¡ µÇ¾î",
-		"¼­·Î°¡ ¹Ş´Â ÇÇÇØ È¿°ú ¹× È¸º¹ È¿°ú, ±×¸®°í ½½·ÔÀÇ À§Ä¡¸¦ ¡×3°øÀ¯¡×fÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯¡×fÀ¸·Î $[DURATION]ÃÊ°£ ¹ß»çÃ¼¸¦ Èê·Áº¸³»°í Å¸°ÔÆÃ ºÒ´É »óÅÂ°¡ µË´Ï´Ù.",
+		"Â§7ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ ì² ê´´ ìš°í´ë¦­Â§fí•˜ë©´ ëŒ€ìƒê³¼ Â§3ìš´ëª… ê³µë™ì²´Â§fê°€ ë˜ì–´",
+		"ì„œë¡œê°€ ë°›ëŠ” í”¼í•´ íš¨ê³¼ ë° íšŒë³µ íš¨ê³¼, ê·¸ë¦¬ê³  ìŠ¬ë¡¯ì˜ ìœ„ì¹˜ë¥¼ Â§3ê³µìœ Â§fí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­Â§fìœ¼ë¡œ $[DURATION]ì´ˆê°„ ë°œì‚¬ì²´ë¥¼ í˜ë ¤ë³´ë‚´ê³  íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ìƒíƒœê°€ ë©ë‹ˆë‹¤.",
 		" $[LEFT_COOLDOWN]"
 		})
 
@@ -76,8 +76,8 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	private Map<Player, Mortal> mortal = new HashMap<>();
 	private Set<Projectile> projectiles = new HashSet<>();
 	private Player target;
-	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue(), "ÁÂÅ¬¸¯");
-	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue(), "¿ìÅ¬¸¯");
+	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue(), "ì¢Œí´ë¦­");
+	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue(), "ìš°í´ë¦­");
 	private final ActionbarChannel ac = newActionbarChannel();
 	private ActionbarChannel actionbarChannel;
 	private static final RGB color1 = RGB.of(1, 204, 254);
@@ -197,7 +197,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	public static final SettingObject<Integer> LEFT_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
-			"left-cooldown", 40, "# ÁÂÅ¬¸¯ ÄğÅ¸ÀÓ") {
+			"left-cooldown", 40, "# ì¢Œí´ë¦­ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -211,7 +211,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	public static final SettingObject<Integer> RIGHT_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
-			"right-cooldown", 80, "# ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ") {
+			"right-cooldown", 80, "# ìš°í´ë¦­ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -225,7 +225,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(Moros.class,
-			"duration", 5, "# Áö¼Ó ½Ã°£") {
+			"duration", 5, "# ì§€ì† ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -240,7 +240,7 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	    }
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	if (target != null) {
-				actionbarChannel.update("¡×3¿î¸í°øµ¿Ã¼¡×f: ¡×e" + getPlayer().getName());	
+				actionbarChannel.update("Â§3ìš´ëª…ê³µë™ì²´Â§f: Â§e" + getPlayer().getName());	
 	    	}
 	    }
 	}
@@ -439,9 +439,9 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 	public void TargetSkill(Material material, LivingEntity entity) {
 		if (material.equals(Material.IRON_INGOT) && entity instanceof Player && target == null && !rightcool.isCooldown()) {
 			target = (Player) entity;
-			ac.update("¡×3¿î¸í°øµ¿Ã¼¡×f: ¡×e" + target.getName());
+			ac.update("Â§3ìš´ëª…ê³µë™ì²´Â§f: Â§e" + target.getName());
 			actionbarChannel = getGame().getParticipant(target).actionbar().newChannel();
-			actionbarChannel.update("¡×3¿î¸í°øµ¿Ã¼¡×f: ¡×e" + getPlayer().getName());	
+			actionbarChannel.update("Â§3ìš´ëª…ê³µë™ì²´Â§f: Â§e" + getPlayer().getName());	
 		}
 	}
 	
@@ -470,13 +470,13 @@ public class Moros extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update("¡×4ÇÊ¸ê¡×f: " + count + "ÃÊ");
+			actionbarChannel.update("Â§4í•„ë©¸Â§f: " + count + "ì´ˆ");
 		}
 		
 		private void addDamage() {
 			if (isRunning()) {
 				setCount(5);
-				actionbarChannel.update("¡×4ÇÊ¸ê¡×f: " + getCount() + "ÃÊ");
+				actionbarChannel.update("Â§4í•„ë©¸Â§f: " + getCount() + "ì´ˆ");
 			}
 		}
 		

@@ -18,10 +18,10 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "È¸º¹ ºÒ´É", displayName = "¡×cÈ¸º¹ ºÒ´É", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "íšŒë³µ ë¶ˆëŠ¥", displayName = "Â§cíšŒë³µ ë¶ˆëŠ¥", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.HEALING_BAN
 }, description = {
-		"¸ğµç È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù."
+		"ëª¨ë“  íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
 })
 public class Irreparable extends AbstractGame.Effect implements Listener {
 

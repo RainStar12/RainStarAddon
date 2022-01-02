@@ -34,11 +34,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(
-		name = "³­¼ö Á¶Àı", rank = Rank.L, species = Species.HUMAN, explain = {
-		"$[DURATION]ÃÊ°£ ¡×a¼öÄ¡¸¦ Á¶Á¤¡×fÇÏ¿©, ¡×c°ø°İ¡×f°ú ¡×b¹æ¾î¡×f°ªÀ» Á¶ÀıÇÕ´Ï´Ù.",
-		"¡×c°ø°İ¡×fÀº °ÔÀÓ µµÁß¿¡ ¼¼¿î ¡×c¿ª´ë ÃÖ°íÄ¡ÀÇ ÀÔÈù ÇÇÇØ·®¡×f ÀÌÇÏ·Î ¡×e¶³¾îÁöÁö ¾ÊÀ¸¸ç¡×f,",
-		"¡×b¹æ¾î¡×f´Â °ÔÀÓ µµÁß¿¡ ¼¼¿î ¡×b¿ª´ë ÃÖ¼ÒÄ¡ÀÇ ¹ŞÀº ÇÇÇØ·®¡×f ÀÌ»óÀ¸·Î ¡×e¿Ã¶ó°¡Áö ¾Ê½À´Ï´Ù¡×f.",
-		"´É·ÂÀº $[PERIOD]ÃÊ¸¶´Ù ÃæÀüµÇ¾î Àû¿¡°Ô ÇÇÇØ¸¦ ÀÔÈú ¶§ ¹ßµ¿ÇÕ´Ï´Ù."
+		name = "ë‚œìˆ˜ ì¡°ì ˆ", rank = Rank.L, species = Species.HUMAN, explain = {
+		"$[DURATION]ì´ˆê°„ Â§aìˆ˜ì¹˜ë¥¼ ì¡°ì •Â§fí•˜ì—¬, Â§cê³µê²©Â§fê³¼ Â§bë°©ì–´Â§fê°’ì„ ì¡°ì ˆí•©ë‹ˆë‹¤.",
+		"Â§cê³µê²©Â§fì€ ê²Œì„ ë„ì¤‘ì— ì„¸ìš´ Â§cì—­ëŒ€ ìµœê³ ì¹˜ì˜ ì…íŒ í”¼í•´ëŸ‰Â§f ì´í•˜ë¡œ Â§eë–¨ì–´ì§€ì§€ ì•Šìœ¼ë©°Â§f,",
+		"Â§bë°©ì–´Â§fëŠ” ê²Œì„ ë„ì¤‘ì— ì„¸ìš´ Â§bì—­ëŒ€ ìµœì†Œì¹˜ì˜ ë°›ì€ í”¼í•´ëŸ‰Â§f ì´ìƒìœ¼ë¡œ Â§eì˜¬ë¼ê°€ì§€ ì•ŠìŠµë‹ˆë‹¤Â§f.",
+		"ëŠ¥ë ¥ì€ $[PERIOD]ì´ˆë§ˆë‹¤ ì¶©ì „ë˜ì–´ ì ì—ê²Œ í”¼í•´ë¥¼ ì…í ë•Œ ë°œë™í•©ë‹ˆë‹¤."
 		})
 
 public class RandomNumberControl extends AbilityBase {
@@ -48,7 +48,7 @@ public class RandomNumberControl extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
-			"period", 30, "# ´É·Â Áö¼Ó ÁÖ±â") {
+			"period", 30, "# ëŠ¥ë ¥ ì§€ì† ì£¼ê¸°") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -58,7 +58,7 @@ public class RandomNumberControl extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
-			"duration", 3, "# ´É·Â Áö¼Ó½Ã°£") {
+			"duration", 3, "# ëŠ¥ë ¥ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -70,8 +70,8 @@ public class RandomNumberControl extends AbilityBase {
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
 	    	periodtimer.start();
-	    	acAttack.update("¡×cÃÖ°í °ø°İ ÇÇÇØ·®¡×7: ¡×e" + df.format(topDamage));
-	    	acDefence.update("¡×bÃÖ¼Ò ¹æ¾î ÇÇÇØ·®¡×7: ¡×e" + df.format(topDefence));
+	    	acAttack.update("Â§cìµœê³  ê³µê²© í”¼í•´ëŸ‰Â§7: Â§e" + df.format(topDamage));
+	    	acDefence.update("Â§bìµœì†Œ ë°©ì–´ í”¼í•´ëŸ‰Â§7: Â§e" + df.format(topDefence));
 	    } 
 	}
 	
@@ -94,12 +94,12 @@ public class RandomNumberControl extends AbilityBase {
 		@Override
 		public void run(int count) {
 			damages = lastTopDamage + (((topDamage - lastTopDamage) * (6 - count)) / 5);
-			acAttack.update("¡×cÃÖ°í °ø°İ ÇÇÇØ·®¡×7: ¡×e" + df.format(damages));
+			acAttack.update("Â§cìµœê³  ê³µê²© í”¼í•´ëŸ‰Â§7: Â§e" + df.format(damages));
 		}
 		
 		@Override
 		public void onEnd() {
-			acAttack.update("¡×cÃÖ°í °ø°İ ÇÇÇØ·®¡×7: ¡×e" + df.format(topDamage));
+			acAttack.update("Â§cìµœê³  ê³µê²© í”¼í•´ëŸ‰Â§7: Â§e" + df.format(topDamage));
 		}
 		
 		@Override
@@ -115,12 +115,12 @@ public class RandomNumberControl extends AbilityBase {
 		@Override
 		public void run(int count) {
 			defences = lastTopDefence - (((lastTopDefence - topDefence) * (6 - count)) / 5);
-			acDefence.update("¡×bÃÖ¼Ò ¹æ¾î ÇÇÇØ·®¡×7: ¡×e" + df.format(defences));
+			acDefence.update("Â§bìµœì†Œ ë°©ì–´ í”¼í•´ëŸ‰Â§7: Â§e" + df.format(defences));
 		}
 		
 		@Override
 		public void onEnd() {
-			acDefence.update("¡×bÃÖ¼Ò ¹æ¾î ÇÇÇØ·®¡×7: ¡×e" + df.format(topDefence));
+			acDefence.update("Â§bìµœì†Œ ë°©ì–´ í”¼í•´ëŸ‰Â§7: Â§e" + df.format(topDefence));
 		}
 		
 		@Override
@@ -140,7 +140,7 @@ public class RandomNumberControl extends AbilityBase {
 		@Override
 		public void onEnd() {
 			if (period != 0) {
-				getPlayer().sendMessage("¡×2[¡×a!¡×2] ¡×f³­¼ö Á¶ÀıÀ» »ç¿ë °¡´ÉÇÕ´Ï´Ù.");
+				getPlayer().sendMessage("Â§2[Â§a!Â§2] Â§fë‚œìˆ˜ ì¡°ì ˆì„ ì‚¬ìš© ê°€ëŠ¥í•©ë‹ˆë‹¤.");
 				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));	
 			}
 			available = true;
@@ -153,7 +153,7 @@ public class RandomNumberControl extends AbilityBase {
 		@Override
     	public void onStart() {
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 0.9f);
-    		bossBar = Bukkit.createBossBar("¡×b³­¼ö Á¶Àı Áß", BarColor.GREEN, BarStyle.SOLID);
+    		bossBar = Bukkit.createBossBar("Â§bë‚œìˆ˜ ì¡°ì ˆ ì¤‘", BarColor.GREEN, BarStyle.SOLID);
     		bossBar.setProgress(1);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -286,7 +286,7 @@ public class RandomNumberControl extends AbilityBase {
 					hitLoc.getX() + (((random.nextDouble() * 2) - 1) * 0.5),
 					hitLoc.getY() + 1.25 + (((random.nextDouble() * 2) - 1) * 0.25), 
 					hitLoc.getZ() + (((random.nextDouble() * 2) - 1) * 0.5), 
-					over ? "¡×b¡×l" + damageDF.format(damage) : "¡×c¡×l" + damageDF.format(damage));
+					over ? "Â§bÂ§l" + damageDF.format(damage) : "Â§cÂ§l" + damageDF.format(damage));
 			this.damage = damage;
 			this.control = control;
 			this.controldamage = controldamage;
@@ -310,7 +310,7 @@ public class RandomNumberControl extends AbilityBase {
 					} else if (damage == controldamage) {
 						damages = damage;
 					}
-					hologram.setText("¡×a¡×l" + damageDF.format(damages));
+					hologram.setText("Â§aÂ§l" + damageDF.format(damages));
 				}	
 			}
 			hologram.teleport(hologram.getLocation().add(0, 0.03, 0));

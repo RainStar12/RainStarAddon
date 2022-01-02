@@ -75,17 +75,17 @@ import daybreak.google.common.base.Predicate;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(
-		name = "Å©·Î¿ì", rank = Rank.L, species = Species.ANIMAL, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×c- ¡×8¼¨µµ¿ì ½ºÅÜ¡×f: ¼ø°£ ¡×b¹«Àû ¹× Åõ¸í, Å¸°ÔÆÃ ºÒ´É »óÅÂ¡×f°¡ µÇ¾î",
-		" ÀÌµ¿ ¼Óµµ°¡ ¸Å¿ì ³ô¾ÆÁö°í ´Ù¸¥ »ı¸íÃ¼¸¦ Áö³ªÄ¥ ¼ö ÀÖ½À´Ï´Ù. $[COOLDOWN]",
-		" ÀÌÈÄ Áö¼Ó½Ã°£ÀÌ ³¡³ª¸é Áö³ªÄ£ »ı¸íÃ¼µé¿¡°Ô °­·ÂÇÑ ÇÇÇØ¸¦ ÀÔÈ÷°í ¡×cÃâÇ÷¡×f½ÃÅ°¸ç,",
-		" Áö¼ÓÀûÀ¸·Î ¡×c0¡×fÀÌ µÉ ¶§±îÁö °¨¼ÒÇÏ´Â Ãß°¡ °ø°İ·ÂÀ» ¡×c12¡×f¸¸Å­ ¾ò½À´Ï´Ù.",
-		" ÇÇÇØ ÀÔÈù ´ë»ó ÇÑ ¸í´ç ¡×cÃß°¡ °ø°İ·Â¡×fÀÇ °¨¼Ò ¼Óµµ°¡ ´ÊÃçÁı´Ï´Ù.",
-		"¡×7´É·Â Áö¼Ó Áß ÆĞ½Ãºê ¡×c- ¡×3¼¨µµ¿ì Ä¿Æ°¡×f: ÀÚ½ÅÀÇ ÁÖº¯¿¡ ±×¸²ÀÚ Àå¸·ÀÌ ±ò·Á",
-		" 10Ä­ ³» ÇÃ·¹ÀÌ¾î¸¦ ¸Å¿ì ´À¸®°Ô ¸¸µì´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×c- ¡×9¼¨µµ¿ì ÀÌÅÍ¡×f: ÃâÇ÷ ÁßÀÎ ´ë»ó¿¡°Ô ÇÇÇØ¸¦ ÀÔÈ÷¸é Àá½Ã°£",
-		" Ãß°¡ °ø°İ·ÂÀÇ °¨¼Ò ¼Óµµ°¡ ´À·ÁÁö°í, ¡×8¼¨µµ¿ì ½ºÅÜ¡×fÀÇ ÄğÅ¸ÀÓÀÌ ÁÙ¾îµì´Ï´Ù.",
-		" ¶ÇÇÑ ´ë»óÀÇ ³²Àº ÃâÇ÷ Áö¼Ó½Ã°£¿¡ ºñ·ÊÇØ Ã¼·ÂÀ» È¸º¹ÇÒ ¼ö ÀÖ½À´Ï´Ù."
+		name = "í¬ë¡œìš°", rank = Rank.L, species = Species.ANIMAL, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§c- Â§8ì„€ë„ìš° ìŠ¤í…Â§f: ìˆœê°„ Â§bë¬´ì  ë° íˆ¬ëª…, íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ìƒíƒœÂ§fê°€ ë˜ì–´",
+		" ì´ë™ ì†ë„ê°€ ë§¤ìš° ë†’ì•„ì§€ê³  ë‹¤ë¥¸ ìƒëª…ì²´ë¥¼ ì§€ë‚˜ì¹  ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´í›„ ì§€ì†ì‹œê°„ì´ ëë‚˜ë©´ ì§€ë‚˜ì¹œ ìƒëª…ì²´ë“¤ì—ê²Œ ê°•ë ¥í•œ í”¼í•´ë¥¼ ì…íˆê³  Â§cì¶œí˜ˆÂ§fì‹œí‚¤ë©°,",
+		" ì§€ì†ì ìœ¼ë¡œ Â§c0Â§fì´ ë  ë•Œê¹Œì§€ ê°ì†Œí•˜ëŠ” ì¶”ê°€ ê³µê²©ë ¥ì„ Â§c12Â§fë§Œí¼ ì–»ìŠµë‹ˆë‹¤.",
+		" í”¼í•´ ì…íŒ ëŒ€ìƒ í•œ ëª…ë‹¹ Â§cì¶”ê°€ ê³µê²©ë ¥Â§fì˜ ê°ì†Œ ì†ë„ê°€ ëŠ¦ì¶°ì§‘ë‹ˆë‹¤.",
+		"Â§7ëŠ¥ë ¥ ì§€ì† ì¤‘ íŒ¨ì‹œë¸Œ Â§c- Â§3ì„€ë„ìš° ì»¤íŠ¼Â§f: ìì‹ ì˜ ì£¼ë³€ì— ê·¸ë¦¼ì ì¥ë§‰ì´ ê¹”ë ¤",
+		" 10ì¹¸ ë‚´ í”Œë ˆì´ì–´ë¥¼ ë§¤ìš° ëŠë¦¬ê²Œ ë§Œë“­ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§c- Â§9ì„€ë„ìš° ì´í„°Â§f: ì¶œí˜ˆ ì¤‘ì¸ ëŒ€ìƒì—ê²Œ í”¼í•´ë¥¼ ì…íˆë©´ ì ì‹œê°„",
+		" ì¶”ê°€ ê³µê²©ë ¥ì˜ ê°ì†Œ ì†ë„ê°€ ëŠë ¤ì§€ê³ , Â§8ì„€ë„ìš° ìŠ¤í…Â§fì˜ ì¿¨íƒ€ì„ì´ ì¤„ì–´ë“­ë‹ˆë‹¤.",
+		" ë˜í•œ ëŒ€ìƒì˜ ë‚¨ì€ ì¶œí˜ˆ ì§€ì†ì‹œê°„ì— ë¹„ë¡€í•´ ì²´ë ¥ì„ íšŒë³µí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 		})
 
 @SuppressWarnings("deprecation")
@@ -123,7 +123,7 @@ public class Crow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE = synergySettings.new SettingObject<Integer>(Crow.class, "damage", 9,
-			"# ¼¨µµ¿ì ½ºÅÜÀÇ ±âº» ´ë¹ÌÁö") {
+			"# ì„€ë„ìš° ìŠ¤í…ì˜ ê¸°ë³¸ ëŒ€ë¯¸ì§€") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -133,7 +133,7 @@ public class Crow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Crow.class, "right-cooldown", 50,
-			"# Ã¶±« ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ") {
+			"# ì² ê´´ ìš°í´ë¦­ ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -299,7 +299,7 @@ public class Crow extends Synergy implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !shadowstep.isRunning() && !cool.isCooldown()) {
 	    	if (livingEntityLocation.size() > 0 || damagedEntity.size() > 0 || particlerun) {
-	    		getPlayer().sendMessage("¡×8[¡×7!¡×8] ¡×c¾ÆÁ÷ ´É·ÂÀÇ È¿°ú°¡ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+	    		getPlayer().sendMessage("Â§8[Â§7!Â§8] Â§cì•„ì§ ëŠ¥ë ¥ì˜ íš¨ê³¼ê°€ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 	    		return false;
 	    	} else {
 		    	armors = getPlayer().getInventory().getArmorContents();
@@ -323,7 +323,7 @@ public class Crow extends Synergy implements ActiveHandler {
 		
     	@Override
     	public void onStart() {
-    		bossBar2 = Bukkit.createBossBar("¡×cÃß°¡ ÇÇÇØ·®", BarColor.RED, BarStyle.SEGMENTED_12);
+    		bossBar2 = Bukkit.createBossBar("Â§cì¶”ê°€ í”¼í•´ëŸ‰", BarColor.RED, BarStyle.SEGMENTED_12);
     		bossBar2.setProgress(addDamage / 12);
     		bossBar2.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar2.setVisible(true);
@@ -337,7 +337,7 @@ public class Crow extends Synergy implements ActiveHandler {
     		} else {
         		addDamage = Math.max(0, (addDamage - (0.0125 + ((addDamage / 12) * 0.04)) * decreaseSpeed));	
     		}
-    		bossBar2.setTitle("¡×cÃß°¡ ÇÇÇØ·® ¡×7: ¡×e" + df.format(addDamage));
+    		bossBar2.setTitle("Â§cì¶”ê°€ í”¼í•´ëŸ‰ Â§7: Â§e" + df.format(addDamage));
 			bossBar2.setProgress(RangesKt.coerceIn(addDamage / 12, 0, 1));
 			if (addDamage <= 0) stop(false);
     	}
@@ -370,9 +370,13 @@ public class Crow extends Synergy implements ActiveHandler {
 				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.4, 1, 0.4, 120, 0, new MaterialData(Material.DRAGON_EGG));	
 			}
 			SoundLib.ENTITY_PIG_SADDLE.playSound(getPlayer().getLocation(), 1, 0.85f);
-			bossBar1 = Bukkit.createBossBar("¡×7¼¨µµ¿ì ½ºÅÜ", BarColor.WHITE, BarStyle.SOLID);
+			bossBar1 = Bukkit.createBossBar("Â§7ì„€ë„ìš° ìŠ¤í…", BarColor.WHITE, BarStyle.SOLID);
 			bossBar1.setProgress(1);
     		bossBar1.addPlayer(getPlayer());
+    		if (getPlayer().getInventory().getHelmet() == null && getPlayer().getInventory().getChestplate() == null
+    				&& getPlayer().getInventory().getLeggings() == null && getPlayer().getInventory().getBoots() == null) {
+    			armors = null;
+    		}
     		if (ServerVersion.getVersion() >= 10) bossBar1.setVisible(true);
 			getPlayer().getInventory().setArmorContents(null);
 			getParticipant().attributes().TARGETABLE.setValue(false);
@@ -415,10 +419,10 @@ public class Crow extends Synergy implements ActiveHandler {
 		protected void onSilentEnd() {
 			getPlayer().setSprinting(false);
 			getPlayer().setWalkSpeed(0.2F);
-			getPlayer().getInventory().setArmorContents(armors);
+			if (armors != null) getPlayer().getInventory().setArmorContents(armors);
 			getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
-			getPlayer().getInventory().setItemInMainHand(mainhandItem);
-			getPlayer().getInventory().setItemInOffHand(offhandItem);
+			if (!mainhandItem.getType().equals(Material.AIR)) getPlayer().getInventory().setItemInMainHand(mainhandItem);
+			if (!offhandItem.getType().equals(Material.AIR)) getPlayer().getInventory().setItemInOffHand(offhandItem);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			bossBar1.removeAll();
 			SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer().getLocation(), 1, 0.7f);

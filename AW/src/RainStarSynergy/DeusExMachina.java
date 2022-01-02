@@ -34,11 +34,11 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 
-@AbilityManifest(name = "µ¥¿ì½º ¿¢½º ¸¶Å°³ª", rank = Rank.L, species = Species.GOD, explain = {
-		"Ã¶±« ¿ìÅ¬¸¯ ½Ã $[DURATION]ÃÊ°£ ¡×c°ø°İ·Â¡×7(ATK)¡×f, ¡×3¹æ¾î·Â¡×7(DEF)¡×f, ¡×dÈ¸º¹·Â¡×7(REC)¡×fÀÇ ¡×a¼öÄ¡¸¦ Á¶ÀÛ¡×fÇÏ¿©",
-		"°ÔÀÓ ³»¿¡ ÀÖ¾ú´ø ¡×bÃÖ°í ±â·ÏÄ¡¡×f¸¦ ºÒ·¯¿É´Ï´Ù. $[COOLDOWN]",
-		"´É·ÂÀ» »ç¿ëÇÏ°í ³ª¸é ¡×bÃÖ°í ±â·ÏÄ¡¡×f°¡ ÃÊ±âÈ­µË´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×dhorn1111"
+@AbilityManifest(name = "ë°ìš°ìŠ¤ ì—‘ìŠ¤ ë§ˆí‚¤ë‚˜", rank = Rank.L, species = Species.GOD, explain = {
+		"ì² ê´´ ìš°í´ë¦­ ì‹œ $[DURATION]ì´ˆê°„ Â§cê³µê²©ë ¥(ATK)Â§f, Â§3ë°©ì–´ë ¥Â§7(DEF)Â§f, Â§díšŒë³µë ¥7(REC)Â§fì˜ Â§aìˆ˜ì¹˜ë¥¼ ì¡°ì‘Â§fí•˜ì—¬",
+		"ê²Œì„ ë‚´ì— ìˆì—ˆë˜ Â§bìµœê³  ê¸°ë¡ì¹˜Â§fë¥¼ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤. $[COOLDOWN]",
+		"ëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ê³  ë‚œ í›„ì—ëŠ” Â§bìµœê³  ê¸°ë¡ì¹˜Â§fê°€ ì´ˆê¸°í™”ë©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§dhorn1111"
 })
 
 public class DeusExMachina extends Synergy implements ActiveHandler {
@@ -48,7 +48,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(DeusExMachina.class, 
-			"cooldown", 60, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -63,7 +63,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(DeusExMachina.class,
-			"duration", 4, "# ´É·Â Áö¼Ó½Ã°£") {
+			"duration", 4, "# ì§€ì† ì‹œê°„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -74,9 +74,9 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 	
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	acAttack.update("¡×cATK¡×7: ¡×e" + df.format(topDamage));
-	    	acDefence.update("¡×bDEF¡×7: ¡×e" + df.format(topDefence));
-	    	acRecovery.update("¡×aREC¡×7: ¡×e" + df.format(topRecovery));
+	    	acAttack.update("Â§cATKÂ§7: Â§e" + df.format(topDamage));
+	    	acDefence.update("Â§bDEFÂ§7: Â§e" + df.format(topDefence));
+	    	acRecovery.update("Â§aRECÂ§7: Â§e" + df.format(topRecovery));
 	    } 
 	}
 	
@@ -98,7 +98,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 				if (!skill.isRunning()) {
 					skill.start();	
 				} else {
-					getPlayer().sendMessage("¡×2[¡×a!¡×2] ¡×f´É·ÂÀÌ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+					getPlayer().sendMessage("Â§2[Â§a!Â§2] Â§cëŠ¥ë ¥ì´ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 				}
 			}
 		}
@@ -112,19 +112,19 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			damages = lastTopDamage + (((topDamage - lastTopDamage) * (6 - count)) / 5);
-			acAttack.update("¡×cATK¡×7: ¡×e" + df.format(damages));
+			acAttack.update("Â§cATKÂ§7: Â§e" + df.format(damages));
 		}
 		
 		@Override
 		public void onEnd() {
-			acAttack.update("¡×cATK¡×7: ¡×e" + df.format(topDamage));
+			acAttack.update("Â§cATKÂ§7: Â§e" + df.format(topDamage));
 		}
 		
 		@Override
 		public void onSilentEnd() {
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 	
 	private final AbilityTimer defenceActionbarUpdater = new AbilityTimer(5) {
 		
@@ -133,19 +133,19 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			defences = lastTopDefence - (((lastTopDefence - topDefence) * (6 - count)) / 5);
-			acDefence.update("¡×bDEF¡×7: ¡×e" + df.format(defences));
+			acDefence.update("Â§bDEFÂ§7: Â§e" + df.format(defences));
 		}
 		
 		@Override
 		public void onEnd() {
-			acDefence.update("¡×bDEF¡×7: ¡×e" + df.format(topDefence));
+			acDefence.update("Â§bDEFÂ§7: Â§e" + df.format(topDefence));
 		}
 		
 		@Override
 		public void onSilentEnd() {
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 	
 	private final AbilityTimer recoveryActionbarUpdater = new AbilityTimer(5) {
 		
@@ -154,26 +154,26 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			recovers = lastTopRecovery + (((topRecovery - lastTopRecovery) * (6 - count)) / 5);
-			acRecovery.update("¡×aREC¡×7: ¡×e" + df.format(recovers));
+			acRecovery.update("Â§aRECÂ§7: Â§e" + df.format(recovers));
 		}
 		
 		@Override
 		public void onEnd() {
-			acRecovery.update("¡×aREC¡×7: ¡×e" + df.format(topRecovery));
+			acRecovery.update("Â§aRECÂ§7: Â§e" + df.format(topRecovery));
 		}
 		
 		@Override
 		public void onSilentEnd() {
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 	
 	private final AbilityTimer skill = new AbilityTimer(duration * 20) {
 		
 		@Override
     	public void onStart() {
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 0.9f);
-    		bossBar = Bukkit.createBossBar("¡×b³­¼ö Á¶Àı Áß", BarColor.GREEN, BarStyle.SOLID);
+    		bossBar = Bukkit.createBossBar("Â§bë‚œìˆ˜ ì¡°ì ˆ ì¤‘", BarColor.GREEN, BarStyle.SOLID);
     		bossBar.setProgress(1);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -197,9 +197,9 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 			topDamage = 0;
 			topDefence = 99999;
 			topRecovery = 0;
-	    	acAttack.update("¡×cATK¡×7: ¡×e¡×k" + 0.00);
-	    	acDefence.update("¡×bDEF¡×7: ¡×e¡×k" + 0.00);
-	    	acRecovery.update("¡×aREC¡×7: ¡×e¡×k" + 0.00);
+	    	acAttack.update("Â§cATKÂ§7: Â§eÂ§k" + 0.00);
+	    	acDefence.update("Â§bDEFÂ§7: Â§eÂ§k" + 0.00);
+	    	acRecovery.update("Â§aRECÂ§7: Â§eÂ§k" + 0.00);
 			bossBar.removeAll();
 			cool.start();
 		}
@@ -323,7 +323,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 					hitLoc.getX() + (((random.nextDouble() * 2) - 1) * 0.5),
 					hitLoc.getY() + 1.25 + (((random.nextDouble() * 2) - 1) * 0.25), 
 					hitLoc.getZ() + (((random.nextDouble() * 2) - 1) * 0.5), 
-					over ? "¡×b¡×l" + damageDF.format(damage) : "¡×c¡×l" + damageDF.format(damage));
+					over ? "Â§bÂ§l" + damageDF.format(damage) : "Â§cÂ§l" + damageDF.format(damage));
 			this.damage = damage;
 			this.control = control;
 			this.controldamage = controldamage;
@@ -347,7 +347,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 					} else if (damage == controldamage) {
 						damages = damage;
 					}
-					hologram.setText("¡×a¡×l" + damageDF.format(damages));
+					hologram.setText("Â§aÂ§l" + damageDF.format(damages));
 				}	
 			}
 			hologram.teleport(hologram.getLocation().add(0, 0.03, 0));

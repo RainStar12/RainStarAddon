@@ -20,7 +20,6 @@ import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.google.common.base.Predicate;
@@ -38,54 +37,54 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 @AbilityManifest(name = "[ ]", rank = Rank.S, species = Species.OTHERS, explain = {
-		"¡×a---------------------------------",
+		"Â§a---------------------------------",
 		"$(EXPLAIN)",
-		"¡×a---------------------------------",
-		"Ã¶±«·Î ´ë»óÀ» 30Ä­ ³»¿¡¼­ ¿ìÅ¬¸¯ÇÏ¿© ´É·ÂÀ» 30ÃÊ°£ º¹Á¦ÇÕ´Ï´Ù. $[MIN_COOLDOWN]",
-		"ÀÌÈÄ [  ]À¸·Î µÇµ¹¾Æ¿É´Ï´Ù. µÇµ¹¾Æ¿Ã ¶§ º¹Á¦ÇÑ ´É·ÂÀÌ",
-		"ÄğÅ¸ÀÓÀÏ °æ¿ì, Àı¹İÀÇ ½Ã°£¸¸Å­ [  ]ÀÇ ¡×cÄğÅ¸ÀÓ¡×fÀ» ´õÇÕ´Ï´Ù.",
-		"º¹Á¦ÇÑ ´É·ÂÀÇ ÁÖÀÎÀ» Á×ÀÏ ¶§¸¶´Ù ÃÑ ¡×cÄğÅ¸ÀÓ¡×fÀÌ 25%¾¿ °¨¼ÒÇÕ´Ï´Ù."
+		"Â§a---------------------------------",
+		"ì² ê´´ë¡œ ëŒ€ìƒì„ 30ì¹¸ ë‚´ì—ì„œ ìš°í´ë¦­í•˜ì—¬ ëŠ¥ë ¥ì„ ë³µì œí•©ë‹ˆë‹¤.",
+		"ì›…í¬ë¦° ì±„ ì² ê´´ ì¢Œí´ë¦­ìœ¼ë¡œ ë³µì œë¥¼ í•´ì œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[MIN_COOLDOWN]",
+		"ì´ë•Œ ë³µì œ ì¤‘ì´ë˜ ëŠ¥ë ¥ì´ ì¿¨íƒ€ì„ì¼ ê²½ìš° ì ˆë°˜ì˜ ì¿¨íƒ€ì„ì„ ë”í•©ë‹ˆë‹¤.",
+		"ë³µì œí•œ ëŠ¥ë ¥ì˜ ì£¼ì¸ì„ ì£½ì¼ ë•Œë§ˆë‹¤ ì´ Â§cì¿¨íƒ€ì„Â§fì´ 25%ì”© ê°ì†Œí•©ë‹ˆë‹¤."
 })
 
 @Tips(tip = {
-        "´Ù¸¥ ´ë»óÀÇ ´É·ÂÀ» º¹Á¦ÇÒ ¼ö ÀÖ¾î¼­ ¹«ÇÑÇÑ °¡´É¼ºÀ» °¡Áø ´É·ÂÀÔ´Ï´Ù.",
-        "´ë»óÀÇ ´É·ÂÀ» º¹Á¦ÇÏ¿© ´É·ÂÀ» ¾Ë¾ÆÂ÷¸± ¼ö ÀÖ´Ù´ø°¡, °­ÇÑ ´É·ÂÀ» º¹Á¦ÇÏ¿©",
-        "³» ¸Ú´ë·Î »ç¿ëÀÌ °¡´ÉÇÏ°í ¾î´À ÇÑ ´É·Â¿¡ ¸ØÃçÀÖÁö ¾Ê´Â ´É·ÂÀÔ´Ï´Ù.",
-        "´Ù¸¸ ´É·Â »ç¿ë¿¡ ÀÖ¾î Å¸°ÔÆÃÀÌ °­Á¦µÇ±â¿¡ ´Ù¸¥ ´ë»ó¿¡°Ô Á¢±ÙÇÏ´Â °ÍÀ»",
-        "À¯ÀÇÇÏ¼Å¾ß¸¸ ÇÕ´Ï´Ù."
+        "ë‹¤ë¥¸ ëŒ€ìƒì˜ ëŠ¥ë ¥ì„ ë³µì œí•  ìˆ˜ ìˆì–´ì„œ ë¬´í•œí•œ ê°€ëŠ¥ì„±ì„ ê°€ì§„ ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "ëŒ€ìƒì˜ ëŠ¥ë ¥ì„ ë³µì œí•˜ì—¬ ëŠ¥ë ¥ì„ ì•Œì•„ì°¨ë¦´ ìˆ˜ ìˆë‹¤ë˜ê°€, ê°•í•œ ëŠ¥ë ¥ì„ ë³µì œí•˜ì—¬",
+        "ë‚´ ë©‹ëŒ€ë¡œ ì‚¬ìš©ì´ ê°€ëŠ¥í•˜ê³  ì–´ëŠ í•œ ëŠ¥ë ¥ì— ë©ˆì¶°ìˆì§€ ì•ŠëŠ” ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "ë‹¤ë§Œ ëŠ¥ë ¥ ì‚¬ìš©ì— ìˆì–´ íƒ€ê²ŒíŒ…ì´ ê°•ì œë˜ê¸°ì— ë‹¤ë¥¸ ëŒ€ìƒì—ê²Œ ì ‘ê·¼í•˜ëŠ” ê²ƒì„",
+        "ìœ ì˜í•˜ì…”ì•¼ë§Œ í•©ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "°­ÇÑ ´É·ÂÀÇ ´ë»ó", explain = {
-                "´Ù¸¥ ´ë»óÀÇ ´É·ÂÀÌ °­·ÂÇÒ¼ö·Ï º¹Á¦ÇÏ´Â º»ÀÎÀÇ ´É·Âµµ °­·ÂÇØÁı´Ï´Ù."
+        @Description(subject = "ê°•í•œ ëŠ¥ë ¥ì˜ ëŒ€ìƒ", explain = {
+                "ë‹¤ë¥¸ ëŒ€ìƒì˜ ëŠ¥ë ¥ì´ ê°•ë ¥í• ìˆ˜ë¡ ë³µì œí•˜ëŠ” ë³¸ì¸ì˜ ëŠ¥ë ¥ë„ ê°•ë ¥í•´ì§‘ë‹ˆë‹¤."
         }),
-        @Description(subject = "´É·Â ÆÄ¾Ç", explain = {
-                "Å¸ÀÎÀÇ ´É·ÂÀ» º¹Á¦ÇÏ¿© ´ë»óÀÇ ´É·ÂÀÌ ¹«¾ùÀÎÁö ¾Ë¾Æ³¾ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ëŠ¥ë ¥ íŒŒì•…", explain = {
+                "íƒ€ì¸ì˜ ëŠ¥ë ¥ì„ ë³µì œí•˜ì—¬ ëŒ€ìƒì˜ ëŠ¥ë ¥ì´ ë¬´ì—‡ì¸ì§€ ì•Œì•„ë‚¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "À¯µ¿¼º", explain = {
-                "´É·ÂÀ» º¹Á¦ÇÒ ¼ö ÀÖ´Ù´Â °ÍÀº ´Ù½Ã ¸»ÇØ, °ÔÀÓ Âü°¡ÀÚÀÇ ¸ğµç ´É·ÂµéÀ»",
-                "º»ÀÎÀÌ »ç¿ë °¡´ÉÇÏ´Ù´Â ¸»ÀÔ´Ï´Ù. ¿©·¯ ´É·ÂÀ¸·Î ¹Ù²Ù¸ç ¼ö¸¹Àº Àü¼úÀ»",
-                "ÆîÄ¥ ¼ö ÀÖ´Â À¯µ¿¼ºÀÌ¾ß¸»·Î ÀÌ ´É·ÂÀÇ ÃÖ´ë °­Á¡ÀÔ´Ï´Ù."
+        @Description(subject = "ìœ ë™ì„±", explain = {
+                "ëŠ¥ë ¥ì„ ë³µì œí•  ìˆ˜ ìˆë‹¤ëŠ” ê²ƒì€ ë‹¤ì‹œ ë§í•´, ê²Œì„ ì°¸ê°€ìì˜ ëª¨ë“  ëŠ¥ë ¥ë“¤ì„",
+                "ë³¸ì¸ì´ ì‚¬ìš© ê°€ëŠ¥í•˜ë‹¤ëŠ” ë§ì…ë‹ˆë‹¤. ì—¬ëŸ¬ ëŠ¥ë ¥ìœ¼ë¡œ ë°”ê¾¸ë©° ìˆ˜ë§ì€ ì „ìˆ ì„",
+                "í¼ì¹  ìˆ˜ ìˆëŠ” ìœ ë™ì„±ì´ì•¼ë§ë¡œ ì´ ëŠ¥ë ¥ì˜ ìµœëŒ€ ê°•ì ì…ë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "¾àÇÑ ´É·ÂÀÇ ´ë»ó", explain = {
-                "¿ªÀ¸·Î ´ë»óÀÌ ¾àÇÑ ´É·ÂÀ» ¼ÒÁöÇÏ°í ÀÖ´Ù¸é, º¹Á¦ÇÑ ÀÚ½ÅÀÇ ´É·Âµµ",
-                "¾àÇØÁö´Â ²ÃÀÌ µË´Ï´Ù. ´Ù¸¥ ´ë»óÀÇ ´É·ÂÀ» ¹Ì¸® ÆÄ¾ÇÇØµÎ¼¼¿ä."
+        @Description(subject = "ì•½í•œ ëŠ¥ë ¥ì˜ ëŒ€ìƒ", explain = {
+                "ì—­ìœ¼ë¡œ ëŒ€ìƒì´ ì•½í•œ ëŠ¥ë ¥ì„ ì†Œì§€í•˜ê³  ìˆë‹¤ë©´, ë³µì œí•œ ìì‹ ì˜ ëŠ¥ë ¥ë„",
+                "ì•½í•´ì§€ëŠ” ê¼´ì´ ë©ë‹ˆë‹¤. ë‹¤ë¥¸ ëŒ€ìƒì˜ ëŠ¥ë ¥ì„ ë¯¸ë¦¬ íŒŒì•…í•´ë‘ì„¸ìš”."
         }),
-        @Description(subject = "ÀûÀº Âü°¡ÀÚ ¼ö", explain = {
-                "°ÔÀÓ Âü°¡ÀÚ ¼ö°¡ ÀûÀ¸¸é °á°úÀûÀ¸·Î ÀÌ ´É·ÂÀÇ ÃÖ´ë °­Á¡ÀÎ",
-                "À¯µ¿¼ºÀ» ÇØÄ¡´Â ²ÃÀÌ µË´Ï´Ù. µÇµµ·Ï ÇÃ·¹ÀÌ¾î°¡ ¸¹Àº °ÔÀÓÀ»",
-                "ÁøÇàÇÏ´Â ÆíÀÌ ÁÁ½À´Ï´Ù."
+        @Description(subject = "ì ì€ ì°¸ê°€ì ìˆ˜", explain = {
+                "ê²Œì„ ì°¸ê°€ì ìˆ˜ê°€ ì ìœ¼ë©´ ê²°ê³¼ì ìœ¼ë¡œ ì´ ëŠ¥ë ¥ì˜ ìµœëŒ€ ê°•ì ì¸",
+                "ìœ ë™ì„±ì„ í•´ì¹˜ëŠ” ê¼´ì´ ë©ë‹ˆë‹¤. ë˜ë„ë¡ í”Œë ˆì´ì–´ê°€ ë§ì€ ê²Œì„ì„",
+                "ì§„í–‰í•˜ëŠ” í¸ì´ ì¢‹ìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "ÂªÀº Áö¼Ó½Ã°£", explain = {
-                "º¹Á¦ÇÑ ´É·ÂÀ» »ç¿ë °¡´ÉÇÑ ½Ã°£Àº 30ÃÊ¹Û¿¡ Ã¤ µÇÁö ¾Ê¾Æ,",
-                "´ëºÎºĞÀÇ ¾×Æ¼ºê ´É·ÂÀº ±â²¯ÇØ¾ß ÇÑ ¹ø »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-                "¶ÇÇÑ º¹Á¦ÇÑ ´É·ÂÀÇ ÄğÅ¸ÀÓÀ» Àı¹İ °¡Áö¹Ç·Î",
-                "ºü¸£°í ½ÅÁßÇÑ ÆÇ´Ü·ÂÀ» ¿äÇÕ´Ï´Ù."
+        @Description(subject = "ì§§ì€ ì§€ì†ì‹œê°„", explain = {
+                "ë³µì œí•œ ëŠ¥ë ¥ì„ ì‚¬ìš© ê°€ëŠ¥í•œ ì‹œê°„ì€ 30ì´ˆë°–ì— ì±„ ë˜ì§€ ì•Šì•„,",
+                "ëŒ€ë¶€ë¶„ì˜ ì•¡í‹°ë¸Œ ëŠ¥ë ¥ì€ ê¸°ê»í•´ì•¼ í•œ ë²ˆ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+                "ë˜í•œ ë³µì œí•œ ëŠ¥ë ¥ì˜ ì¿¨íƒ€ì„ì„ ì ˆë°˜ ê°€ì§€ë¯€ë¡œ",
+                "ë¹ ë¥´ê³  ì‹ ì¤‘í•œ íŒë‹¨ë ¥ì„ ìš”í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TEN), difficulty = Difficulty.NORMAL)
 
 public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
-	public static final SettingObject<Integer> MIN_COOLDOWN = abilitySettings.new SettingObject<Integer>(Empty.class, "COOLDOWN", 30, "# ÃÖ¼Ò ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> MIN_COOLDOWN = abilitySettings.new SettingObject<Integer>(Empty.class, "cooldown", 30, "# ìµœì†Œ ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -130,7 +129,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (killtarget != null) {
 				if (killtarget.equals(e.getEntity())) {
 					killcount++;
-					ac.update("¡×cÅ³ Ä«¿îÆ®¡×7: ¡×f" + killcount);
+					ac.update("Â§cí‚¬ ì¹´ìš´íŠ¸Â§7: Â§f" + killcount);
 				}
 			}
 		}
@@ -141,12 +140,12 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		@Override
 		public String toString() {
 			if (ability == null) {
-				return "´É·ÂÀ» º¹Á¦ÇÒ ¼ö ÀÖ½À´Ï´Ù.".toString();
+				return "ëŠ¥ë ¥ì„ ë³µì œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.".toString();
 			} else {
 				final StringJoiner joiner = new StringJoiner("\n");
-				joiner.add("¡×aº¹Á¦ÇÑ ´É·Â ¡×f| ¡×7[¡×b" + ability.getName() + "¡×7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+				joiner.add("Â§aë³µì œí•œ ëŠ¥ë ¥ Â§f| Â§7[Â§b" + ability.getName() + "Â§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getExplanation(); iterator.hasNext();) {
-					joiner.add("¡×f" + iterator.next());
+					joiner.add("Â§f" + iterator.next());
 				}
 				return joiner.toString();
 			}
@@ -159,8 +158,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	}
 
 	private final int minCooldown = MIN_COOLDOWN.getValue();
-	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-	private final Cooldown cooldown = new Cooldown(MIN_COOLDOWN.getValue(), "°ø¹é");
+	private final Cooldown cooldown = new Cooldown(MIN_COOLDOWN.getValue(), "ê³µë°±");
 
 	public Empty(Participant participant) {
 		super(participant);
@@ -168,6 +166,30 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK) {
+			if (getPlayer().isSneaking()) {
+				if (ability != null) {
+					try {
+						int cooltimeSum = 0;
+						if (Empty.this.ability != null) {
+							for (GameTimer timer : Empty.this.ability.getRunningTimers()) {
+								if (timer instanceof Cooldown.CooldownTimer) {
+									cooltimeSum += timer.getCount();
+								}
+							}
+							Empty.this.ability.destroy();
+						}
+						Empty.this.ability = null;
+						killtarget = null;
+						getParticipant().getPlayer().sendMessage("Â§bë‹¹ì‹ ì˜ ëŠ¥ë ¥ì´ Â§f[  ]Â§bìœ¼ë¡œ ë˜ëŒì•„ì™”ìŠµë‹ˆë‹¤.");
+						cooldown.setCooldown((int) ((minCooldown + (cooltimeSum / 2)) * (Math.pow(0.75, killcount))));
+						cooldown.start();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		if (ability != null) {
 			return ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, clickType);	
 		} else {
@@ -185,9 +207,8 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 										try {
 											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
 											this.ability.setRestricted(false);
-											getPlayer().sendMessage("¡×b´É·ÂÀ» º¹Á¦ÇÏ¿´½À´Ï´Ù. ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + ability.getName() + "¡×b ÀÔ´Ï´Ù.");
+											getPlayer().sendMessage("Â§bëŠ¥ë ¥ì„ ë³µì œí•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¹ì‹ ì˜ ëŠ¥ë ¥ì€ Â§e" + ability.getName() + "Â§b ì…ë‹ˆë‹¤.");
 											killtarget = player;
-											new ReturnTimer();
 										} catch (ReflectiveOperationException e) {
 											e.printStackTrace();
 										}
@@ -200,10 +221,9 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 											if (clazz != Empty.class) {
 												this.ability = AbilityBase.create(clazz, getParticipant());
 												this.ability.setRestricted(false);
-												getPlayer().sendMessage("¡×b´É·ÂÀ» º¹Á¦ÇÏ¿´½À´Ï´Ù. ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + ability.getName() + "¡×b ÀÔ´Ï´Ù.");
-												new ReturnTimer();
+												getPlayer().sendMessage("Â§bëŠ¥ë ¥ì„ ë³µì œí•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¹ì‹ ì˜ ëŠ¥ë ¥ì€ Â§e" + ability.getName() + "Â§b ì…ë‹ˆë‹¤.");
 											} else {
-												getPlayer().sendMessage("¡×b°ø¹éÀº º¹Á¦ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+												getPlayer().sendMessage("Â§bê³µë°±ì€ ë³µì œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 											}
 										} catch (ReflectiveOperationException e) {
 											e.printStackTrace();
@@ -218,11 +238,10 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 									if (clazz != Empty.class) {
 										this.ability = AbilityBase.create(clazz, getParticipant());
 										this.ability.setRestricted(false);
-										getPlayer().sendMessage("¡×b´É·ÂÀ» º¹Á¦ÇÏ¿´½À´Ï´Ù. ´ç½ÅÀÇ ´É·ÂÀº ¡×e" + targetAbility.getName() + "¡×b ÀÔ´Ï´Ù.");
+										getPlayer().sendMessage("Â§bëŠ¥ë ¥ì„ ë³µì œí•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¹ì‹ ì˜ ëŠ¥ë ¥ì€ Â§e" + targetAbility.getName() + "Â§b ì…ë‹ˆë‹¤.");
 										killtarget = player;
-										new ReturnTimer();
 									} else {
-										getPlayer().sendMessage("¡×b°ø¹éÀº º¹Á¦ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+										getPlayer().sendMessage("Â§bê³µë°±ì€ ë³µì œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 									}
 								} catch (ReflectiveOperationException e) {
 									e.printStackTrace();
@@ -266,7 +285,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("¡×cÅ³ Ä«¿îÆ®¡×7: ¡×f" + killcount);
+			ac.update("Â§cí‚¬ ì¹´ìš´íŠ¸Â§7: Â§f" + killcount);
 			if (ability != null) {
 				ability.setRestricted(false);
 			}
@@ -278,42 +297,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (ability != null) {
 				ability.destroy();
 				ability = null;
-			}
-		}
-	}
-
-	private class ReturnTimer extends AbilityTimer {
-
-		private ReturnTimer() {
-			super(TaskType.REVERSE, 30);
-			this.start();
-		}
-
-		@Override
-		protected void run(int arg0) {
-			actionbarChannel.update("[  ]À¸·Î ±ÍÈ¯±îÁö ¡×3" + TimeUtil.parseTimeAsString(getFixedCount()) + "¡×f ³²¾Ò½À´Ï´Ù.");
-		}
-
-		@Override
-		protected void onEnd() {
-			try {
-				int cooltimeSum = 0;
-				if (Empty.this.ability != null) {
-					for (GameTimer timer : Empty.this.ability.getRunningTimers()) {
-						if (timer instanceof Cooldown.CooldownTimer) {
-							cooltimeSum += timer.getCount();
-						}
-					}
-					Empty.this.ability.destroy();
-				}
-				Empty.this.ability = null;
-				killtarget = null;
-				getParticipant().getPlayer().sendMessage("¡×b´ç½ÅÀÇ ´É·ÂÀÌ ¡×f[  ]¡×bÀ¸·Î µÇµ¹¾Æ¿Ô½À´Ï´Ù.");
-				actionbarChannel.update(null);
-				cooldown.setCooldown((int) ((minCooldown + (cooltimeSum / 2)) * (Math.pow(0.75, killcount))));
-				cooldown.start();
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}

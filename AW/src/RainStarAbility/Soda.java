@@ -2,6 +2,7 @@ package RainStarAbility;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +44,7 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -50,21 +52,22 @@ import daybreak.google.common.base.Predicate;
 
 @SuppressWarnings("deprecation")
 @AbilityManifest(
-		name = "¼Ò´Ù", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×3¹° ¼Ó¼º¡×fÀÇ ²¿¸¶ Á¤·É, ¼Ò´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3½ºÇÃ·¡½¬¡×f: ºÒ ¼Ó¼ºÀÇ ÇÇÇØ, ¸ğµç »óÅÂÀÌ»ó, ¸ğµç Æ÷¼Ç È¿°ú¿¡ ¸é¿ª È¿°ú¸¦",
-		" °¡Áı´Ï´Ù. ¶ÇÇÑ ½Å¹ßÀ» ½Å°í ¹° ¼Ó¿¡ µé¾î°¥ ¶§ ¹°°¥Äû ÀÎÃ¦Æ®¸¦ ÀÚµ¿ È¹µæÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×3¹öºíÆË¡×f: $[DURATION_CONFIG]ÃÊ°£ ¹°ÀÌ µÇ¾î, Å¸°ÔÆÃ ºÒ´É ¹× ¹«Àû »óÅÂ°¡ µË´Ï´Ù.",
-		" ¹°ÀÌ µÈ µ¿¾È Áö¸é¿¡ ¸Â´ê¾Æ¼­¸¸ ÀÌµ¿ÇÒ ¼ö ÀÖÀ¸¸ç, Áö¼Ó ½Ã°£ÀÌ ³¡³¯ ¶§ ¹° »óÅÂ°¡",
-		" ÇØÁ¦µÇ°í ÁÖº¯ $[RANGE_CONFIG]Ä­ ³» Àû¿¡°Ô $[EFFECT_DURATION]ÃÊ°£ ºÎ½Ä »óÅÂÀÌ»óÀ» °Ì´Ï´Ù. $[COOLDOWN_CONFIG]",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×7ºÎ½Ä¡×f: Ã¶ ±¤¹°À» »ç¿ëÇÏ´Â ¸ğµç ¾ÆÀÌÅÛÀ» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù.",
-		" ¶ÇÇÑ °©¿ÊÀÇ ¹æ¾î·ÂÀÌ Âø¿ë ±¤¹°¿¡ ºñ·ÊÇØ Èñ±Í¼ºÀÌ ³·À»¼ö·Ï ´õ ¸¹ÀÌ °¨¼ÒÇÕ´Ï´Ù."
+		name = "ì†Œë‹¤", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§3ë¬¼ ì†ì„±Â§fì˜ ê¼¬ë§ˆ ì •ë ¹, ì†Œë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ìˆœìˆ˜Â§f: ë¶ˆ ì†ì„±ì˜ í”¼í•´, ëª¨ë“  ìƒíƒœì´ìƒ, ëª¨ë“  í¬ì…˜ íš¨ê³¼ì— ë©´ì—­ íš¨ê³¼ë¥¼",
+		" ê°€ì§‘ë‹ˆë‹¤. ë˜í•œ ì‹ ë°œì„ ì‹ ê³  ë¬¼ ì†ì— ë“¤ì–´ê°ˆ ë•Œ ë¬¼ê°ˆí€´ ì¸ì±ˆíŠ¸ë¥¼ ìë™ íšë“í•©ë‹ˆë‹¤.",
+		" ìƒíƒœì´ìƒ, í¬ì…˜ íš¨ê³¼ë¥¼ ë°›ì„ ë•Œë§ˆë‹¤ ì²´ë ¥ì„ ë°˜ ì¹¸ íšŒë³µí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§3ìŠ¤í”Œë˜ì‰¬Â§f: $[DURATION_CONFIG]ì´ˆê°„ ë¬¼ì´ ë˜ì–´, íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ë° ë¬´ì  ìƒíƒœê°€ ë©ë‹ˆë‹¤.",
+		" ë¬¼ì´ ëœ ë™ì•ˆ ì§€ë©´ì— ë§ë‹¿ì•„ì„œë§Œ ì´ë™í•  ìˆ˜ ìˆìœ¼ë©°, ì§€ì† ì‹œê°„ì´ ëë‚  ë•Œ ë¬¼ ìƒíƒœê°€",
+		" í•´ì œë˜ê³  ì£¼ë³€ $[RANGE_CONFIG]ì¹¸ ë‚´ ì ì—ê²Œ $[EFFECT_DURATION]ì´ˆê°„ ë¶€ì‹ ìƒíƒœì´ìƒì„ ê²ë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§7ë¶€ì‹Â§f: ì²  ê´‘ë¬¼ì„ ì‚¬ìš©í•˜ëŠ” ëª¨ë“  ì•„ì´í…œì„ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" ë˜í•œ ê°‘ì˜·ì˜ ë°©ì–´ë ¥ì´ ì°©ìš© ê´‘ë¬¼ì— ë¹„ë¡€í•´ í¬ê·€ì„±ì´ ë‚®ì„ìˆ˜ë¡ ë” ë§ì´ ê°ì†Œí•©ë‹ˆë‹¤."
 		},
 		summarize = {
-		"¸ğµç ºÒ ÇÇÇØ, »óÅÂÀÌ»ó, Æ÷¼Ç È¿°ú¿¡ ¸é¿ªÀÌ »ı±é´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ½Ã¡×f ¡×b¹°¡×f »óÅÂ°¡ µÇ¾î Áö¸é¿¡ ¸Â´ê¾Æ ÀÌµ¿ÇÒ ¼ö ÀÖÀ¸¸ç,",
-		"¡×b¹°¡×f »óÅÂ°¡ ÇØÁ¦µÉ ¶§ ÁÖº¯ Àû¿¡°Ô ¡×7ºÎ½Ä¡×f »óÅÂÀÌ»óÀ» °Ì´Ï´Ù.",
-		"¡×7ºÎ½Ä¡×fµÈ ÀûÀº ¹æ¾î·ÂÀÌ °¨¼ÒÇÏ°í Ã¶ ¾ÆÀÌÅÛÀ» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù."
+		"ëª¨ë“  ë¶ˆ í”¼í•´, ìƒíƒœì´ìƒ, í¬ì…˜ íš¨ê³¼ì— ë©´ì—­ì´ ìƒê¹ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ ì‹œÂ§f Â§bë¬¼Â§f ìƒíƒœê°€ ë˜ì–´ ì§€ë©´ì— ë§ë‹¿ì•„ ì´ë™í•  ìˆ˜ ìˆìœ¼ë©°,",
+		"Â§bë¬¼Â§f ìƒíƒœê°€ í•´ì œë  ë•Œ ì£¼ë³€ ì ì—ê²Œ Â§7ë¶€ì‹Â§f ìƒíƒœì´ìƒì„ ê²ë‹ˆë‹¤.",
+		"Â§7ë¶€ì‹Â§fëœ ì ì€ ë°©ì–´ë ¥ì´ ê°ì†Œí•˜ê³  ì²  ì•„ì´í…œì„ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
 		})
 
 public class Soda extends AbilityBase implements ActiveHandler {
@@ -75,7 +78,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(Soda.class,
-			"duration", 7, "# ¹° »óÅÂ Áö¼Ó½Ã°£") {
+			"duration", 7, "# ë¬¼ ìƒíƒœ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -85,7 +88,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> EFFECT_DURATION 
 	= abilitySettings.new SettingObject<Integer>(Soda.class,
-			"effect-duration", 5, "# ºÎ½Ä Áö¼Ó½Ã°£") {
+			"effect-duration", 5, "# ë¶€ì‹ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -95,7 +98,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(Soda.class,
-			"range", 5, "# ºÎ½Ä ¹üÀ§") {
+			"range", 5, "# ë¶€ì‹ ë²”ìœ„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -105,7 +108,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(Soda.class,
-			"cooldown", 30, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 30, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -188,6 +191,11 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		public void run(int count) {
     		for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
     			getPlayer().removePotionEffect(pe.getType());
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 1, RegainReason.CUSTOM);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + 1);
+				}
     		}
     		if (getPlayer().getFireTicks() > 0) {
     			getPlayer().setFireTicks(0);
@@ -236,6 +244,11 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
 		e.setCancelled(true);
+		final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 1, RegainReason.CUSTOM);
+		Bukkit.getPluginManager().callEvent(event);
+		if (!event.isCancelled()) {
+			Healths.setHealth(getPlayer(), getPlayer().getHealth() + 1);
+		}
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)

@@ -36,45 +36,45 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "¶óÀÌÆ®´× Ä«¿îÅÍ", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¡×7´Ş¸®±â ¡×8- ¡×3»¡¸®»¡¸®¡×f: ´Ş¸®¸é¼­ 10ÃÊ ¾È¿¡ ´©±º°¡¸¦ ½ºÃÄ Áö³ª°¥ ¶§¸¶´Ù",
-		" $[DAMAGE]ÀÇ ÇÇÇØ¸¦ ÀÔÈ÷°í ´À¸®°Ô ¸¸µé¸ç, °¡¼ÓÇÕ´Ï´Ù. ´Ş¸®Áö ¾ÊÀ» ¶§ °¡¼ÓÀ» 1 ÀÒ½À´Ï´Ù.",
-		"¡×7°¡¼Ó ¡×8- ¡×b³²µéº¸´Ù ºü¸£°Ô!¡×f: °¡¼Ó ½Ã¸¶´Ù ÀÌµ¿ ¼Óµµ°¡ Áõ°¡ÇÏ¸ç,",
-		" ½ºÄ¡¸ç ÁÖ´Â ÇÇÇØ·®ÀÌ $[DAMAGE_INCREASE]¾¿ Áõ°¡ÇÕ´Ï´Ù. ÃÖ´ë 5´Ü°è±îÁö °¡¼ÓÀÌ °¡´ÉÇÏ°í",
-		" ¸Å °¡¼Ó ½Ã¸¶´Ù ¡×3»¡¸®»¡¸®¡×fÀÇ Áö¼Ó ½Ã°£ÀÌ 10ÃÊ·Î °»½ÅµË´Ï´Ù.",
-		"¡×7ÇÇ°İ ¡×8- ¡×c³»°¡ Á³´Ù°í?¡×f: ÃÖ´ë °¡¼Ó Áß ÇÃ·¹ÀÌ¾î¿¡°Ô ÇÇÇØ¹ŞÀ» ¶§",
-		" °¡¼ÓÀÌ ÃÊ±âÈ­µÇ°í, ÄğÅ¸ÀÓÀ» °¡Áı´Ï´Ù. $[COOLDOWN]",
-		"¡×7±ÙÁ¢ °ø°İ ¡×8- ¡×eE=mc©÷¡×f: ³» ÇöÀç ÀÌµ¿ ¼Óµµ¿¡ ºñ·ÊÇÏ¿© ÇÇÇØ·®ÀÌ °­·ÂÇØÁı´Ï´Ù."
+		name = "ë¼ì´íŠ¸ë‹ ì¹´ìš´í„°", rank = Rank.A, species = Species.HUMAN, explain = {
+		"Â§7ë‹¬ë¦¬ê¸° Â§8- Â§3ë¹¨ë¦¬ë¹¨ë¦¬Â§f: ë‹¬ë¦¬ë©´ì„œ 10ì´ˆ ì•ˆì— ëˆ„êµ°ê°€ë¥¼ ìŠ¤ì³ ì§€ë‚˜ê°ˆ ë•Œë§ˆë‹¤",
+		" $[DAMAGE]ì˜ í”¼í•´ë¥¼ ì…íˆê³  ëŠë¦¬ê²Œ ë§Œë“¤ë©°, ê°€ì†í•©ë‹ˆë‹¤. ë‹¬ë¦¬ì§€ ì•Šì„ ë•Œ ê°€ì†ì„ 1 ìƒìŠµë‹ˆë‹¤.",
+		"Â§7ê°€ì† Â§8- Â§bë‚¨ë“¤ë³´ë‹¤ ë¹ ë¥´ê²Œ!Â§f: ê°€ì† ì‹œë§ˆë‹¤ ì´ë™ ì†ë„ê°€ ì¦ê°€í•˜ë©°,",
+		" ìŠ¤ì¹˜ë©° ì£¼ëŠ” í”¼í•´ëŸ‰ì´ $[DAMAGE_INCREASE]ì”© ì¦ê°€í•©ë‹ˆë‹¤. ìµœëŒ€ 5ë‹¨ê³„ê¹Œì§€ ê°€ì†ì´ ê°€ëŠ¥í•˜ê³ ",
+		" ë§¤ ê°€ì† ì‹œë§ˆë‹¤ Â§3ë¹¨ë¦¬ë¹¨ë¦¬Â§fì˜ ì§€ì† ì‹œê°„ì´ 10ì´ˆë¡œ ê°±ì‹ ë©ë‹ˆë‹¤.",
+		"Â§7í”¼ê²© Â§8- Â§cë‚´ê°€ ì¡Œë‹¤ê³ ?Â§f: ìµœëŒ€ ê°€ì† ì¤‘ í”Œë ˆì´ì–´ì—ê²Œ í”¼í•´ë°›ì„ ë•Œ",
+		" ê°€ì†ì´ ì´ˆê¸°í™”ë˜ê³ , ì¿¨íƒ€ì„ì„ ê°€ì§‘ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7ê·¼ì ‘ ê³µê²© Â§8- Â§eE=mcÂ²Â§f: ë‚´ í˜„ì¬ ì´ë™ ì†ë„ì— ë¹„ë¡€í•˜ì—¬ í”¼í•´ëŸ‰ì´ ê°•ë ¥í•´ì§‘ë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×7´Ş¸®¸é¼­ ´©±º°¡¸¦ ½ºÃÄ Áö³ª°¡¸é¡×f ÇÇÇØ¸¦ ÀÔÈ÷°í ´À¸®°Ô ¸¸µç ÈÄ, ¡×b°¡¼Ó¡×fÇÕ´Ï´Ù.",
-		"´Ş¸®±â¸¦ ÇØÁ¦ÇÒ ¶§¸¶´Ù °¡¼ÓÀ» 1 ÀÒ°í, ¡×b°¡¼Ó¡×fÀÇ ¼öÄ¡¸¸Å­",
-		"½ºÃÄ Áö³ª°¡´Â ÇÇÇØ·®ÀÌ Á¡Á¡ Áõ°¡ÇÕ´Ï´Ù.",
-		"¶ÇÇÑ ³» ÇöÀç ÀÌµ¿ ¼Óµµ¿¡ ºñ·ÊÇÏ¿© ±ÙÁ¢ Å¸°İ ½Ã Ãß°¡ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù."
+		"Â§7ë‹¬ë¦¬ë©´ì„œ ëˆ„êµ°ê°€ë¥¼ ìŠ¤ì³ ì§€ë‚˜ê°€ë©´Â§f í”¼í•´ë¥¼ ì…íˆê³  ëŠë¦¬ê²Œ ë§Œë“  í›„, Â§bê°€ì†Â§fí•©ë‹ˆë‹¤.",
+		"ë‹¬ë¦¬ê¸°ë¥¼ í•´ì œí•  ë•Œë§ˆë‹¤ ê°€ì†ì„ 1 ìƒê³ , Â§bê°€ì†Â§fì˜ ìˆ˜ì¹˜ë§Œí¼",
+		"ìŠ¤ì³ ì§€ë‚˜ê°€ëŠ” í”¼í•´ëŸ‰ì´ ì ì  ì¦ê°€í•©ë‹ˆë‹¤.",
+		"ë˜í•œ ë‚´ í˜„ì¬ ì´ë™ ì†ë„ì— ë¹„ë¡€í•˜ì—¬ ê·¼ì ‘ íƒ€ê²© ì‹œ ì¶”ê°€ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "ºü¸¥ ÀÌµ¿¼Óµµ¸¦ »ì·Á ÀûÀ» Ä¡°í ³ª°¡¸ç ½Î¿ì´Â ´É·ÂÀÔ´Ï´Ù.",
-        "±âº» ÀÌµ¿¼Óµµ°¡ Áõ°¡ÇÏ±â ¶§¹®¿¡ ½Å¼Ó ¹öÇÁ¸¦ ¾ò´Â´Ù¸é ´õ »¡¸®",
-        "¿òÁ÷ÀÏ ¼ö ÀÖ°í, Áßµµ¿¡ ´Ş¸®±â°¡ ²÷±âÁö ¾Ê¾Æ¾ß ÇÏ±â¿¡",
-        "³ĞÀº ÆòÁö ÁöÇü ¹× ¹¶ÃÄÀÖ´Â ¿©·µ ´ë»óÀ¸·Î À¯¸®ÇÕ´Ï´Ù.",
-        "´Ù¸¸ ´Ş¸®´Â µµÁß °ø°İ ½Ã ´Ş¸®±â°¡ ²÷±â´Â ÆÇÁ¤ÀÌ Á¸ÀçÇÏ¹Ç·Î",
-        "´É·ÂÀ» Àß »ì¸®°í ½Í´Ù¸é ÁÖÀÇÇÏ¼¼¿ä."
+        "ë¹ ë¥¸ ì´ë™ì†ë„ë¥¼ ì‚´ë ¤ ì ì„ ì¹˜ê³  ë‚˜ê°€ë©° ì‹¸ìš°ëŠ” ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "ê¸°ë³¸ ì´ë™ì†ë„ê°€ ì¦ê°€í•˜ê¸° ë•Œë¬¸ì— ì‹ ì† ë²„í”„ë¥¼ ì–»ëŠ”ë‹¤ë©´ ë” ë¹¨ë¦¬",
+        "ì›€ì§ì¼ ìˆ˜ ìˆê³ , ì¤‘ë„ì— ë‹¬ë¦¬ê¸°ê°€ ëŠê¸°ì§€ ì•Šì•„ì•¼ í•˜ê¸°ì—",
+        "ë„“ì€ í‰ì§€ ì§€í˜• ë° ë­‰ì³ìˆëŠ” ì—¬ëŸ¿ ëŒ€ìƒìœ¼ë¡œ ìœ ë¦¬í•©ë‹ˆë‹¤.",
+        "ë‹¤ë§Œ ë‹¬ë¦¬ëŠ” ë„ì¤‘ ê³µê²© ì‹œ ë‹¬ë¦¬ê¸°ê°€ ëŠê¸°ëŠ” íŒì •ì´ ì¡´ì¬í•˜ë¯€ë¡œ",
+        "ëŠ¥ë ¥ì„ ì˜ ì‚´ë¦¬ê³  ì‹¶ë‹¤ë©´ ì£¼ì˜í•˜ì„¸ìš”."
 }, strong = {
-        @Description(subject = "¼Óµµ", explain = {
-        		"ºü¸¥ ¼Óµµ¾ß¸»·Î ÀÌ ´É·ÂÀÇ °­Á¡ÀÔ´Ï´Ù.",
-        		"´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ Ãß°İÇÒ ¶§µµ, »óÈ²À» ¹ş¾î³¯ ¶§µµ",
-        		"±âº»ÀûÀÎ ¼Óµµ Áõ°¡´Â ÁÁ°Ô ÀÛ¿ëÇÕ´Ï´Ù."
+        @Description(subject = "ì†ë„", explain = {
+        		"ë¹ ë¥¸ ì†ë„ì•¼ë§ë¡œ ì´ ëŠ¥ë ¥ì˜ ê°•ì ì…ë‹ˆë‹¤.",
+        		"ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ì¶”ê²©í•  ë•Œë„, ìƒí™©ì„ ë²—ì–´ë‚  ë•Œë„",
+        		"ê¸°ë³¸ì ì¸ ì†ë„ ì¦ê°€ëŠ” ì¢‹ê²Œ ì‘ìš©í•©ë‹ˆë‹¤."
         }),
-        @Description(subject = "Æò¾ß", explain = {
-        		"´Ş¸®±â°¡ ²÷ÀÌÁö ¾Ê¾Æ¾ß ÇÏ±â ¶§¹®¿¡, Æò¾ß µî",
-        		"Àå¾Ö¹°ÀÌ ¾ø´Â ÁöÇü¿¡¼­ ´õ¿í À¯¸®ÇÕ´Ï´Ù."
+        @Description(subject = "í‰ì•¼", explain = {
+        		"ë‹¬ë¦¬ê¸°ê°€ ëŠì´ì§€ ì•Šì•„ì•¼ í•˜ê¸° ë•Œë¬¸ì—, í‰ì•¼ ë“±",
+        		"ì¥ì• ë¬¼ì´ ì—†ëŠ” ì§€í˜•ì—ì„œ ë”ìš± ìœ ë¦¬í•©ë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "Àå¾Ö¹°", explain = {
-        		"»ê µî ÀÚ¿¬ÀûÀÎ »ó½ÂÁöÇü°ú ³ª¹«, °Ç¹° µî ¸ğµç ºí·ÏÀÌ",
-        		"ÀÌ ´É·ÂÀÇ Àå¾Ö¹°ÀÌ µÉ ¼ö ÀÖ½À´Ï´Ù. °¡´ÉÇÏ´Ù¸é Æò¾ß¸¦",
-        		"Ã£´Â °ÍÀ» ÃßÃµµå¸³´Ï´Ù."
+        @Description(subject = "ì¥ì• ë¬¼", explain = {
+        		"ì‚° ë“± ìì—°ì ì¸ ìƒìŠ¹ì§€í˜•ê³¼ ë‚˜ë¬´, ê±´ë¬¼ ë“± ëª¨ë“  ë¸”ë¡ì´",
+        		"ì´ ëŠ¥ë ¥ì˜ ì¥ì• ë¬¼ì´ ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤. ê°€ëŠ¥í•˜ë‹¤ë©´ í‰ì•¼ë¥¼",
+        		"ì°¾ëŠ” ê²ƒì„ ì¶”ì²œë“œë¦½ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.TWO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.SIX, utility = Level.ZERO), difficulty = Difficulty.NORMAL)
 
@@ -88,7 +88,7 @@ public class LightningCounter extends AbilityBase {
 	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1, true, false);
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			LightningCounter.class, "cooldown", 10, "# ÄğÅ¸ÀÓ") {
+			LightningCounter.class, "cooldown", 10, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -101,7 +101,7 @@ public class LightningCounter extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DAMAGE = abilitySettings.new SettingObject<Double>(
-			LightningCounter.class, "damage", 7.0, "# ±âº» ´ë¹ÌÁö") {
+			LightningCounter.class, "damage", 7.0, "# ê¸°ë³¸ ëŒ€ë¯¸ì§€") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -109,7 +109,7 @@ public class LightningCounter extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(
-			LightningCounter.class, "damage-increase", 1.0, "# ´ë¹Ì½Ã »ó½Â·®") {
+			LightningCounter.class, "damage-increase", 1.0, "# ëŒ€ë¯¸ì‹œ ìƒìŠ¹ëŸ‰") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -118,7 +118,7 @@ public class LightningCounter extends AbilityBase {
 	
 	protected void onUpdate(AbilityBase.Update update) {
 		if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
-			actionbarChannel.update("¡×3°¡¼Ó ¡×b0¡×3´Ü°è");
+			actionbarChannel.update("Â§3ê°€ì† Â§b0Â§3ë‹¨ê³„");
 		    running.start();
 		    getPlayer().setWalkSpeed(0.3f);
 		    getPlayer().setFlySpeed(0.2f);
@@ -188,7 +188,7 @@ public class LightningCounter extends AbilityBase {
 			} else if (!getPlayer().isSprinting() && !RunCool.isRunning() && attacking.isRunning() && attacking.stack >= 1) {
 				attacking.stack--;
 				attacking.stop(true);
-				actionbarChannel.update("¡×3°¡¼Ó ¡×b" + attacking.stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: ¡×fÁ¾·á");
+				actionbarChannel.update("Â§3ê°€ì† Â§b" + attacking.stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: Â§fì¢…ë£Œ");
 				float speed = 0.2f;
 				switch(attacking.stack) {
 				case 0:
@@ -228,7 +228,7 @@ public class LightningCounter extends AbilityBase {
 		
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update("¡×3°¡¼Ó ¡×b" + stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: " + getFixedCount() + "ÃÊ");		
+			actionbarChannel.update("Â§3ê°€ì† Â§b" + stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: " + getFixedCount() + "ì´ˆ");		
 			if (!getPlayer().isDead() && getPlayer().isSprinting()) {		
 				if (pentity == null) {
 					for (LivingEntity livingentity : LocationUtil.getConflictingEntities(LivingEntity.class, getPlayer(), predicate)) {
@@ -253,7 +253,7 @@ public class LightningCounter extends AbilityBase {
 			}
 			if (isRunning()) {
 				setCount(200);
-				actionbarChannel.update("¡×3°¡¼Ó ¡×b" + stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: " + getFixedCount() + "ÃÊ");
+				actionbarChannel.update("Â§3ê°€ì† Â§b" + stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: " + getFixedCount() + "ì´ˆ");
 			}
 			float speed = 0.2f;
 			switch(attacking.stack) {
@@ -285,7 +285,7 @@ public class LightningCounter extends AbilityBase {
 		
 		@Override
 		protected void onEnd() {
-			actionbarChannel.update("¡×6Áö¼Ó ½Ã°£ ¡×fÁ¾·á");
+			actionbarChannel.update("Â§6ì§€ì† ì‹œê°„ Â§fì¢…ë£Œ");
 			stack = 0;
 			getPlayer().setWalkSpeed(0.3f);
 			getPlayer().setFlySpeed(0.2f);

@@ -47,22 +47,22 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import kotlin.ranges.RangesKt;
 
-@AbilityManifest(name = "½Å¼±", rank = Rank.L, species = Species.GOD, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×b½Å¼±³îÀ½¡×f: ÀÚ½ÅÀÇ ºĞ½ÅÀ» $[DURATION]ÃÊ°£ ÇöÀç À§Ä¡¿¡ ¼ÒÈ¯ÇÕ´Ï´Ù.",
-		" ºĞ½ÅÀ¸·ÎºÎÅÍ 6Ä­ ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î´Â ºĞ½Å¿¡°Ô µµ¹ß´çÇÕ´Ï´Ù.",
-		" ºĞ½Å Áö¼Ó Áß ÀÚ½ÅÀÌ ÁÖ´Â ¸ğµç ÇÇÇØ·®ÀÌ 50%·Î °¨¼ÒÇÕ´Ï´Ù. $[COOLDOWN]",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×b½ÅÃâ±Í¸ô¡×f: ½Å¼±³îÀ½ Áö¼Ó µµÁß »ç¿ë ½Ã Áö¼Ó½Ã°£ 1ÃÊ¸¦ ¼Ò¸ğÇØ",
-		" ÀÚ½ÅÀÇ À§Ä¡¿Í ºĞ½ÅÀÇ À§Ä¡¸¦ ¼­·Î µÚ¹Ù²Ù°í ÇÇÇØ·® °¨¼Ò¸¦ 2ÃÊ°£ ¾ø¾Û´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×bÇã°ø´äº¸¡×f: ³«ÇÏÇÏ¸ç °øÁß¿¡¼­ ¿õÅ©¸± ½Ã ÇÑ ¹ø ´õ Á¡ÇÁÇÕ´Ï´Ù.",
-		" »ç¿ë ÈÄ Ã¹ ³«ÇÏ ÇÇÇØ¸¦ ¹«½ÃÇÕ´Ï´Ù. »ç¿ë ÈÄ ÂøÁö Àü °øÁß¿¡¼­ ±ÙÁ¢ Å¸°İÇßÀ» ¶§",
-		" Ã¼°øÇÑ ½Ã°£¿¡ ºñ·ÊÇÏ¿© ÃÖ´ë 5ÀÇ Ãß°¡ ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ½À´Ï´Ù."
+@AbilityManifest(name = "ì‹ ì„ ", rank = Rank.L, species = Species.GOD, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bì‹ ì„ ë†€ìŒÂ§f: ìì‹ ì˜ ë¶„ì‹ ì„ $[DURATION]ì´ˆê°„ í˜„ì¬ ìœ„ì¹˜ì— ì†Œí™˜í•©ë‹ˆë‹¤.",
+		" ë¶„ì‹ ìœ¼ë¡œë¶€í„° 6ì¹¸ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ëŠ” ë¶„ì‹ ì—ê²Œ ë„ë°œë‹¹í•©ë‹ˆë‹¤.",
+		" ë¶„ì‹  ì§€ì† ì¤‘ ìì‹ ì´ ì£¼ëŠ” ëª¨ë“  í”¼í•´ëŸ‰ì´ $[DAMAGE_DECREASE]%ë¡œ ê°ì†Œí•©ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bì‹ ì¶œê·€ëª°Â§f: ì‹ ì„ ë†€ìŒ ì§€ì† ë„ì¤‘ ì‚¬ìš© ì‹œ ì§€ì†ì‹œê°„ 1ì´ˆë¥¼ ì†Œëª¨í•´",
+		" ìì‹ ì˜ ìœ„ì¹˜ì™€ ë¶„ì‹ ì˜ ìœ„ì¹˜ë¥¼ ì„œë¡œ ë’¤ë°”ê¾¸ê³  í”¼í•´ëŸ‰ ê°ì†Œë¥¼ 2ì´ˆê°„ ì—†ì•±ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bí—ˆê³µë‹µë³´Â§f: ë‚™í•˜í•˜ë©° ê³µì¤‘ì—ì„œ ì›…í¬ë¦´ ì‹œ í•œ ë²ˆ ë” ì í”„í•©ë‹ˆë‹¤.",
+		" ì‚¬ìš© í›„ ì²« ë‚™í•˜ í”¼í•´ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤. ì‚¬ìš© í›„ ì°©ì§€ ì „ ê³µì¤‘ì—ì„œ ê·¼ì ‘ íƒ€ê²©í–ˆì„ ë•Œ",
+		" ì²´ê³µí•œ ì‹œê°„ì— ë¹„ë¡€í•˜ì—¬ ìµœëŒ€ 5ì˜ ì¶”ê°€ í”¼í•´ë¥¼ ì…í ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ½Ã¡×f ÀûÀÇ ½Ã¼±À» °­Á¦·Î Á¶ÀÛÇÏ´Â ¡×3ºĞ½Å¡×fÀ» ¼ÒÈ¯ÇÕ´Ï´Ù. $[COOLDOWN]",
-		"ºĞ½ÅÀÌ ÀÖÀ» ¶§ ¸ğµç ÇÇÇØ·®ÀÌ 50% °¨¼ÒÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ½Ã¡×f ºĞ½ÅÀÌ ÀÖÀ» ¶§ Áö¼Ó½Ã°£ 1ÃÊ¸¦ ¼Ò¸ğÇØ ºĞ½Å°ú ³ªÀÇ À§Ä¡¸¦ µÚ¹Ù²Ù°í",
-		"ÇÇÇØ·® °¨¼Ò È¿°ú¸¦ 2ÃÊ°£ Á¦°ÅÇÕ´Ï´Ù.",
-		"°øÁß¿¡¼­ ¿õÅ©¸± ½Ã ÇÑ ¹ø ´õ Á¡ÇÁÇÏ°í Ã¹ ³«ÇÏ ÇÇÇØ¸¦ ¹«½ÃÇÕ´Ï´Ù."
+		"Â§7ì² ê´´ ìš°í´ë¦­ ì‹œÂ§f ì ì˜ ì‹œì„ ì„ ê°•ì œë¡œ ì¡°ì‘í•˜ëŠ” Â§3ë¶„ì‹ Â§fì„ ì†Œí™˜í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		"ë¶„ì‹ ì´ ìˆì„ ë•Œ ëª¨ë“  í”¼í•´ëŸ‰ì´ 50% ê°ì†Œí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ ì‹œÂ§f ë¶„ì‹ ì´ ìˆì„ ë•Œ ì§€ì†ì‹œê°„ 1ì´ˆë¥¼ ì†Œëª¨í•´ ë¶„ì‹ ê³¼ ë‚˜ì˜ ìœ„ì¹˜ë¥¼ ë’¤ë°”ê¾¸ê³ ",
+		"í”¼í•´ëŸ‰ ê°ì†Œ íš¨ê³¼ë¥¼ 2ì´ˆê°„ ì œê±°í•©ë‹ˆë‹¤.",
+		"ê³µì¤‘ì—ì„œ ì›…í¬ë¦´ ì‹œ í•œ ë²ˆ ë” ì í”„í•˜ê³  ì²« ë‚™í•˜ í”¼í•´ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤."
 		})
 
 @SuppressWarnings("deprecation")
@@ -79,6 +79,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	private BossBar bossBar = null;
 	private BossBar bossBar2 = null;
 	private int addDamage = 0;
+	private final int decrease = DAMAGE_DECREASE.getValue();
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	
@@ -112,7 +113,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Divinity.class,
-			"cooldown", 100, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 100, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -126,7 +127,16 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION 
 	= abilitySettings.new SettingObject<Integer>(Divinity.class,
-			"duration", 8, "# Áö¼Ó ½Ã°£") {
+			"duration", 8, "# ì§€ì† ì‹œê°„") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_DECREASE 
+	= abilitySettings.new SettingObject<Integer>(Divinity.class,
+			"damage-decrease", 30, "# ë¶„ì‹  ì§€ì† ì¤‘ ëŒ€ë¯¸ì§€ ê°ì†Œ") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -156,7 +166,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 			    		nodamage.start();	
 		    		}
 		    	} else {
-			    	getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cºĞ½ÅÀÌ ¾ø°Å³ª, ´É·ÂÀÌ Áö¼Ó ÁßÀÌÁö ¾Ê½À´Ï´Ù.");	
+			    	getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cë¶„ì‹ ì´ ì—†ê±°ë‚˜, ëŠ¥ë ¥ì´ ì§€ì† ì¤‘ì´ì§€ ì•ŠìŠµë‹ˆë‹¤.");	
 		    	}
 		    }
 		}
@@ -167,7 +177,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onStart() {
-    		bossBar2 = Bukkit.createBossBar("Ã¼°ø Ãß°¡ ÇÇÇØ·®", BarColor.WHITE, BarStyle.SEGMENTED_10);
+    		bossBar2 = Bukkit.createBossBar("ì²´ê³µ ì¶”ê°€ í”¼í•´ëŸ‰", BarColor.WHITE, BarStyle.SEGMENTED_10);
     		bossBar2.setProgress(0);
     		bossBar2.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar2.setVisible(true);
@@ -195,7 +205,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onStart() {
-    		bossBar = Bukkit.createBossBar("´ë¹ÌÁö °¨¼Ò ¹«È¿È­", BarColor.BLUE, BarStyle.SEGMENTED_6);
+    		bossBar = Bukkit.createBossBar("ëŒ€ë¯¸ì§€ ê°ì†Œ ë¬´íš¨í™”", BarColor.BLUE, BarStyle.SEGMENTED_6);
     		bossBar.setProgress(1);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -282,12 +292,12 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		if (skill.isRunning()) {
 			if (!nodamage.isRunning()) {
 				if (e.getDamager().equals(getPlayer())) {
-					e.setDamage(e.getDamage() * 0.5);
+					e.setDamage(e.getDamage() * ((100 - decrease) * 0.01));
 				}
 				if (e.getDamager() instanceof Projectile) {
 					Projectile p = (Projectile) e.getDamager();
 					if (getPlayer().equals(p.getShooter())) {
-						e.setDamage(e.getDamage() * 0.5);
+						e.setDamage(e.getDamage() * ((100 - decrease) * 0.01));
 					}
 				}	
 			}
@@ -306,7 +316,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 			armorstand = getPlayer().getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
 			if (ServerVersion.getVersion() >= 10 && ServerVersion.getVersion() < 15)
 				armorstand.setInvulnerable(true);
-			armorstand.setCustomName("¡×e" + getPlayer().getName() + "¡×fÀÇ ¡×bºĞ½Å");
+			armorstand.setCustomName("Â§e" + getPlayer().getName() + "Â§fì˜ Â§bë¶„ì‹ ");
 			armorstand.setCustomNameVisible(true);
 			armorstand.setBasePlate(false);
 			armorstand.setArms(true);
@@ -320,7 +330,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		protected void onDurationProcess(int count) {
 			if (armorstand == null) {
 				this.stop(false);
-				getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cºĞ½ÅÀÌ »ç¶óÁ® ´É·ÂÀÌ Áï½Ã Á¾·áµÇ¾ú½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cë¶„ì‹ ì´ ì‚¬ë¼ì ¸ ëŠ¥ë ¥ì´ ì¦‰ì‹œ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
 			}
 			if (count % 8 == 0) {
 				for (Location loc : sphere.toLocations(armorstand.getLocation().clone().add(0, 1, 0))) {

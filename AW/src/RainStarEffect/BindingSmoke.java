@@ -23,11 +23,11 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "¼Ó¹ÚÀÇ ¿¬¸·", displayName = "¡×8¼Ó¹ÚÀÇ ¿¬¸·", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ì†ë°•ì˜ ì—°ë§‰", displayName = "Â§8ì†ë°•ì˜ ì—°ë§‰", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"Á¡ÇÁ ¹× ÀÌµ¿ ¼Óµµ°¡ ±Ş°İÇÏ°Ô °¨¼ÒÇÕ´Ï´Ù.",
-		"¶ÇÇÑ ¿£Æ¼Æ¼¿¡ ÀÇÇÑ ÇÇÇØ ¿Ü ¸ğµç ÇÇÇØ¸¦ 1.5¹è·Î ¹Ş½À´Ï´Ù."
+		"ì í”„ ë° ì´ë™ ì†ë„ê°€ ê¸‰ê²©í•˜ê²Œ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"ë˜í•œ ì—”í‹°í‹°ì— ì˜í•œ í”¼í•´ ì™¸ ëª¨ë“  í”¼í•´ë¥¼ 1.5ë°°ë¡œ ë°›ìŠµë‹ˆë‹¤."
 })
 public class BindingSmoke extends AbstractGame.Effect implements Listener {
 

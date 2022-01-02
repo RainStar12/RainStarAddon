@@ -32,12 +32,12 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "ÈÆ¼ö", displayName = "¡×cÈÆ¼ö", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "í›ˆìˆ˜", displayName = "Â§cí›ˆìˆ˜", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.SIGHT_RESTRICTION
 }, description = {
-		"ÇÃ·¹ÀÌ¾î°¡ Æ¯Á¤ Çàµ¿µéÀ» ÇÒ ¶§¸¶´Ù È®·üÀûÀ¸·Î ÈÆ¼ö¸¦ µÓ´Ï´Ù.",
-		"ÈÆ¼ö¸¦ ¹ŞÀ¸¸é ½Ã¾ß°¡ Àá±ñ ºÀÀÎµË´Ï´Ù.",
-		"ÀÌ È¿°ú´Â ÀÚµ¿ ¿µ±¸ Áö¼Ó È¿°úÀÔ´Ï´Ù."
+		"í”Œë ˆì´ì–´ê°€ íŠ¹ì • í–‰ë™ë“¤ì„ í•  ë•Œë§ˆë‹¤ í™•ë¥ ì ìœ¼ë¡œ í›ˆìˆ˜ë¥¼ ë‘¡ë‹ˆë‹¤.",
+		"í›ˆìˆ˜ë¥¼ ë°›ìœ¼ë©´ ì‹œì•¼ê°€ ì ê¹ ë´‰ì¸ë©ë‹ˆë‹¤.",
+		"ì´ íš¨ê³¼ëŠ” ìë™ ì˜êµ¬ ì§€ì† íš¨ê³¼ì…ë‹ˆë‹¤."
 })
 public class BackseatGaming extends AbstractGame.Effect implements Listener {
 
@@ -73,7 +73,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(5) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ½Î¿ò ±×·¸°Ô ÇÏ´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ì‹¸ì›€ ê·¸ë ‡ê²Œ í•˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -84,7 +84,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(10) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ È° ±×·¸°Ô ½î´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ í™œ ê·¸ë ‡ê²Œ ì˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(5) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ÅÛ ±×·¸°Ô ¶³±¸´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ í…œ ê·¸ë ‡ê²Œ ë–¨êµ¬ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -106,7 +106,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(5) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ½º¿Ò ±×·¸°Ô ÇÏ´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ìŠ¤ì™‘ ê·¸ë ‡ê²Œ í•˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(20) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ºí·Ï ±×·¸°Ô ºÎ¼ö´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ë¸”ë¡ ê·¸ë ‡ê²Œ ë¶€ìˆ˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -128,7 +128,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(20) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ºí·Ï ±×·¸°Ô ¼³Ä¡ÇÏ´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ë¸”ë¡ ê·¸ë ‡ê²Œ ì„¤ì¹˜í•˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -139,7 +139,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(2) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ±×·¸°Ô Å¸´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ê·¸ë ‡ê²Œ íƒ€ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(2) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ´É·Â ±×·¸°Ô ¾²´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ëŠ¥ë ¥ ê·¸ë ‡ê²Œ ì“°ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -166,7 +166,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 					SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 					SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.7f);
 					SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 0.7f);
-					player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c°³¸øÇÏ³× ¤»");
+					player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cê°œëª»í•˜ë„¤ ã…‹");
 				}
 			}.runTaskLater(AbilityWar.getPlugin(), 60L);
 			stop(false);
@@ -179,7 +179,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(1000) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ¹«ºù ±×·¸°Ô Ä¡´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ ë¬´ë¹™ ê·¸ë ‡ê²Œ ì¹˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -190,7 +190,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(20) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ ÆÄ¹Ö ±×·¸°Ô ÇÏ´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ íŒŒë° ê·¸ë ‡ê²Œ í•˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}
@@ -201,7 +201,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 			if (random.nextInt(15) == 0) {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
-				player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×c¾Æ~ È¸º¹ ±×·¸°Ô ÇÏ´Â °Å ¾Æ´Ñµ¥~");
+				player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§cì•„~ íšŒë³µ ê·¸ë ‡ê²Œ í•˜ëŠ” ê±° ì•„ë‹Œë°~");
 			}
 		}
 	}

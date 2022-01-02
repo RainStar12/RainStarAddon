@@ -24,14 +24,14 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "¸¶ºñ", displayName = "¡×3¸¶ºñ", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ë§ˆë¹„", displayName = "Â§3ë§ˆë¹„", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_INTERRUPT, EffectType.COMBAT_RESTRICTION, EffectType.SIGHT_RESTRICTION 
 }, description = {
-		"¡×f´«, ÆÈ, ´Ù¸® Áß ÇÑ ºÎºĞÀÌ ¡×3¸¶ºñ¡×fµË´Ï´Ù.",
-		"¡×3¸¶ºñ¡×fµÈ ºÎÀ§¿¡ µû¶ó °¢°¢ÀÇ Çàµ¿ÀÌ Á¦¾àµË´Ï´Ù.",
-		"¡×6´«¡×7: ¡×f½Ã¾ß°¡ Â÷´ÜµË´Ï´Ù. ¡×7(½Ç¸í È¿°ú)",
-		"¡×6ÆÈ¡×7: ¡×f±ÙÁ¢ ÇÇÇØ·®ÀÌ ¸Å¿ì ´À¸®°í ¾àÇØÁı´Ï´Ù.",
-		"¡×6´Ù¸®¡×7: ¡×fÀÌµ¿ ¼Óµµ°¡ ±Ş°İÈ÷ ´À·ÁÁı´Ï´Ù."
+		"Â§fëˆˆ, íŒ”, ë‹¤ë¦¬ ì¤‘ í•œ ë¶€ë¶„ì´ Â§3ë§ˆë¹„Â§fë©ë‹ˆë‹¤.",
+		"Â§3ë§ˆë¹„Â§fëœ ë¶€ìœ„ì— ë”°ë¼ ê°ê°ì˜ í–‰ë™ì´ ì œì•½ë©ë‹ˆë‹¤.",
+		"Â§6ëˆˆÂ§7: Â§fì‹œì•¼ê°€ ì°¨ë‹¨ë©ë‹ˆë‹¤. Â§7(ì‹¤ëª… íš¨ê³¼)",
+		"Â§6íŒ”Â§7: Â§fê·¼ì ‘ í”¼í•´ëŸ‰ì´ ë§¤ìš° ëŠë¦¬ê³  ì•½í•´ì§‘ë‹ˆë‹¤.",
+		"Â§6ë‹¤ë¦¬Â§7: Â§fì´ë™ ì†ë„ê°€ ê¸‰ê²©íˆ ëŠë ¤ì§‘ë‹ˆë‹¤."
 })
 public class Paralysis extends AbstractGame.Effect implements Listener {
 

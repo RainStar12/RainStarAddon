@@ -42,17 +42,17 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @SuppressWarnings("deprecation")
-@AbilityManifest(name = "ÇÇ°¡ º¹»ç°¡ µÈ´Ù°í", rank = Rank.L, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×eÅ©¸®½ºÅ»Àº ¹«ÀûÀÌ´Ù¡×f: Èí¼ö Ã¼·ÂÀ» ÇÑ Ä­ ÀÌ»ó °¡Áö°í ÀÖÀ» ¶§ Èí¼ö", 
-		" Ã¼·Â·®À» ³Ñ´Â ÇÇÇØ·®ÀÌ µé¾î¿Â´Ù¸é, ¿ÀÁ÷ Èí¼ö Ã¼·Â¸¸ÀÌ ¼ÒÁøµË´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×c·çº£¸£´Â \"½Å\"ÀÌ°í¡×f: ¾î¶² ½ÄÀ¸·Î´ø È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¶§",
-		" ³» Èí¼ö Ã¼·Â·®ÀÌ ³» ÃÖ´ë Ã¼·ÂÀÇ Àı¹İÀ» »óÈ¸ÇÏÁö ¾Ê´Â´Ù¸é",
-		" È¸º¹ È¿°ú¸¸Å­ÀÇ Èí¼ö Ã¼·ÂÀ» ¸Å¹ø Ãß°¡ È¹µæÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×aÃ¼·ÂÀ» »ğÀ¸·Î ÆÛ¼­ ¹èÆ÷ÇÏ°í ÀÖÀİ¾Æ¡×f: ¾î¶² ½ÄÀ¸·Î´ø ÇÇÇØ¸¦ ÀÔÀ» ¶§¸¶´Ù",
-		" 1.3¹èÀÇ ÇÇÇØ¸¦ ÀÔ½À´Ï´Ù. ÀÚ¿¬ È¸º¹ ¼Óµµ°¡ ¸Å¿ì »¡¶óÁı´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×4ÇÇ°¡ º¹»ç°¡ µÈ´Ù°í¡×f: »ó´ë¸¦ ¹Ù¶óº¸°í ÀÌ ´É·ÂÀ» »ç¿ëÇÏ¸é",
-		" ´ë»ó¿¡°Ô¼­ Ã¼·ÂÀ» ¹İ Ä­ ÈíÇ÷ÇÕ´Ï´Ù. $[COOLDOWN_CONFIG]",
-		" ¶ÇÇÑ Ã¼·ÂÀÌ °¡µæ ÀÖÀ» °æ¿ì ÇÑ Ä­ ¼Ò¸ğÇØ ´ë»ó¿¡°Ô Ãß°¡ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù."
+@AbilityManifest(name = "í”¼ê°€ ë³µì‚¬ê°€ ëœë‹¤ê³ ", rank = Rank.L, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§eí¬ë¦¬ìŠ¤íƒˆì€ ë¬´ì ì´ë‹¤Â§f: í¡ìˆ˜ ì²´ë ¥ì„ í•œ ì¹¸ ì´ìƒ ê°€ì§€ê³  ìˆì„ ë•Œ í¡ìˆ˜", 
+		" ì²´ë ¥ëŸ‰ì„ ë„˜ëŠ” í”¼í•´ëŸ‰ì´ ë“¤ì–´ì˜¨ë‹¤ë©´, ì˜¤ì§ í¡ìˆ˜ ì²´ë ¥ë§Œì´ ì†Œì§„ë©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë£¨ë² ë¥´ëŠ” \"ì‹ \"ì´ê³ Â§f: ì–´ë–¤ ì‹ìœ¼ë¡œë˜ íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ë•Œ",
+		" ë‚´ í¡ìˆ˜ ì²´ë ¥ëŸ‰ì´ ë‚´ ìµœëŒ€ ì²´ë ¥ì˜ ì ˆë°˜ì„ ìƒíšŒí•˜ì§€ ì•ŠëŠ”ë‹¤ë©´",
+		" íšŒë³µ íš¨ê³¼ë§Œí¼ì˜ í¡ìˆ˜ ì²´ë ¥ì„ ë§¤ë²ˆ ì¶”ê°€ íšë“í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§aì²´ë ¥ì„ ì‚½ìœ¼ë¡œ í¼ì„œ ë°°í¬í•˜ê³  ìˆì–ì•„Â§f: ì–´ë–¤ ì‹ìœ¼ë¡œë˜ í”¼í•´ë¥¼ ì…ì„ ë•Œë§ˆë‹¤",
+		" $[MULTIPLY]ë°°ì˜ í”¼í•´ë¥¼ ì…ìŠµë‹ˆë‹¤. ìì—° íšŒë³µ ì†ë„ê°€ ë§¤ìš° ë¹¨ë¼ì§‘ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§4í”¼ê°€ ë³µì‚¬ê°€ ëœë‹¤ê³ Â§f: ìƒëŒ€ë¥¼ ë°”ë¼ë³´ê³  ì´ ëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ë©´",
+		" ëŒ€ìƒì—ê²Œì„œ ì²´ë ¥ì„ ë°˜ ì¹¸ í¡í˜ˆí•©ë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		" ë˜í•œ ì²´ë ¥ì´ ê°€ë“ ìˆì„ ê²½ìš° í•œ ì¹¸ ì†Œëª¨í•´ ëŒ€ìƒì—ê²Œ ì¶”ê°€ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤."
 		})
 
 public class HealthCopy extends Synergy implements ActiveHandler {
@@ -62,7 +62,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(HealthCopy.class, "cooldown", 6,
-			"# ÈíÇ÷ ÄğÅ¸ÀÓ") {
+			"# í¡í˜ˆ ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -72,6 +72,15 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 		@Override
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	public static final SettingObject<Double> MULTIPLY = synergySettings.new SettingObject<Double>(HealthCopy.class, "cooldown", 1.3,
+			"# ë°›ëŠ” ëŒ€ë¯¸ì§€ ë°°ìˆ˜") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
 		}
 	};
 	
@@ -124,7 +133,8 @@ public class HealthCopy extends Synergy implements ActiveHandler {
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
     
-	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "ÈíÇ÷", 0);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "í¡í˜ˆ", 0);
+	private final double multiply = MULTIPLY.getValue();
 	private boolean cancelled = false;
 	
 	private static final Note[] notes = new Note[] {
@@ -155,7 +165,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 		if (e.getEntity().equals(getPlayer()) && !getPlayer().isDead()) {
-			e.setDamage(e.getDamage() * 1.3);
+			e.setDamage(e.getDamage() * multiply);
 			if (getPlayer().getHealth() - e.getFinalDamage() > 0) {
 				float yellowheart = NMS.getAbsorptionHearts(getPlayer());
 	    		if (yellowheart >= 2) {

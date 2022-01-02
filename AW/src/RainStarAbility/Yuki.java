@@ -206,7 +206,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public String toString() {
-                return getValue() ? "§b켜짐" : "§c꺼짐";
+			return getValue() ? "§b켜짐" : "§c꺼짐";
         }
 		
 	};

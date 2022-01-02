@@ -17,10 +17,10 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "È¥¶õ", displayName = "¡×6È¥¶õ", method = ApplicationMethod.MULTIPLE, type = {
+@EffectManifest(name = "í˜¼ë€", displayName = "Â§6í˜¼ë€", method = ApplicationMethod.MULTIPLE, type = {
 		EffectType.MOVEMENT_INTERRUPT
 }, description = {
-		"ÀüÈÄÁÂ¿ìÀÇ ¹«ÀÛÀ§ ¹æÇâÀ¸·Î Æ¨°Ü³ª°©´Ï´Ù."
+		"ì „í›„ì¢Œìš°ì˜ ë¬´ì‘ìœ„ ë°©í–¥ìœ¼ë¡œ íŠ•ê²¨ë‚˜ê°‘ë‹ˆë‹¤."
 })
 public class Confusion extends AbstractGame.Effect implements Listener {
 

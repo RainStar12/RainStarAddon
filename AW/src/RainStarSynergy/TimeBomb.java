@@ -56,14 +56,14 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "½ÃÇÑ ÆøÅº", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÆøÆÄ±¤¡×f: ¸ğµç Æø¹ß ÇÇÇØ¸¦ ¹«½ÃÇÏ°í, ¹ŞÀ» ÇÇÇØ¸¸Å­ ¿ªÈ¸º¹ÇÕ´Ï´Ù.",
-		" Æø¹ßÀÌ ÀÏ¾î³¯ ¶§¸¶´Ù Æø¹ß À§Ä¡·Î ¼ø°£ÀÌµ¿ÇÏ°í $[DURATION_CONFIG]ÃÊ°£ Èû 1 ¹öÇÁ¸¦ ¾ò½À´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×c½ÃÇÑ ÆøÅº¡×f: ÀÚ½ÅÀ¸·ÎºÎÅÍ $[RANGE_CONFIG]Ä­ ¹üÀ§ ³» $[BOMB_AMOUNT]°³ÀÇ ÆøÅºÀ» ",
-		" ¹«ÀÛÀ§·Î ¼³Ä¡ÇÕ´Ï´Ù. ÆøÅºµéÀº Á¦°¢±â Æø¹ß ½Ã°£ÀÌ ´Ù¸£¸ç °¢ ÆøÅºÀÇ À§¿¡¼­",
-		" Æø¹ß±îÁöÀÇ ³²Àº ½Ã°£À» º¼ ¼ö ÀÖ½À´Ï´Ù. $[COOLDOWN_CONFIG]",
-		" ½ÃÇÑ ÆøÅºÀÌ ÅÍÁö¸é, Æø¹ß¿¡ ÈÖ¸»¸° ´ë»óÀÇ ½Ã°£À» $[TIMESTOP_DURATION]ÃÊ°£ Á¤Áö½ÃÅµ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×cÆø¹ß Á¶Àı¡×f: ÆøÆÄ±¤À¸·Î ¼ø°£ÀÌµ¿ÇÒ Áö ¿©ºÎ¸¦ °áÁ¤ÇÕ´Ï´Ù."
+@AbilityManifest(name = "ì‹œí•œ í­íƒ„", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cí­íŒŒê´‘Â§f: ëª¨ë“  í­ë°œ í”¼í•´ë¥¼ ë¬´ì‹œí•˜ê³ , ë°›ì„ í”¼í•´ë§Œí¼ ì—­íšŒë³µí•©ë‹ˆë‹¤.",
+		" í­ë°œì´ ì¼ì–´ë‚  ë•Œë§ˆë‹¤ í­ë°œ ìœ„ì¹˜ë¡œ ìˆœê°„ì´ë™í•˜ê³  $[DURATION_CONFIG]ì´ˆê°„ í˜ 1 ë²„í”„ë¥¼ ì–»ìŠµë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cì‹œí•œ í­íƒ„Â§f: ìì‹ ìœ¼ë¡œë¶€í„° $[RANGE_CONFIG]ì¹¸ ë²”ìœ„ ë‚´ $[BOMB_AMOUNT]ê°œì˜ í­íƒ„ì„ ",
+		" ë¬´ì‘ìœ„ë¡œ ì„¤ì¹˜í•©ë‹ˆë‹¤. í­íƒ„ë“¤ì€ ì œê°ê¸° í­ë°œ ì‹œê°„ì´ ë‹¤ë¥´ë©° ê° í­íƒ„ì˜ ìœ„ì—ì„œ",
+		" í­ë°œê¹Œì§€ì˜ ë‚¨ì€ ì‹œê°„ì„ ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		" ì‹œí•œ í­íƒ„ì´ í„°ì§€ë©´, í­ë°œì— íœ˜ë§ë¦° ëŒ€ìƒì˜ ì‹œê°„ì„ $[TIMESTOP_DURATION]ì´ˆê°„ ì •ì§€ì‹œí‚µë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§cí­ë°œ ì¡°ì ˆÂ§f: í­íŒŒê´‘ìœ¼ë¡œ ìˆœê°„ì´ë™í•  ì§€ ì—¬ë¶€ë¥¼ ê²°ì •í•©ë‹ˆë‹¤."
 		})
 
 public class TimeBomb extends Synergy implements ActiveHandler {
@@ -105,7 +105,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
 			synergySettings.new SettingObject<Integer>(TimeBomb.class, "cooldown", 200,
-            "# Ã¶±« ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ", "# ´ÜÀ§: ÃÊ") {
+            "# ì² ê´´ ìš°í´ë¦­ ì¿¨íƒ€ì„", "# ë‹¨ìœ„: ì´ˆ") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -118,7 +118,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     
 	public static final SettingObject<Integer> DURATION_CONFIG = 
 			synergySettings.new SettingObject<Integer>(TimeBomb.class, "duration", 10,
-            "# Èû ¹öÇÁ Áö¼Ó½Ã°£", "# ´ÜÀ§: ÃÊ") {
+            "# í˜ ë²„í”„ ì§€ì†ì‹œê°„", "# ë‹¨ìœ„: ì´ˆ") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -127,7 +127,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     
 	public static final SettingObject<Integer> RANGE_CONFIG = 
 			synergySettings.new SettingObject<Integer>(TimeBomb.class, "range", 20,
-            "# ÆøÅº ¼³Ä¡ ÃÖ´ë ¹üÀ§") {
+            "# í­íƒ„ ì„¤ì¹˜ ìµœëŒ€ ë²”ìœ„") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -136,7 +136,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     
 	public static final SettingObject<Integer> BOMB_AMOUNT = 
 			synergySettings.new SettingObject<Integer>(TimeBomb.class, "bomb-amount", 30,
-            "# ¼³Ä¡ÇÒ ½ÃÇÑÆøÅºÀÇ °³¼ö") {
+            "# ì„¤ì¹˜í•  ì‹œí•œí­íƒ„ì˜ ê°œìˆ˜") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -145,7 +145,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     
 	public static final SettingObject<Integer> TIMESTOP_DURATION = 
 			synergySettings.new SettingObject<Integer>(TimeBomb.class, "timestop-duration", 2,
-            "# ½Ã°£ Á¤Áö Áö¼Ó½Ã°£", "# ´ÜÀ§: ÃÊ") {
+            "# ì‹œê°„ ì •ì§€ ì§€ì†ì‹œê°„", "# ë‹¨ìœ„: ì´ˆ") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -329,10 +329,10 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.LEFT_CLICK) {
 			if (teleport) {
 				teleport = false;
-				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×fÀÌÁ¦ Æø¹ßÀÌ ÀÏ¾î³ªµµ ¼ø°£ÀÌµ¿ÇÏÁö ¾Ê½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì´ì œ í­ë°œì´ ì¼ì–´ë‚˜ë„ ìˆœê°„ì´ë™í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			} else {
 				teleport = true;
-				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×fÀÌÁ¦ Æø¹ßÀÌ ÀÏ¾î³ª¸é ¼ø°£ÀÌµ¿ÇÕ´Ï´Ù.");
+				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì´ì œ í­ë°œì´ ì¼ì–´ë‚˜ë©´ ìˆœê°„ì´ë™í•©ë‹ˆë‹¤.");
 			}
 		}
 		return false;
@@ -355,18 +355,18 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 			hologram.setInvulnerable(true);
 			NMS.removeBoundingBox(hologram);
 			hologram.setCustomNameVisible(true);
-			hologram.setCustomName("¡×c¡×l" + (time / 20));
+			hologram.setCustomName("Â§cÂ§l" + (time / 20));
 			setPeriod(TimeUnit.TICKS, 1);
 		}
 		
 		@Override
 		protected void onStart() {
-			hologram.setCustomName("¡×c¡×l" + (time / 20));
+			hologram.setCustomName("Â§cÂ§l" + (time / 20));
 		}
 		
 		@Override
 		protected void run(int count) {
-			hologram.setCustomName("¡×c¡×l" + (count / 20));
+			hologram.setCustomName("Â§cÂ§l" + (count / 20));
 			hologram.teleport(tntprimed.getLocation().clone().add(0, 1.2, 0));
 		}
 		
@@ -417,7 +417,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 				}
 			PotionEffects.SLOW_DIGGING.addPotionEffect(player, timestopduration * 20, 30, true);
 			PotionEffects.BLINDNESS.addPotionEffect(player, timestopduration * 20, 1, true);
-			NMS.sendTitle(player, "¡×b½Ã°£ÀÌ ¸ØÃè´Ù.", "", 0, 40, 20);	
+			NMS.sendTitle(player, "Â§bì‹œê°„ì´ ë©ˆì·„ë‹¤.", "", 0, 40, 20);	
 		}
 		
 		@Override

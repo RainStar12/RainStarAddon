@@ -62,6 +62,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -89,15 +90,15 @@ import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
 
 @SuppressWarnings("deprecation")
-@AbilityManifest(name = "ÀÌ°ú»ı", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×d¹°¸® È­ÇĞ¡×f: $[RESTOCK]ÃÊ¸¶´Ù ¹«ÀÛÀ§ÀÇ »óÅÂÀÌ»ó ÇÏ³ª°¡ ÃæÀüµÈ",
-		" ÅõÃ´¿ë °íÅë ¹× ¹«ÀÛÀ§ ºÎÁ¤ È¿°úÀÇ Æ÷¼Ç ÇÏ³ª¸¦ ºñÁÖ·ù ¼Õ¿¡ Áö±Ş¹Ş½À´Ï´Ù.",
-		" ºñÁÖ·ù ¼ÕÀ» »ç¿ëÇÒ ¼ö ¾ø°í, ÀÚ½ÅÀº ºÎÁ¤ Æ÷¼Ç È¿°ú¸¦ ±àÁ¤ È¿°ú·Î º¯°æÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×b±âÇÏ¿Í º¤ÅÍ¡×f: ÅõÃ´¿ë Æ÷¼ÇÀÌ ÀÏÁ¤ °Å¸® ³»ÀÇ °¡Àå °¡±î¿î ´ë»ó¿¡°Ô À¯µµµË´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×eÈ®·ü°ú Åë°è¡×f: ½½·Ô 3°³Â¥¸®ÀÇ ½½·Ô¸Ó½Å ÇÏ³ª¸¦ °¡µ¿ÇÏ¿©",
-		" ´çÃ·µÈ È¿°úµéÀ» $[SLOT_DURATION]ÃÊ°£ ¹Ş½À´Ï´Ù. $[SLOT_COOLDOWN]",
-		" ¼¼ È¿°ú°¡ ÀüºÎ ´Ù¸¦ °æ¿ì È¿°ú ¼öÄ¡°¡ 3¹è·Î »ó½ÂÇÕ´Ï´Ù.",
-        " ¡×c<ÄÚ>¡×7:¡×f ÁÖ´Â ´ë¹ÌÁö ¡×c$[SLOT_ADD_DAMAGE]¡×f »ó½Â ¡×7| ¡×6<Å©>¡×7:¡×f ¹Ş´Â ´ë¹ÌÁö ¡×3$[SLOT_REDUCE_DAMAGE]¡×f °¨¼Ò ¡×7| ¡×e<½º>¡×7:¡×f ÃÊ´ç HP ¡×d$[SLOT_HEAL]¡×f È¸º¹"
+@AbilityManifest(name = "ì´ê³¼ìƒ", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§dë¬¼ë¦¬ í™”í•™Â§f: $[RESTOCK]ì´ˆë§ˆë‹¤ ë¬´ì‘ìœ„ì˜ ìƒíƒœì´ìƒ í•˜ë‚˜ê°€ ì¶©ì „ëœ",
+		" íˆ¬ì²™ìš© ê³ í†µ ë° ë¬´ì‘ìœ„ ë¶€ì • íš¨ê³¼ì˜ í¬ì…˜ í•˜ë‚˜ë¥¼ ë¹„ì£¼ë¥˜ ì†ì— ì§€ê¸‰ë°›ìŠµë‹ˆë‹¤.",
+		" ë¹„ì£¼ë¥˜ ì†ì„ ì‚¬ìš©í•  ìˆ˜ ì—†ê³ , ìì‹ ì€ ë¶€ì • í¬ì…˜ íš¨ê³¼ë¥¼ ê¸ì • íš¨ê³¼ë¡œ ë³€ê²½í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bê¸°í•˜ì™€ ë²¡í„°Â§f: íˆ¬ì²™ìš© í¬ì…˜ì´ ì¼ì • ê±°ë¦¬ ë‚´ì˜ ê°€ì¥ ê°€ê¹Œìš´ ëŒ€ìƒì—ê²Œ ìœ ë„ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§eí™•ë¥ ê³¼ í†µê³„Â§f: ìŠ¬ë¡¯ 3ê°œì§œë¦¬ì˜ ìŠ¬ë¡¯ë¨¸ì‹  í•˜ë‚˜ë¥¼ ê°€ë™í•˜ì—¬",
+		" ë‹¹ì²¨ëœ íš¨ê³¼ë“¤ì„ $[SLOT_DURATION]ì´ˆê°„ ë°›ìŠµë‹ˆë‹¤. $[SLOT_COOLDOWN]",
+		" ì„¸ íš¨ê³¼ê°€ ì „ë¶€ ë‹¤ë¥¼ ê²½ìš° íš¨ê³¼ ìˆ˜ì¹˜ê°€ 3ë°°ë¡œ ìƒìŠ¹í•©ë‹ˆë‹¤.",
+        " Â§c<ì½”>Â§7:Â§f ì£¼ëŠ” ëŒ€ë¯¸ì§€ Â§c$[SLOT_ADD_DAMAGE]Â§f ìƒìŠ¹ Â§7| Â§6<í¬>Â§7:Â§f ë°›ëŠ” ëŒ€ë¯¸ì§€ Â§3$[SLOT_REDUCE_DAMAGE]Â§f ê°ì†Œ Â§7| Â§e<ìŠ¤>Â§7:Â§f ì´ˆë‹¹ HP Â§d$[SLOT_HEAL]Â§f íšŒë³µ"
 		})
 
 public class NaturalScienceStudent extends Synergy implements ActiveHandler {
@@ -108,7 +109,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RESTOCK
 	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"restock", 13, "# Æ÷¼Ç ÀçÃæÀü ½Ã°£", "# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ 40%±îÁö ¹Ş½À´Ï´Ù.") {
+			"restock", 13, "# í¬ì…˜ ì¬ì¶©ì „ ì‹œê°„", "# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ 40%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -117,7 +118,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_ADD_DAMAGE
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-add-damage", 1.6, "# ½½·Ô¸Ó½Å <ÄÚ> Ãß°¡ ´ë¹ÌÁö") {
+			"slot-add-damage", 1.6, "# ìŠ¬ë¡¯ë¨¸ì‹  <ì½”> ì¶”ê°€ ëŒ€ë¯¸ì§€") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -126,7 +127,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_REDUCE_DAMAGE
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-reduce-damage", 2.5, "# ½½·Ô¸Ó½Å <Å©> ´ë¹ÌÁö °¨¼Ò") {
+			"slot-reduce-damage", 2.5, "# ìŠ¬ë¡¯ë¨¸ì‹  <í¬> ëŒ€ë¯¸ì§€ ê°ì†Œ") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -135,7 +136,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Double> SLOT_HEAL
 	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-heal", 0.7, "# ½½·Ô¸Ó½Å <½º> ÃÊ´ç È¸º¹·®") {
+			"slot-heal", 0.7, "# ìŠ¬ë¡¯ë¨¸ì‹  <ìŠ¤> ì´ˆë‹¹ íšŒë³µëŸ‰") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -144,7 +145,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> SLOT_COOLDOWN
 	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"slot-cooldown", 60, "# ½½·Ô¸Ó½Å ´É·Â ÄğÅ¸ÀÓ") {
+			"slot-cooldown", 60, "# ìŠ¬ë¡¯ë¨¸ì‹  ëŠ¥ë ¥ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -158,7 +159,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> SLOT_DURATION
 	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"slot-duration", 10, "# ½½·Ô¸Ó½Å Áö¼Ó½Ã°£") {
+			"slot-duration", 10, "# ìŠ¬ë¡¯ë¨¸ì‹  ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -167,7 +168,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_POISON_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-poison-duration", 14,
-			"# µ¶ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë… ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -178,7 +179,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_WEAKNESS_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-weakness-duration", 17,
-			"# ³ª¾àÇÔ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë‚˜ì•½í•¨ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -189,7 +190,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_SLOWNESS_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slowness-duration", 23,
-			"# ±¸¼Ó Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# êµ¬ì† ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -200,7 +201,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 
 	public static final SettingObject<Integer> POTION_WITHER_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-wither-duration", 19,
-			"# ½Ãµê Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì‹œë“¦ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -211,7 +212,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_BLINDNESS_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-blind-duration", 12,
-			"# ½Ç¸í Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì‹¤ëª… ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -222,7 +223,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_CONFUSION_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-confusion-duration", 14,
-			"# ¸Ö¹Ì Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë©€ë¯¸ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -233,7 +234,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_GLOWING_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-glowing-duration", 90,
-			"# ¹ß±¤ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë°œê´‘ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -244,7 +245,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_HUNGER_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-hunger-duration", 120,
-			"# Çã±â Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# í—ˆê¸° ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -255,7 +256,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_LEVITATION_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-levitation-duration", 5,
-			"# °øÁß ºÎ¾ç Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ê³µì¤‘ ë¶€ì–‘ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -266,7 +267,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_SLOW_DIGGING_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slow-digging-duration", 30,
-			"# Ã¤±¼ ÇÇ·Î Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì±„êµ´ í”¼ë¡œ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -277,7 +278,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POTION_UNLUCK_DURATION = 
 			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-unluck-duration", 300,
-			"# ºÒÇà Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë¶ˆí–‰ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -314,37 +315,37 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES_GOOD 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.REGENERATION, Pair.of("¡×dÀç»ı", PotionEffectType.REGENERATION.getColor()))
-			.put(PotionEffectType.SPEED, Pair.of("¡×b½Å¼Ó", PotionEffectType.SPEED.getColor()))
-			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("¡×cÈ­¿° ÀúÇ×", PotionEffectType.FIRE_RESISTANCE.getColor()))
-			.put(PotionEffectType.NIGHT_VISION, Pair.of("¡×9¾ß°£ Åõ½Ã", PotionEffectType.NIGHT_VISION.getColor()))
-			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("¡×6Èû", PotionEffectType.INCREASE_DAMAGE.getColor()))
-			.put(PotionEffectType.JUMP, Pair.of("¡×aÁ¡ÇÁ °­È­", PotionEffectType.JUMP.getColor()))
-			.put(PotionEffectType.WATER_BREATHING, Pair.of("¡×3¼öÁß È£Èí", PotionEffectType.WATER_BREATHING.getColor()))
-			.put(PotionEffectType.INVISIBILITY, Pair.of("¡×7Åõ¸íÈ­", PotionEffectType.INVISIBILITY.getColor()))
-			.put(PotionEffectType.LUCK, Pair.of("¡×aÇà¿î", PotionEffectType.LUCK.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.ABSORPTION, Pair.of("¡×eÈí¼ö", Color.fromRGB(254, 246, 18)))
-			.put(PotionEffectType.FAST_DIGGING, Pair.of("¡×e¼º±ŞÇÔ", Color.fromRGB(254, 254, 143)))
-			.put(PotionEffectType.HEALTH_BOOST, Pair.of("¡×c»ı¸í·Â °­È­", Color.fromRGB(254, 178, 217)))
-			.put(PotionEffectType.SATURATION, Pair.of("¡×eÆ÷¸¸°¨", Color.fromRGB(254, 221, 115)))
-			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("¡×8ÀúÇ×", Color.fromRGB(1, 96, 106)))
+			.put(PotionEffectType.REGENERATION, Pair.of("Â§dì¬ìƒ", PotionEffectType.REGENERATION.getColor()))
+			.put(PotionEffectType.SPEED, Pair.of("Â§bì‹ ì†", PotionEffectType.SPEED.getColor()))
+			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("Â§cí™”ì—¼ ì €í•­", PotionEffectType.FIRE_RESISTANCE.getColor()))
+			.put(PotionEffectType.NIGHT_VISION, Pair.of("Â§9ì•¼ê°„ íˆ¬ì‹œ", PotionEffectType.NIGHT_VISION.getColor()))
+			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("Â§6í˜", PotionEffectType.INCREASE_DAMAGE.getColor()))
+			.put(PotionEffectType.JUMP, Pair.of("Â§aì í”„ ê°•í™”", PotionEffectType.JUMP.getColor()))
+			.put(PotionEffectType.WATER_BREATHING, Pair.of("Â§3ìˆ˜ì¤‘ í˜¸í¡", PotionEffectType.WATER_BREATHING.getColor()))
+			.put(PotionEffectType.INVISIBILITY, Pair.of("Â§7íˆ¬ëª…í™”", PotionEffectType.INVISIBILITY.getColor()))
+			.put(PotionEffectType.LUCK, Pair.of("Â§aí–‰ìš´", PotionEffectType.LUCK.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.ABSORPTION, Pair.of("Â§eí¡ìˆ˜", Color.fromRGB(254, 246, 18)))
+			.put(PotionEffectType.FAST_DIGGING, Pair.of("Â§eì„±ê¸‰í•¨", Color.fromRGB(254, 254, 143)))
+			.put(PotionEffectType.HEALTH_BOOST, Pair.of("Â§cìƒëª…ë ¥ ê°•í™”", Color.fromRGB(254, 178, 217)))
+			.put(PotionEffectType.SATURATION, Pair.of("Â§eí¬ë§Œê°", Color.fromRGB(254, 221, 115)))
+			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("Â§8ì €í•­", Color.fromRGB(1, 96, 106)))
 			.build();
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES_BAD 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.POISON, Pair.of("¡×2µ¶", PotionEffectType.POISON.getColor()))
-			.put(PotionEffectType.WEAKNESS, Pair.of("¡×7³ª¾àÇÔ", PotionEffectType.WEAKNESS.getColor()))
-			.put(PotionEffectType.SLOW, Pair.of("¡×8±¸¼Ó", PotionEffectType.SLOW.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.WITHER, Pair.of("¡×0½Ãµê", Color.fromRGB(1, 1, 1)))
-			.put(PotionEffectType.BLINDNESS, Pair.of("¡×7½Ç¸í", Color.fromRGB(140, 140, 140)))
-			.put(PotionEffectType.CONFUSION, Pair.of("¡×5¸Ö¹Ì", Color.fromRGB(171, 130, 18)))
-			.put(PotionEffectType.GLOWING, Pair.of("¡×f¹ß±¤", Color.fromRGB(254, 254, 254)))
-			.put(PotionEffectType.HUNGER, Pair.of("¡×2Çã±â", Color.fromRGB(134, 229, 127)))
-			.put(PotionEffectType.LEVITATION, Pair.of("¡×5°øÁß ºÎ¾ç", Color.fromRGB(171, 18, 151)))
-			.put(PotionEffectType.SLOW_DIGGING, Pair.of("¡×8Ã¤±¼ ÇÇ·Î", Color.fromRGB(93, 93, 93)))
-			.put(PotionEffectType.UNLUCK, Pair.of("¡×aºÒ¿î", Color.fromRGB(206, 242, 121)))
+			.put(PotionEffectType.POISON, Pair.of("Â§2ë…", PotionEffectType.POISON.getColor()))
+			.put(PotionEffectType.WEAKNESS, Pair.of("Â§7ë‚˜ì•½í•¨", PotionEffectType.WEAKNESS.getColor()))
+			.put(PotionEffectType.SLOW, Pair.of("Â§8êµ¬ì†", PotionEffectType.SLOW.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.WITHER, Pair.of("Â§0ì‹œë“¦", Color.fromRGB(1, 1, 1)))
+			.put(PotionEffectType.BLINDNESS, Pair.of("Â§7ì‹¤ëª…", Color.fromRGB(140, 140, 140)))
+			.put(PotionEffectType.CONFUSION, Pair.of("Â§5ë©€ë¯¸", Color.fromRGB(171, 130, 18)))
+			.put(PotionEffectType.GLOWING, Pair.of("Â§fë°œê´‘", Color.fromRGB(254, 254, 254)))
+			.put(PotionEffectType.HUNGER, Pair.of("Â§2í—ˆê¸°", Color.fromRGB(134, 229, 127)))
+			.put(PotionEffectType.LEVITATION, Pair.of("Â§5ê³µì¤‘ ë¶€ì–‘", Color.fromRGB(171, 18, 151)))
+			.put(PotionEffectType.SLOW_DIGGING, Pair.of("Â§8ì±„êµ´ í”¼ë¡œ", Color.fromRGB(93, 93, 93)))
+			.put(PotionEffectType.UNLUCK, Pair.of("Â§aë¶ˆìš´", Color.fromRGB(206, 242, 121)))
 			.build();
 	
 	private static final ImmutableMap<PotionEffectType, Integer> POTION_DURATION
@@ -353,7 +354,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 			.put(PotionEffectType.WEAKNESS, POTION_WEAKNESS_DURATION.getValue())
 			.put(PotionEffectType.SLOW, POTION_SLOWNESS_DURATION.getValue())
 			.put(PotionEffectType.HARM, 1)
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
 			.put(PotionEffectType.WITHER, POTION_WITHER_DURATION.getValue())
 			.put(PotionEffectType.BLINDNESS, POTION_BLINDNESS_DURATION.getValue())
 			.put(PotionEffectType.CONFUSION, POTION_CONFUSION_DURATION.getValue())
@@ -393,7 +394,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	private final double slotreducedamage = SLOT_REDUCE_DAMAGE.getValue();
 	private final double slotheal = SLOT_HEAL.getValue();
 	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(40) * RESTOCK.getValue() : RESTOCK.getValue());
-	private final Cooldown slotcooldown = new Cooldown(SLOT_COOLDOWN.getValue(), "½½·Ô¸Ó½Å");
+	private final Cooldown slotcooldown = new Cooldown(SLOT_COOLDOWN.getValue(), "ìŠ¬ë¡¯ë¨¸ì‹ ");
 	private PotionEffectType offhandPotion;
 	private static final Set<Material> bows;
 	private static final Circle circle = Circle.of(10, 70);
@@ -431,7 +432,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 			for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
 				if (POTION_TYPES_BAD.containsKey(pe.getType())) {
 					PotionEffect newpe = new PotionEffect(POTION_REVERSE.get(pe.getType()), pe.getDuration(), pe.getAmplifier(), false, true);
-					getPlayer().sendMessage("¡×6[¡×a!¡×e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "¡×f È¿°ú¸¦ ±³Ã¼½ÃÄÑ " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "¡×f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.ÀÌ°¡) + " µÇ¾ú½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§6[Â§a!Â§e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "Â§f íš¨ê³¼ë¥¼ êµì²´ì‹œì¼œ " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "Â§f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
 					getPlayer().removePotionEffect(pe.getType());
 					getPlayer().addPotionEffect(newpe);
 				}	
@@ -460,15 +461,15 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
     		meta.setColor(POTION_TYPES_BAD.get(offhandPotion).getRight());    		
     		effecttype = random.pick(EffectRegistry.values().toArray(new EffectRegistry.EffectRegistration[0]));
 			effectduration = (random.nextInt(15) + 1) * 20;
-			meta.setDisplayName("¡×fÅõÃ´¿ë " + effecttype.getManifest().displayName() + "¡×f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.°ú¿Í) + " " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "¡×f ¹× ¡×4°íÅë¡×fÀÇ Æ÷¼Ç");
+			meta.setDisplayName("Â§fíˆ¬ì²™ìš© " + effecttype.getManifest().displayName() + "Â§f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.ê³¼ì™€) + " " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "Â§f ë° Â§4ê³ í†µÂ§fì˜ í¬ì…˜");
 			@SuppressWarnings("serial")
 			List<String> lores = new ArrayList<String>() {
 				{
-					add("¡×f" + effecttype.getManifest().displayName() + " (" + (effectduration / 1200) + ":" + ((effectduration / 20) % 60) + ") ");
+					add("Â§f" + effecttype.getManifest().displayName() + " (" + (effectduration / 1200) + ":" + ((effectduration / 20) % 60) + ") ");
 				}
 			};
 			
-			getPlayer().sendMessage("¡×6[¡×a!¡×e] ¡×fÅõÃ´¿ë " + effecttype.getManifest().displayName() + "¡×f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.°ú¿Í) + " " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "¡×f ¹× ¡×4°íÅë¡×fÀÇ Æ÷¼ÇÀ» ¸¸µé¾î³Â½À´Ï´Ù.");
+			getPlayer().sendMessage("Â§6[Â§a!Â§e] Â§fíˆ¬ì²™ìš© " + effecttype.getManifest().displayName() + "Â§f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.ê³¼ì™€) + " " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "Â§f ë° Â§4ê³ í†µÂ§fì˜ í¬ì…˜ì„ ë§Œë“¤ì–´ëƒˆìŠµë‹ˆë‹¤.");
 			meta.setLore(lores);
     		
     		item.setItemMeta(meta);
@@ -506,6 +507,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 						else if (effecttype.equals(Confusion.registration)) Confusion.apply(p, TimeUnit.TICKS, effectduration, 10);
 						else if (effecttype.equals(Madness.registration)) Madness.apply(p, TimeUnit.TICKS, effectduration, 10);
 						else if (effecttype.equals(SnowflakeMark.registration)) SnowflakeMark.apply(p, TimeUnit.TICKS, effectduration, 1);
+						else if (effecttype.equals(Fear.registration)) Fear.apply(p, TimeUnit.TICKS, effectduration, getPlayer());
 						else effecttype.apply(p, TimeUnit.TICKS, effectduration);		
 					}
 				}
@@ -559,7 +561,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 						} else {
 							messagestack++;
 							e.setCancelled(true);
-							if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+							if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 						}
 					} else {
 						e.setCancelled(true);
@@ -591,7 +593,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 						} else {
 							messagestack++;
 							e.setCancelled(true);
-							if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+							if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 						}
 					} else if (getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET)) {
 						Block block = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
@@ -608,7 +610,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 							} else {
 								messagestack++;
 								e.setCancelled(true);
-								if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+								if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 							}
 						}
 					}
@@ -624,7 +626,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 					} else {
 						messagestack++;
 						e.setCancelled(true);
-						if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+						if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 					}
 				}
 			}
@@ -702,10 +704,10 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
         
         public void onStart() {
             results.clear();
-            results.put("¡×c<ÄÚ>", 0);
-            results.put("¡×6<Å©>", 0);
-            results.put("¡×e<½º>", 0);
-            joiner = new StringJoiner("¡×f ");
+            results.put("Â§c<ì½”>", 0);
+            results.put("Â§6<í¬>", 0);
+            results.put("Â§e<ìŠ¤>", 0);
+            joiner = new StringJoiner("Â§f ");
         }
 
         public void run(int count) {
@@ -724,34 +726,34 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
             duration.start();
             NMS.clearTitle(getPlayer());
 
-            if (results.get("¡×c<ÄÚ>") == 1 && results.get("¡×6<Å©>") == 1 && results.get("¡×e<½º>") == 1) {
-                getPlayer().sendMessage("¡×c[¡×e!¡×c] ¡×cÈ­¡×6·Á¡×eÇÏ¡×a°Ô ¡×bÅÍ¡×9Áø¡×5´Ù¡×d!");
+            if (results.get("Â§c<ì½”>") == 1 && results.get("Â§6<í¬>") == 1 && results.get("Â§e<ìŠ¤>") == 1) {
+                getPlayer().sendMessage("Â§c[Â§e!Â§c] Â§cí™”Â§6ë ¤Â§eí•˜Â§aê²Œ Â§bí„°Â§9ì§„Â§5ë‹¤Â§d!");
                 
-                results.put("¡×c<ÄÚ>", 3);
-                results.put("¡×6<Å©>", 3);
-                results.put("¡×e<½º>", 3);
+                results.put("Â§c<ì½”>", 3);
+                results.put("Â§6<í¬>", 3);
+                results.put("Â§e<ìŠ¤>", 3);
 
                 new AbilityTimer(TaskType.NORMAL, 5) {
                     public void run(int count) {
                         switch (count) {
                             case 1: {
-                                NMS.sendTitle(getPlayer(), "", "¡×b<C> ¡×c<O> ¡×6<K> ¡×e<E> ¡×a<S>", 0, 20, 0);
+                                NMS.sendTitle(getPlayer(), "", "Â§b<C> Â§c<O> Â§6<K> Â§e<E> Â§a<S>", 0, 20, 0);
                                 break;
                             }
                             case 2: {
-                                NMS.sendTitle(getPlayer(), "", "¡×a<C> ¡×b<O> ¡×c<K> ¡×6<E> ¡×e<S>", 0, 20, 0);
+                                NMS.sendTitle(getPlayer(), "", "Â§a<C> Â§b<O> Â§c<K> Â§6<E> Â§e<S>", 0, 20, 0);
                                 break;
                             }
                             case 3: {
-                                NMS.sendTitle(getPlayer(), "", "¡×e<C> ¡×a<O> ¡×b<K> ¡×c<E> ¡×6<S>", 0, 20, 0);
+                                NMS.sendTitle(getPlayer(), "", "Â§e<C> Â§a<O> Â§b<K> Â§c<E> Â§6<S>", 0, 20, 0);
                                 break;
                             }
                             case 4: {
-                                NMS.sendTitle(getPlayer(), "", "¡×6<C> ¡×e<O> ¡×a<K> ¡×b<E> ¡×c<S>", 0, 20, 0);
+                                NMS.sendTitle(getPlayer(), "", "Â§6<C> Â§e<O> Â§a<K> Â§b<E> Â§c<S>", 0, 20, 0);
                                 break;
                             }
                             case 5: {
-                                NMS.sendTitle(getPlayer(), "", "¡×c<C> ¡×6<O> ¡×e<K> ¡×a<E> ¡×b<S>", 0, 20, 0);
+                                NMS.sendTitle(getPlayer(), "", "Â§c<C> Â§6<O> Â§e<K> Â§a<E> Â§b<S>", 0, 20, 0);
                                 break;
                             }
                         }
@@ -770,14 +772,14 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
                 }.setPeriod(TimeUnit.TICKS,4).start();
             }
 
-            if (results.get("¡×c<ÄÚ>") != 0) {
-                getPlayer().sendMessage("ÁÖ´Â ´ë¹ÌÁö ¡×c" + df.format(results.get("¡×c<ÄÚ>") * slotadddamage) + "¡×f Áõ°¡");
+            if (results.get("Â§c<ì½”>") != 0) {
+                getPlayer().sendMessage("ì£¼ëŠ” ëŒ€ë¯¸ì§€ Â§c" + df.format(results.get("Â§c<ì½”>") * slotadddamage) + "Â§f ì¦ê°€");
             }
-            if (results.get("¡×6<Å©>") != 0) {
-                getPlayer().sendMessage("¹Ş´Â ´ë¹ÌÁö ¡×3" + df.format(results.get("¡×6<Å©>") * slotreducedamage) + "¡×f °¨¼Ò");
+            if (results.get("Â§6<í¬>") != 0) {
+                getPlayer().sendMessage("ë°›ëŠ” ëŒ€ë¯¸ì§€ Â§3" + df.format(results.get("Â§6<í¬>") * slotreducedamage) + "Â§f ê°ì†Œ");
             }
-            if (results.get("¡×e<½º>") != 0) {
-                getPlayer().sendMessage("ÃÊ´ç HP ¡×d" + df.format(results.get("¡×e<½º>") * slotheal) + "¡×f È¸º¹");
+            if (results.get("Â§e<ìŠ¤>") != 0) {
+                getPlayer().sendMessage("ì´ˆë‹¹ HP Â§d" + df.format(results.get("Â§e<ìŠ¤>") * slotheal) + "Â§f íšŒë³µ");
             }
 
             SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
@@ -786,7 +788,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
         class SlotDuration extends Duration {
 
             public SlotDuration() {
-                super(SLOT_DURATION.getValue(), slotcooldown, "½½·Ô¸Ó½Å");
+                super(SLOT_DURATION.getValue(), slotcooldown, "ìŠ¬ë¡¯ë¨¸ì‹ ");
             }
 
             public void onDurationStart() {
@@ -795,10 +797,10 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 
             @Override
             protected void onDurationProcess(int i) { 
-				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), results.get("¡×e<½º>") * slotheal, RegainReason.CUSTOM);
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), results.get("Â§e<ìŠ¤>") * slotheal, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + results.get("¡×e<½º>") * slotheal);
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + results.get("Â§e<ìŠ¤>") * slotheal);
 				}
             }
 
@@ -815,7 +817,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
         @EventHandler
         public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
             if (e.getEntity().equals(getPlayer())) {
-                e.setDamage(Math.max(0, e.getDamage() - (results.get("¡×6<Å©>") * slotreducedamage)));
+                e.setDamage(Math.max(0, e.getDamage() - (results.get("Â§6<í¬>") * slotreducedamage)));
             }
 
             Entity attacker = e.getDamager();
@@ -829,7 +831,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
             }
 
             if (attacker.equals(getPlayer())) {
-                e.setDamage(e.getDamage() + (results.get("¡×c<ÄÚ>") * slotadddamage));
+                e.setDamage(e.getDamage() + (results.get("Â§c<ì½”>") * slotadddamage));
             }
         }
     }

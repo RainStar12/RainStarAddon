@@ -74,23 +74,23 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
-		name = "Äí·Î", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¡×7ÆÐ½Ãºê ¡×c- ¡×8¾îµÒÀÇ ÃßÁ¾ÀÚ¡×f: ÀÚ½ÅÀÌ ÀÖ´Â À§Ä¡°¡ ¾îµÎ¿ï¼ö·Ï ½ºÅ³ ÇÇÇØ·®ÀÌ Áõ°¡ÇÕ´Ï´Ù.",
-		" ½Ç¸íÀ» °¡Áø ÀûÀ» ±ÙÁ¢ °ø°ÝÇÏ¸é Ãß°¡ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.",
-		"¡×7±ÙÁ¢ Å¸°Ý ÈÄ F ¡×8- ¡×5Â÷¿ø Àý´Ü¡×f: ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ºü¸£°Ô ÁúÁÖÇÕ´Ï´Ù.",
-		" ÁúÁÖÇÏ¸ç Áö³ª°£ °ø°£À» Àý´Ü½ÃÄÑ ÁÖº¯ ¿£Æ¼Æ¼µéÀ» ²ø¾î¿Í ÇÇÇØ¸¦ ÀÔÈ÷°í",
-		" Àá½Ã°£ Â÷¿øÀÇ ÀúÆíÀ¸·Î º¸³»¹ö¸³´Ï´Ù. $[COOLDOWN]",
-		" ¡×7´ë½ÃÇü Àý´Ü¡×f: $[DASH_CONFIG]",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×c¸¶¾È °³¹æ¡×f: Ä¡¸íÀûÀÎ ÇÇÇØ¸¦ ÀÔ¾úÀ» ¶§, Ã¼·ÂÀ» ÃÖ´ë Ã¼·ÂÀÇ Àý¹Ý±îÁö",
-		" Áï½Ã È¸º¹ÇÏ°í ¸¶¾ÈÀ» °³¹æÇÕ´Ï´Ù."
+		name = "ì¿ ë¡œ", rank = Rank.A, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§c- Â§8ì–´ë‘ ì˜ ì¶”ì¢…ìžÂ§f: ìžì‹ ì´ ìžˆëŠ” ìœ„ì¹˜ê°€ ì–´ë‘ìš¸ìˆ˜ë¡ ìŠ¤í‚¬ í”¼í•´ëŸ‰ì´ ì¦ê°€í•©ë‹ˆë‹¤.",
+		" ì‹¤ëª…ì„ ê°€ì§„ ì ì„ ê·¼ì ‘ ê³µê²©í•˜ë©´ ì¶”ê°€ í”¼í•´ë¥¼ ìž…íž™ë‹ˆë‹¤.",
+		"Â§7ê·¼ì ‘ íƒ€ê²© í›„ F Â§8- Â§5ì°¨ì› ì ˆë‹¨Â§f: ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ë¹ ë¥´ê²Œ ì§ˆì£¼í•©ë‹ˆë‹¤.",
+		" ì§ˆì£¼í•˜ë©° ì§€ë‚˜ê°„ ê³µê°„ì„ ì ˆë‹¨ì‹œì¼œ ì£¼ë³€ ì—”í‹°í‹°ë“¤ì„ ëŒì–´ì™€ í”¼í•´ë¥¼ ìž…ížˆê³ ",
+		" ìž ì‹œê°„ ì°¨ì›ì˜ ì €íŽ¸ìœ¼ë¡œ ë³´ë‚´ë²„ë¦½ë‹ˆë‹¤. $[COOLDOWN]",
+		" Â§7ëŒ€ì‹œí˜• ì ˆë‹¨Â§f: $[DASH_CONFIG]",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë§ˆì•ˆ ê°œë°©Â§f: ì¹˜ëª…ì ì¸ í”¼í•´ë¥¼ ìž…ì—ˆì„ ë•Œ, ì²´ë ¥ì„ ìµœëŒ€ ì²´ë ¥ì˜ ì ˆë°˜ê¹Œì§€",
+		" ì¦‰ì‹œ íšŒë³µí•˜ê³  ë§ˆì•ˆì„ ê°œë°©í•©ë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×7±ÙÁ¢ Å¸°Ý ÈÄ °ËÀ» µé°í FÅ°¸¦ ºü¸£°Ô¡×f ´©¸£¸é ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ÁúÁÖÇØ",
-		"Áö³ª°£ °ø°£À» Àý´Ü½ÃÄÑ ÁÖº¯ ¿£Æ¼Æ¼µéÀ» ²ø¾î¿Í ÇÇÇØ¸¦ ÀÔÈ÷°í",
-		"Àá½Ã°£ ¡×3Â÷¿øÀÇ ÀúÆí¡×fÀ¸·Î º¸³» °ø°Ý ºÒ´É, ¹«Àû, Å¸°ÔÆÃ ºÒ´É »óÅÂ·Î ¸¸µì´Ï´Ù.",
+		"Â§7ê·¼ì ‘ íƒ€ê²© í›„ ê²€ì„ ë“¤ê³  Fí‚¤ë¥¼ ë¹ ë¥´ê²ŒÂ§f ëˆ„ë¥´ë©´ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ì§ˆì£¼í•´",
+		"ì§€ë‚˜ê°„ ê³µê°„ì„ ì ˆë‹¨ì‹œì¼œ ì£¼ë³€ ì—”í‹°í‹°ë“¤ì„ ëŒì–´ì™€ í”¼í•´ë¥¼ ìž…ížˆê³ ",
+		"ìž ì‹œê°„ Â§3ì°¨ì›ì˜ ì €íŽ¸Â§fìœ¼ë¡œ ë³´ë‚´ ê³µê²© ë¶ˆëŠ¥, ë¬´ì , íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ìƒíƒœë¡œ ë§Œë“­ë‹ˆë‹¤.",
 		" $[COOLDOWN]",
-		"»ç¸Á À§±â¿¡ ³õÀÏ ¶§ Ã¼·ÂÀ» ÃÖ´ë Ã¼·ÂÀÇ Àý¹Ý±îÁö Áï½Ã È¸º¹ ÈÄ",
-		"¸¶¾ÈÀÌ °³¹æµÈ ´É·ÂÀ¸·Î º¯°æµË´Ï´Ù."
+		"ì‚¬ë§ ìœ„ê¸°ì— ë†“ì¼ ë•Œ ì²´ë ¥ì„ ìµœëŒ€ ì²´ë ¥ì˜ ì ˆë°˜ê¹Œì§€ ì¦‰ì‹œ íšŒë³µ í›„",
+		"ë§ˆì•ˆì´ ê°œë°©ëœ ëŠ¥ë ¥ìœ¼ë¡œ ë³€ê²½ë©ë‹ˆë‹¤."
 		})
 
 @SuppressWarnings("deprecation")
@@ -102,8 +102,8 @@ public class Kuro extends AbilityBase {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Kuro.class,
-			"cooldown", 50, "# Â÷¿ø Àý´Ü ÄðÅ¸ÀÓ",
-			"# ÄðÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ ÃÖ´ë 50%±îÁö ¹Þ½À´Ï´Ù.") {
+			"cooldown", 50, "# ì°¨ì› ì ˆë‹¨ ì¿¨íƒ€ìž„",
+			"# ì¿¨íƒ€ìž„ ê°ì†Œ íš¨ê³¼ë¥¼ ìµœëŒ€ 50%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -116,16 +116,16 @@ public class Kuro extends AbilityBase {
 	};
 	
 	public static final SettingObject<Boolean> DASH_CONFIG = abilitySettings.new SettingObject<Boolean>(Kuro.class,
-			"dash-config", false, "# Â÷¿ø Àý´Ü ÀÌµ¿ ´ë½ÃÇü ¿©ºÎ", "# ÁúÁÖ °³³äÀ¸·Î Àû¿ë½ÃÄÑ ºí·°À» °üÅëÇÒ Áö Á¤ÇÕ´Ï´Ù.") {
+			"dash-config", false, "# ì°¨ì› ì ˆë‹¨ ì´ë™ ëŒ€ì‹œí˜• ì—¬ë¶€", "# ì§ˆì£¼ ê°œë…ìœ¼ë¡œ ì ìš©ì‹œì¼œ ë¸”ëŸ­ì„ ê´€í†µí•  ì§€ ì •í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public String toString() {
-                return getValue() ? "¡×bÄÑÁü" : "¡×c²¨Áü";
+                return getValue() ? "Â§bì¼œì§" : "Â§cêº¼ì§";
         }
 		
 	};
 	
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "Â÷¿ø Àý´Ü", CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "ì°¨ì› ì ˆë‹¨", CooldownDecrease._50);
 	private Map<Player, NextDimension> nextMap = new HashMap<>(); 
 	private final Crescent crescent = Crescent.of(1, 20);
 	private boolean dashboolean = DASH_CONFIG.getValue();
@@ -201,7 +201,7 @@ public class Kuro extends AbilityBase {
 	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
 				getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2);
 			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
-			   	getPlayer().sendMessage("¡×8[¡×7!¡×8] ¡×cÁ×À½ÀÇ À§±â¡×f¿¡¼­ Å»ÃâÇÏ±â À§ÇØ ¡×4±ÝÁöµÈ ¸¶¾È¡×fÀ» ¡×3°³¹æ¡×fÇÏ¿´½À´Ï´Ù! ¡×7/aw check");
+			   	getPlayer().sendMessage("Â§8[Â§7!Â§8] Â§cì£½ìŒì˜ ìœ„ê¸°Â§fì—ì„œ íƒˆì¶œí•˜ê¸° ìœ„í•´ Â§4ê¸ˆì§€ëœ ë§ˆì•ˆÂ§fì„ Â§3ê°œë°©Â§fí•˜ì˜€ìŠµë‹ˆë‹¤! Â§7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -308,7 +308,7 @@ public class Kuro extends AbilityBase {
     					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
             			cool.start();
     				} else {
-    					getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¹Ù¶óº¸´Â ¹æÇâ¿¡ ÀÌµ¿ÇÒ ¼ö ÀÖ´Â °÷ÀÌ ¾ø½À´Ï´Ù.");
+    					getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fë°”ë¼ë³´ëŠ” ë°©í–¥ì— ì´ë™í•  ìˆ˜ ìžˆëŠ” ê³³ì´ ì—†ìŠµë‹ˆë‹¤.");
     				}	
     			}
     		}
@@ -599,7 +599,7 @@ public class Kuro extends AbilityBase {
     	protected void run(int count) {
     		player.setGameMode(GameMode.SPECTATOR);
     		ParticleLib.SMOKE_LARGE.spawnParticle(player.getLocation().clone().add(0, 1, 0), 0, 0, 0, 3, 0);
-    		actionbarChannel.update("¡×5Â÷¿øÀÇ ÀúÆí¡×f: " + count / 10 + "ÃÊ");
+    		actionbarChannel.update("Â§5ì°¨ì›ì˜ ì €íŽ¸Â§f: " + count / 10 + "ì´ˆ");
     	}
 		
 		@Override

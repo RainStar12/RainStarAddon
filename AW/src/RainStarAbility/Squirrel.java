@@ -50,15 +50,15 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "´Ù¶÷Áã", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×6µµÅä¸®¡×f: ÀÚ½ÅÀÇ ÁÖº¯¿¡ 3ÃÊ À¯ÁöµÇ´Â ¡×6µµÅä¸®¡×f°¡ °è¼ÓÇØ »ı°Ü³³´Ï´Ù.",
-		" ¼ÒÈ¯ °£°İÀº 0.7ÃÊ¸¶´Ù, ÄğÅ¸ÀÓÀÏ ¶© 1.2ÃÊ¸¶´Ù ÇÏ³ª¾¿ ¼ÒÈ¯µË´Ï´Ù.",
-		" ¡×6µµÅä¸®¡×f´Â ÃÖ´ë ¡×e22°³¡×f±îÁö ¼öÁı °¡´ÉÇÕ´Ï´Ù. ¡×6µµÅä¸®¡×f¸¦ ¼Ò¸ğÇÏ¿©",
-		" ½ºÅ³À» »ç¿ë °¡´ÉÇÏ°í, µÎ ½ºÅ³Àº ÄğÅ¸ÀÓÀ» °øÀ¯ÇÕ´Ï´Ù. $[COOLDOWN]",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×a³È³È¡×f: ºñ¾î ÀÖ´Â Ã¼·ÂÀÇ $[HEAL_AMOUNT]%¸¦ È¸º¹ÇÕ´Ï´Ù. $[EAT_CONSUME]",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×b¶÷Áã½ã´õ¡×f: $[CHANNELING]ÃÊ°£ ÀÌµ¿ ºÒ°¡ »óÅÂ°¡ µÇ°í, ³» ÇöÀç À§Ä¡¿¡¼­",
-		" ÆÛÁ®³ª°¡´Â ¹ø°³¸¦ ¶³¾î¶ß·Á ÀûµéÀ» °¨Àü½ÃÅµ´Ï´Ù. $[THUNDER_CONSUME]",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×eLessso"
+		name = "ë‹¤ëŒì¥", rank = Rank.S, species = Species.ANIMAL, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§6ë„í† ë¦¬Â§f: ìì‹ ì˜ ì£¼ë³€ì— 3ì´ˆ ìœ ì§€ë˜ëŠ” Â§6ë„í† ë¦¬Â§fê°€ ê³„ì†í•´ ìƒê²¨ë‚©ë‹ˆë‹¤.",
+		" ì†Œí™˜ ê°„ê²©ì€ 0.7ì´ˆë§ˆë‹¤, ì¿¨íƒ€ì„ì¼ ë• 1.2ì´ˆë§ˆë‹¤ í•˜ë‚˜ì”© ì†Œí™˜ë©ë‹ˆë‹¤.",
+		" Â§6ë„í† ë¦¬Â§fëŠ” ìµœëŒ€ Â§e22ê°œÂ§fê¹Œì§€ ìˆ˜ì§‘ ê°€ëŠ¥í•©ë‹ˆë‹¤. Â§6ë„í† ë¦¬Â§fë¥¼ ì†Œëª¨í•˜ì—¬",
+		" ìŠ¤í‚¬ì„ ì‚¬ìš© ê°€ëŠ¥í•˜ê³ , ë‘ ìŠ¤í‚¬ì€ ì¿¨íƒ€ì„ì„ ê³µìœ í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§aëƒ ëƒ Â§f: ë¹„ì–´ ìˆëŠ” ì²´ë ¥ì˜ $[HEAL_AMOUNT]%ë¥¼ íšŒë³µí•©ë‹ˆë‹¤. $[EAT_CONSUME]",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bëŒì¥ì¬ë”Â§f: $[CHANNELING]ì´ˆê°„ ì´ë™ ë¶ˆê°€ ìƒíƒœê°€ ë˜ê³ , ë‚´ í˜„ì¬ ìœ„ì¹˜ì—ì„œ",
+		" í¼ì ¸ë‚˜ê°€ëŠ” ë²ˆê°œë¥¼ ë–¨ì–´ëœ¨ë ¤ ì ë“¤ì„ ê°ì „ì‹œí‚µë‹ˆë‹¤. $[THUNDER_CONSUME]",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§eLessso"
 		})
 
 public class Squirrel extends AbilityBase implements ActiveHandler {
@@ -69,7 +69,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> EAT_CONSUME 
 	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
-			"eat-consume", 8, "# ³È³ÈÀ¸·Î ¼Ò¸ğµÇ´Â µµÅä¸®ÀÇ ¼ö") {
+			"eat-consume", 8, "# ëƒ ëƒ ìœ¼ë¡œ ì†Œëª¨ë˜ëŠ” ë„í† ë¦¬ì˜ ìˆ˜") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -78,14 +78,14 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
 	
 	public static final SettingObject<Integer> THUNDER_CONSUME 
 	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
-			"thunder-consume", 16, "# ¶÷Áã½ã´õ·Î ¼Ò¸ğµÇ´Â µµÅä¸®ÀÇ ¼ö") {
+			"thunder-consume", 16, "# ëŒì¥ì¬ë”ë¡œ ì†Œëª¨ë˜ëŠ” ë„í† ë¦¬ì˜ ìˆ˜") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -94,14 +94,14 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
 	
 	public static final SettingObject<Integer> HEAL_AMOUNT 
 	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
-			"heal-amount", 40, "# »ç¿ë½Ã È¸º¹µÇ´Â ¾ç (´ÜÀ§: %)") {
+			"heal-amount", 40, "# ì‚¬ìš©ì‹œ íšŒë³µë˜ëŠ” ì–‘ (ë‹¨ìœ„: %)") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -112,7 +112,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Double> CHANNELING 
 	= abilitySettings.new SettingObject<Double>(Squirrel.class,
-			"channeling", 1.5, "# ¶÷Áã½ã´õÀÇ Ã¤³Î¸µ ½Ã°£(ÀÌµ¿ ºÒ°¡ Áö¼Ó½Ã°£)") {
+			"channeling", 1.5, "# ëŒì¥ì¬ë”ì˜ ì±„ë„ë§ ì‹œê°„(ì´ë™ ë¶ˆê°€ ì§€ì†ì‹œê°„)") {
 		
 		@Override
 		public boolean condition(Double value) {
@@ -122,7 +122,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Squirrel.class, "cooldown", 50, "# ÄğÅ¸ÀÓ", "# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ 50%±îÁö ¹Ş½À´Ï´Ù.") {
+			Squirrel.class, "cooldown", 50, "# ì¿¨íƒ€ì„", "# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ 50%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -169,7 +169,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
 	    	passive.start();
-	    	ac.update("¡×6µµÅä¸®¡×f: ¡×e" + acornstack);
+	    	ac.update("Â§6ë„í† ë¦¬Â§f: Â§e" + acornstack);
 	    }
 	}
 	
@@ -216,9 +216,9 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 							
 						}.setPeriod(TimeUnit.TICKS, 1).start();
 						acornstack = (acornstack - thunderconsume);
-						ac.update("¡×6µµÅä¸®¡×f: ¡×e" + acornstack);
+						ac.update("Â§6ë„í† ë¦¬Â§f: Â§e" + acornstack);
 						return cool.start();
-					} else getPlayer().sendMessage("¡×6[¡×e!¡×6] ¡×c¼ÒÁö µµÅä¸®°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+					} else getPlayer().sendMessage("Â§6[Â§e!Â§6] Â§cì†Œì§€ ë„í† ë¦¬ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
 				} else if (clickType == ClickType.RIGHT_CLICK) {
 					if (acornstack >= eatconsume) {
 						double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
@@ -231,9 +231,9 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 							SoundLib.ENTITY_PLAYER_BURP.playSound(getPlayer().getLocation(), 1f, 1.5f);
 						}
 						acornstack = (acornstack - eatconsume);
-						ac.update("¡×6µµÅä¸®¡×f: ¡×e" + acornstack);
+						ac.update("Â§6ë„í† ë¦¬Â§f: Â§e" + acornstack);
 						return cool.start();
-					} else getPlayer().sendMessage("¡×6[¡×e!¡×6] ¡×c¼ÒÁö µµÅä¸®°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+					} else getPlayer().sendMessage("Â§6[Â§e!Â§6] Â§cì†Œì§€ ë„í† ë¦¬ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
 				}	
 			}
 		}
@@ -339,7 +339,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 					this.stop(false);
 					SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer().getLocation(), 1, 0.65f);
 					acornstack = Math.min(22, acornstack + 1);
-					ac.update("¡×6µµÅä¸®¡×f: ¡×e" + acornstack);
+					ac.update("Â§6ë„í† ë¦¬Â§f: Â§e" + acornstack);
 				}
 			}
 		}

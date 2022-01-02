@@ -12,7 +12,6 @@ import RainStarAbility.Butterfly;
 import RainStarAbility.Citrus;
 import RainStarAbility.Crystal;
 import RainStarAbility.Dash;
-import RainStarAbility.DefileGak;
 import RainStarAbility.Detection;
 import RainStarAbility.Dinosaur;
 import RainStarAbility.Divinity;
@@ -20,6 +19,7 @@ import RainStarAbility.Echo;
 import RainStarAbility.Empty;
 import RainStarAbility.Executioner;
 import RainStarAbility.Flex;
+import RainStarAbility.Fool;
 import RainStarAbility.FoxCrystalBall;
 import RainStarAbility.GlassCannon;
 import RainStarAbility.GuardianAngel;
@@ -36,6 +36,7 @@ import RainStarAbility.LightningCounter;
 import RainStarAbility.LingeringArrow;
 import RainStarAbility.LittleDevil;
 import RainStarAbility.Megalodon;
+import RainStarAbility.Minotauros;
 import RainStarAbility.Mira;
 import RainStarAbility.Moros;
 import RainStarAbility.MultiHit;
@@ -63,6 +64,7 @@ import RainStarAbility.HeadtoHead;
 import RainStarAbility.Yuki;
 import RainStarAbility.chronos.Chronos;
 import RainStarSynergy.ASAP;
+import RainStarSynergy.Abyss;
 import RainStarSynergy.Accelerator;
 import RainStarSynergy.AkashicRecords;
 import RainStarSynergy.AliceInFreezer;
@@ -86,7 +88,6 @@ import RainStarSynergy.HumanBaseball;
 import RainStarSynergy.Infallibility;
 import RainStarSynergy.Joker;
 import RainStarSynergy.LaplaceDemon;
-import RainStarSynergy.MagicShow;
 import RainStarSynergy.Mirror;
 import RainStarSynergy.MomentaryTrip;
 import RainStarSynergy.MovingSkill;
@@ -107,7 +108,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Berserker;
-import daybreak.abilitywar.ability.list.Clown;
 import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.Demigod;
 import daybreak.abilitywar.ability.list.DevilBoots;
@@ -131,6 +131,7 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
 public class AddonR extends Addon implements Listener {
@@ -195,8 +196,6 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Tesla.class);
 		AbilityFactory.registerAbility(RainStar.class);
 		AbilityList.registerAbility(RainStar.class);
-		AbilityFactory.registerAbility(DefileGak.class);
-		AbilityList.registerAbility(DefileGak.class);
 		AbilityFactory.registerAbility(Soda.class);
 		AbilityList.registerAbility(Soda.class);
 		AbilityFactory.registerAbility(Alice.class);
@@ -246,6 +245,10 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(FoxCrystalBall.class);
 		AbilityFactory.registerAbility(SkyWhale.class);
 		AbilityList.registerAbility(SkyWhale.class);
+		AbilityFactory.registerAbility(Fool.class);
+		AbilityList.registerAbility(Fool.class);
+		AbilityFactory.registerAbility(Minotauros.class);
+		AbilityList.registerAbility(Minotauros.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -257,7 +260,6 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(EnergyBlocker.class, Indecision.class, SocialDistancing.class);
 		SynergyFactory.registerSynergy(PrecisionAiming.class, PrecisionAiming.class, Infallibility.class);
 		SynergyFactory.registerSynergy(Kairos.class, Kairos.class, Chance.class);
-		SynergyFactory.registerSynergy(Magician.class, Mira.class, MagicShow.class);
 		SynergyFactory.registerSynergy(GlassCannon.class, VictoryBySword.class, ASAP.class);
 		SynergyFactory.registerSynergy(GuardianAngel.class, GuardianAngel.class, PatronSaint.class);
 		SynergyFactory.registerSynergy(PrecisionAiming.class, PenetrationArrow.class, HomingPenetrationArrow.class);
@@ -270,7 +272,6 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Yuki.class, Yuki.class, YukiSnow.class);
 		SynergyFactory.registerSynergy(Ruber.class, Crystal.class, HealthCopy.class);
 		SynergyFactory.registerSynergy(Tesla.class, Tesla.class, TeslaPlasma.class);
-		SynergyFactory.registerSynergy(Clown.class, Alice.class, Joker.class);
 		SynergyFactory.registerSynergy(Teabagging.class, LittleDevil.class, BadManner.class);
 		SynergyFactory.registerSynergy(Dash.class, Divinity.class, MovingSkill.class);
 		SynergyFactory.registerSynergy(Curse.class, Divinity.class, CurseOfGod.class);
@@ -287,6 +288,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Protagonist.class, SurvivalInstinct.class, Cliche.class);
 		SynergyFactory.registerSynergy(Flector.class, Stop.class, HumanBaseball.class);
 		SynergyFactory.registerSynergy(HeadtoHead.class, Loki.class, CowardlyMatch.class);
+		SynergyFactory.registerSynergy(Empty.class, Empty.class, Abyss.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -302,22 +304,37 @@ public class AddonR extends Addon implements Listener {
 	        }   
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
-		Bukkit.broadcastMessage("¡×a·¹ÀÎ½ºÅ¸ ¾Öµå¿Â¡×eÀÌ Àû¿ëµÇ¾ú½À´Ï´Ù.");
-		Bukkit.broadcastMessage("¡×e´É·Â ¡×f52°³ ¡×7/ ¡×d½Ã³ÊÁö ¡×f40°³ Àû¿ë ¿Ï·á.");
+		Bukkit.broadcastMessage("Â§aë ˆì¸ìŠ¤íƒ€ ì• ë“œì˜¨Â§eì´ ì ìš©ë˜ì—ˆìŠµë‹ˆë‹¤.");
+		Bukkit.broadcastMessage("Â§eëŠ¥ë ¥ Â§f53ê°œ Â§7/ Â§dì‹œë„ˆì§€ Â§f40ê°œ ì ìš© ì™„ë£Œ.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
         RainStarEffectFactory.load();
+        
+    	
+    	if (ServerVersion.getVersion() == 12) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_12_R1.Clown.class, Alice.class, Joker.class);
+    	} else if (ServerVersion.getVersion() == 13) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_13_R1.Clown.class, Alice.class, Joker.class);
+    	} else if (ServerVersion.getVersion() == 14) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_14_R1.Clown.class, Alice.class, Joker.class);
+    	} else if (ServerVersion.getVersion() == 15) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_15_R1.Clown.class, Alice.class, Joker.class);
+    	} else if (ServerVersion.getVersion() == 16) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_16_R1.Clown.class, Alice.class, Joker.class);
+    	} else if (ServerVersion.getVersion() == 17) {
+    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_17_R1.Clown.class, Alice.class, Joker.class);
+    	}
 		
 	}
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("¡×a·¹ÀÎ½ºÅ¸ ¾Öµå¿Â¡×fÀÌ Àû¿ëµÇ¾ú½À´Ï´Ù. ¡×e´É·Â ¡×f52°³ Àû¿ë ¿Ï·á.");
+		e.addCredit("Â§aë ˆì¸ìŠ¤íƒ€ ì• ë“œì˜¨Â§fì´ ì ìš©ë˜ì—ˆìŠµë‹ˆë‹¤. Â§eëŠ¥ë ¥ Â§f53ê°œ ì ìš© ì™„ë£Œ.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("¡×d½Ã³ÊÁö ¡×f40°³ Àû¿ë ¿Ï·á.");
+			e.addCredit("Â§dì‹œë„ˆì§€ Â§f40ê°œ ì ìš© ì™„ë£Œ.");
 		}
-		e.addCredit("¡×a·¹ÀÎ½ºÅ¸ ¾Öµå¿Â ¡×f°³¹ßÀÚ : RainStar_ [¡×9µğ½ºÄÚµå ¡×f: RainStar¡×7#0846¡×f]");
+		e.addCredit("Â§aë ˆì¸ìŠ¤íƒ€ ì• ë“œì˜¨ Â§fê°œë°œì : RainStar_ [Â§9ë””ìŠ¤ì½”ë“œ Â§f: RainStarÂ§7#0846Â§f]");
 	}
 
 }

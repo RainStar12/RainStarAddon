@@ -58,11 +58,11 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "ÁÖÀÎ°ø", rank = Rank.S, species = Species.HUMAN, explain = {
-		"´ç½ÅÀº ÀÌ ´É·ÂÀÚ ÀüÀïÀÇ ¡×eÁÖÀÎ°ø¡×fÀÔ´Ï´Ù.",
-		"Ã¼·ÂÀÌ Àû¾î ¡×cÀ§±â »óÅÂ¡×f°¡ µÉ ¶§ ´Ù¾çÇÑ ¡×aÁÖÀÎ°ø ¹öÇÁ¡×f¸¦ ¹Ş½À´Ï´Ù.",
-		"¶ÇÇÑ ÀûÀ» Ã³Ä¡ÇÒ ¶§¸¶´Ù ¸Å¹ø ¡×d¼ºÀå¡×fÇÕ´Ï´Ù.",
-		"¡×8[¡×7HIDDEN¡×8] ¡×cÀÌ¾ß±â ÀïÅ»¡×f: ÀÚ, ÀÌÁ¦ ´©°¡ ÁÖÀÎ°øÀÌÁö?"
+@AbilityManifest(name = "ì£¼ì¸ê³µ", rank = Rank.S, species = Species.HUMAN, explain = {
+		"ë‹¹ì‹ ì€ ì´ ëŠ¥ë ¥ì ì „ìŸì˜ Â§eì£¼ì¸ê³µÂ§fì…ë‹ˆë‹¤.",
+		"ì²´ë ¥ì´ ì ì–´ Â§cìœ„ê¸° ìƒíƒœÂ§fê°€ ë  ë•Œ ë‹¤ì–‘í•œ Â§aì£¼ì¸ê³µ ë²„í”„Â§fë¥¼ ë°›ìŠµë‹ˆë‹¤.",
+		"ë˜í•œ ì ì„ ì²˜ì¹˜í•  ë•Œë§ˆë‹¤ ë§¤ë²ˆ Â§dì„±ì¥Â§fí•©ë‹ˆë‹¤.",
+		"Â§8[Â§7HIDDENÂ§8] Â§cì´ì•¼ê¸° ìŸíƒˆÂ§f: ì, ì´ì œ ëˆ„ê°€ ì£¼ì¸ê³µì´ì§€?"
 		})
 
 public class Protagonist extends AbilityBase {
@@ -211,16 +211,16 @@ public class Protagonist extends AbilityBase {
 						Mix mix = (Mix) ab;
 						if (mix.hasAbility() && !mix.hasSynergy()) {
 							if (mix.getFirst().getClass().equals(Protagonist.class) || mix.getSecond().getClass().equals(Protagonist.class)) {
-				    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×f´ç½Å°ú´Â ´Ù¸¥ ÀÌ¾ß±âÀÇ ÁÖÀÎ°øÀ» ¸¸³ª ¡×aÁÖÀÎ°ø ¹öÇÁ¡×f¸¦ ¹Ş°í ½Â¸®ÇÏ¿´½À´Ï´Ù.");
-				    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×cÀÌ¾ß±â ÀïÅ»¡×fÀ» ´Ş¼ºÇÏ¿´½À´Ï´Ù.");
+				    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§fë‹¹ì‹ ê³¼ëŠ” ë‹¤ë¥¸ ì´ì•¼ê¸°ì˜ ì£¼ì¸ê³µì„ ë§Œë‚˜ Â§aì£¼ì¸ê³µ ë²„í”„Â§fë¥¼ ë°›ê³  ìŠ¹ë¦¬í•˜ì˜€ìŠµë‹ˆë‹¤.");
+				    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§cì´ì•¼ê¸° ìŸíƒˆÂ§fì„ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 				    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 				    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));
 							}
 						}
 					} else if (ab.getClass().equals(Protagonist.class)) {
-						getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×f´ç½Å°ú´Â ´Ù¸¥ ÀÌ¾ß±âÀÇ ÁÖÀÎ°øÀ» ¸¸³ª ¡×aÁÖÀÎ°ø ¹öÇÁ¡×f¸¦ ¹Ş°í ½Â¸®ÇÏ¿´½À´Ï´Ù.");
-		    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×cÀÌ¾ß±â ÀïÅ»¡×fÀ» ´Ş¼ºÇÏ¿´½À´Ï´Ù.");
+						getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§fë‹¹ì‹ ê³¼ëŠ” ë‹¤ë¥¸ ì´ì•¼ê¸°ì˜ ì£¼ì¸ê³µì„ ë§Œë‚˜ Â§aì£¼ì¸ê³µ ë²„í”„Â§fë¥¼ ë°›ê³  ìŠ¹ë¦¬í•˜ì˜€ìŠµë‹ˆë‹¤.");
+		    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§cì´ì•¼ê¸° ìŸíƒˆÂ§fì„ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 		    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 		    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));

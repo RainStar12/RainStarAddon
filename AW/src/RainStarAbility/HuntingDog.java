@@ -61,13 +61,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "»ç³É°³", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×c»ç³É°³¸¦ Ç® ½Ã°£¡×f: ¡×6$[DURATION_A] È¤Àº $[DURATION_B]ÃÊ¡×f°£ ¡×e$[COUNT]¡×f¸¶¸®ÀÇ »ç³É°³¸¦ ¼ÒÈ¯ÇÕ´Ï´Ù.",
-		" »ç³É°³´Â ¡×c»¡°£»ö¡×f, ¡×a³ì»ö¡×f, ¡×bÇÏ´Ã»ö¡×f ¸ñ°ÉÀÌ¿¡ µû¸¥ º°°³ÀÇ ´É·ÂÄ¡·Î",
-		" ÀûÀ» »ç³ÉÇÏ·¯ ³ª¼·´Ï´Ù. $[COOLDOWN]",
-		" ÀÌ »ç³É°³°¡ ¹°¾î¶â´Â ÀûÀº $[DAMAGE]ÀÇ ÇÇÇØ¸¦ ÀÔ°í $[STUN]Æ½°£ ¡×e±âÀı¡×fÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×cÈû Àç±â¡×f: °¢ »ç³É°³ÀÇ ½ºÅÈÀ» º¼ ¼ö ÀÖ´Â GUI¸¦ ¿ÀÇÂÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×6DUCKGAE"
+		name = "ì‚¬ëƒ¥ê°œ", rank = Rank.S, species = Species.ANIMAL, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cì‚¬ëƒ¥ê°œë¥¼ í’€ ì‹œê°„Â§f: Â§6$[DURATION_A] í˜¹ì€ $[DURATION_B]ì´ˆÂ§fê°„ Â§e$[COUNT]Â§fë§ˆë¦¬ì˜ ì‚¬ëƒ¥ê°œë¥¼ ì†Œí™˜í•©ë‹ˆë‹¤.",
+		" ì‚¬ëƒ¥ê°œëŠ” Â§cë¹¨ê°„ìƒ‰Â§f, Â§aë…¹ìƒ‰Â§f, Â§bí•˜ëŠ˜ìƒ‰Â§f ëª©ê±¸ì´ì— ë”°ë¥¸ ë³„ê°œì˜ ëŠ¥ë ¥ì¹˜ë¡œ",
+		" ì ì„ ì‚¬ëƒ¥í•˜ëŸ¬ ë‚˜ì„­ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´ ì‚¬ëƒ¥ê°œê°€ ë¬¼ì–´ëœ¯ëŠ” ì ì€ $[DAMAGE]ì˜ í”¼í•´ë¥¼ ì…ê³  $[STUN]í‹±ê°„ Â§eê¸°ì ˆÂ§fí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§cí˜ ì¬ê¸°Â§f: ê° ì‚¬ëƒ¥ê°œì˜ ìŠ¤íƒ¯ì„ ë³¼ ìˆ˜ ìˆëŠ” GUIë¥¼ ì˜¤í”ˆí•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§6DUCKGAE"
 		})
 
 public class HuntingDog extends AbilityBase implements ActiveHandler {
@@ -76,7 +76,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "cooldown", 110, "# ÄğÅ¸ÀÓ") {
+	private static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "cooldown", 110, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -90,7 +90,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> DURATION_A = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-a", 12, "# Áö¼Ó ½Ã°£") {
+	private static final SettingObject<Integer> DURATION_A = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-a", 12, "# ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -99,16 +99,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private static final SettingObject<Integer> DURATION_B = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-b", 14, "# Áö¼Ó ½Ã°£") {
-
-		@Override
-		public boolean condition(Integer arg0) {
-			return arg0 >= 1;
-		}
-
-	};
-	
-	private static final SettingObject<Integer> COUNT = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "count", 7, "# ¼ÒÈ¯ÇÏ´Â »ç³É°³ÀÇ ¼ö") {
+	private static final SettingObject<Integer> DURATION_B = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-b", 14, "# ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -117,7 +108,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> DAMAGE = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "damage", 6, "# »ç³É°³ÀÇ ±âº» ´ë¹ÌÁö") {
+	private static final SettingObject<Integer> COUNT = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "count", 7, "# ì†Œí™˜í•˜ëŠ” ì‚¬ëƒ¥ê°œì˜ ìˆ˜") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -126,7 +117,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "health", 20, "# »ç³É°³ÀÇ ±âº» Ã¼·Â") {
+	private static final SettingObject<Integer> DAMAGE = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "damage", 6, "# ì‚¬ëƒ¥ê°œì˜ ê¸°ë³¸ ëŒ€ë¯¸ì§€") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -135,7 +126,16 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> STUN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "stun", 4, "# »ç³É°³ °ø°İÀÇ ±âÀı ½Ã°£(´ÜÀ§: Æ½)") {
+	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "health", 20, "# ì‚¬ëƒ¥ê°œì˜ ê¸°ë³¸ ì²´ë ¥") {
+
+		@Override
+		public boolean condition(Integer arg0) {
+			return arg0 >= 1;
+		}
+
+	};
+	
+	private static final SettingObject<Integer> STUN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "stun", 2, "# ì‚¬ëƒ¥ê°œ ê³µê²©ì˜ ê¸°ì ˆ ì‹œê°„(ë‹¨ìœ„: í‹±)") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -438,7 +438,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 				if (wolf.getCollarColor().equals(DyeColor.RED)) {
 					e.setDamage(dogDamage * 1.65);
 					Stun.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, stunduration);
-					Bleed.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, 20);
+					if (!getGame().getParticipant((Player) e.getEntity()).hasEffect(Bleed.registration)) Bleed.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, 20);
 					rgb = RGB.of(168, 13, 20);
 				} else if (wolf.getCollarColor().equals(DyeColor.LIME)) {
 					e.setDamage(dogDamage);
@@ -462,48 +462,48 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 	public class DogGui extends AbilityTimer implements Listener {
 		
 		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(" ").build();
-		private final ItemStack RED = (new ItemBuilder(MaterialX.RED_WOOL)).displayName("¡×c»¡°£»ö ¸ñ°ÉÀÌÀÇ »ç³É°³").build();
-		private final ItemStack GREEN = (new ItemBuilder(MaterialX.LIME_WOOL)).displayName("¡×aÃÊ·Ï»ö ¸ñ°ÉÀÌÀÇ »ç³É°³").build();
-		private final ItemStack BLUE = (new ItemBuilder(MaterialX.LIGHT_BLUE_WOOL)).displayName("¡×bÆÄ¶õ»ö ¸ñ°ÉÀÌÀÇ »ç³É°³").build();
-		private final ItemStack EXIT = (new ItemBuilder(MaterialX.SPRUCE_DOOR)).displayName("¡×3³ª°¡±â").build();
+		private final ItemStack RED = (new ItemBuilder(MaterialX.RED_WOOL)).displayName("Â§cë¹¨ê°„ìƒ‰ ëª©ê±¸ì´ì˜ ì‚¬ëƒ¥ê°œ").build();
+		private final ItemStack GREEN = (new ItemBuilder(MaterialX.LIME_WOOL)).displayName("Â§aì´ˆë¡ìƒ‰ ëª©ê±¸ì´ì˜ ì‚¬ëƒ¥ê°œ").build();
+		private final ItemStack BLUE = (new ItemBuilder(MaterialX.LIGHT_BLUE_WOOL)).displayName("Â§bíŒŒë€ìƒ‰ ëª©ê±¸ì´ì˜ ì‚¬ëƒ¥ê°œ").build();
+		private final ItemStack EXIT = (new ItemBuilder(MaterialX.SPRUCE_DOOR)).displayName("Â§3ë‚˜ê°€ê¸°").build();
 		
 		private final Inventory gui;
 		
 		public DogGui() {
 			super(TaskType.REVERSE, 99999);
 			setPeriod(TimeUnit.TICKS, 1);
-			gui = Bukkit.createInventory(null, InventoryType.HOPPER, "¡×c»ç³É°³ ¡×0´É·ÂÄ¡");
+			gui = Bukkit.createInventory(null, InventoryType.HOPPER, "Â§cì‚¬ëƒ¥ê°œ Â§0ëŠ¥ë ¥ì¹˜");
 			
 			ItemMeta redmeta = RED.getItemMeta();
 			final List<String> redlore = new ArrayList<>();
-			redlore.add("¡×c°ø°İ·Â¡×7: ¡×a¡á¡á¡á¡á¡á");
-			redlore.add("¡×dÃ¼·Â¡×7  : ¡×a¡á¡×8¡à¡à¡à¡à");
-			redlore.add("¡×b¼Óµµ¡×7  : ¡×a¡á¡á¡á¡×8¡à¡à");
-			redlore.add("¡×8====================");
-			redlore.add("¡×3¿ì¼± Å¸°ÔÆÃ ´ë»ó¡×7: ¡×f°¡Àå ¸¶Áö¸·À¸·Î ÁÖÀÎÀ» °ø°İÇÑ Àû");
-			redlore.add("¡×2Æ¯¼ö ´É·Â¡×7: ¡×fÀûÀ» ÇÇÇØÀÔÈú ¶§ ¡×cÃâÇ÷¡×fÈ¿°ú¸¦ ºÎ¿©ÇÔ");
+			redlore.add("Â§cê³µê²©ë ¥Â§7: Â§aâ– â– â– â– â– ");
+			redlore.add("Â§dì²´ë ¥Â§7  : Â§aâ– Â§8â–¡â–¡â–¡â–¡");
+			redlore.add("Â§bì†ë„Â§7  : Â§aâ– â– â– Â§8â–¡â–¡");
+			redlore.add("Â§8====================");
+			redlore.add("Â§3ìš°ì„  íƒ€ê²ŒíŒ… ëŒ€ìƒÂ§7: Â§fê°€ì¥ ë§ˆì§€ë§‰ìœ¼ë¡œ ì£¼ì¸ì„ ê³µê²©í•œ ì ");
+			redlore.add("Â§2íŠ¹ìˆ˜ ëŠ¥ë ¥Â§7: Â§fì ì„ í”¼í•´ì…í ë•Œ Â§cì¶œí˜ˆÂ§fíš¨ê³¼ë¥¼ ë¶€ì—¬í•¨");
 			redmeta.setLore(redlore);
 			RED.setItemMeta(redmeta);
 			
 			ItemMeta greenmeta = GREEN.getItemMeta();
 			final List<String> greenlore = new ArrayList<>();
-			greenlore.add("¡×c°ø°İ·Â¡×7: ¡×a¡á¡á¡á¡×8¡à¡à");
-			greenlore.add("¡×dÃ¼·Â¡×7  : ¡×a¡á¡á¡á¡á¡á");
-			greenlore.add("¡×b¼Óµµ¡×7  : ¡×a¡á¡×8¡à¡à¡à¡à");
-			greenlore.add("¡×8====================");
-			greenlore.add("¡×3¿ì¼± Å¸°ÔÆÃ ´ë»ó¡×7: ¡×fÀÚ½ÅÀ¸·ÎºÎÅÍ °¡Àå °¡±î¿î Àû");
-			greenlore.add("¡×2Æ¯¼ö ´É·Â¡×7: ¡×fÀû¿¡°Ô ÀÔÈù ÇÇÇØ¿¡ ºñ·ÊÇØ ÁÖÀÎÀ» ¡×aÈ¸º¹¡×f½ÃÅ´");
+			greenlore.add("Â§cê³µê²©ë ¥Â§7: Â§aâ– â– â– Â§8â–¡â–¡");
+			greenlore.add("Â§dì²´ë ¥Â§7  : Â§aâ– â– â– â– â– ");
+			greenlore.add("Â§bì†ë„Â§7  : Â§aâ– Â§8â–¡â–¡â–¡â–¡");
+			greenlore.add("Â§8====================");
+			greenlore.add("Â§3ìš°ì„  íƒ€ê²ŒíŒ… ëŒ€ìƒÂ§7: Â§fìì‹ ìœ¼ë¡œë¶€í„° ê°€ì¥ ê°€ê¹Œìš´ ì ");
+			greenlore.add("Â§2íŠ¹ìˆ˜ ëŠ¥ë ¥Â§7: Â§fì ì—ê²Œ ì…íŒ í”¼í•´ì— ë¹„ë¡€í•´ ì£¼ì¸ì„ Â§aíšŒë³µÂ§fì‹œí‚´");
 			greenmeta.setLore(greenlore);
 			GREEN.setItemMeta(greenmeta);
 			
 			ItemMeta bluemeta = BLUE.getItemMeta();
 			final List<String> bluelore = new ArrayList<>();
-			bluelore.add("¡×c°ø°İ·Â¡×7: ¡×a¡á¡á¡×8¡à¡à¡à");
-			bluelore.add("¡×dÃ¼·Â¡×7  : ¡×a¡á¡á¡á¡×8¡à¡à");
-			bluelore.add("¡×b¼Óµµ¡×7  : ¡×a¡á¡á¡á¡á¡×8¡à");
-			bluelore.add("¡×8====================");
-			bluelore.add("¡×3¿ì¼± Å¸°ÔÆÃ ´ë»ó¡×7: ¡×fÁÖÀÎ¿¡°Ô °¡Àå °¡±îÀÌ ÀÖ´Â Àû");
-			bluelore.add("¡×2Æ¯¼ö ´É·Â¡×7: ¡×fÇÇÇØ¸¦ ÀÔÈú ¶§ ÀûÀÌ ¡×b±âÀı¡×fÇÏ´Â ½Ã°£ÀÌ 2¹è ±æ¾îÁü");
+			bluelore.add("Â§cê³µê²©ë ¥Â§7: Â§aâ– â– Â§8â–¡â–¡â–¡");
+			bluelore.add("Â§dì²´ë ¥Â§7  : Â§aâ– â– â– Â§8â–¡â–¡");
+			bluelore.add("Â§bì†ë„Â§7  : Â§aâ– â– â– â– Â§8â–¡");
+			bluelore.add("Â§8====================");
+			bluelore.add("Â§3ìš°ì„  íƒ€ê²ŒíŒ… ëŒ€ìƒÂ§7: Â§fì£¼ì¸ì—ê²Œ ê°€ì¥ ê°€ê¹Œì´ ìˆëŠ” ì ");
+			bluelore.add("Â§2íŠ¹ìˆ˜ ëŠ¥ë ¥Â§7: Â§fí”¼í•´ë¥¼ ì…í ë•Œ ì ì´ Â§bê¸°ì ˆÂ§fí•˜ëŠ” ì‹œê°„ì´ 2ë°° ê¸¸ì–´ì§");
 			bluemeta.setLore(bluelore);
 			BLUE.setItemMeta(bluemeta);
 		}

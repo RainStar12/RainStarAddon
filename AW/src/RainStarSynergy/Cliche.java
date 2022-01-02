@@ -68,14 +68,14 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "Å¬¸®¼Î", rank = Rank.L, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×bÁÖÀÎ°ø ¹öÇÁ¡×f: Ã¼·ÂÀÌ Àû¾î ¡×cÀ§±â »óÅÂ¡×f°¡ µÉ ¶§ ´Ù¾çÇÑ ¡×bÁÖÀÎ°ø ¹öÇÁ¡×f¸¦",
-		" ¹ŞÀ¸¸ç, ÀûÀ» Ã³Ä¡ÇÒ ¶§¸¶´Ù ¸Å¹ø ¡×d¼ºÀå¡×fÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×aÇØÄ¡¿ü³ª?¡×f: Ä¡¸íÀû ÇÇÇØ¸¦ ÀÔÀ» ¶§, ¡×aºÒ»çÀÇ ÅäÅÛ È¿°ú¡×f°¡ ¹ßµ¿ÇÕ´Ï´Ù.",
-		" ¡×aºÒ»çÀÇ ÅäÅÛ¡×fÀº $[PERIOD]ÃÊ¸¶´Ù ÀçÃæÀüµË´Ï´Ù.",
-		" ¡×aºÒ»çÀÇ ÅäÅÛ¡×fÀÌ ÀçÃæÀüµÇ±â Àü±îÁö, ¡×bÁÖÀÎ°ø ¹öÇÁ¡×f¸¦ ¾òÀ» ¼ö ¾ø½À´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÀÏ´ç¹é¡×f: $[RANGE]Ä­ ³» ÀûÀÇ ¼ö¿¡ ºñ·ÊÇØ ÇØÄ¡¿ü³ª? È¿°ú°¡ ´õ »¡¸® ¹ßµ¿ÇÕ´Ï´Ù.",
-		"¡×8[¡×7HIDDEN¡×8] ¡×e±İÀÇÈ¯Çâ¡×f: ÀÌ°É·Î ÀÌ¾ß±â ³¡!"
+@AbilityManifest(name = "í´ë¦¬ì…°", rank = Rank.L, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bì£¼ì¸ê³µ ë²„í”„Â§f: ì²´ë ¥ì´ ì ì–´ Â§cìœ„ê¸° ìƒíƒœÂ§fê°€ ë  ë•Œ ë‹¤ì–‘í•œ Â§bì£¼ì¸ê³µ ë²„í”„Â§fë¥¼",
+		" ë°›ìœ¼ë©°, ì ì„ ì²˜ì¹˜í•  ë•Œë§ˆë‹¤ ë§¤ë²ˆ Â§dì„±ì¥Â§fí•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§aí•´ì¹˜ì› ë‚˜?Â§f: ì¹˜ëª…ì  í”¼í•´ë¥¼ ì…ì„ ë•Œ, Â§aë¶ˆì‚¬ì˜ í† í…œ íš¨ê³¼Â§fê°€ ë°œë™í•©ë‹ˆë‹¤.",
+		" Â§aë¶ˆì‚¬ì˜ í† í…œÂ§fì€ $[PERIOD]ì´ˆë§ˆë‹¤ ì¬ì¶©ì „ë©ë‹ˆë‹¤.",
+		" Â§aë¶ˆì‚¬ì˜ í† í…œÂ§fì´ ì¬ì¶©ì „ë˜ê¸° ì „ê¹Œì§€, Â§bì£¼ì¸ê³µ ë²„í”„Â§fë¥¼ ì–»ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì¼ë‹¹ë°±Â§f: $[RANGE]ì¹¸ ë‚´ ì ì˜ ìˆ˜ì— ë¹„ë¡€í•´ í•´ì¹˜ì› ë‚˜? íš¨ê³¼ê°€ ë” ë¹¨ë¦¬ ë°œë™í•©ë‹ˆë‹¤.",
+		"Â§8[Â§7HIDDENÂ§8] Â§eê¸ˆì˜í™˜í–¥Â§f: ì´ê±¸ë¡œ ì´ì•¼ê¸° ë!"
 		})
 
 public class Cliche extends Synergy {
@@ -107,7 +107,7 @@ public class Cliche extends Synergy {
 	}
 
 	public static final SettingObject<Integer> PERIOD = synergySettings.new SettingObject<Integer>(Cliche.class,
-			"period", 60, "# ºÒ»çÀÇ ÅäÅÛ ÀçÃæÀü ½Ã°£", "# ÄğÅ¸ÀÓ °¨¼Ò°¡ 50%±îÁö Àû¿ëµË´Ï´Ù.") {
+			"period", 60, "# ë¶ˆì‚¬ì˜ í† í…œ ì¬ì¶©ì „ ì‹œê°„", "# ì¿¨íƒ€ì„ ê°ì†Œê°€ 50%ê¹Œì§€ ì ìš©ë©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -117,7 +117,7 @@ public class Cliche extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Cliche.class,
-			"range", 13, "# ÀÏ´ç¹é È¿°ú »ç°Å¸®") {
+			"range", 13, "# ì¼ë‹¹ë°± íš¨ê³¼ ì‚¬ê±°ë¦¬") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -127,7 +127,7 @@ public class Cliche extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> INV_DURATION = synergySettings.new SettingObject<Integer>(Cliche.class,
-			"inv-duration", 30, "# ±İÀÇÈ¯Çâ ¹«Àû Áö¼Ó½Ã°£") {
+			"inv-duration", 30, "# ê¸ˆì˜í™˜í–¥ ë¬´ì  ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -203,14 +203,14 @@ public class Cliche extends Synergy {
     		SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
     		SoundLib.ENTITY_FIREWORK_ROCKET_LARGE_BLAST.broadcastSound();
     		SoundLib.ENTITY_FIREWORK_ROCKET_TWINKLE.broadcastSound();
-    		Bukkit.broadcastMessage("¡×8[¡×7HIDDEN¡×8] ¡×bÁÖÀÎ°ø ¡×e" + getPlayer().getName() + "¡×f´Ô¿¡ ÀÇÇØ ¸¶¿ÕÀÌ ¾²·¯Á³½À´Ï´Ù.");
-    		Bukkit.broadcastMessage("¡×8[¡×7HIDDEN¡×8] ¡×b" + invduration + "¡×fÃÊ°£ ÁÖÀÎ°øÀÌ ¼±Á¦ °ø°İÇÏ±â Àü±îÁö ÁÖÀÎ°øÀ» °ø°İÇÏÁö ¸øÇÕ´Ï´Ù.");
-    		getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×e±İÀÇÈ¯Çâ¡×fÀ» ´Ş¼ºÇÏ¿´½À´Ï´Ù.");
+    		Bukkit.broadcastMessage("Â§8[Â§7HIDDENÂ§8] Â§bì£¼ì¸ê³µ Â§e" + getPlayer().getName() + "Â§fë‹˜ì— ì˜í•´ ë§ˆì™•ì´ ì“°ëŸ¬ì¡ŒìŠµë‹ˆë‹¤.");
+    		Bukkit.broadcastMessage("Â§8[Â§7HIDDENÂ§8] Â§b" + invduration + "Â§fì´ˆê°„ ì£¼ì¸ê³µì´ ì„ ì œ ê³µê²©í•˜ê¸° ì „ê¹Œì§€ ì£¼ì¸ê³µì„ ê³µê²©í•˜ì§€ ëª»í•©ë‹ˆë‹¤.");
+    		getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§eê¸ˆì˜í™˜í–¥Â§fì„ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
     	}
     	
     	@Override
 		public void run(int count) {
-    		ac.update("¡×d¹«Àû¡×7: ¡×f" + df.format(invtimer.getCount() * 0.05) + "ÃÊ");
+    		ac.update("Â§dë¬´ì Â§7: Â§f" + df.format(invtimer.getCount() * 0.05) + "ì´ˆ");
     	}
     	
     	@Override
@@ -237,7 +237,7 @@ public class Cliche extends Synergy {
     	@Override
     	public void onEnd() {
     		SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.75f);
-    		getPlayer().sendMessage("¡×a[¡×e!¡×a] ¡×fÀ§±â Å»Ãâ ±âÈ¸°¡ ´Ù½Ã »ı°Ü³µ½À´Ï´Ù.");
+    		getPlayer().sendMessage("Â§a[Â§e!Â§a] Â§fìœ„ê¸° íƒˆì¶œ ê¸°íšŒê°€ ë‹¤ì‹œ ìƒê²¨ë‚¬ìŠµë‹ˆë‹¤.");
     	}
     	
     }.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();

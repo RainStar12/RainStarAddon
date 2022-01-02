@@ -99,22 +99,22 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
-		name = "¸¶¿Õ", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×7ÃÖÃÊ ºÎ¿© ¡×8- ¡×c°­¸²¡×f: ¸¶¿Õ ´É·ÂÀ» ¹èÁ¤¹ÞÀ» ¶§·ÎºÎÅÍ 45ÃÊ°£ ¡×3Â÷¿øÀÇ ³Ê¸Ó¡×f ¼Ó¿¡¼­",
-		" ÀÚÀ¯·Ó°Ô ÀÌµ¿ÇÒ ¼ö ÀÖ½À´Ï´Ù. µµÁß¿¡ ºùÀÇ¸¦ ½ÃµµÇÒ °æ¿ì ´ë»ó À§¿¡¼­ °­¸²ÇÕ´Ï´Ù.",
-		" °­¸² ½Ã ÁÖº¯ ÀÏ´ë¸¦ 15ÃÊ°£ ¡×7¾îµÒ Áö´ë¡×f·Î ¸¸µé¾î Áö´ë À§ ÇÃ·¹ÀÌ¾î¸¦ Áö¼ÓÀûÀ¸·Î",
-		" ½Ç¸í½ÃÅ°°í º»ÀÎÀº ºñÇàÇÏ¸ç ¡×7¾îµÒ Áö´ë¡×f À§¿¡¼­ ¡×8¾ÏÀü¡×f È¿°ú°¡ »ó½Ã ¹ßµ¿ÇÕ´Ï´Ù.",
-		"¡×7°Ë µé°í F ¡×8- ¡×5½Ã°ø°£ Àý´Ü¡×f: ½ºÅ³ »ç¿ë ÈÄ ¸ðµç ÇÃ·¹ÀÌ¾î°¡ ÀÌµ¿ÇÑ",
-		" ½Ã°£ÀÇ ÈçÀûÀÌ ³²°í, ´Ù½Ã ´É·ÂÀ» »ç¿ë È¤Àº ÀÚµ¿ Áß´ÜÇÒ ¶§ ¹üÀ§ ³»ÀÇ",
-		" ½Ã°£ÀÇ ÈçÀûÀÇ ÁÖÀÎµé¿¡°Ô ÇÇÇØ¸¦ ÀÔÈ÷¸ç ¡×3Â÷¿ø ³Ê¸Ó¡×f·Î º¸³»¹ö¸³´Ï´Ù. $[COOLDOWN]",
-		" ÀÌÈÄ ÀÚ½Åµµ Àá½Ã°£ ¡×3Â÷¿ø ³Ê¸Ó¡×f·Î ÀÌµ¿ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×e¸¶·Â Ä¡È¯¡×f: È¸º¹ È¿°ú¸¦ µÎ ¹ø ¹ÞÀ» ¶§¸¶´Ù ÇØ´ç È¸º¹ È¿°ú¸¦ Àý¹ÝÀ¸·Î ¹Þ°í",
-		" ´ë½Å ¿µ±¸ÀûÀÎ ¡×c±ÙÁ¢ Ãß°¡ °ø°Ý·Â¡×fÀ» ¡×dÈ¸º¹¡×f¿¡ ºñ·ÊÇØ ÃÖ´ë ¡×c5¡×f±îÁö ¾òÀ» ¼ö ÀÖ½À´Ï´Ù.",
-		" Ã¼·ÂÀÌ 50% ÀÌÇÏÀÎ »óÅÂ¶ó¸é ¡×cÃß°¡ °ø°Ý·Â¡×fÀ» ¼Ò¸ðÇØ ´õ ¸¹ÀÌ ¡×dÈ¸º¹¡×fÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×c- ¡×8¾ÏÀü¡×f: ÀÚ½ÅÀÇ À§Ä¡°¡ ¾îµÎ¿ï¼ö·Ï ½ºÅ³ ÇÇÇØ·®ÀÌ °­È­µË´Ï´Ù.",
-		" ½Ç¸íÀ» °¡Áö°í ÀÖ´Â ÀûÀ» °ø°ÝÇÒ ¶§ ´ë»ó¿¡°Ô ¡×c1.2¹èÀÇ ÇÇÇØ¡×f¸¦ ÀÔÈü´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×3Â÷¿ø Áö¹è¡×f: Â÷¿øÀÇ ÀúÆíÀÌ³ª ³Ê¸Ó¿¡¼­ ÀÚÀ¯·Ó°Ô ÀÌµ¿ °¡´ÉÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµð¾î Á¦°øÀÚ¡×b] keuleijeo"
+		name = "ë§ˆì™•", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§7ìµœì´ˆ ë¶€ì—¬ Â§8- Â§cê°•ë¦¼Â§f: ë§ˆì™• ëŠ¥ë ¥ì„ ë°°ì •ë°›ì„ ë•Œë¡œë¶€í„° 45ì´ˆê°„ Â§3ì°¨ì›ì˜ ë„ˆë¨¸Â§f ì†ì—ì„œ",
+		" ìžìœ ë¡­ê²Œ ì´ë™í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤. ë„ì¤‘ì— ë¹™ì˜ë¥¼ ì‹œë„í•  ê²½ìš° ëŒ€ìƒ ìœ„ì—ì„œ ê°•ë¦¼í•©ë‹ˆë‹¤.",
+		" ê°•ë¦¼ ì‹œ ì£¼ë³€ ì¼ëŒ€ë¥¼ 15ì´ˆê°„ Â§7ì–´ë‘  ì§€ëŒ€Â§fë¡œ ë§Œë“¤ì–´ ì§€ëŒ€ ìœ„ í”Œë ˆì´ì–´ë¥¼ ì§€ì†ì ìœ¼ë¡œ",
+		" ì‹¤ëª…ì‹œí‚¤ê³  ë³¸ì¸ì€ ë¹„í–‰í•˜ë©° Â§7ì–´ë‘  ì§€ëŒ€Â§f ìœ„ì—ì„œ Â§8ì•”ì „Â§f íš¨ê³¼ê°€ ìƒì‹œ ë°œë™í•©ë‹ˆë‹¤.",
+		"Â§7ê²€ ë“¤ê³  F Â§8- Â§5ì‹œê³µê°„ ì ˆë‹¨Â§f: ìŠ¤í‚¬ ì‚¬ìš© í›„ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì´ë™í•œ",
+		" ì‹œê°„ì˜ í”ì ì´ ë‚¨ê³ , ë‹¤ì‹œ ëŠ¥ë ¥ì„ ì‚¬ìš© í˜¹ì€ ìžë™ ì¤‘ë‹¨í•  ë•Œ ë²”ìœ„ ë‚´ì˜",
+		" ì‹œê°„ì˜ í”ì ì˜ ì£¼ì¸ë“¤ì—ê²Œ í”¼í•´ë¥¼ ìž…ížˆë©° Â§3ì°¨ì› ë„ˆë¨¸Â§fë¡œ ë³´ë‚´ë²„ë¦½ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´í›„ ìžì‹ ë„ ìž ì‹œê°„ Â§3ì°¨ì› ë„ˆë¨¸Â§fë¡œ ì´ë™í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§eë§ˆë ¥ ì¹˜í™˜Â§f: íšŒë³µ íš¨ê³¼ë¥¼ ë‘ ë²ˆ ë°›ì„ ë•Œë§ˆë‹¤ í•´ë‹¹ íšŒë³µ íš¨ê³¼ë¥¼ ì ˆë°˜ìœ¼ë¡œ ë°›ê³ ",
+		" ëŒ€ì‹  ì˜êµ¬ì ì¸ Â§cê·¼ì ‘ ì¶”ê°€ ê³µê²©ë ¥Â§fì„ Â§díšŒë³µÂ§fì— ë¹„ë¡€í•´ ìµœëŒ€ Â§c5Â§fê¹Œì§€ ì–»ì„ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		" ì²´ë ¥ì´ 50% ì´í•˜ì¸ ìƒíƒœë¼ë©´ Â§cì¶”ê°€ ê³µê²©ë ¥Â§fì„ ì†Œëª¨í•´ ë” ë§Žì´ Â§díšŒë³µÂ§fí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§c- Â§8ì•”ì „Â§f: ìžì‹ ì˜ ìœ„ì¹˜ê°€ ì–´ë‘ìš¸ìˆ˜ë¡ ìŠ¤í‚¬ í”¼í•´ëŸ‰ì´ ê°•í™”ë©ë‹ˆë‹¤.",
+		" ì‹¤ëª…ì„ ê°€ì§€ê³  ìžˆëŠ” ì ì„ ê³µê²©í•  ë•Œ ëŒ€ìƒì—ê²Œ Â§c1.2ë°°ì˜ í”¼í•´Â§fë¥¼ ìž…íž™ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ì°¨ì› ì§€ë°°Â§f: ì°¨ì›ì˜ ì €íŽ¸ì´ë‚˜ ë„ˆë¨¸ì—ì„œ ìžìœ ë¡­ê²Œ ì´ë™ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìžÂ§b] keuleijeo"
 		})
 
 @SuppressWarnings("deprecation")
@@ -126,8 +126,8 @@ public class DemonLord extends Synergy {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(DemonLord.class,
-			"cooldown", 40, "# ½Ã°ø°£ Àý´Ü ÄðÅ¸ÀÓ",
-			"# ÄðÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ ÃÖ´ë 50%±îÁö ¹Þ½À´Ï´Ù.") {
+			"cooldown", 40, "# ì‹œê³µê°„ ì ˆë‹¨ ì¿¨íƒ€ìž„",
+			"# ì¿¨íƒ€ìž„ ê°ì†Œ íš¨ê³¼ë¥¼ ìµœëŒ€ 50%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -141,7 +141,7 @@ public class DemonLord extends Synergy {
 	
 	public static final SettingObject<Integer> DAMAGE 
 	= synergySettings.new SettingObject<Integer>(DemonLord.class,
-			"damage", 12, "# ½Ã°ø°£ Àý´Ü ÇÇÇØ·®") {
+			"damage", 12, "# ì‹œê³µê°„ ì ˆë‹¨ í”¼í•´ëŸ‰") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -151,7 +151,7 @@ public class DemonLord extends Synergy {
 	
 	public static final SettingObject<Integer> DAMAGE_INCREASE 
 	= synergySettings.new SettingObject<Integer>(DemonLord.class,
-			"damage-increase", 40, "# ¹à±â°¡ 1´Ü°è ³·À»¼ö·Ï Áõ°¡ÇÏ´Â ÇÇÇØ·®", "# ´ÜÀ§: %", "# ¹à±â´Â 15´Ü°è·Î, ÃÖ¼Ò ¹à±âÀÎ 0ÀÏ °æ¿ì 40%ÀÇ ±âÁØ", "# 15 * 0.4 = 6ÀÇ Ãß´ïÀ» °¡Áý´Ï´Ù.") {
+			"damage-increase", 40, "# ë°ê¸°ê°€ 1ë‹¨ê³„ ë‚®ì„ìˆ˜ë¡ ì¦ê°€í•˜ëŠ” í”¼í•´ëŸ‰", "# ë‹¨ìœ„: %", "# ë°ê¸°ëŠ” 15ë‹¨ê³„ë¡œ, ìµœì†Œ ë°ê¸°ì¸ 0ì¼ ê²½ìš° 40%ì˜ ê¸°ì¤€", "# 15 * 0.4 = 6ì˜ ì¶”ëŒì„ ê°€ì§‘ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -191,7 +191,7 @@ public class DemonLord extends Synergy {
 	private PotionEffect lightblindness = new PotionEffect(PotionEffectType.BLINDNESS, 50, 1, true, false);
 	private PotionEffect confusionsight = new PotionEffect(PotionEffectType.CONFUSION, 140, 1, true, false);
 	
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "½Ã°ø°£ Àý´Ü", CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "ì‹œê³µê°„ ì ˆë‹¨", CooldownDecrease._50);
 	private final int damage = DAMAGE.getValue();
 	private final int increase = DAMAGE_INCREASE.getValue();
 	
@@ -371,8 +371,8 @@ public class DemonLord extends Synergy {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR && !descend) {
 			Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-			getPlayer().sendMessage("¡×8[¡×7!¡×8] ¡×f´ç½ÅÀÇ ´É·ÂÀÌ ¡×8¸¶¿Õ¡×fÀ¸·Î ¡×eº¯°æ¡×fµÇ¾ú½À´Ï´Ù. ¡×7/aw check");
-			getPlayer().sendMessage("¡×8[¡×7!¡×8] ¡×3Â÷¿øÀÇ ³Ê¸Ó¡×f·Î Àº½ÅÇÕ´Ï´Ù...");
+			getPlayer().sendMessage("Â§8[Â§7!Â§8] Â§fë‹¹ì‹ ì˜ ëŠ¥ë ¥ì´ Â§8ë§ˆì™•Â§fìœ¼ë¡œ Â§eë³€ê²½Â§fë˜ì—ˆìŠµë‹ˆë‹¤. Â§7/aw check");
+			getPlayer().sendMessage("Â§8[Â§7!Â§8] Â§3ì°¨ì›ì˜ ë„ˆë¨¸Â§fë¡œ ì€ì‹ í•©ë‹ˆë‹¤...");
 			ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getEyeLocation(), 0.2, 0.2, 0.2, 50, 0);
 			SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer().getLocation(), 1, 0.7f);
 			dimensionBeyond.start();
@@ -393,7 +393,7 @@ public class DemonLord extends Synergy {
 		@Override
 		public void run(int count) {
 			getPlayer().setGameMode(GameMode.SPECTATOR);
-			dimensionac.update("¡×3Â÷¿ø ³Ê¸Ó¡×7: ¡×f" + df.format(count * 0.05) + "ÃÊ");
+			dimensionac.update("Â§3ì°¨ì› ë„ˆë¨¸Â§7: Â§f" + df.format(count * 0.05) + "ì´ˆ");
 			if (getPlayer().getSpectatorTarget() != null && getPlayer().getSpectatorTarget() instanceof Player) {
 				target = (Player) getPlayer().getSpectatorTarget();
 				stop(false);
@@ -768,7 +768,7 @@ public class DemonLord extends Synergy {
 				e.setAmount(e.getAmount() * 0.5);
 				addDamage = Math.min(5, addDamage + e.getAmount());
 			}
-			ac.update("¡×cÃß°¡ °ø°Ý·Â¡×f: " + df2.format(addDamage));
+			ac.update("Â§cì¶”ê°€ ê³µê²©ë ¥Â§f: " + df2.format(addDamage));
 			stack = 0;
 		}
 	}
@@ -953,8 +953,8 @@ public class DemonLord extends Synergy {
     		if (!cool.isCooldown()) {
         		if (skill.isRunning()) {
         			if (skill.getCount() >= 7) {
-        				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¾ÆÁ÷ ÃÖ¼ÒÇÑÀÇ °ËÀÇ ÈûÀÌ ¸ð¾ÆÁöÁö ¾Ê¾Ò½À´Ï´Ù.");
-        				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×3ÃÖ¼Ò ´ë±â ½Ã°£¡×f: ¾ÕÀ¸·Î ¡×e" + Math.abs(6 - skill.getCount()) + "¡×fÃÊ");
+        				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì•„ì§ ìµœì†Œí•œì˜ ê²€ì˜ íž˜ì´ ëª¨ì•„ì§€ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+        				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§3ìµœì†Œ ëŒ€ê¸° ì‹œê°„Â§f: ì•žìœ¼ë¡œ Â§e" + Math.abs(6 - skill.getCount()) + "Â§fì´ˆ");
         			} else {
         				skill.stop(false);
         			}
@@ -993,7 +993,7 @@ public class DemonLord extends Synergy {
 		@Override
 		public void run(int count) {
 			if (count <= 3) {
-				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×e" + skill.getCount() + "¡×fÃÊ ÈÄ Áï½Ã ¡×3»ç¿ë¡×fµË´Ï´Ù!");
+				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§e" + skill.getCount() + "Â§fì´ˆ í›„ ì¦‰ì‹œ Â§3ì‚¬ìš©Â§fë©ë‹ˆë‹¤!");
 				SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
 			}
 		}
@@ -1298,7 +1298,7 @@ public class DemonLord extends Synergy {
     		if (!player.equals(getPlayer())) {
         		ParticleLib.SMOKE_LARGE.spawnParticle(player.getLocation().clone().add(0, 1, 0), 0, 0, 0, 3, 0);	
     		}
-    		actionbarChannel.update("¡×3Â÷¿ø ³Ê¸Ó¡×f: " + count / 10 + "ÃÊ");
+    		actionbarChannel.update("Â§3ì°¨ì› ë„ˆë¨¸Â§f: " + count / 10 + "ì´ˆ");
     	}
 		
 		@Override

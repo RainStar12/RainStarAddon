@@ -52,12 +52,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "Alice in ³Ãµ¿°í", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×bNonsense¡×f: ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ¡×3³Ãµ¿ Ä«µå¡×f¸¦ ´øÁ®",
-		" ÀûÁß ´ë»óÀ» ¡×bºù°á¡×f½ÃÅ°°í, ¡×b´«²É ¸ğ¾ç¡×fÀ¸·Î ´Ù½Ã ÆÛÁ®³ª°©´Ï´Ù.",
-		" Ãß°¡ ¹ß»çÃ¼´Â ºù°á½ÃÅ³ ¶§ ÆÛÁ®³ª°¡Áö ¾Ê°í ÄğÅ¸ÀÓÀ» ÀÏºÎ °¨¼Ò½ÃÅµ´Ï´Ù.",
-		" ¡×3³Ãµ¿ Ä«µå¡×f·Î ºù°áµÈ ÀûÀº ¡×b´«²É Ç¥½Ä¡×fÀ» ÃÖ´ë ¡×a5¡×f´Ü°è±îÁö ¡×a1¡×f´Ü°è È¹µæÇÏ°í,",
-		" Ãß°¡ ¹ß»çÃ¼·Î ºù°áµÉ °æ¿ì ¡×9³Ã±â¡×f È¿°ú¸¦ ¾ò°Ô µË´Ï´Ù. $[COOLDOWN]"
+		name = "Alice in ëƒ‰ë™ê³ ", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bNonsenseÂ§f: ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ Â§3ëƒ‰ë™ ì¹´ë“œÂ§fë¥¼ ë˜ì ¸",
+		" ì ì¤‘ ëŒ€ìƒì„ Â§bë¹™ê²°Â§fì‹œí‚¤ê³ , Â§bëˆˆê½ƒ ëª¨ì–‘Â§fìœ¼ë¡œ ë‹¤ì‹œ í¼ì ¸ë‚˜ê°‘ë‹ˆë‹¤.",
+		" ì¶”ê°€ ë°œì‚¬ì²´ëŠ” ë¹™ê²°ì‹œí‚¬ ë•Œ í¼ì ¸ë‚˜ê°€ì§€ ì•Šê³  ì¿¨íƒ€ì„ì„ ì¼ë¶€ ê°ì†Œì‹œí‚µë‹ˆë‹¤.",
+		" Â§3ëƒ‰ë™ ì¹´ë“œÂ§fë¡œ ë¹™ê²°ëœ ì ì€ Â§bëˆˆê½ƒ í‘œì‹Â§fì„ ìµœëŒ€ Â§a5Â§fë‹¨ê³„ê¹Œì§€ Â§a1Â§fë‹¨ê³„ íšë“í•˜ê³ ,",
+		" ì¶”ê°€ ë°œì‚¬ì²´ë¡œ ë¹™ê²°ë  ê²½ìš° Â§9ëƒ‰ê¸°Â§f íš¨ê³¼ë¥¼ ì–»ê²Œ ë©ë‹ˆë‹¤. $[COOLDOWN]"
 		})
 
 public class AliceInFreezer extends Synergy implements ActiveHandler {
@@ -68,7 +68,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			synergySettings.new SettingObject<Integer>(AliceInFreezer.class, "cooldown", 17,
-            "# Ã¶±« ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ", "# ´ÜÀ§: ÃÊ") {
+            "# ì² ê´´ ìš°í´ë¦­ ì¿¨íƒ€ì„", "# ë‹¨ìœ„: ì´ˆ") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -79,7 +79,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
         }
     };
     
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "Ä«µå", CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "ì¹´ë“œ", CooldownDecrease._50);
 	private static final Circle circle1 = Circle.of(7, 6);
 	private static final Circle circle2 = Circle.of(7, 8);
 	private int number = 1;

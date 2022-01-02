@@ -24,11 +24,11 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "µµ»ìÀÚ", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cºí·¯µå·¯½ºÆ®¡×f: ´ë»ó¿¡ Ã¼·Â¿¡ µû¶ó ¸¹À»¼ö·Ï ¡×a¾àÇÏ°Ô¡×8(¡×7ÃÖ¼Ò 0.6¹è¡×8)¡×f,",
-		" ÀûÀ»¼ö·Ï ¡×4°­ÇÏ°Ô¡×8(¡×7ÃÖ´ë 1.6¹è¡×8)¡×f °ø°İÇÕ´Ï´Ù.",
-		"¡×7Å³ ¡×8- ¡×cÄ«´Ï¹ß¸®Áò¡×f: ´ë»óÀ» Á×¿´À» °æ¿ì, ÇöÀç ³²Àº Ã¼·Â¸¸Å­ Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù.",
-		" ÀÌ¶§ ÃÖ´ë Ã¼·ÂÀ» ³Ñ´Â È¸º¹·®Àº ¡×eÈí¼ö Ã¼·Â¡×fÀ¸·Î ¾ò½À´Ï´Ù."
+@AbilityManifest(name = "ë„ì‚´ì", rank = Rank.A, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë¸”ëŸ¬ë“œëŸ¬ìŠ¤íŠ¸Â§f: ëŒ€ìƒì— ì²´ë ¥ì— ë”°ë¼ ë§ì„ìˆ˜ë¡ Â§aì•½í•˜ê²ŒÂ§8(Â§7ìµœì†Œ 0.6ë°°Â§8)Â§f,",
+		" ì ì„ìˆ˜ë¡ Â§4ê°•í•˜ê²ŒÂ§8(Â§7ìµœëŒ€ 1.6ë°°Â§8)Â§f ê³µê²©í•©ë‹ˆë‹¤.",
+		"Â§7í‚¬ Â§8- Â§cì¹´ë‹ˆë°œë¦¬ì¦˜Â§f: ëŒ€ìƒì„ ì£½ì˜€ì„ ê²½ìš°, í˜„ì¬ ë‚¨ì€ ì²´ë ¥ë§Œí¼ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤.",
+		" ì´ë•Œ ìµœëŒ€ ì²´ë ¥ì„ ë„˜ëŠ” íšŒë³µëŸ‰ì€ Â§eí¡ìˆ˜ ì²´ë ¥Â§fìœ¼ë¡œ ì–»ìŠµë‹ˆë‹¤."
 		})
 
 public class Butcher extends AbilityBase {

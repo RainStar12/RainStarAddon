@@ -25,12 +25,12 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "À¯È¤", displayName = "¡×dÀ¯È¤", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ìœ í˜¹", displayName = "Â§dìœ í˜¹", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.SIGHT_CONTROL
 }, description = {
-		"À¯È¤ÇÑ ´ë»óÀ» Áö¼ÓÇØ¼­ ¹Ù¶óº¸°Ô µÇ¸ç,",
-		"À¯È¤ÇÑ ´ë»óÀÌ À¯È¤µÈ ÇÃ·¹ÀÌ¾î¸¦ Å¸°İÇÒ ¶§ ÁØ ÃÖÁ¾ ÇÇÇØ·®¿¡",
-		"ºñ·ÊÇÏ¿© À¯È¤ÇÑ ´ë»óÀÇ Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù."
+		"ìœ í˜¹í•œ ëŒ€ìƒì„ ì§€ì†í•´ì„œ ë°”ë¼ë³´ê²Œ ë˜ë©°,",
+		"ìœ í˜¹í•œ ëŒ€ìƒì´ ìœ í˜¹ëœ í”Œë ˆì´ì–´ë¥¼ íƒ€ê²©í•  ë•Œ ì¤€ ìµœì¢… í”¼í•´ëŸ‰ì—",
+		"ë¹„ë¡€í•˜ì—¬ ìœ í˜¹í•œ ëŒ€ìƒì˜ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤."
 })
 public class Charm extends AbstractGame.Effect implements Listener {
 

@@ -33,49 +33,49 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "±¸¹ÌÈ£", rank = Rank.A, species = Species.ANIMAL, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×d¼öÇà¡×f: ¸Å $[StackTimer]ÃÊ¸¶´Ù ²¿¸® 1°³¸¦ È¹µæÇÕ´Ï´Ù.",
-		" °æÇèÇÏÁö ¸øÇÑ ÇÇÇØ ¹æ½ÄÀ¸·Î ÇÇÇØÀÔ¾úÀ» ¶§ Ãß°¡·Î 1°³ ´õ È¹µæÇÕ´Ï´Ù.",
-		" ²¿¸®¸¦ º¸À¯ÇÏ°í ÀÖÀ» ¶§, 5°³ ÀÌÈÄºÎÅÍ ÁÖ´Â ´ë¹ÌÁö°¡ 0.5¾¿ »ó½ÂÇÕ´Ï´Ù.",
-		" ²¿¸®´Â 2°³·Î ½ÃÀÛÇÏ¿© ÃÖ´ë 9°³±îÁö ¼ÒÁö °¡´ÉÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×b±â·Ï¡×f: ÇÇÇØÀÔÀº ¹æ½Ä¿¡ ´ëÇÑ ±â·ÏÀÌ ³ªÅ¸³³´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×dµĞ°©¡×f: ²¿¸®°¡ 9°³ÀÏ ¶§ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		" »ç¿ë ½Ã µĞ°©ÇÏ¿© ¡×e±¸¹ÌÈ£(µĞ°©)¡×f ´É·ÂÀÌ µÇ°í ¸ğµç ²¿¸®¸¦ ÀÒ½À´Ï´Ù.",
-		"¡×8[¡×7HIDDEN¡×8] ¡×3»êÀü¼öÀü¡×f: ¡×o¼öÇàÀÇ ³¡¿¡ µµ´ŞÇÒ ¼ö ÀÖÀ»±î¿ä?"
+@AbilityManifest(name = "êµ¬ë¯¸í˜¸", rank = Rank.A, species = Species.ANIMAL, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§dìˆ˜í–‰Â§f: ë§¤ $[StackTimer]ì´ˆë§ˆë‹¤ ê¼¬ë¦¬ 1ê°œë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		" ê²½í—˜í•˜ì§€ ëª»í•œ í”¼í•´ ë°©ì‹ìœ¼ë¡œ í”¼í•´ì…ì—ˆì„ ë•Œ ì¶”ê°€ë¡œ 1ê°œ ë” íšë“í•©ë‹ˆë‹¤.",
+		" ê¼¬ë¦¬ë¥¼ ë³´ìœ í•˜ê³  ìˆì„ ë•Œ, 5ê°œ ì´í›„ë¶€í„° ì£¼ëŠ” ëŒ€ë¯¸ì§€ê°€ 0.5ì”© ìƒìŠ¹í•©ë‹ˆë‹¤.",
+		" ê¼¬ë¦¬ëŠ” 2ê°œë¡œ ì‹œì‘í•˜ì—¬ ìµœëŒ€ 9ê°œê¹Œì§€ ì†Œì§€ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bê¸°ë¡Â§f: í”¼í•´ì…ì€ ë°©ì‹ì— ëŒ€í•œ ê¸°ë¡ì´ ë‚˜íƒ€ë‚©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§dë‘”ê°‘Â§f: ê¼¬ë¦¬ê°€ 9ê°œì¼ ë•Œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		" ì‚¬ìš© ì‹œ ë‘”ê°‘í•˜ì—¬ Â§eêµ¬ë¯¸í˜¸(ë‘”ê°‘)Â§f ëŠ¥ë ¥ì´ ë˜ê³  ëª¨ë“  ê¼¬ë¦¬ë¥¼ ìƒìŠµë‹ˆë‹¤.",
+		"Â§8[Â§7HIDDENÂ§8] Â§3ì‚°ì „ìˆ˜ì „Â§f: Â§oìˆ˜í–‰ì˜ ëì— ë„ë‹¬í•  ìˆ˜ ìˆì„ê¹Œìš”?"
 		},
 		summarize = {
-		"¹Ì°æÇè ÇÇÇØ ¹æ¹ıÀ¸·Î ÇÇÇØÀÔÀ» ¶§¸¶´Ù ²¿¸® 1°³¸¦ Áï½Ã È¹µæÇÕ´Ï´Ù.",
-		"²¿¸®°¡ 5°³ ÀÌ»óÀÏ ¶§ ²¿¸® ÇÏ³ª´ç ÁÖ´Â ´ë¹ÌÁö°¡ 0.5¾¿ »ó½ÂÇÕ´Ï´Ù.",
-		"²¿¸®°¡ 9°³ÀÏ ¶§ ¡×7Ã¶±« ¿ìÅ¬¸¯ ½Ã¡×f ¡×e±¸¹ÌÈ£(µĞ°©)¡×fÀ¸·Î µĞ°©ÇÕ´Ï´Ù."
+		"ë¯¸ê²½í—˜ í”¼í•´ ë°©ë²•ìœ¼ë¡œ í”¼í•´ì…ì„ ë•Œë§ˆë‹¤ ê¼¬ë¦¬ 1ê°œë¥¼ ì¦‰ì‹œ íšë“í•©ë‹ˆë‹¤.",
+		"ê¼¬ë¦¬ê°€ 5ê°œ ì´ìƒì¼ ë•Œ ê¼¬ë¦¬ í•˜ë‚˜ë‹¹ ì£¼ëŠ” ëŒ€ë¯¸ì§€ê°€ 0.5ì”© ìƒìŠ¹í•©ë‹ˆë‹¤.",
+		"ê¼¬ë¦¬ê°€ 9ê°œì¼ ë•Œ Â§7ì² ê´´ ìš°í´ë¦­ ì‹œÂ§f Â§eêµ¬ë¯¸í˜¸(ë‘”ê°‘)Â§fìœ¼ë¡œ ë‘”ê°‘í•©ë‹ˆë‹¤."
 		})
 
 public class NineTailFox extends AbilityBase implements ActiveHandler {
 	
 	private static final ImmutableMap<DamageCause, String> damageCauses = ImmutableMap.<DamageCause, String>builder()
-							.put(DamageCause.BLOCK_EXPLOSION, "Ä§´ë Æø¹ß")
-							.put(DamageCause.CONTACT, "¼±ÀÎÀå Á¢ÃË")
-							.put(DamageCause.CRAMMING, "¿£Æ¼Æ¼ »çÀÌ¿¡ ³¢ÀÓ")
-							.put(DamageCause.CUSTOM, "Ä¿½ºÅÒ")
-							.put(DamageCause.DROWNING, "ÀÍ»ç")
-							.put(DamageCause.ENTITY_ATTACK, "ÀÏ¹İ °ø°İ")
-							.put(DamageCause.ENTITY_EXPLOSION, "Æø¹ß")
-							.put(DamageCause.ENTITY_SWEEP_ATTACK, "ÈÛ¾µ±â °ø°İ")
-							.put(DamageCause.FALL, "³«ÇÏ")
-							.put(DamageCause.FALLING_BLOCK, "¶³¾îÁö´Â ºí·Ï¿¡ ¸ÂÀ½")
-							.put(DamageCause.FIRE, "ºÒ")
-							.put(DamageCause.FIRE_TICK, "È­¿°")
-							.put(DamageCause.FLY_INTO_WALL, "º®¿¡ ¹ÚÀ½")
-							.put(DamageCause.HOT_FLOOR, "¸¶±×¸¶ºí·Ï")
-							.put(DamageCause.LAVA, "¿ë¾Ï")
-							.put(DamageCause.LIGHTNING, "¹ø°³")
-							.put(DamageCause.MAGIC, "¸¶¹ı")
-							.put(DamageCause.POISON, "µ¶")
-							.put(DamageCause.PROJECTILE, "¹ß»çÃ¼")
-							.put(DamageCause.STARVATION, "±¾ÁÖ¸²")
-							.put(DamageCause.SUFFOCATION, "¾Ğ»ç")
-							.put(DamageCause.THORNS, "°¡½Ã ÀÎÃ¦Æ®")
-							.put(DamageCause.VOID, "¼¼°è ¹ÛÀ¸·Î ¶³¾îÁü")
-							.put(DamageCause.WITHER, "½Ãµê")
+							.put(DamageCause.BLOCK_EXPLOSION, "ì¹¨ëŒ€ í­ë°œ")
+							.put(DamageCause.CONTACT, "ì„ ì¸ì¥ ì ‘ì´‰")
+							.put(DamageCause.CRAMMING, "ì—”í‹°í‹° ì‚¬ì´ì— ë¼ì„")
+							.put(DamageCause.CUSTOM, "ì»¤ìŠ¤í…€")
+							.put(DamageCause.DROWNING, "ìµì‚¬")
+							.put(DamageCause.ENTITY_ATTACK, "ì¼ë°˜ ê³µê²©")
+							.put(DamageCause.ENTITY_EXPLOSION, "í­ë°œ")
+							.put(DamageCause.ENTITY_SWEEP_ATTACK, "íœ©ì“¸ê¸° ê³µê²©")
+							.put(DamageCause.FALL, "ë‚™í•˜")
+							.put(DamageCause.FALLING_BLOCK, "ë–¨ì–´ì§€ëŠ” ë¸”ë¡ì— ë§ìŒ")
+							.put(DamageCause.FIRE, "ë¶ˆ")
+							.put(DamageCause.FIRE_TICK, "í™”ì—¼")
+							.put(DamageCause.FLY_INTO_WALL, "ë²½ì— ë°•ìŒ")
+							.put(DamageCause.HOT_FLOOR, "ë§ˆê·¸ë§ˆë¸”ë¡")
+							.put(DamageCause.LAVA, "ìš©ì•”")
+							.put(DamageCause.LIGHTNING, "ë²ˆê°œ")
+							.put(DamageCause.MAGIC, "ë§ˆë²•")
+							.put(DamageCause.POISON, "ë…")
+							.put(DamageCause.PROJECTILE, "ë°œì‚¬ì²´")
+							.put(DamageCause.STARVATION, "êµ¶ì£¼ë¦¼")
+							.put(DamageCause.SUFFOCATION, "ì••ì‚¬")
+							.put(DamageCause.THORNS, "ê°€ì‹œ ì¸ì±ˆíŠ¸")
+							.put(DamageCause.VOID, "ì„¸ê³„ ë°–ìœ¼ë¡œ ë–¨ì–´ì§")
+							.put(DamageCause.WITHER, "ì‹œë“¦")
 							.build();
 
 	public NineTailFox(Participant participant) {
@@ -83,7 +83,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> StackTimer = abilitySettings.new SettingObject<Integer>(NineTailFox.class,
-			"Stack Timer", 25, "# ²¿¸® ÀÚµ¿ ÃæÀü ½Ã°£") {
+			"Stack Timer", 25, "# ê¼¬ë¦¬ ìë™ ì¶©ì „ ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -102,7 +102,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("¡×b²¿¸® ¼ö¡×f: " + stack + "°³");
+			ac.update("Â§bê¼¬ë¦¬ ìˆ˜Â§f: " + stack + "ê°œ");
 			passive.start();
 		} else if (update == Update.ABILITY_DESTROY || update == Update.RESTRICTION_SET) {
 			ac.unregister();
@@ -118,12 +118,12 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     		if (timer != 0) {
         		if (count % timer == 0 && stack < 9) {
         			stack++;
-        			ac.update("¡×b²¿¸® ¼ö¡×f: " + stack + "°³");
+        			ac.update("Â§bê¼¬ë¦¬ ìˆ˜Â§f: " + stack + "ê°œ");
         		}	
     		} else {
     			if (stack < 9) {
         			stack++;
-        			ac.update("¡×b²¿¸® ¼ö¡×f: " + stack + "°³");	
+        			ac.update("Â§bê¼¬ë¦¬ ìˆ˜Â§f: " + stack + "ê°œ");	
     			}
     		}
     	}
@@ -135,18 +135,18 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     	if (e.getEntity().equals(getPlayer())) {
 			if (!damagetype.contains(e.getCause()) && !e.getCause().equals(DamageCause.SUICIDE) && !e.getCause().equals(DamageCause.DRAGON_BREATH)) {
 				damagetype.add(e.getCause());
-				getPlayer().sendMessage("[¡×c!¡×f] ¡×c" + damageCauses.get(e.getCause()) + "¡×f" + KoreanUtil.getJosa(damageCauses.get(e.getCause()), Josa.À»¸¦) + " ÅëÇÏ¿© ¼öÇàÀ» ¼º°øÇß½À´Ï´Ù.");
+				getPlayer().sendMessage("[Â§c!Â§f] Â§c" + damageCauses.get(e.getCause()) + "Â§f" + KoreanUtil.getJosa(damageCauses.get(e.getCause()), Josa.ì„ë¥¼) + " í†µí•˜ì—¬ ìˆ˜í–‰ì„ ì„±ê³µí–ˆìŠµë‹ˆë‹¤.");
 				SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer(), 1, 1.4f);
 				ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 200, 1);
 				if (damagetype.size() == 24) {
-					getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¸ğµç ÇÇÇØ ¹æ½ÄÀ» °æÇèÇÏ¿© ´ç½ÅÀº ¿Ïº®È÷ µĞ°©ÇÒ ¼ö ÀÖ°Ô µÇ¾ú½À´Ï´Ù.");
-					getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×3»êÀü¼öÀü¡×fÀ» ´Ş¼ºÇÏ¿´½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] ëª¨ë“  í”¼í•´ ë°©ì‹ì„ ê²½í—˜í•˜ì—¬ ë‹¹ì‹ ì€ ì™„ë²½íˆ ë‘”ê°‘í•  ìˆ˜ ìˆê²Œ ë˜ì—ˆìŠµë‹ˆë‹¤.");
+					getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§3ì‚°ì „ìˆ˜ì „Â§fì„ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 	    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 					master = true;
 				} else {
 		    		if (stack < 9) {
 		    			stack++;
-		    			ac.update("¡×b²¿¸® ¼ö¡×f: " + stack + "°³");
+		    			ac.update("Â§bê¼¬ë¦¬ ìˆ˜Â§f: " + stack + "ê°œ");
 		    		}	
 				}
 			}
@@ -176,7 +176,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && stack == 9) {
 	    	if (master) {
 	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("¡×5[¡×d!¡×5] ¡×e¿ÏÀü µĞ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
+		    	getPlayer().sendMessage("Â§5[Â§d!Â§5] Â§eì™„ì „ ë‘”ê°‘ì— ì„±ê³µí•˜ì…¨ìŠµë‹ˆë‹¤. Â§7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -203,7 +203,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		    	}	
 	    	} else {
 	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("¡×5[¡×d!¡×5] ¡×eµĞ°©¿¡ ¼º°øÇÏ¼Ì½À´Ï´Ù. ¡×7/aw check");
+		    	getPlayer().sendMessage("Â§5[Â§d!Â§5] Â§eë‘”ê°‘ì— ì„±ê³µí•˜ì…¨ìŠµë‹ˆë‹¤. Â§7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -232,13 +232,13 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	    	return true;
 	    }
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK)) {
-	    	getPlayer().sendMessage("¡×c==== ¡×d¼öÇà ¹æ¹ı ¡×c====");
-			final StringJoiner joiner = new StringJoiner("¡×f, ");
+	    	getPlayer().sendMessage("Â§c==== Â§dìˆ˜í–‰ ë°©ë²• Â§c====");
+			final StringJoiner joiner = new StringJoiner("Â§f, ");
 			for (final Entry<DamageCause, String> entry : damageCauses.entrySet()) {
-				joiner.add((damagetype.contains(entry.getKey()) ? "¡×e" : "¡×7") + entry.getValue());
+				joiner.add((damagetype.contains(entry.getKey()) ? "Â§e" : "Â§7") + entry.getValue());
 			}
 			getPlayer().sendMessage(joiner.toString());
-			getPlayer().sendMessage("¡×c====================");
+			getPlayer().sendMessage("Â§c====================");
 	    }
 		return false;
 	}

@@ -25,19 +25,19 @@ import daybreak.abilitywar.utils.base.collect.SetUnion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "¾ÆÄ«½Ä ·¹ÄÚµå", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3·Î±× Á¶»ç¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î°¡ ¾×Æ¼ºê ´É·ÂÀ» »ç¿ëÇÒ ¶§¸¶´Ù",
-		" ´ë»ó ÇÃ·¹ÀÌ¾î°¡ »ç¿ëÇÑ ´É·Â ¹× ´ë»óÀÇ À§Ä¡¸¦ ¾Ë ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×2¹«´Ü ÀüÀç¡×f: ÇÃ·¹ÀÌ¾î Áß ÆĞ½Ãºê È¿°ú¸¸À» °¡Áø ´É·Âµé Áß",
-		" ÇÏ³ªÀÇ ÆĞ½Ãºê¸¦ È¹µæÇÕ´Ï´Ù. ¸¸¾à ´Ù¸¥ ÆĞ½Ãºê È¿°ú¸¸À» ¼ÒÁöÇÑ ´É·Â ¼ÒÀ¯ÀÚ°¡",
-		" »ç¸ÁÇßÀ» °æ¿ì, ÇØ´ç ÆĞ½Ãºê È¿°ú·Î ÀüÈ¯µË´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×a±â·ÏÀÇ ÀçÇö¡×f: °¡Àå ÃÖ±Ù¿¡ »ç¿ëµÈ ´É·Â µÎ °³¸¦ Áï½Ã »ç¿ëÇÕ´Ï´Ù.",
-		" ÀÌ ´É·ÂÀÇ ÄğÅ¸ÀÓÀº ¸ğµç ÇÃ·¹ÀÌ¾î°¡ °¡Áö°í ÀÖ´Â ÄğÅ¸ÀÓÀÇ Æò±Õ°ªÀÇ",
-		" ÃÖ´ë 100ÃÊ±îÁö ºñ·ÊÇÕ´Ï´Ù. ¸¸¾à ÄğÅ¸ÀÓÀÌ 0ÃÊÀÏ °æ¿ì,",
-		" ´ë½Å ±âº» ÄğÅ¸ÀÓÀ» °¡Áı´Ï´Ù. $[COOLDOWN_CONFIG]",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×bÃÊ¿ìÁÖ ¿¬»ê¡×f: ±â·ÏÀÇ ÀçÇöÀ¸·Î »ç¿ëµÉ ´É·Â ¹× ÄğÅ¸ÀÓÀÇ",
-		" ¿¹»ó ½Ã°£À» º¼ ¼ö ÀÖ½À´Ï´Ù. ¸¸¾à ¿õÅ©¸° Ã¤·Î ÁÂÅ¬¸¯ ½Ã",
-		" ·Î±× Á¶»çÀÇ ¾Ë¸²À» ²°´Ù ÄÓ ¼ö ÀÖ½À´Ï´Ù."
+@AbilityManifest(name = "ì•„ì¹´ì‹ ë ˆì½”ë“œ", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ë¡œê·¸ ì¡°ì‚¬Â§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ ì•¡í‹°ë¸Œ ëŠ¥ë ¥ì„ ì‚¬ìš©í•  ë•Œë§ˆë‹¤",
+		" ëŒ€ìƒ í”Œë ˆì´ì–´ê°€ ì‚¬ìš©í•œ ëŠ¥ë ¥ ë° ëŒ€ìƒì˜ ìœ„ì¹˜ë¥¼ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§2ë¬´ë‹¨ ì „ì¬Â§f: í”Œë ˆì´ì–´ ì¤‘ íŒ¨ì‹œë¸Œ íš¨ê³¼ë§Œì„ ê°€ì§„ ëŠ¥ë ¥ë“¤ ì¤‘",
+		" í•˜ë‚˜ì˜ íŒ¨ì‹œë¸Œë¥¼ íšë“í•©ë‹ˆë‹¤. ë§Œì•½ ë‹¤ë¥¸ íŒ¨ì‹œë¸Œ íš¨ê³¼ë§Œì„ ì†Œì§€í•œ ëŠ¥ë ¥ ì†Œìœ ìê°€",
+		" ì‚¬ë§í–ˆì„ ê²½ìš°, í•´ë‹¹ íŒ¨ì‹œë¸Œ íš¨ê³¼ë¡œ ì „í™˜ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§aê¸°ë¡ì˜ ì¬í˜„Â§f: ê°€ì¥ ìµœê·¼ì— ì‚¬ìš©ëœ ëŠ¥ë ¥ ë‘ ê°œë¥¼ ì¦‰ì‹œ ì‚¬ìš©í•©ë‹ˆë‹¤.",
+		" ì´ ëŠ¥ë ¥ì˜ ì¿¨íƒ€ì„ì€ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ê°€ì§€ê³  ìˆëŠ” ì¿¨íƒ€ì„ì˜ í‰ê· ê°’ì˜",
+		" ìµœëŒ€ 100ì´ˆê¹Œì§€ ë¹„ë¡€í•©ë‹ˆë‹¤. ë§Œì•½ ì¿¨íƒ€ì„ì´ 0ì´ˆì¼ ê²½ìš°,",
+		" ëŒ€ì‹  ê¸°ë³¸ ì¿¨íƒ€ì„ì„ ê°€ì§‘ë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bì´ˆìš°ì£¼ ì—°ì‚°Â§f: ê¸°ë¡ì˜ ì¬í˜„ìœ¼ë¡œ ì‚¬ìš©ë  ëŠ¥ë ¥ ë° ì¿¨íƒ€ì„ì˜",
+		" ì˜ˆìƒ ì‹œê°„ì„ ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤. ë§Œì•½ ì›…í¬ë¦° ì±„ë¡œ ì¢Œí´ë¦­ ì‹œ",
+		" ë¡œê·¸ ì¡°ì‚¬ì˜ ì•Œë¦¼ì„ ê»ë‹¤ ì¼¤ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 		})
 
 public class AkashicRecords extends Synergy implements ActiveHandler {
@@ -47,16 +47,16 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 	}
 	
 	private static final ImmutableMap<Rank, String> rankcolor = ImmutableMap.<Rank, String>builder()
-			.put(Rank.C, "¡×e")
-			.put(Rank.B, "¡×b")
-			.put(Rank.A, "¡×a")
-			.put(Rank.S, "¡×d")
-			.put(Rank.L, "¡×6")
-			.put(Rank.SPECIAL, "¡×c")
+			.put(Rank.C, "Â§e")
+			.put(Rank.B, "Â§b")
+			.put(Rank.A, "Â§a")
+			.put(Rank.S, "Â§d")
+			.put(Rank.L, "Â§6")
+			.put(Rank.SPECIAL, "Â§c")
 			.build();
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AkashicRecords.class,
-			"cooldown", 60, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -69,7 +69,7 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 	};
 
 	private LimitedPushingList<AbilityBase> logability = new LimitedPushingList<>(2);
-	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "¾ÆÄ«½Ä ·¹ÄÚµå");
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "ì•„ì¹´ì‹ ë ˆì½”ë“œ");
 	private AbilityBase ability = null;
 	private boolean alarm = true;
 	private final ActionbarChannel ac = newActionbarChannel();
@@ -92,11 +92,11 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 			int getz = (int) e.getParticipant().getPlayer().getLocation().getZ();
 	    	if (mix.hasSynergy()) {
 	    		if (mix.getSynergy().getClass().equals(AkashicRecords.class)) {
-	    			getPlayer().sendMessage("[¡×c!¡×f] ¡×e" + e.getPlayer().getName() + "¡×f´ÔÀÌ ¡×6¾ÆÄ«½Ä ·¹ÄÚµå¡×f¸¦ °³¹æÇÏ¿´½À´Ï´Ù.");
+	    			getPlayer().sendMessage("[Â§c!Â§f] Â§e" + e.getPlayer().getName() + "Â§fë‹˜ì´ Â§6ì•„ì¹´ì‹ ë ˆì½”ë“œÂ§fë¥¼ ê°œë°©í•˜ì˜€ìŠµë‹ˆë‹¤.");
 	    		} else {
-		    		getPlayer().sendMessage("[¡×c!¡×f] ¡×e" + e.getPlayer().getName() + "¡×f´ÔÀÌ ¡×3½Ã³ÊÁö¡×f ´É·ÂÀ» »ç¿ëÇÏ¿´½À´Ï´Ù.");
-					getPlayer().sendMessage(" ¡×7- ¡×e»ç¿ë ´É·Â¡×f: " + rankcolor.get(mix.getSynergy().getRank()) + mix.getSynergy().getDisplayName()
-					+ " ¡×7| ¡×e»ç¿ë À§Ä¡¡×f: ¡×3" + getx + "¡×f, ¡×3" + gety + "¡×f, ¡×3" + getz);
+		    		getPlayer().sendMessage("[Â§c!Â§f] Â§e" + e.getPlayer().getName() + "Â§fë‹˜ì´ Â§3ì‹œë„ˆì§€Â§f ëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ì˜€ìŠµë‹ˆë‹¤.");
+					getPlayer().sendMessage(" Â§7- Â§eì‚¬ìš© ëŠ¥ë ¥Â§f: " + rankcolor.get(mix.getSynergy().getRank()) + mix.getSynergy().getDisplayName()
+					+ " Â§7| Â§eì‚¬ìš© ìœ„ì¹˜Â§f: Â§3" + getx + "Â§f, Â§3" + gety + "Â§f, Â§3" + getz);
 					try {
 						this.logability.add(AbilityBase.create(mix.getSynergy().getClass(), getParticipant())); 
 						this.logability.get(0).setRestricted(false);
@@ -106,9 +106,9 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 	    		}
 	    	} else {
 				final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-				getPlayer().sendMessage("[¡×c!¡×f] ¡×e" + e.getPlayer().getName() + "¡×f´ÔÀÌ ´É·ÂÀ» »ç¿ëÇÏ¿´½À´Ï´Ù.");
-				getPlayer().sendMessage(" ¡×7- ¡×e»ç¿ë ´É·Â¡×f: " + rankcolor.get(first.getRank()) + first.getDisplayName() + "¡×f + " + rankcolor.get(second.getRank()) + 
-						second.getDisplayName() + " ¡×7| ¡×e»ç¿ë À§Ä¡¡×f: ¡×3" + getx + "¡×f, ¡×3" + gety + "¡×f, ¡×3" + getz);
+				getPlayer().sendMessage("[Â§c!Â§f] Â§e" + e.getPlayer().getName() + "Â§fë‹˜ì´ ëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ì˜€ìŠµë‹ˆë‹¤.");
+				getPlayer().sendMessage(" Â§7- Â§eì‚¬ìš© ëŠ¥ë ¥Â§f: " + rankcolor.get(first.getRank()) + first.getDisplayName() + "Â§f + " + rankcolor.get(second.getRank()) + 
+						second.getDisplayName() + " Â§7| Â§eì‚¬ìš© ìœ„ì¹˜Â§f: Â§3" + getx + "Â§f, Â§3" + gety + "Â§f, Â§3" + getz);
 				if (first instanceof ActiveHandler && !(second instanceof ActiveHandler)) {
 					try {
 						this.logability.add(AbilityBase.create(first.getClass(), getParticipant())); 
@@ -212,7 +212,7 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 				}
 	    	}
 	    	if (ability != null) {
-	    		ac.update("¡×bÆĞ½Ãºê ¡×f: " + rankcolor.get(ability.getRank()) + ability.getDisplayName());
+	    		ac.update("Â§bíŒ¨ì‹œë¸Œ Â§f: " + rankcolor.get(ability.getRank()) + ability.getDisplayName());
 	    	}
 		}
 	}
@@ -265,7 +265,7 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 				}
 				return cooldown.start();	
 			} else {
-				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¾ÆÁ÷ ±â·Ï¿¡ ÀÛ¼ºµÈ °ÍÀÌ ¾ø½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì•„ì§ ê¸°ë¡ì— ì‘ì„±ëœ ê²ƒì´ ì—†ìŠµë‹ˆë‹¤.");
 			}
 
 		}
@@ -273,10 +273,10 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK) {
 			if (getPlayer().isSneaking()) {
 				if (alarm) {
-					getPlayer().sendMessage("¡×f[¡×c!¡×f] ¡×3·Î±× Á¶»ç¡×f ¾Ë¸²À» Á¾·áÇÕ´Ï´Ù.");
+					getPlayer().sendMessage("Â§f[Â§c!Â§f] Â§3ë¡œê·¸ ì¡°ì‚¬Â§f ì•Œë¦¼ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.");
 					alarm = false;
 				} else {
-					getPlayer().sendMessage("¡×f[¡×c!¡×f] ¡×3·Î±× Á¶»ç¡×f ¾Ë¸²À» ÀÛµ¿ÇÕ´Ï´Ù.");
+					getPlayer().sendMessage("Â§f[Â§c!Â§f] Â§3ë¡œê·¸ ì¡°ì‚¬Â§f ì•Œë¦¼ì„ ì‘ë™í•©ë‹ˆë‹¤.");
 					alarm = true;
 				}
 
@@ -293,16 +293,16 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 					}
 				}
 				if (logability.size() == 2) {
-					getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×eÀû¿ëµÉ ´É·Â¡×f: " + rankcolor.get(logability.get(0).getRank()) + logability.get(0).getDisplayName() + "¡×f + "
+					getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§eì ìš©ë  ëŠ¥ë ¥Â§f: " + rankcolor.get(logability.get(0).getRank()) + logability.get(0).getDisplayName() + "Â§f + "
 							+ rankcolor.get(logability.get(1).getRank()) + logability.get(1).getDisplayName());
 				} else {
-					getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×eÀû¿ëµÉ ´É·ÂÀÌ ¾ø½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§eì ìš©ë  ëŠ¥ë ¥ì´ ì—†ìŠµë‹ˆë‹¤.");
 				}
 
 				if (coolvalue == 0) {
-					getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cÀû¿ëµÉ ÄğÅ¸ÀÓ¡×f: 60ÃÊ");
+					getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cì ìš©ë  ì¿¨íƒ€ì„Â§f: 60ì´ˆ");
 				} else {
-					getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cÀû¿ëµÉ ÄğÅ¸ÀÓ¡×f: " + Math.min(100, (coolvalue / getGame().getParticipants().size())) + "ÃÊ");
+					getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cì ìš©ë  ì¿¨íƒ€ì„Â§f: " + Math.min(100, (coolvalue / getGame().getParticipants().size())) + "ì´ˆ");
 				}
 			
 			}

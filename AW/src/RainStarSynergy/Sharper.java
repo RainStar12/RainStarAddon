@@ -35,13 +35,13 @@ import daybreak.google.common.base.Predicate;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
-@AbilityManifest(name = "Å¸Â¥", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7´ÙÀÌ¾Æ¸óµå Å¸°İ ¡×8- ¡×b½ÂºÎ¼ö¡×f: ´ë»ó°úÀÇ ¡×aµµ¹Ú¡×fÀ» ÁøÇàÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ¡×e50%¡×f È®·ü·Î ÀÚ½Å È¤Àº »ó´ë°¡ ³²Àº Ã¼·ÂÀÇ 2/3¸¦ ÀÒ°Ô µË´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×c¹ØÀå»©±â¡×f: ÀÚ½ÅÀÌ ÆĞ¹èÇÒ ¡×aµµ¹Ú¡×f¿¡¼­ ¡×e50%¡×fÀÇ È®·ü·Î",
-		" °á°ú¸¦ ¹Ù²ã »ó´ë°¡ ´ë½Å ÆĞ¹èÇÏ°Ô µË´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3¿î¸í ¿³º¸±â¡×f: ÇÑ ¹ø ÀÌ»ó µµ¹ÚÀ» ÁøÇàÇÑ ´ë»ó¿¡°Ô ´Ù½Ã µµ¹ÚÀ» °É ¶§",
-		" ¹ØÀå»©±â¸¦ Á¦¿ÜÇÑ ÀÚ½ÅÀÇ ½Â¸® ¿©ºÎ¸¦ ¾Ë ¼ö ÀÖ½À´Ï´Ù."})
+@AbilityManifest(name = "íƒ€ì§œ", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7ë‹¤ì´ì•„ëª¬ë“œ íƒ€ê²© Â§8- Â§bìŠ¹ë¶€ìˆ˜Â§f: ëŒ€ìƒê³¼ì˜ Â§aë„ë°•Â§fì„ ì§„í–‰í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" Â§e50%Â§f í™•ë¥ ë¡œ ìì‹  í˜¹ì€ ìƒëŒ€ê°€ ë‚¨ì€ ì²´ë ¥ì˜ 2/3ë¥¼ ìƒê²Œ ë©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë°‘ì¥ë¹¼ê¸°Â§f: ìì‹ ì´ íŒ¨ë°°í•  Â§aë„ë°•Â§fì—ì„œ Â§e50%Â§fì˜ í™•ë¥ ë¡œ",
+		" ê²°ê³¼ë¥¼ ë°”ê¿” ìƒëŒ€ê°€ ëŒ€ì‹  íŒ¨ë°°í•˜ê²Œ ë©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ìš´ëª… ì—¿ë³´ê¸°Â§f: í•œ ë²ˆ ì´ìƒ ë„ë°•ì„ ì§„í–‰í•œ ëŒ€ìƒì—ê²Œ ë‹¤ì‹œ ë„ë°•ì„ ê±¸ ë•Œ",
+		" ë°‘ì¥ë¹¼ê¸°ë¥¼ ì œì™¸í•œ ìì‹ ì˜ ìŠ¹ë¦¬ ì—¬ë¶€ë¥¼ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤."})
 
 public class Sharper extends Synergy {
 
@@ -57,7 +57,7 @@ public class Sharper extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Sharper.class,
-			"cooldown", 10, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 10, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -107,7 +107,7 @@ public class Sharper extends Synergy {
 			if (random.nextBoolean()) {
 				target.setHealth(target.getHealth() / 3);
 				target.getWorld().createExplosion(target.getLocation(), 1.0F); 	
-				player.sendMessage("¡×3[¡×b!¡×3] ¡×c¹ØÀå »©±â¡×f¸¦ ÅëÇÏ¿© »ì¾Æ³²¾Ò½À´Ï´Ù.");
+				player.sendMessage("Â§3[Â§b!Â§3] Â§cë°‘ì¥ ë¹¼ê¸°Â§fë¥¼ í†µí•˜ì—¬ ì‚´ì•„ë‚¨ì•˜ìŠµë‹ˆë‹¤.");
 			} else {
 				player.setHealth(player.getHealth() / 3);
 				player.getWorld().createExplosion(player.getLocation(), 1.0F); 	
@@ -268,9 +268,9 @@ public class Sharper extends Synergy {
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ());
 			if (win) {
-				hologram.setText("¡×cº»ÀÎ ÆĞ¹è");
+				hologram.setText("Â§cë³¸ì¸ íŒ¨ë°°");
 			} else {
-				hologram.setText("¡×bº»ÀÎ ½Â¸®");
+				hologram.setText("Â§bë³¸ì¸ ìŠ¹ë¦¬");
 			}
 			hologram.display(getPlayer());
 			Sharper.this.fateMap.put(player, this);

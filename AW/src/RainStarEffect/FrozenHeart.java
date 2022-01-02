@@ -25,15 +25,15 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "ÇÁ·ÎÁğ ÇÏÆ®", displayName = "¡×3ÇÁ·ÎÁğ ÇÏÆ®", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "í”„ë¡œì¦Œ í•˜íŠ¸", displayName = "Â§3í”„ë¡œì¦Œ í•˜íŠ¸", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.HEALING_BAN
 }, description = {
-		"¸ğµç È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		"½½·ÔÀ» º¯°æÇÒ ¶§¸¶´Ù 2.5ÃÊ¸¦ ´ë±âÇØ¾ß ÇÏ°í,", 
-		"ÀÌµ¿ ¼Óµµ¿Í °ø°İ ¼Óµµ°¡ °¨¼ÒÇÕ´Ï´Ù.",
-		"È¿°ú°¡ ÇØÁ¦µÉ ¶§, ¿ø·¡ ¹ŞÀ» È¸º¹ È¿°ú¸¦",
-		"Àı¹İÀ¸·Î ÁÙ¿© ÇÑ²¨¹ø¿¡ ¹Ş½À´Ï´Ù.",
-		"ÀÌ È¿°ú´Â ÀÌµ¿ÇÒ ¶§¸¶´Ù ´õ »¡¸® Áö¼Ó½Ã°£ÀÌ ÁÙ¾îµì´Ï´Ù."
+		"ëª¨ë“  íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"ìŠ¬ë¡¯ì„ ë³€ê²½í•  ë•Œë§ˆë‹¤ 2.5ì´ˆë¥¼ ëŒ€ê¸°í•´ì•¼ í•˜ê³ ,", 
+		"ì´ë™ ì†ë„ì™€ ê³µê²© ì†ë„ê°€ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"íš¨ê³¼ê°€ í•´ì œë  ë•Œ, ì›ë˜ ë°›ì„ íšŒë³µ íš¨ê³¼ë¥¼",
+		"ì ˆë°˜ìœ¼ë¡œ ì¤„ì—¬ í•œêº¼ë²ˆì— ë°›ìŠµë‹ˆë‹¤.",
+		"ì´ íš¨ê³¼ëŠ” ì´ë™í•  ë•Œë§ˆë‹¤ ë” ë¹¨ë¦¬ ì§€ì†ì‹œê°„ì´ ì¤„ì–´ë“­ë‹ˆë‹¤."
 })
 public class FrozenHeart extends AbstractGame.Effect implements Listener {
 

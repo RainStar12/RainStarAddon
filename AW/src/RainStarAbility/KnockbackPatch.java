@@ -1,16 +1,12 @@
 package RainStarAbility;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import RainStarEffect.Chill;
-import RainStarEffect.Irreparable;
-import RainStarEffect.SnowflakeMark;
 import RainStarEffect.TimeInterrupt;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -19,21 +15,19 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @Beta
 
-@AbilityManifest(name = "³Ë¹éÆĞÄ¡", rank = Rank.A, species = Species.OTHERS, explain = {
-		"³Ë¹é ¹ö±× ÆĞÄ¡¿ë ´É·Â",
-		"ÇöÀç ±â´ÉÀº ³Ë¹é ¿À·ù·Î ³Ë¹éµÇÁö ¾Ê´Â ÇÃ·¹ÀÌ¾î¿¡°Ô ºÎ¿© ½Ã,",
-		"´ë»óÀÌ ÇÑ ¹øÀÌ¶óµµ ¿òÁ÷ÀÌ¸é ³Ë¹é ¹ö±×°¡ Ç®¸®°Ô µË´Ï´Ù."
+@AbilityManifest(name = "ë„‰ë°±íŒ¨ì¹˜", rank = Rank.A, species = Species.OTHERS, explain = {
+		"ë„‰ë°± ë²„ê·¸ íŒ¨ì¹˜ìš© ëŠ¥ë ¥",
+		"í˜„ì¬ ê¸°ëŠ¥ì€ ë„‰ë°± ì˜¤ë¥˜ë¡œ ë„‰ë°±ë˜ì§€ ì•ŠëŠ” í”Œë ˆì´ì–´ì—ê²Œ ë¶€ì—¬ ì‹œ,",
+		"ëŒ€ìƒì´ í•œ ë²ˆì´ë¼ë„ ì›€ì§ì´ë©´ ë„‰ë°± ë²„ê·¸ê°€ í’€ë¦¬ê²Œ ë©ë‹ˆë‹¤."
 		})
 
 public class KnockbackPatch extends AbilityBase implements ActiveHandler {

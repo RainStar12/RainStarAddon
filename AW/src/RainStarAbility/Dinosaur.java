@@ -48,16 +48,16 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "°ø·æ", rank = Rank.L, species = Species.ANIMAL, explain = {
-		"¡×7°ÔÀÓ ½ÃÀÛ ¡×8- ¡×6È­¼®È­¡×f: °ø·æ ¾Ë È­¼®ÀÌ µÇ¾î ¶¥ ¼Ó¿¡ ÆÄ¹¯Èü´Ï´Ù.",
-		" ±×µ¿¾ÈÀº ¡×3À¯·É »óÅÂ¡×f°¡ µÇ¾î ÀÚÀ¯·Ó°Ô ÀÌµ¿ ¹× ¼ø°£ ÀÌµ¿ÀÌ °¡´ÉÇÕ´Ï´Ù.",
-		" ´©±º°¡°¡ ÀÌ È­¼®À» Ã£°Å³ª À¯·É »óÅÂ·Î ºùÀÇ¸¦ ½ÃµµÇÒ ¶§",
-		" À¯·É »óÅÂ°¡ ÇØÁ¦µÇ°í È­¼®¿¡¼­ ±ú¾î³ª ¡×eÈí¼ö Ã¼·Â¡×fÀ» ÀÜ¶à È¹µæÇÕ´Ï´Ù.",
-		" È¤Àº $[LONGEST_WAIT]ÃÊ°¡ Áö³ªµµ ÀÚµ¿À¸·Î Ç®·Á³³´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×2¾ĞµµÀûÀÎ ÈûÀ¸·Î¡×f: Á¶±İ ¶°¿À¸¥ µÚ ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î Âï¾î³»¸³´Ï´Ù.",
-		" ÀÌ¸¦ ¡×2$[COUNT]¡×fÈ¸, ¡×2$[DAMAGE]¡×fÀÇ ÇÇÇØ·Î ¹İº¹ÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ÀÌÈÄ ´ë¹ÌÁö¸¦ ÀÔÈù »ç¶÷ ¼ö¿¡ ºñ·ÊÇØ ¡×eÈí¼ö Ã¼·Â¡×fÀ» ÃµÃµÈ÷ È¹µæÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×2ehdgh141"
+@AbilityManifest(name = "ê³µë£¡", rank = Rank.L, species = Species.ANIMAL, explain = {
+		"Â§7ê²Œì„ ì‹œì‘ Â§8- Â§6í™”ì„í™”Â§f: ê³µë£¡ ì•Œ í™”ì„ì´ ë˜ì–´ ë•… ì†ì— íŒŒë¬»í™ë‹ˆë‹¤.",
+		" ê·¸ë™ì•ˆì€ Â§3ìœ ë ¹ ìƒíƒœÂ§fê°€ ë˜ì–´ ììœ ë¡­ê²Œ ì´ë™ ë° ìˆœê°„ ì´ë™ì´ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		" ëˆ„êµ°ê°€ê°€ ì´ í™”ì„ì„ ì°¾ê±°ë‚˜ ìœ ë ¹ ìƒíƒœë¡œ ë¹™ì˜ë¥¼ ì‹œë„í•  ë•Œ",
+		" ìœ ë ¹ ìƒíƒœê°€ í•´ì œë˜ê³  í™”ì„ì—ì„œ ê¹¨ì–´ë‚˜ Â§eí¡ìˆ˜ ì²´ë ¥Â§fì„ ì”ëœ© íšë“í•©ë‹ˆë‹¤.",
+		" í˜¹ì€ $[LONGEST_WAIT]ì´ˆê°€ ì§€ë‚˜ë„ ìë™ìœ¼ë¡œ í’€ë ¤ë‚©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§2ì••ë„ì ì¸ í˜ìœ¼ë¡œÂ§f: ì¡°ê¸ˆ ë– ì˜¤ë¥¸ ë’¤ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ì°ì–´ë‚´ë¦½ë‹ˆë‹¤.",
+		" ì´ë¥¼ Â§2$[COUNT]Â§fíšŒ, Â§2$[DAMAGE]Â§fì˜ í”¼í•´ë¡œ ë°˜ë³µí•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´í›„ ëŒ€ë¯¸ì§€ë¥¼ ì…íŒ ì‚¬ëŒ ìˆ˜ì— ë¹„ë¡€í•´ Â§eí¡ìˆ˜ ì²´ë ¥Â§fì„ ì²œì²œíˆ íšë“í•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§2ehdgh141"
 		})
 
 @SuppressWarnings("deprecation")
@@ -69,7 +69,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "cooldown", 120,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -85,7 +85,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> LONGEST_WAIT = 
 			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "longest-wait", 180,
-			"# ÃÖ´ë Áö¼Ó ½Ã°£") {
+			"# ìµœëŒ€ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -96,7 +96,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COUNT = 
 			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "count", 9,
-			"# ¿¬¼Ó Âï±â È½¼ö") {
+			"# ì—°ì† ì°ê¸° íšŸìˆ˜") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -107,7 +107,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DAMAGE = 
 			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "damage", 11,
-			"# ¿¬¼Ó Âï±âÀÇ ÇÇÇØ·®") {
+			"# ì—°ì† ì°ê¸°ì˜ í”¼í•´ëŸ‰") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -117,8 +117,8 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ABSORTION_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 150,
-			"# È¹µæÇÏ´Â Èí¼ö Ã¼·Â", "# ´ÜÀ§´Â %·Î, ÃÖ´ë Ã¼·Â¿¡ ºñ·ÊÇÕ´Ï´Ù.") {
+			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 100,
+			"# íšë“í•˜ëŠ” í¡ìˆ˜ ì²´ë ¥", "# ë‹¨ìœ„ëŠ” %ë¡œ, ìµœëŒ€ ì²´ë ¥ì— ë¹„ë¡€í•©ë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -196,7 +196,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 				eggcreate.setItemMeta(meta);
 			}
 			egg = getPlayer().getWorld().dropItem(getPlayer().getEyeLocation(), eggcreate);
-			egg.setCustomName("¡×2°ø·æ ¾Ë");
+			egg.setCustomName("Â§2ê³µë£¡ ì•Œ");
 			egg.setCustomNameVisible(true);
 			if (getPlayer().getLocation().getY() > 4) teleLoc = getPlayer().getLocation().clone().add(0, -3, 0);
 		}
@@ -205,7 +205,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		public void run(int count) {
 			egg.teleport(teleLoc);
 			getPlayer().setGameMode(GameMode.SPECTATOR);
-			ac.update("¡×3À¯·É »óÅÂ¡×7: ¡×e" + (count / 20) + "¡×fÃÊ");
+			ac.update("Â§3ìœ ë ¹ ìƒíƒœÂ§7: Â§e" + (count / 20) + "Â§fì´ˆ");
 			if (getPlayer().getSpectatorTarget() != null) stop(false);
 		}
 		
@@ -271,9 +271,9 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && !cooldown.isCooldown() && !fossil.isRunning()) {
 			if (!skill.isRunning()) {
 				if (skillstack > 1) {
-					getPlayer().sendMessage("¡×2[¡×6!¡×2] ¡×c¾ÆÁ÷ ´É·ÂÀÌ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+					getPlayer().sendMessage("Â§2[Â§6!Â§2] Â§cì•„ì§ ëŠ¥ë ¥ì´ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 				} else return skill.start();	
-			} else getPlayer().sendMessage("¡×2[¡×6!¡×2] ¡×c¾ÆÁ÷ ´É·ÂÀÌ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+			} else getPlayer().sendMessage("Â§2[Â§6!Â§2] Â§cì•„ì§ ëŠ¥ë ¥ì´ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 		}
 		return false;
 	}
@@ -293,7 +293,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onStart() {
 			this.setCount(0);
-			ac2.update("¡×2³²Àº µ¹Áø¡×7: ¡×6" + (skillcount - skillstack));
+			ac2.update("Â§2ë‚¨ì€ ëŒì§„Â§7: Â§6" + (skillcount - skillstack));
 			skillstack++;
 			nofall = true;
 			getPlayer().setVelocity(new Vector(0, 1.5, 0));

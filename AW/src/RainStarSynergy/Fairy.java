@@ -72,14 +72,14 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "Æä¾î¸®", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×b°áÁ¤È­¡×f: ÁÖº¯ $[RANGE]Ä­ ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î¸¦ $[DURATION]ÃÊ°£ ¡×b°áÁ¤È­¡×f½ÃÅµ´Ï´Ù.",
-		" °áÁ¤È­µÈ ÇÃ·¹ÀÌ¾îÀÇ ¡×dÈ¸º¹ È¿°ú¡×f´Â ´ë½Å ÀÚ½ÅÀÌ 2¹èÀÇ ¡×eÈí¼ö Ã¼·Â¡×fÀ¸·Î º¯È¯ÇØ",
-		" ÃÖ´ë ÀÚ½ÅÀÇ ÃÖ´ë Ã¼·Â¸¸Å­±îÁö ¼ÒÁöÇÒ ¼ö ÀÖÀ¸¸ç ÀÌ¹Ì ÃÖ´ëÄ¡ÀÏ °æ¿ì",
-		" ÀÏ¹İ Ã¼·ÂÀÌ ¡×dÈ¸º¹¡×fµË´Ï´Ù. $[COOLDOWN]",
-		"¡×7È° ¹ß»ç ¡×8- ¡×a°áÁ¤ È­»ì¡×f: ¡×3´õ ºü¸£°í ¹«Á¶°Ç Ä¡¸íÅ¸°¡ ¹ßµ¿ÇÏ´Â È­»ì¡×fÀ» ¹ß»çÇÕ´Ï´Ù.",
-		" °áÁ¤ È­»ìÀº ÀûÁßÇÑ ÀûÀ» ¡×e$[CHANCE]%¡×f È®·ü·Î $[SHOT_DURATION]ÃÊ°£ ¡×b°áÁ¤È­¡×f½ÃÅµ´Ï´Ù.",
-		" À§ È¿°ú°¡ ¹ßµ¿ÇÏÁö ¾ÊÀ¸¸é, ´ë½Å ÀûÀ» ´õ Å©°Ô ¹ĞÃÄ³À´Ï´Ù.",
+		name = "í˜ì–´ë¦¬", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bê²°ì •í™”Â§f: ì£¼ë³€ $[RANGE]ì¹¸ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ë¥¼ $[DURATION]ì´ˆê°„ Â§bê²°ì •í™”Â§fì‹œí‚µë‹ˆë‹¤.",
+		" ê²°ì •í™”ëœ í”Œë ˆì´ì–´ì˜ Â§díšŒë³µ íš¨ê³¼Â§fëŠ” ëŒ€ì‹  ìì‹ ì´ 2ë°°ì˜ Â§eí¡ìˆ˜ ì²´ë ¥Â§fìœ¼ë¡œ ë³€í™˜í•´",
+		" ìµœëŒ€ ìì‹ ì˜ ìµœëŒ€ ì²´ë ¥ë§Œí¼ê¹Œì§€ ì†Œì§€í•  ìˆ˜ ìˆìœ¼ë©° ì´ë¯¸ ìµœëŒ€ì¹˜ì¼ ê²½ìš°",
+		" ì¼ë°˜ ì²´ë ¥ì´ Â§díšŒë³µÂ§fë©ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7í™œ ë°œì‚¬ Â§8- Â§aê²°ì • í™”ì‚´Â§f: Â§3ë” ë¹ ë¥´ê³  ë¬´ì¡°ê±´ ì¹˜ëª…íƒ€ê°€ ë°œë™í•˜ëŠ” í™”ì‚´Â§fì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" ê²°ì • í™”ì‚´ì€ ì ì¤‘í•œ ì ì„ Â§e$[CHANCE]%Â§f í™•ë¥ ë¡œ $[SHOT_DURATION]ì´ˆê°„ Â§bê²°ì •í™”Â§fì‹œí‚µë‹ˆë‹¤.",
+		" ìœ„ íš¨ê³¼ê°€ ë°œë™í•˜ì§€ ì•Šìœ¼ë©´, ëŒ€ì‹  ì ì„ ë” í¬ê²Œ ë°€ì³ëƒ…ë‹ˆë‹¤.",
 		})
 
 @SuppressWarnings("unused")
@@ -89,7 +89,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Fairy.class, "cooldown", 100, "# ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Fairy.class, "cooldown", 100, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -103,7 +103,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Fairy.class, "range", 10, "# »ç°Å¸®") {
+	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Fairy.class, "range", 10, "# ì‚¬ê±°ë¦¬") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -112,7 +112,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "duration", 7, "# Áö¼Ó ½Ã°£") {
+	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "duration", 7, "# ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -121,7 +121,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> SHOT_DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "shot-duration", 3, "# È° °áÁ¤È­ Áö¼Ó ½Ã°£") {
+	public static final SettingObject<Integer> SHOT_DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "shot-duration", 3, "# í™œ ê²°ì •í™” ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -130,7 +130,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> CHANCE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance", 20, "# °áÁ¤ È­»ì È®·ü") {
+	public static final SettingObject<Integer> CHANCE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance", 20, "# ê²°ì • í™”ì‚´ í™•ë¥ ") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -139,7 +139,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> CHANCE_INCREASE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance-increase", 10, "# ½ÇÆĞ½Ã È®·ü Áõ°¡") {
+	public static final SettingObject<Integer> CHANCE_INCREASE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance-increase", 10, "# ì‹¤íŒ¨ì‹œ í™•ë¥  ì¦ê°€") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -752,7 +752,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 		@Override
 		public final String toString() {
-			return "¡×b°áÁ¤È­¡×f" + ": ¡×a" + ((maxCount - getCount()) / 10.0) + "ÃÊ";
+			return "Â§bê²°ì •í™”Â§f" + ": Â§a" + ((maxCount - getCount()) / 10.0) + "ì´ˆ";
 		}
 		
 	}

@@ -20,12 +20,12 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "È­»ó", displayName = "¡×4È­»ó", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "í™”ìƒ", displayName = "Â§4í™”ìƒ", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 }, description = {
-		"¸ğµç È­¿°°è ÇÇÇØ¸¦ 2.5¹è·Î ¹Ş½À´Ï´Ù.",
-		"¶ÇÇÑ È­¿°°è ÇÇÇØ¸¦ ¹«½ÃÇÒ ¼ö ¾ø°Ô µÇ¸ç,",
-		"È­¿°ÀÌ ²¨Áú ¶§ ²¨Áö±â ÀüÀÇ È­¿° Áö¼Ó½Ã°£¿¡ ºñ·ÊÇØ",
-		"Ãß°¡ ÇÇÇØ¸¦ ÀÔ½À´Ï´Ù."
+		"ëª¨ë“  í™”ì—¼ê³„ í”¼í•´ë¥¼ 2.5ë°°ë¡œ ë°›ìŠµë‹ˆë‹¤.",
+		"ë˜í•œ í™”ì—¼ê³„ í”¼í•´ë¥¼ ë¬´ì‹œí•  ìˆ˜ ì—†ê²Œ ë˜ë©°,",
+		"í™”ì—¼ì´ êº¼ì§ˆ ë•Œ êº¼ì§€ê¸° ì „ì˜ í™”ì—¼ ì§€ì†ì‹œê°„ì— ë¹„ë¡€í•´",
+		"ì¶”ê°€ í”¼í•´ë¥¼ ì…ìŠµë‹ˆë‹¤."
 })
 public class Burn extends AbstractGame.Effect implements Listener {
 	

@@ -17,9 +17,9 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
-@EffectManifest(name = "µµ¹ß", displayName = "¡×cµµ¹ß", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ë„ë°œ", displayName = "Â§cë„ë°œ", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 }, description = {
-		"µµ¹ßÇÑ »ç¶÷À» ±ÙÁ¢ Å¸°İÇÒ ¶§ Ãß°¡ ÇÇÇØ¸¦ ÁÙ ¼ö ÀÖ½À´Ï´Ù."
+		"ë„ë°œí•œ ì‚¬ëŒì„ ê·¼ì ‘ íƒ€ê²©í•  ë•Œ ì¶”ê°€ í”¼í•´ë¥¼ ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 })
 public class Agro extends AbstractGame.Effect implements Listener {
 

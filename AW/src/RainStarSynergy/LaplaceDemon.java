@@ -29,15 +29,15 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "¶óÇÃ¶ó½ºÀÇ ¾Ç¸¶", rank = Rank.S, species = Species.UNDEAD, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×c°áÁ¤·Ğ¡×f: ÁÖ»çÀ§¸¦ ±¼·Á ÇöÀç »óÈ²¿¡¼­ °¡Àå ÇÊ¿äÇÑ °ªÀ»",
-		" µµÃâÇØ³À´Ï´Ù. »ó´ÜÀÇ Á¶°ÇÀÏ¼ö·Ï ¿ì¼±¼øÀ§°¡ ³ô½À´Ï´Ù. $[COOLDOWN]",
-		" ³» ÇÇ°¡ 33% ÀÌÇÏÀÏ °æ¿ì ¡×7- ¡×dÀç»ı",
-		" ÃÖ±Ù 5ÃÊ ³» ³»°¡ ±ÙÁ¢ °ø°İÇßÀ» °æ¿ì ¡×7- ¡×6Èû",
-		" ÃÖ±Ù 5ÃÊ ³» ³»°¡ ÇÇÇØÀÔ¾úÀ» °æ¿ì ¡×7- ¡×8ÀúÇ×",
-		" ÃÖ±Ù 5ÃÊ ³» ³»°¡ È­¿° ÇÇÇØ¸¦ ÀÔ¾úÀ» °æ¿ì ¡×7- ¡×cÈ­¿° ÀúÇ×",
-		" ÁÖº¯ 9Ä­ ³» ´Ù¸¥ ÇÃ·¹ÀÌ¾î°¡ ÀÖÀ» °æ¿ì ¡×7- ¡×b½Å¼Ó",
-		" ÇØ´ç»çÇ×ÀÌ ¾øÀ» °æ¿ì ¡×7- ¡×e¼º±ŞÇÔ",
+@AbilityManifest(name = "ë¼í”Œë¼ìŠ¤ì˜ ì•…ë§ˆ", rank = Rank.S, species = Species.UNDEAD, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cê²°ì •ë¡ Â§f: ì£¼ì‚¬ìœ„ë¥¼ êµ´ë ¤ í˜„ì¬ ìƒí™©ì—ì„œ ê°€ì¥ í•„ìš”í•œ ê°’ì„",
+		" ë„ì¶œí•´ëƒ…ë‹ˆë‹¤. ìƒë‹¨ì˜ ì¡°ê±´ì¼ìˆ˜ë¡ ìš°ì„ ìˆœìœ„ê°€ ë†’ìŠµë‹ˆë‹¤. $[COOLDOWN]",
+		" ë‚´ í”¼ê°€ 33% ì´í•˜ì¼ ê²½ìš° Â§7- Â§dì¬ìƒ",
+		" ìµœê·¼ 5ì´ˆ ë‚´ ë‚´ê°€ ê·¼ì ‘ ê³µê²©í–ˆì„ ê²½ìš° Â§7- Â§6í˜",
+		" ìµœê·¼ 5ì´ˆ ë‚´ ë‚´ê°€ í”¼í•´ì…ì—ˆì„ ê²½ìš° Â§7- Â§8ì €í•­",
+		" ìµœê·¼ 5ì´ˆ ë‚´ ë‚´ê°€ í™”ì—¼ í”¼í•´ë¥¼ ì…ì—ˆì„ ê²½ìš° Â§7- Â§cí™”ì—¼ ì €í•­",
+		" ì£¼ë³€ 9ì¹¸ ë‚´ ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ ìˆì„ ê²½ìš° Â§7- Â§bì‹ ì†",
+		" í•´ë‹¹ì‚¬í•­ì´ ì—†ì„ ê²½ìš° Â§7- Â§eì„±ê¸‰í•¨",
 		})
 
 public class LaplaceDemon extends Synergy implements ActiveHandler {
@@ -53,10 +53,12 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 	private boolean speed = false;
 	private ActionbarChannel ac = newActionbarChannel();
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
+	private final int duration = DURATION.getValue();
+	private final int amplifier = AMPLIFIER.getValue();
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "cooldown", 14,
-            "# ÄğÅ¸ÀÓ") {
+            "# ì¿¨íƒ€ì„") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -64,6 +66,24 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
         @Override
         public String toString() {
             return Formatter.formatCooldown(getValue());
+        }
+    };
+    
+	public static final SettingObject<Integer> DURATION = 
+			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "duration", 300,
+            "# ì§€ì† ì‹œê°„", "# ë‹¨ìœ„: í‹±(20í‹± = 1ì´ˆ, 1í‹± = 0.05ì´ˆ)") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Integer> AMPLIFIER = 
+			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "amplifier", 0,
+            "# í¬ì…˜ íš¨ê³¼ ê³„ìˆ˜", "# ì£¼ì˜! 0ë¶€í„° ì‹œì‘í•©ë‹ˆë‹¤.", "# 0ì¼ ë•Œ í¬ì…˜ íš¨ê³¼ ê³„ìˆ˜ëŠ” 1ë ˆë²¨,", "# 1ì¼ ë•Œ í¬ì…˜ íš¨ê³¼ ê³„ìˆ˜ëŠ” 2ë ˆë²¨ì…ë‹ˆë‹¤.") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
         }
     };
     
@@ -109,17 +129,17 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 			else speed = false;
 			
 			if (!getPlayer().hasPotionEffect(PotionEffectType.REGENERATION) && regeneration == true) {
-				ac.update("¡×dÀç»ı");
+				ac.update("Â§dì¬ìƒ");
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) && power == true) {
-				ac.update("¡×6Èû");
+				ac.update("Â§6í˜");
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) && resistance == true) {
-				ac.update("¡×8ÀúÇ×");
+				ac.update("Â§8ì €í•­");
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.FIRE_RESISTANCE) && fireimmune == true) {
-				ac.update("¡×cÈ­¿° ÀúÇ×");
+				ac.update("Â§cí™”ì—¼ ì €í•­");
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.SPEED) && speed == true) {
-				ac.update("¡×b½Å¼Ó");
+				ac.update("Â§bì‹ ì†");
 			} else {
-				ac.update("¡×e¼º±ŞÇÔ");
+				ac.update("Â§eì„±ê¸‰í•¨");
 			}
     	}
     	
@@ -213,23 +233,23 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK && !cool.isCooldown()) {
 			if (!getPlayer().hasPotionEffect(PotionEffectType.REGENERATION) && regeneration == true) {
-				getPlayer().sendMessage("¡×dÀç»ı ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§dì¬ìƒ Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), duration, amplifier, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE) && power == true) {
-				getPlayer().sendMessage("¡×6Èû ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§6í˜ Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), duration, amplifier, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE) && resistance == true) {
-				getPlayer().sendMessage("¡×8ÀúÇ× ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§8ì €í•­ Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), duration, amplifier, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.FIRE_RESISTANCE) && fireimmune == true) {
-				getPlayer().sendMessage("¡×cÈ­¿° ÀúÇ× ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.FIRE_RESISTANCE.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§cí™”ì—¼ ì €í•­ Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.FIRE_RESISTANCE.addPotionEffect(getPlayer(), duration, amplifier, true);
 			} else if (!getPlayer().hasPotionEffect(PotionEffectType.SPEED) && speed == true) {
-				getPlayer().sendMessage("¡×b½Å¼Ó ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§bì‹ ì† Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), duration, amplifier, true);
 			} else {
-				getPlayer().sendMessage("¡×e¼º±ŞÇÔ ¡×fÈ¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-				PotionEffects.FAST_DIGGING.addPotionEffect(getPlayer(), 300, 1, true);
+				getPlayer().sendMessage("Â§eì„±ê¸‰í•¨ Â§fíš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+				PotionEffects.FAST_DIGGING.addPotionEffect(getPlayer(), duration, amplifier, true);
 			}
 			return cool.start();
 		}

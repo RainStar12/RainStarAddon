@@ -40,28 +40,28 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "¹İÁß·Â", rank = Rank.C, species = Species.OTHERS, explain = {
-		"ÀÚ½ÅÀÌ ¹ß»çÇÏ´Â ¸ğµç ¹ß»çÃ¼°¡ 1Æ½ ÈÄ ¡×bÁ¤Áö¡×fÇÕ´Ï´Ù.",
-		"Á¤ÁöµÈ ¹ß»çÃ¼°¡ È­»ìÀÏ ¶§ ³ª ÀÌ¿ÜÀÇ Á¸Àç°¡ ´êÀ¸¸é Á¤Áö°¡ ÇØÁ¦µË´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ½Ã¡×f, Á¤ÁöµÈ ¸ğµç ¹ß»çÃ¼¸¦ Á¤Áö ÇØÁ¦ÇÕ´Ï´Ù.",
-		"¡×7Ã¶±«¸¦ µé°í ¿õÅ©¸° Ã¤ ÈÙ¡×f·Î Á¤Áö±îÁö °É¸®´Â ½Ã°£À» Á¶Àı °¡´ÉÇÕ´Ï´Ù.",
-		"³» ¹ß»çÃ¼¿¡ ¸ÂÀº ÀûÀº ±âº» ¹«Àû ½Ã°£ÀÌ ¡×cÃÊ±âÈ­¡×fµË´Ï´Ù."
+@AbilityManifest(name = "ë°˜ì¤‘ë ¥", rank = Rank.C, species = Species.OTHERS, explain = {
+		"ìì‹ ì´ ë°œì‚¬í•˜ëŠ” ëª¨ë“  ë°œì‚¬ì²´ê°€ 1í‹± í›„ Â§bì •ì§€Â§fí•©ë‹ˆë‹¤.",
+		"ì •ì§€ëœ ë°œì‚¬ì²´ê°€ í™”ì‚´ì¼ ë•Œ ë‚˜ ì´ì™¸ì˜ ì¡´ì¬ê°€ ë‹¿ìœ¼ë©´ ì •ì§€ê°€ í•´ì œë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ ì‹œÂ§f, ì •ì§€ëœ ëª¨ë“  ë°œì‚¬ì²´ë¥¼ ì •ì§€ í•´ì œí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ë¥¼ ë“¤ê³  ì›…í¬ë¦° ì±„ íœ Â§fë¡œ ì •ì§€ê¹Œì§€ ê±¸ë¦¬ëŠ” ì‹œê°„ì„ ì¡°ì ˆ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"ë‚´ ë°œì‚¬ì²´ì— ë§ì€ ì ì€ ê¸°ë³¸ ë¬´ì  ì‹œê°„ì´ Â§cì´ˆê¸°í™”Â§fë©ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "¹ß»çÃ¼¸¦ ¸ØÃçµÑ ¼ö ÀÖ´Ù´Â °ÍÀ» Àß »ì¸®¼Å¾ß ÇÕ´Ï´Ù. ÀÌ¸¦Å×¸é ¿£´õ ÁøÁÖ¸¦",
-        "È°¿ëÇÏ¿© °øÁß¿¡ ¸ØÃçµÎ°í ¿øÇÏ´Â ¶§¿¡ ÅÚ·¹Æ÷Æ®°¡ °¡´ÉÇÏ°í,",
-        "Æ÷¼ÇÀÌ³ª È­»ì µîÀ» ¸ØÃçµÎ¾î ´ë»óÀ» ÇÑ¹ø¿¡ °ø°İÀÌ °¡´ÉÇÕ´Ï´Ù.",
-        "´Ù¸¸ È­»ìÀÌ Á¦´ë·Î ³ª¾Æ°¡Áö ¸øÇÏ±â ¶§¹®¿¡ ±âº» È­»ìº¸´Ù »ç¿ëÀÌ ¾î·Æ½À´Ï´Ù."
+        "ë°œì‚¬ì²´ë¥¼ ë©ˆì¶°ë‘˜ ìˆ˜ ìˆë‹¤ëŠ” ê²ƒì„ ì˜ ì‚´ë¦¬ì…”ì•¼ í•©ë‹ˆë‹¤. ì´ë¥¼í…Œë©´ ì—”ë” ì§„ì£¼ë¥¼",
+        "í™œìš©í•˜ì—¬ ê³µì¤‘ì— ë©ˆì¶°ë‘ê³  ì›í•˜ëŠ” ë•Œì— í…”ë ˆí¬íŠ¸ê°€ ê°€ëŠ¥í•˜ê³ ,",
+        "í¬ì…˜ì´ë‚˜ í™”ì‚´ ë“±ì„ ë©ˆì¶°ë‘ì–´ ëŒ€ìƒì„ í•œë²ˆì— ê³µê²©ì´ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+        "ë‹¤ë§Œ í™”ì‚´ì´ ì œëŒ€ë¡œ ë‚˜ì•„ê°€ì§€ ëª»í•˜ê¸° ë•Œë¬¸ì— ê¸°ë³¸ í™”ì‚´ë³´ë‹¤ ì‚¬ìš©ì´ ì–´ë µìŠµë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "Æ®·¦", explain = {
-                "´É·ÂÀ» ¸ğ¸£´Â »ó´ë¸¦ ¹Ì¸® ÁØºñÇØ µĞ È­»ì ¹× Æ÷¼ÇÀ»",
-                "¸ØÃçµĞ Æ®·¦À» ÀÌ¿ëÇÏ¿© À¯ÀÎÇØ °ø°İÇÒ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "íŠ¸ë©", explain = {
+                "ëŠ¥ë ¥ì„ ëª¨ë¥´ëŠ” ìƒëŒ€ë¥¼ ë¯¸ë¦¬ ì¤€ë¹„í•´ ë‘” í™”ì‚´ ë° í¬ì…˜ì„",
+                "ë©ˆì¶°ë‘” íŠ¸ë©ì„ ì´ìš©í•˜ì—¬ ìœ ì¸í•´ ê³µê²©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "¿ø°Å¸®Àü", explain = {
-                "È­»ìÀÌ ¸Ö¸® ³ª¾Æ°¡±â Èûµé´Ù´Â Á¡ ¶§¹®¿¡ ¿ø°Å¸® Àü¿¡ Ãë¾àÇÕ´Ï´Ù.",
-                "µÇµµ·ÏÀÌ¸é »ó´ë¸¦ ³»°Ô ÂÑ¾Æ¿À´Â ÂÊÀ¸·Î À¯µµÇÏ¼¼¿ä."
+        @Description(subject = "ì›ê±°ë¦¬ì „", explain = {
+                "í™”ì‚´ì´ ë©€ë¦¬ ë‚˜ì•„ê°€ê¸° í˜ë“¤ë‹¤ëŠ” ì  ë•Œë¬¸ì— ì›ê±°ë¦¬ ì „ì— ì·¨ì•½í•©ë‹ˆë‹¤.",
+                "ë˜ë„ë¡ì´ë©´ ìƒëŒ€ë¥¼ ë‚´ê²Œ ì«“ì•„ì˜¤ëŠ” ìª½ìœ¼ë¡œ ìœ ë„í•˜ì„¸ìš”."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TWO), difficulty = Difficulty.HARD)
 
@@ -111,7 +111,7 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR && arrows == true) {		
-			ac.update("¡×bÁ¤Áö ½Ã°£ ¡×f: " + timer + "Æ½ ÈÄ");
+			ac.update("Â§bì •ì§€ ì‹œê°„ Â§f: " + timer + "í‹± í›„");
 		}
 		
 		if (update == Update.ABILITY_DESTROY || update == Update.RESTRICTION_SET) {
@@ -133,16 +133,16 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 			switch (state) {
 				case UP:
 					timer = limit(timer + 1, 5, 1);
-					ac.update("¡×bÁ¤Áö ½Ã°£ ¡×f: " + timer + "Æ½ ÈÄ");
+					ac.update("Â§bì •ì§€ ì‹œê°„ Â§f: " + timer + "í‹± í›„");
 					break;
 				case DOWN:
 					timer = limit(timer - 1, 5, 1);
-					ac.update("¡×bÁ¤Áö ½Ã°£ ¡×f: " + timer + "Æ½ ÈÄ");
+					ac.update("Â§bì •ì§€ ì‹œê°„ Â§f: " + timer + "í‹± í›„");
 					break;
 				default:
 					break;
 			}
-			NMS.sendTitle(getPlayer(), state == State.UP ? "¡×c¡è" : "¡×9¡é", String.valueOf(timer), 0, 20, 0);
+			NMS.sendTitle(getPlayer(), state == State.UP ? "Â§câ†‘" : "Â§9â†“", String.valueOf(timer), 0, 20, 0);
 			if (!titleClear.start()) {
 				titleClear.setCount(10);
 			}

@@ -4,11 +4,15 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,6 +36,8 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -44,12 +50,14 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "섬토끼", rank = Rank.S, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §e밝은 귀§f: 주변 $[RANGE]칸 이내에 적이 들어올 경우 알 수 있습니다.",
 		" 이때 5초 내로 철괴를 우클릭하면 맞은편으로 즉시 토낍니다. $[COOLDOWN]",
 		"§7웅크리기 §8- §b깡총깡총§f: 땅에서 웅크렸다 떼면 높게 점프할 수 있습니다.",
+		" 땅을 박차고 올라갈 때 충전된 시간에 비례하여 주변에 대미지를 입힙니다.",
 		" 이 점프를 하고 난 뒤의 낙하 피해량이 §51/7§f로 감소합니다.",
 		"§7치명타 공격 §8- §d강타§f: 근접 혹은 원거리 공격으로 치명타 피해를 입힐 때",
 		" 피해량의 $[TRUE_DAMAGE]%는 트루 대미지의 §c고정 피해§f로 입힙니다.",
@@ -117,6 +125,34 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 	    	sneakchecker.start();
 	    }
 	}
+	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler &&
+								((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(
+							entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant)
+							|| (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
 	
 	private boolean attackCooldown = false;
 	private final DecimalFormat df = new DecimalFormat("0.0");
@@ -196,7 +232,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 				if (getPlayer().isSneaking()) {
 					if (longsneak == 0) NMS.sendTitle(getPlayer(), "", Strings.repeat("§b§l⤊", sneakstack).concat(Strings.repeat("§7§l⤊", 10 - sneakstack)), 0, 100, 1);
 					longsneak++;
-					if (longsneak % 10 == 0) {
+					if (longsneak % 6 == 0) {
 						if (sneakstack != 10) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 0.5f, (float) (1 + (0.1 * (sneakstack + 1))));
 						sneakstack = Math.min(10, sneakstack + 1);
 						if (sneakstack == 10) NMS.sendTitle(getPlayer(), "", Strings.repeat("§d§l⤊", sneakstack).concat(Strings.repeat("§7§l⤊", 10 - sneakstack)), 0, 100, 1);
@@ -209,6 +245,9 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 						longsneak = 0;
 						if (sneakstack > 0) {
 							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 50, 1, getPlayer().getLocation().clone().add(0, -1, 0).getBlock());
+							for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 5, 2.5, predicate)) {
+								Damages.damageFixed(livingEntity, getPlayer(), (float) (sneakstack * 0.3));
+							}
 							getPlayer().setVelocity(new Vector(getPlayer().getVelocity().getX() * 1.3, ((0.15 * sneakstack) + 0.6), getPlayer().getVelocity().getZ() * 1.3));
 							sneakstack = 0;
 							jumped = true;
@@ -217,11 +256,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 						}	
 					}
 				}	
-			} else {
-				if (getPlayer().isOnGround()) {
-					jumped = false;
-				}
-			}
+			} else if (getPlayer().isOnGround()) jumped = false;
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -368,14 +403,12 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 		if (NMS.isArrow(e.getDamager()) && e.getEntity() instanceof Player) {
 			Arrow arrow = (Arrow) e.getDamager();
 			Player player = (Player) e.getEntity();
-			if (critArrows.contains(arrow) && !e.getEntity().equals(getPlayer())) {
-				
+			if (critArrows.contains(arrow) && !e.getEntity().equals(getPlayer())) {			
 				double trueDamage = (e.getDamage() * (trueDamageValue * 0.01));
 				e.setDamage(e.getDamage() - trueDamage);
 				if (Damages.canDamage(player, DamageCause.ENTITY_ATTACK, trueDamage)) {
 					Healths.setHealth(player, Math.max(1, player.getHealth() - trueDamage));	
-				}
-				
+				}				
 				ParticleLib.CRIT_MAGIC.spawnParticle(player.getLocation(), 0.25, 1, 0.25, 100, 1);
 			}
 		}

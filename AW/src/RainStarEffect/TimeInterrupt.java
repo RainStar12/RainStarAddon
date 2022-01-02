@@ -36,11 +36,11 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "½Ã°£ Á¶ÀÛ", displayName = "¡×3½Ã°£ Á¶ÀÛ", method = ApplicationMethod.UNIQUE_STACK, type = {
+@EffectManifest(name = "ì‹œê°„ ê°„ì„­", displayName = "Â§3ì‹œê°„ ê°„ì„­", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.ABILITY_RESTRICTION, EffectType.MOVEMENT_INTERRUPT, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"¡×fÀÌµ¿ ¼Óµµ¡×7 ¡¤ ¡×f°ø°İ ¼Óµµ¡×7 ¡¤ ¡×fÄğÅ¸ÀÓÀÌ ¡×e´À·ÁÁö¸ç¡×f,",
-		"¡×fÁö¼Ó ½Ã°£¡×7 ¡¤ ¡×f±âº» ¹«Àû ½Ã°£¡×fÀÌ ¡×bºü¸£°Ô¡×f Èå¸¨´Ï´Ù."
+		" Â§fì´ë™ ì†ë„Â§7 Â· Â§fê³µê²© ì†ë„Â§7 Â· Â§fì¿¨íƒ€ì„ì´ Â§eëŠë¦¬ê²Œ íë¥´ê³ ",
+		" Â§fì§€ì† ì‹œê°„Â§7 Â· Â§fê¸°ë³¸ ë¬´ì  ì‹œê°„ì´ Â§bë¹ ë¥´ê²Œ íë¦…ë‹ˆë‹¤Â§f."
 })
 public class TimeInterrupt extends AbstractGame.Effect implements Listener {
 

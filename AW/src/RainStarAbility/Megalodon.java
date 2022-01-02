@@ -67,14 +67,14 @@ import daybreak.google.common.base.Predicate;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(
-		name = "¸Ş°¥·Îµ·", rank = Rank.L, species = Species.ANIMAL, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×bÅ·¡×f: ¾×Ã¼ ³»¿¡¼­ ¡×6Èû¡×f ¹öÇÁ, ¿õÅ©¸± ¶§ ¡×bÀÌ¼Ó¡×f ¹öÇÁ¸¦ È¹µæÇÕ´Ï´Ù.",
-		" ¡×c¿ë¾Ï ÇÇÇØ¡×f¸¦ ÀÔÁö ¾Ê°í ¿ë¾Ï ¼Ó¿¡¼­ ¡×dÈ¸º¹ ¼Óµµ ¹öÇÁ¡×f¸¦ È¹µæÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×c¹ö½ºÆ®¡×f: Àû¿¡°Ô ±ÙÁ¢ ÇÇÇØ¸¦ ÀÔÈ÷°Å³ª ÇÇÇØ¸¦ ¹ŞÀ» ¶§¸¶´Ù",
-		" ´ë¹ÌÁö¿¡ ºñ·ÊÇÏ¿© ¡×4¹ö½ºÆ® ¾Æ¿ô¡×fÀÇ °ÔÀÌÁö°¡ Â÷Â÷ Â÷¿À¸¨´Ï´Ù.",
-		" °ÔÀÌÁö¸¦ °¡µæ Ã¤¿ì¸é, ¡×c12.15ÃÊ¡×f°£ ¡×4¹ö½ºÆ® ¾Æ¿ô¡×f »óÅÂ°¡ µÇ¾î ÁÖº¯¿¡ ¾×Ã¼¸¦ Èğ»Ñ¸° µÚ",
-		" Ãß°¡ °ø°İ·Â°ú Ãß°¡ ÇÇÇØ¸¦ ¾ò°í, Å¸°İÇÑ ´ë»óÀ» ¡×cÃâÇ÷¡×f½ÃÅµ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×cHSRD"
+		name = "ë©”ê°ˆë¡œëˆ", rank = Rank.L, species = Species.ANIMAL, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bí‚¹Â§f: ì•¡ì²´ ë‚´ì—ì„œ Â§6í˜Â§f ë²„í”„, ì›…í¬ë¦´ ë•Œ Â§bì´ì†Â§f ë²„í”„ë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		" Â§cìš©ì•” í”¼í•´Â§fë¥¼ ì…ì§€ ì•Šê³  ìš©ì•” ì†ì—ì„œ Â§díšŒë³µ ì†ë„ ë²„í”„Â§fë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë²„ìŠ¤íŠ¸Â§f: ì ì—ê²Œ ê·¼ì ‘ í”¼í•´ë¥¼ ì…íˆê±°ë‚˜ í”¼í•´ë¥¼ ë°›ì„ ë•Œë§ˆë‹¤",
+		" ëŒ€ë¯¸ì§€ì— ë¹„ë¡€í•˜ì—¬ Â§4ë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§fì˜ ê²Œì´ì§€ê°€ ì°¨ì°¨ ì°¨ì˜¤ë¦…ë‹ˆë‹¤.",
+		" ê²Œì´ì§€ë¥¼ ê°€ë“ ì±„ìš°ë©´, Â§c12.15ì´ˆÂ§fê°„ Â§4ë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§f ìƒíƒœê°€ ë˜ì–´ ì£¼ë³€ì— ì•¡ì²´ë¥¼ í©ë¿Œë¦° ë’¤",
+		" ì¶”ê°€ ê³µê²©ë ¥ê³¼ ì¶”ê°€ í”¼í•´ë¥¼ ì–»ê³ , íƒ€ê²©í•œ ëŒ€ìƒì„ Â§cì¶œí˜ˆÂ§fì‹œí‚µë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§cHSRD"
 		})
 
 public class Megalodon extends AbilityBase {
@@ -95,6 +95,7 @@ public class Megalodon extends AbilityBase {
 	private BossBar bossBar2 = null;
 	private final DecimalFormat df = new DecimalFormat("0.00");
 	private Random random = new Random();
+	private final int liquidcount = LIQUID_COUNT.getValue();
 	
 	private int gauge = 0;
 	
@@ -135,7 +136,7 @@ public class Megalodon extends AbilityBase {
 	
 	public static final SettingObject<Double> DAMAGE = 
 			abilitySettings.new SettingObject<Double>(Megalodon.class, "damage", 5.0,
-            "# Ãß°¡ ÇÇÇØ·®", "# Ãß°¡ ÇÇÇØ·®ÀÇ 1/2¸¸Å­ ÀÚ½Åµµ Ãß°¡ ÇÇÇØ¸¦ ÀÔ½À´Ï´Ù.") {
+            "# ì¶”ê°€ í”¼í•´ëŸ‰", "# ì¶”ê°€ í”¼í•´ëŸ‰ì˜ 1/2ë§Œí¼ ìì‹ ë„ ì¶”ê°€ í”¼í•´ë¥¼ ì…ìŠµë‹ˆë‹¤.") {
 
         @Override
         public boolean condition(Double value) {
@@ -146,7 +147,7 @@ public class Megalodon extends AbilityBase {
     
 	public static final SettingObject<Double> REQUEST_DAMAGE = 
 			abilitySettings.new SettingObject<Double>(Megalodon.class, "request-damage", 25.0,
-            "# ¹ö½ºÆ® ¾Æ¿ôÀÇ ¿ä±¸ ÇÇÇØ·®ÀÇ ÃÑÇÕ") {
+            "# ë²„ìŠ¤íŠ¸ ì•„ì›ƒì˜ ìš”êµ¬ í”¼í•´ëŸ‰ì˜ ì´í•©") {
 
         @Override
         public boolean condition(Double value) {
@@ -157,7 +158,7 @@ public class Megalodon extends AbilityBase {
     
 	public static final SettingObject<Integer> RANGE = 
 			abilitySettings.new SettingObject<Integer>(Megalodon.class, "range", 5,
-            "# ¾×Ã¼¸¦ Èğ»Ñ¸± ¹üÀ§") {
+            "# ì•¡ì²´ë¥¼ í©ë¿Œë¦´ ë²”ìœ„") {
 
         @Override
         public boolean condition(Integer value) {
@@ -168,7 +169,7 @@ public class Megalodon extends AbilityBase {
     
 	public static final SettingObject<Integer> LIQUID_COUNT = 
 			abilitySettings.new SettingObject<Integer>(Megalodon.class, "liquid-count", 3,
-            "# Èğ»Ñ¸± ¾×Ã¼ÀÇ ¼ö") {
+            "# í©ë¿Œë¦´ ì•¡ì²´ì˜ ìˆ˜") {
 
         @Override
         public boolean condition(Integer value) {
@@ -197,7 +198,7 @@ public class Megalodon extends AbilityBase {
 		
     	@Override
     	public void onStart() {
-    		bossBar1 = Bukkit.createBossBar("¡×b¹ö½ºÆ® ¾Æ¿ô¡×f: ¡×e" + df.format(damagestack) + " ¡×7/ ¡×e" + df.format(requestDamage), BarColor.WHITE, BarStyle.SOLID);
+    		bossBar1 = Bukkit.createBossBar("Â§bë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§f: Â§e" + df.format(damagestack) + " Â§7/ Â§e" + df.format(requestDamage), BarColor.WHITE, BarStyle.SOLID);
     		bossBar1.setProgress(damagestack * (1 / requestDamage));
     		bossBar1.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar1.setVisible(true);
@@ -239,7 +240,7 @@ public class Megalodon extends AbilityBase {
     			SoundLib.ENTITY_ENDER_DRAGON_GROWL.playSound(getPlayer().getLocation(), 1.5f, 1.85f);
 				SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 				boolean randomvalue = random.nextBoolean();
-				for (Location loc : LocationUtil.getRandomLocations(getPlayer().getLocation(), 5, 3)) {
+				for (Location loc : LocationUtil.getRandomLocations(getPlayer().getLocation(), 5, liquidcount)) {
 					for (Location locations : Line.between(loc, loc.clone().add(0, 3, 0), 75).toLocations(loc)) {
 						if (randomvalue) ParticleLib.WATER_SPLASH.spawnParticle(locations, 0, 0, 0, 1, 1);
 						else ParticleLib.DRIP_LAVA.spawnParticle(locations, 0, 0, 0, 1, 1);
@@ -252,7 +253,7 @@ public class Megalodon extends AbilityBase {
 				}
 				showHelix(RGB.RED);
     		}
-    		bossBar1.setTitle("¡×b¹ö½ºÆ® ¾Æ¿ô¡×f: ¡×e" + df.format(damagestack) + " ¡×7/ ¡×e" + df.format(requestDamage));
+    		bossBar1.setTitle("Â§bë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§f: Â§e" + df.format(damagestack) + " Â§7/ Â§e" + df.format(requestDamage));
     	}
     	
 		@Override
@@ -271,7 +272,7 @@ public class Megalodon extends AbilityBase {
 		
     	@Override
     	public void onStart() {
-    		bossBar2 = Bukkit.createBossBar("¡×c¹ö½ºÆ® ¾Æ¿ô¡×7: ¡×e" + df.format(nowDamage * 0.1), BarColor.RED, BarStyle.SOLID);
+    		bossBar2 = Bukkit.createBossBar("Â§cë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§7: Â§e" + df.format(nowDamage * 0.1), BarColor.RED, BarStyle.SOLID);
     		bossBar2.setProgress(1);
     		bossBar2.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar2.setVisible(true);
@@ -297,7 +298,7 @@ public class Megalodon extends AbilityBase {
     			damagestack = 0;
     			bossbarUpdate.start();
     		} else bossBar2.setProgress(RangesKt.coerceIn((double) nowDamage / addDamage, 0, 1));
-    		bossBar2.setTitle("¡×c¹ö½ºÆ® ¾Æ¿ô¡×7: ¡×e" + df.format(nowDamage));
+    		bossBar2.setTitle("Â§cë²„ìŠ¤íŠ¸ ì•„ì›ƒÂ§7: Â§e" + df.format(nowDamage));
     	}
     	
 		@Override

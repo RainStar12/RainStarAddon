@@ -18,11 +18,11 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "½Ã°£ ¿Ö°î", displayName = "¡×3½Ã°£ ¿Ö°î", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ì‹œê°„ ì™œê³¡", displayName = "Â§3ì‹œê°„ ì™œê³¡", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"ÀÌµ¿ ¼Óµµ ¹× °ø°İ ¼Óµµ°¡ °¨¼ÒÇÕ´Ï´Ù.",
-		"¶ÇÇÑ ¸ğµç º¤ÅÍ ¿µÇâÀ» Àı¹İ¸¸ ¹Ş½À´Ï´Ù."
+		"ì´ë™ ì†ë„ ë° ê³µê²© ì†ë„ê°€ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"ë˜í•œ ëª¨ë“  ë²¡í„° ì˜í–¥ì„ ì ˆë°˜ë§Œ ë°›ìŠµë‹ˆë‹¤."
 })
 public class TimeDistortion extends AbstractGame.Effect implements Listener {
 

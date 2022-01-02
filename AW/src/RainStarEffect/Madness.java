@@ -23,11 +23,11 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "±¤¶õ", displayName = "¡×5±¤¶õ", method = ApplicationMethod.UNIQUE_STACK, type = {
+@EffectManifest(name = "ê´‘ë€", displayName = "Â§5ê´‘ë€", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.MOVEMENT_INTERRUPT, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"»óÇÏÀüÈÄÁÂ¿ìÀÇ ¹«ÀÛÀ§ ¹æÇâÀ¸·Î Æ¨°Ü³ª°©´Ï´Ù.",
-		"¶ÇÇÑ ¿£Æ¼Æ¼¿¡ ÀÇÇÑ ÇÇÇØ ¿Ü ¸ğµç ÇÇÇØ¸¦ 1.5¹è·Î ¹Ş½À´Ï´Ù."
+		"ìƒí•˜ì „í›„ì¢Œìš°ì˜ ë¬´ì‘ìœ„ ë°©í–¥ìœ¼ë¡œ íŠ•ê²¨ë‚˜ê°‘ë‹ˆë‹¤.",
+		"ë˜í•œ ì—”í‹°í‹°ì— ì˜í•œ í”¼í•´ ì™¸ ëª¨ë“  í”¼í•´ë¥¼ 1.5ë°°ë¡œ ë°›ìŠµë‹ˆë‹¤."
 })
 public class Madness extends AbstractGame.Effect implements Listener {
 

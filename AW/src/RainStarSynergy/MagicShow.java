@@ -54,19 +54,9 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "¸ÅÁ÷ ¼î", rank = Rank.L, species = Species.HUMAN, explain = {
-		"¡×7È­»ì ÀûÁß ¡×8- ¡×3Æ®¸¯½ºÅÍ¡×f: ¿õÅ©¸° Ã¤·Î È° ¹ß»ç ½Ã È­»ìÀÌ ÀûÁßÇÑ À§Ä¡¿¡",
-		" Ç¥½ÄÀ» ³²±â°í ±¤¶õ µğ¹öÇÁ¸¦ ¹Ş´Â ÇÊµå¸¦ Àü°³ÇÕ´Ï´Ù. $[ArrowcoolConfig]",
-		" Ç¥½ÄÀº 1°³¸¸ Á¸ÀçÇÏ¸ç »ı¼º ½Ã¸¶´Ù ¹üÀ§ ³» ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡¸¦ µÚ¹Ù²ß´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×5¸¯Æ®¼î¡×f: Ç¥½ÄÀÌ ÀÖ´Â À§Ä¡·Î ¼ø°£ÀÌµ¿ÇÕ´Ï´Ù. $[CooldownConfig]",
-		" ÀÌ¶§ ±âÁ¸¿¡ ÀÚ½ÅÀÌ ÀÖ´ø À§Ä¡·ÎºÎÅÍ $[TeleportConfig]Ä­ ÀÌ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î¿Í",
-		" ±¤¶õ µğ¹öÇÁ ¼ÒÀ¯ÀÚ¸¦ ÀüºÎ ¼ø°£ÀÌµ¿½ÃÅ°°í 3ÃÊ°£ ±âÀı½ÃÅµ´Ï´Ù.",
-		" ¶ÇÇÑ ÀÌµ¿ ÈÄ À§Ä¡¿¡¼­ Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù. ¸¸ÀÏ ´ë»óÀÌ Ç¥½ÄÀÇ ¹üÀ§ ³» ÀÖ¾ú´Ù¸é",
-		" À§ È¿°úµéÀ» ÀüºÎ ¹«½ÃÇÏ°í ±âÁ¸ÀÇ ³»°¡ ÀÖ´ø À§Ä¡·Î ÀÌµ¿½ÃÅ² ÈÄ 6ÃÊ°£",
-		" Áßµ¶ ´ë¹ÌÁö¸¦ ÀÔÈ÷°í È¿°ú°¡ ³¡³¯ ¶§ ´Ù½Ã Ç¥½ÄÀÇ À§Ä¡·Î ÀÌµ¿½ÃÅµ´Ï´Ù.",
-		" ¼ø°£ÀÌµ¿ ÀÌÈÄ, ÀÚ½ÅÀº 3ÃÊ°£ ¹«Àû »óÅÂ°¡ µË´Ï´Ù.",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×c±¤¶õ¡×f: ¸Å ÃÊ¸¶´Ù ¹«ÀÛÀ§ÀÇ ¹æÇâÀ¸·Î Æ¨°Ü³ª°©´Ï´Ù.",
-		" ¶ÇÇÑ ¿£Æ¼Æ¼¿¡ ´ëÇÑ ÇÇÇØ ÀÌ¿ÜÀÇ ¸ğµç ÇÇÇØ¸¦ 1.5¹è·Î ¹Ş°Ô µË´Ï´Ù.",
+		name = "ë§¤ì§ ì‡¼", rank = Rank.L, species = Species.HUMAN, explain = {
+		"ìƒëª…ì²´ë¥¼ ê´€í†µí•˜ëŠ” ì¹´ë“œë¥¼ ë˜ì ¸ $[CARD_DAMAGE]ì˜ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤. $[CARD_COOLDOWN]",
+		"ëŒ€ìƒì€ "
 		})
 
 public class MagicShow extends Synergy implements ActiveHandler {
@@ -75,8 +65,8 @@ public class MagicShow extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> ArrowcoolConfig = synergySettings.new SettingObject<Integer>(MagicShow.class,
-			"Arrow Cooldown", 30, "# È­»ì ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> CARD_COOLDOWN = synergySettings.new SettingObject<Integer>(MagicShow.class,
+			"card-cooldown", 20, "# ì¹´ë“œ íˆ¬ì²™ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -88,8 +78,8 @@ public class MagicShow extends Synergy implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(MagicShow.class,
-			"Cooldown", 70, "# ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> SHUFFLE_COOLDOWN = synergySettings.new SettingObject<Integer>(MagicShow.class,
+			"shuffle-cooldown", 70, "# ì…”í”Œ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -101,21 +91,31 @@ public class MagicShow extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RangeConfig = synergySettings.new SettingObject<Integer>(MagicShow.class,
-			"Field Range", 7, "# Ç¥½Ä ÇÊµå ¹üÀ§", "¡×2[¡×c!¡×2] ¡×7ÁÖÀÇ! ÆÄÆ¼Å¬ÀÌ º¯°æµÇÁö ¾Ê½À´Ï´Ù.") {
+	public static final SettingObject<Double> CARD_DAMAGE = synergySettings.new SettingObject<Double>(MagicShow.class,
+			"card-damage", 10.0, "# ì¹´ë“œ ëŒ€ë¯¸ì§€") {
 
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 
 	};
 	
-	public static final SettingObject<Integer> TeleportConfig = synergySettings.new SettingObject<Integer>(MagicShow.class,
-			"Teleport Range", 5, "# ÅÚ·¹Æ÷Æ® ¹üÀ§") {
+	public static final SettingObject<Double> SHUFFLE_DURATION = synergySettings.new SettingObject<Double>(MagicShow.class,
+			"shuffle-duration", 20.0, "# ì…”í”Œ ì§€ì†ì‹œê°„") {
 
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Double> SHOWTIME_DURATION = synergySettings.new SettingObject<Double>(MagicShow.class,
+			"showtime-duration", 10.0, "# ì‡¼ íƒ€ì„! ì§€ì†ì‹œê°„") {
+
+		@Override
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 
@@ -171,10 +171,6 @@ public class MagicShow extends Synergy implements ActiveHandler {
 	};
 	
 	private final Circle circle = Circle.of(7, 100);
-	private final Cooldown teleCool = new Cooldown(CooldownConfig.getValue(), "°ø°£ µµ¾à");
-	private final Cooldown arrowCool = new Cooldown(ArrowcoolConfig.getValue(), "Ç¥½Ä");
-	private final int range = RangeConfig.getValue();
-	private final int teleport = TeleportConfig.getValue();
 	private static final RGB color = RGB.of(25, 147, 168);
 	private final ActionbarChannel ac = newActionbarChannel();
 	private Arrow arrow;
@@ -213,9 +209,9 @@ public class MagicShow extends Synergy implements ActiveHandler {
 							}
 						}
 					}		
-					ac.update("¡×3Ç¥½Ä À§Ä¡¡×f: ¡×5" + arrow.getLocation().getBlockX() + "¡×f, ¡×5" + arrow.getLocation().getBlockY() + "¡×f, ¡×5" + arrow.getLocation().getBlockZ());
+					ac.update("Â§3í‘œì‹ ìœ„ì¹˜Â§f: Â§5" + arrow.getLocation().getBlockX() + "Â§f, Â§5" + arrow.getLocation().getBlockY() + "Â§f, Â§5" + arrow.getLocation().getBlockZ());
 				} else {
-					getPlayer().sendMessage("[¡×c!¡×f] ¡×3Ç¥½Ä¡×fÀÌ ¼¼°è °æ°è¼± ¹ÛÀ» Áö³ª »ç¶óÁ³½À´Ï´Ù.");
+					getPlayer().sendMessage("[Â§c!Â§f] Â§3í‘œì‹Â§fì´ ì„¸ê³„ ê²½ê³„ì„  ë°–ì„ ì§€ë‚˜ ì‚¬ë¼ì¡ŒìŠµë‹ˆë‹¤.");
 					arrowCool.setCount(0);
 					activecool.stop(false);
 					getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
@@ -289,7 +285,7 @@ public class MagicShow extends Synergy implements ActiveHandler {
 		if ((e.getCause() == DamageCause.BLOCK_EXPLOSION || e.getCause() == DamageCause.ENTITY_EXPLOSION) && e.getEntity().equals(getPlayer())) e.setCancelled(true);
 		if (e.getEntity().equals(getPlayer()) && inv.isRunning()) e.setCancelled(true);
 		if (fallcancel.contains(e.getEntity()) && e.getCause() == DamageCause.FALL) {
-			e.getEntity().sendMessage("¡×a³«ÇÏ ´ë¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù.");
+			e.getEntity().sendMessage("Â§aë‚™í•˜ ëŒ€ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound((Player) e.getEntity());
 			fallcancel.remove(e.getEntity());
 			e.setCancelled(true);
@@ -331,7 +327,7 @@ public class MagicShow extends Synergy implements ActiveHandler {
 									
 									@Override
 									public void run(int count) {
-										actionbar.update("¡×2Áßµ¶¡×f: " + count + "ÃÊ");
+										actionbar.update("Â§2ì¤‘ë…Â§f: " + count + "ì´ˆ");
 										PotionEffects.POISON.addPotionEffect(player, 99999, 2, true);
 										ParticleLib.ITEM_CRACK.spawnParticle(player.getLocation(), 0.3, 1, 0.3, 50, 0, MaterialX.SLIME_BLOCK);
 									}
@@ -388,7 +384,7 @@ public class MagicShow extends Synergy implements ActiveHandler {
 				ac.unregister();
 				return teleCool.start();
 			} else {
-				getPlayer().sendMessage("[¡×c!¡×f] Ç¥½ÄÀÌ Á¸ÀçÇÏÁö ¾Ê¾Æ ¡×3°ø°£ µµ¾à¡×fÀ» ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+				getPlayer().sendMessage("[Â§c!Â§f] í‘œì‹ì´ ì¡´ì¬í•˜ì§€ ì•Šì•„ Â§3ê³µê°„ ë„ì•½Â§fì„ í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 			}
 		}
 		return false;

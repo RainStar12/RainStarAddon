@@ -22,10 +22,10 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "ºñ°ÌÇÑ ½ÂºÎ", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×3ÈÄ¹æ¡×fÀ» ±ÙÁ¢ °ø°İÇÒ ¶§ ÇÇÇØ·®ÀÌ ¡×c$[DAMAGE_INCREASE]% Áõ°¡¡×fÇÏ°í ¡×3ÈÄ¹æ¡×fÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù. ",
-		"$[PERIOD]ÃÊ¸¶´Ù °ø°İÇÒ °æ¿ì ´ë»óÀÇ ¡×bÁ¤È®ÇÑ ÈÄ¹æ¡×fÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.",
-		"´Ù¸¥ »ı¸íÃ¼°¡ ³» Á¤¸éÀ» ±ÙÁ¢ °ø°İÇÒ °æ¿ì, ÇÇÇØ·®ÀÌ ¡×c$[DAMAGE_DECREASE]% °¨¼Ò¡×fÇÕ´Ï´Ù."
+@AbilityManifest(name = "ë¹„ê²í•œ ìŠ¹ë¶€", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§3í›„ë°©Â§fì„ ê·¼ì ‘ ê³µê²©í•  ë•Œ í”¼í•´ëŸ‰ì´ Â§c$[DAMAGE_INCREASE]% ì¦ê°€Â§fí•˜ê³  Â§3í›„ë°©Â§fìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤. ",
+		"$[PERIOD]ì´ˆë§ˆë‹¤ ê³µê²©í•  ê²½ìš° ëŒ€ìƒì˜ Â§bì •í™•í•œ í›„ë°©Â§fìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.",
+		"ë‹¤ë¥¸ ìƒëª…ì²´ê°€ ë‚´ ì •ë©´ì„ ê·¼ì ‘ ê³µê²©í•  ê²½ìš°, í”¼í•´ëŸ‰ì´ Â§c$[DAMAGE_DECREASE]% ê°ì†ŒÂ§fí•©ë‹ˆë‹¤."
 		})
 
 public class CowardlyMatch extends Synergy {
@@ -35,7 +35,7 @@ public class CowardlyMatch extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> DAMAGE_INCREASE = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
-			"damage-increase", 65, "# ´ë¹ÌÁö Áõ°¡ ¹èÀ²(´ÜÀ§: %)") {
+			"damage-increase", 65, "# ëŒ€ë¯¸ì§€ ì¦ê°€ ë°°ìœ¨(ë‹¨ìœ„: %)") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -43,7 +43,7 @@ public class CowardlyMatch extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_DECREASE = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
-			"damage-decrease", 25, "# ´ë¹ÌÁö °¨¼Ò ¹èÀ²(´ÜÀ§: %)") {
+			"damage-decrease", 25, "# ëŒ€ë¯¸ì§€ ê°ì†Œ ë°°ìœ¨(ë‹¨ìœ„: %)") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -51,7 +51,7 @@ public class CowardlyMatch extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> PERIOD = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
-			"period", 6, "# ÈÄ¹æ ÀÌµ¿ È¿°ú ÁÖ±â", "# ÄğÅ¸ÀÓ °¨¼Ò°¡ 50%±îÁö Àû¿ëµË´Ï´Ù.") {
+			"period", 6, "# í›„ë°© ì´ë™ íš¨ê³¼ ì£¼ê¸°", "# ì¿¨íƒ€ì„ ê°ì†Œê°€ 50%ê¹Œì§€ ì ìš©ë©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -85,7 +85,7 @@ public class CowardlyMatch extends Synergy {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-    		ac.update("¡×bÀû ÈÄ¹æ ÀÌµ¿ °¡´É");
+    		ac.update("Â§bì  í›„ë°© ì´ë™ ê°€ëŠ¥");
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class CowardlyMatch extends Synergy {
     	@Override
     	public void onEnd() {
     		teleportable = true;
-    		ac.update("¡×bÀû ÈÄ¹æ ÀÌµ¿ °¡´É");
+    		ac.update("Â§bì  í›„ë°© ì´ë™ ê°€ëŠ¥");
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();

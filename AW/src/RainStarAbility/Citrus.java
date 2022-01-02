@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,6 +46,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -71,22 +71,22 @@ import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
 
 @SuppressWarnings("deprecation")
-@AbilityManifest(name = "½ÃÆ®·¯½º", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×aÇ® ¼Ó¼º¡×fÀÇ ¹Ì½ºÅÍ¸® ¿¬±İ¼ú»ç, ½ÃÆ®·¯½º.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×2¿¤¸¯¼­¡×f: ¡×a±àÁ¤ Æ÷¼Ç È¿°ú¡×fÀÇ °è¼ö¸¦ ¡×e1´Ü°è¡×f ³ô¿©¼­ ¹Ş½À´Ï´Ù.",
-		" ÀÌ È¿°ú·Î °­È­µÈ ¼ö¿¡ ºñ·ÊÇØ ´ÙÀ½ ÄğÅ¸ÀÓÀÌ °¨¼ÒÇÕ´Ï´Ù. $[COOLDOWN]",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3ÄÉ¹ÌÄÃ ¾²·Î¿ö¡×f: ±âº»ÀûÀ¸·Î ºñÁÖ·ù ¼ÕÀ» »ç¿ëÇÏÁö ¸øÇÕ´Ï´Ù.",
-		" ºñÁÖ·ù ¼Õ¿¡ ¡×a$[RESTOCK]¡×fÃÊ¸¶´Ù ÀçÃæÀüµÇ´Â ¡×cºÎÁ¤ ÅõÃ´Çü Æ÷¼Ç¡×fÀÌ »ı±é´Ï´Ù.",
-		" 10Ä­ ³»¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ´Ù¸é ÇØ´ç Æ÷¼ÇÀ» ¸Ö¸® ´øÁú ¼ö ÀÖ½À´Ï´Ù.",
-		" ¶ÇÇÑ 10Ä­ ³» ´ë»óÀÌ 4°³ ÀÌ»óÀÇ Æ÷¼Ç È¿°ú¸¦ °®°í ÀÖ´Ù¸é ¡×5Æ÷¼Ç Áßµ¶¡×fÀ» ÀÏÀ¸ÄÑ",
-		" ´ë»óÀÌ °¡Áø ¡×cºÎÁ¤ °è¿­ Æ÷¼Ç È¿°ú¡×f¸¦ 7ÃÊ°£ ¡×e1´Ü°è¡×f ³ôÀÔ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×5ÄÉ¹ÌÄÃ Äİ·¦½º¡×f: ºñÁÖ·ù ¼Õ¿¡ ¡×4Áï½Ã ÇÇÇØ Æ÷¼Ç¡×fÀÌ ÀÖÀ» °æ¿ì¿¡",
-		" »óÅÂÀÌ»ó È¿°ú¸¦ ¹Ş´Â´Ù¸é ¹«½ÃÇÏ°í Æ÷¼Ç¿¡ ÇØ´ç »óÅÂÀÌ»óÀ» ÁÖÀÔÇÕ´Ï´Ù.",
-		" ¡×cºÎÁ¤ Æ÷¼Ç È¿°ú¡×f¸¦ ¹ŞÀ¸¸é »ó¹İµÇ´Â ¡×a±àÁ¤ È¿°ú¡×f·Î ´ëÃ¼µË´Ï´Ù."
+@AbilityManifest(name = "ì‹œíŠ¸ëŸ¬ìŠ¤", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§aí’€ ì†ì„±Â§fì˜ ë¯¸ìŠ¤í„°ë¦¬ ì—°ê¸ˆìˆ ì‚¬, ì‹œíŠ¸ëŸ¬ìŠ¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§2ì—˜ë¦­ì„œÂ§f: Â§aê¸ì • í¬ì…˜ íš¨ê³¼Â§fì˜ ê³„ìˆ˜ë¥¼ Â§e1ë‹¨ê³„Â§f ë†’ì—¬ì„œ ë°›ìŠµë‹ˆë‹¤.",
+		" ì´ íš¨ê³¼ë¡œ ê°•í™”ëœ ìˆ˜ì— ë¹„ë¡€í•´ ë‹¤ìŒ ì¿¨íƒ€ì„ì´ ê°ì†Œí•©ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ì¼€ë¯¸ì»¬ ì“°ë¡œì›ŒÂ§f: ê¸°ë³¸ì ìœ¼ë¡œ ë¹„ì£¼ë¥˜ ì†ì„ ì‚¬ìš©í•˜ì§€ ëª»í•©ë‹ˆë‹¤.",
+		" ë¹„ì£¼ë¥˜ ì†ì— Â§a$[RESTOCK]Â§fì´ˆë§ˆë‹¤ ì¬ì¶©ì „ë˜ëŠ” Â§cë¶€ì • íˆ¬ì²™í˜• í¬ì…˜Â§fì´ ìƒê¹ë‹ˆë‹¤.",
+		" 10ì¹¸ ë‚´ì— í”Œë ˆì´ì–´ê°€ ìˆë‹¤ë©´ í•´ë‹¹ í¬ì…˜ì„ ë©€ë¦¬ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		" ë˜í•œ 10ì¹¸ ë‚´ ëŒ€ìƒì´ 4ê°œ ì´ìƒì˜ í¬ì…˜ íš¨ê³¼ë¥¼ ê°–ê³  ìˆë‹¤ë©´ Â§5í¬ì…˜ ì¤‘ë…Â§fì„ ì¼ìœ¼ì¼œ",
+		" ëŒ€ìƒì´ ê°€ì§„ Â§cë¶€ì • ê³„ì—´ í¬ì…˜ íš¨ê³¼Â§fë¥¼ 7ì´ˆê°„ Â§e1ë‹¨ê³„Â§f ë†’ì…ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§5ì¼€ë¯¸ì»¬ ì½œë©ìŠ¤Â§f: ë¹„ì£¼ë¥˜ ì†ì— Â§4ì¦‰ì‹œ í”¼í•´ í¬ì…˜Â§fì´ ìˆì„ ê²½ìš°ì—",
+		" ìƒíƒœì´ìƒ íš¨ê³¼ë¥¼ ë°›ëŠ”ë‹¤ë©´ ë¬´ì‹œí•˜ê³  í¬ì…˜ì— í•´ë‹¹ ìƒíƒœì´ìƒì„ ì£¼ì…í•©ë‹ˆë‹¤.",
+		" Â§cë¶€ì • í¬ì…˜ íš¨ê³¼Â§fë¥¼ ë°›ìœ¼ë©´ ìƒë°˜ë˜ëŠ” Â§aê¸ì • íš¨ê³¼Â§fë¡œ ëŒ€ì²´ë©ë‹ˆë‹¤."
 		}, summarize = {
-		"¡×7Ã¶±« ÁÂÅ¬¸¯À¸·Î ¡×f¹Ş°í ÀÖ´Â ¡×a±àÁ¤ Æ÷¼ÇÈ¿°ú¡×f¸¦ °­È­ÇÏ°í ¡×cºÎÁ¤ Æ÷¼ÇÈ¿°ú¡×f¸¦ ±³Ã¼ÇÕ´Ï´Ù.",
-		"°è¼Ó ÀçÃæÀüµÇ´Â ¡×cºÎÁ¤Çü ÅõÃ´ Æ÷¼Ç¡×fÀº ´Ù¸¥ ÇÃ·¹ÀÌ¾î°¡ 10Ä­ ³»¿¡ ÀÖ¾î¾ß ´øÁú ¼ö ÀÖ½À´Ï´Ù.",
-		"ºñÁÖ·ù ¼Õ¿¡ ¡×4Áï½Ã ÇÇÇØ Æ÷¼Ç¡×fÀÌ ÀÖÀ¸¸é »óÅÂÀÌ»óÀ» ¹ŞÀ» ¶§ Æ÷¼Ç¿¡ ÁÖÀÔÇÕ´Ï´Ù."
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ìœ¼ë¡œ Â§fë°›ê³  ìˆëŠ” Â§aê¸ì • í¬ì…˜íš¨ê³¼Â§fë¥¼ ê°•í™”í•˜ê³  Â§cë¶€ì • í¬ì…˜íš¨ê³¼Â§fë¥¼ êµì²´í•©ë‹ˆë‹¤.",
+		"ê³„ì† ì¬ì¶©ì „ë˜ëŠ” Â§cë¶€ì •í˜• íˆ¬ì²™ í¬ì…˜Â§fì€ ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ 10ì¹¸ ë‚´ì— ìˆì–´ì•¼ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		"ë¹„ì£¼ë¥˜ ì†ì— Â§4ì¦‰ì‹œ í”¼í•´ í¬ì…˜Â§fì´ ìˆìœ¼ë©´ ìƒíƒœì´ìƒì„ ë°›ì„ ë•Œ í¬ì…˜ì— ì£¼ì…í•©ë‹ˆë‹¤."
 		})
 
 public class Citrus extends AbilityBase implements ActiveHandler {
@@ -97,8 +97,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RESTOCK = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "restock", 13,
-			"# Æ÷¼Ç ÀçÃæÀü ½Ã°£",
-			"# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ 40%±îÁö ¹Ş½À´Ï´Ù.") {
+			"# í¬ì…˜ ì¬ì¶©ì „ ì‹œê°„",
+			"# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ 40%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -109,7 +109,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Citrus.class,
-			"cooldown", 75, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 75, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -123,7 +123,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> POISON_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "poison-duration", 14,
-			"# µ¶ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë… ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -134,7 +134,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> WEAKNESS_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "weakness-duration", 17,
-			"# ³ª¾àÇÔ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë‚˜ì•½í•¨ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -145,7 +145,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> SLOWNESS_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "slowness-duration", 23,
-			"# ±¸¼Ó Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# êµ¬ì† ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -156,7 +156,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> WITHER_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "wither-duration", 19,
-			"# ½Ãµê Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì‹œë“¦ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -167,7 +167,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> BLINDNESS_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "blind-duration", 12,
-			"# ½Ç¸í Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì‹¤ëª… ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -178,7 +178,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CONFUSION_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "confusion-duration", 14,
-			"# ¸Ö¹Ì Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë©€ë¯¸ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -189,7 +189,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> GLOWING_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "glowing-duration", 90,
-			"# ¹ß±¤ Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë°œê´‘ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -200,7 +200,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> HUNGER_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "hunger-duration", 120,
-			"# Çã±â Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# í—ˆê¸° ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -211,7 +211,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> LEVITATION_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "levitation-duration", 5,
-			"# °øÁß ºÎ¾ç Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ê³µì¤‘ ë¶€ì–‘ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -222,7 +222,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> SLOW_DIGGING_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "slow-digging-duration", 30,
-			"# Ã¤±¼ ÇÇ·Î Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ì±„êµ´ í”¼ë¡œ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -233,7 +233,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> UNLUCK_DURATION = 
 			abilitySettings.new SettingObject<Integer>(Citrus.class, "unluck-duration", 300,
-			"# ºÒÇà Áö¼Ó½Ã°£ (´ÜÀ§: ÃÊ)") {
+			"# ë¶ˆí–‰ ì§€ì†ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -269,39 +269,39 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES_GOOD 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.REGENERATION, Pair.of("¡×dÀç»ı", PotionEffectType.REGENERATION.getColor()))
-			.put(PotionEffectType.SPEED, Pair.of("¡×b½Å¼Ó", PotionEffectType.SPEED.getColor()))
-			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("¡×cÈ­¿° ÀúÇ×", PotionEffectType.FIRE_RESISTANCE.getColor()))
-			.put(PotionEffectType.HEAL, Pair.of("¡×dÄ¡À¯", PotionEffectType.HEAL.getColor()))
-			.put(PotionEffectType.NIGHT_VISION, Pair.of("¡×9¾ß°£ Åõ½Ã", PotionEffectType.NIGHT_VISION.getColor()))
-			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("¡×6Èû", PotionEffectType.INCREASE_DAMAGE.getColor()))
-			.put(PotionEffectType.JUMP, Pair.of("¡×aÁ¡ÇÁ °­È­", PotionEffectType.JUMP.getColor()))
-			.put(PotionEffectType.WATER_BREATHING, Pair.of("¡×3¼öÁß È£Èí", PotionEffectType.WATER_BREATHING.getColor()))
-			.put(PotionEffectType.INVISIBILITY, Pair.of("¡×7Åõ¸íÈ­", PotionEffectType.INVISIBILITY.getColor()))
-			.put(PotionEffectType.LUCK, Pair.of("¡×aÇà¿î", PotionEffectType.LUCK.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.ABSORPTION, Pair.of("¡×eÈí¼ö", Color.fromRGB(254, 246, 18)))
-			.put(PotionEffectType.FAST_DIGGING, Pair.of("¡×e¼º±ŞÇÔ", Color.fromRGB(254, 254, 143)))
-			.put(PotionEffectType.HEALTH_BOOST, Pair.of("¡×c»ı¸í·Â °­È­", Color.fromRGB(254, 178, 217)))
-			.put(PotionEffectType.SATURATION, Pair.of("¡×eÆ÷¸¸°¨", Color.fromRGB(254, 221, 115)))
-			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("¡×8ÀúÇ×", Color.fromRGB(1, 96, 106)))
+			.put(PotionEffectType.REGENERATION, Pair.of("Â§dì¬ìƒ", PotionEffectType.REGENERATION.getColor()))
+			.put(PotionEffectType.SPEED, Pair.of("Â§bì‹ ì†", PotionEffectType.SPEED.getColor()))
+			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("Â§cí™”ì—¼ ì €í•­", PotionEffectType.FIRE_RESISTANCE.getColor()))
+			.put(PotionEffectType.HEAL, Pair.of("Â§dì¹˜ìœ ", PotionEffectType.HEAL.getColor()))
+			.put(PotionEffectType.NIGHT_VISION, Pair.of("Â§9ì•¼ê°„ íˆ¬ì‹œ", PotionEffectType.NIGHT_VISION.getColor()))
+			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("Â§6í˜", PotionEffectType.INCREASE_DAMAGE.getColor()))
+			.put(PotionEffectType.JUMP, Pair.of("Â§aì í”„ ê°•í™”", PotionEffectType.JUMP.getColor()))
+			.put(PotionEffectType.WATER_BREATHING, Pair.of("Â§3ìˆ˜ì¤‘ í˜¸í¡", PotionEffectType.WATER_BREATHING.getColor()))
+			.put(PotionEffectType.INVISIBILITY, Pair.of("Â§7íˆ¬ëª…í™”", PotionEffectType.INVISIBILITY.getColor()))
+			.put(PotionEffectType.LUCK, Pair.of("Â§aí–‰ìš´", PotionEffectType.LUCK.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.ABSORPTION, Pair.of("Â§eí¡ìˆ˜", Color.fromRGB(254, 246, 18)))
+			.put(PotionEffectType.FAST_DIGGING, Pair.of("Â§eì„±ê¸‰í•¨", Color.fromRGB(254, 254, 143)))
+			.put(PotionEffectType.HEALTH_BOOST, Pair.of("Â§cìƒëª…ë ¥ ê°•í™”", Color.fromRGB(254, 178, 217)))
+			.put(PotionEffectType.SATURATION, Pair.of("Â§eí¬ë§Œê°", Color.fromRGB(254, 221, 115)))
+			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("Â§8ì €í•­", Color.fromRGB(1, 96, 106)))
 			.build();
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES_BAD 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.POISON, Pair.of("¡×2µ¶", PotionEffectType.POISON.getColor()))
-			.put(PotionEffectType.WEAKNESS, Pair.of("¡×7³ª¾àÇÔ", PotionEffectType.WEAKNESS.getColor()))
-			.put(PotionEffectType.SLOW, Pair.of("¡×8±¸¼Ó", PotionEffectType.SLOW.getColor()))
-			.put(PotionEffectType.HARM, Pair.of("¡×4°íÅë", PotionEffectType.HARM.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.WITHER, Pair.of("¡×0½Ãµê", Color.fromRGB(1, 1, 1)))
-			.put(PotionEffectType.BLINDNESS, Pair.of("¡×7½Ç¸í", Color.fromRGB(140, 140, 140)))
-			.put(PotionEffectType.CONFUSION, Pair.of("¡×5¸Ö¹Ì", Color.fromRGB(171, 130, 18)))
-			.put(PotionEffectType.GLOWING, Pair.of("¡×f¹ß±¤", Color.fromRGB(254, 254, 254)))
-			.put(PotionEffectType.HUNGER, Pair.of("¡×2Çã±â", Color.fromRGB(134, 229, 127)))
-			.put(PotionEffectType.LEVITATION, Pair.of("¡×5°øÁß ºÎ¾ç", Color.fromRGB(171, 18, 151)))
-			.put(PotionEffectType.SLOW_DIGGING, Pair.of("¡×8Ã¤±¼ ÇÇ·Î", Color.fromRGB(93, 93, 93)))
-			.put(PotionEffectType.UNLUCK, Pair.of("¡×aºÒ¿î", Color.fromRGB(206, 242, 121)))
+			.put(PotionEffectType.POISON, Pair.of("Â§2ë…", PotionEffectType.POISON.getColor()))
+			.put(PotionEffectType.WEAKNESS, Pair.of("Â§7ë‚˜ì•½í•¨", PotionEffectType.WEAKNESS.getColor()))
+			.put(PotionEffectType.SLOW, Pair.of("Â§8êµ¬ì†", PotionEffectType.SLOW.getColor()))
+			.put(PotionEffectType.HARM, Pair.of("Â§4ê³ í†µ", PotionEffectType.HARM.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.WITHER, Pair.of("Â§0ì‹œë“¦", Color.fromRGB(1, 1, 1)))
+			.put(PotionEffectType.BLINDNESS, Pair.of("Â§7ì‹¤ëª…", Color.fromRGB(140, 140, 140)))
+			.put(PotionEffectType.CONFUSION, Pair.of("Â§5ë©€ë¯¸", Color.fromRGB(171, 130, 18)))
+			.put(PotionEffectType.GLOWING, Pair.of("Â§fë°œê´‘", Color.fromRGB(254, 254, 254)))
+			.put(PotionEffectType.HUNGER, Pair.of("Â§2í—ˆê¸°", Color.fromRGB(134, 229, 127)))
+			.put(PotionEffectType.LEVITATION, Pair.of("Â§5ê³µì¤‘ ë¶€ì–‘", Color.fromRGB(171, 18, 151)))
+			.put(PotionEffectType.SLOW_DIGGING, Pair.of("Â§8ì±„êµ´ í”¼ë¡œ", Color.fromRGB(93, 93, 93)))
+			.put(PotionEffectType.UNLUCK, Pair.of("Â§aë¶ˆìš´", Color.fromRGB(206, 242, 121)))
 			.build();
 	
 	private static final ImmutableMap<PotionEffectType, Integer> POTION_DURATION
@@ -310,7 +310,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			.put(PotionEffectType.WEAKNESS, WEAKNESS_DURATION.getValue())
 			.put(PotionEffectType.SLOW, SLOWNESS_DURATION.getValue())
 			.put(PotionEffectType.HARM, 1)
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
 			.put(PotionEffectType.WITHER, WITHER_DURATION.getValue())
 			.put(PotionEffectType.BLINDNESS, BLINDNESS_DURATION.getValue())
 			.put(PotionEffectType.CONFUSION, CONFUSION_DURATION.getValue())
@@ -384,7 +384,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
 				if (POTION_TYPES_BAD.containsKey(pe.getType())) {
 					PotionEffect newpe = new PotionEffect(POTION_REVERSE.get(pe.getType()), pe.getDuration(), pe.getAmplifier(), false, true);
-					getPlayer().sendMessage("¡×6[¡×a!¡×e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "¡×f È¿°ú¸¦ ±³Ã¼½ÃÄÑ " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "¡×f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.ÀÌ°¡) + " µÇ¾ú½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§6[Â§a!Â§e] " + POTION_TYPES_BAD.get(pe.getType()).getLeft() + "Â§f íš¨ê³¼ë¥¼ êµì²´ì‹œì¼œ " + POTION_TYPES_GOOD.get(newpe.getType()).getLeft() + "Â§f" + KoreanUtil.getJosa(POTION_TYPES_GOOD.get(newpe.getType()).getLeft(), Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
 					getPlayer().removePotionEffect(pe.getType());
 					getPlayer().addPotionEffect(newpe);
 				}	
@@ -411,9 +411,9 @@ public class Citrus extends AbilityBase implements ActiveHandler {
     		if (offhandPotion.equals(PotionEffectType.HARM)) meta.setBasePotionData(new PotionData(PotionType.INSTANT_DAMAGE));
     		meta.addCustomEffect(new PotionEffect(offhandPotion, POTION_DURATION.get(offhandPotion) * 20, 1), true);
     		meta.setColor(POTION_TYPES_BAD.get(offhandPotion).getRight());
-    		meta.setDisplayName("¡×fÅõÃ´¿ë " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "¡×fÀÇ Æ÷¼Ç");
+    		meta.setDisplayName("Â§fíˆ¬ì²™ìš© " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "Â§fì˜ í¬ì…˜");
     		
-    		getPlayer().sendMessage("¡×6[¡×a!¡×e] ¡×fÅõÃ´¿ë " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "¡×fÀÇ Æ÷¼ÇÀ» ¸¸µé¾î³Â½À´Ï´Ù.");
+    		getPlayer().sendMessage("Â§6[Â§a!Â§e] Â§fíˆ¬ì²™ìš© " + POTION_TYPES_BAD.get(offhandPotion).getLeft() + "Â§fì˜ í¬ì…˜ì„ ë§Œë“¤ì–´ëƒˆìŠµë‹ˆë‹¤.");
     		
     		item.setItemMeta(meta);
     		
@@ -434,7 +434,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	    	for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
     			if (POTION_TYPES_GOOD.containsKey(pe.getType())) {
     				PotionEffect newpe = new PotionEffect(pe.getType(), pe.getDuration(), pe.getAmplifier() + 1, false, true);
-    				getPlayer().sendMessage("¡×6[¡×a!¡×e] " + POTION_TYPES_GOOD.get(pe.getType()).getLeft() + "¡×f È¿°ú¸¦ °­È­½ÃÄÑ °è¼ö°¡ ¡×e" + (newpe.getAmplifier() + 1) + "¡×f" + KoreanUtil.getJosa("" + newpe.getAmplifier() + 1, Josa.ÀÌ°¡) + " µÇ¾ú½À´Ï´Ù.");
+    				getPlayer().sendMessage("Â§6[Â§a!Â§e] " + POTION_TYPES_GOOD.get(pe.getType()).getLeft() + "Â§f íš¨ê³¼ë¥¼ ê°•í™”ì‹œì¼œ ê³„ìˆ˜ê°€ Â§e" + (newpe.getAmplifier() + 1) + "Â§f" + KoreanUtil.getJosa("" + newpe.getAmplifier() + 1, Josa.ì´ê°€) + " ë˜ì—ˆìŠµë‹ˆë‹¤.");
     				getPlayer().removePotionEffect(pe.getType());
     				getPlayer().addPotionEffect(newpe);
     				changedcounter++;
@@ -458,17 +458,17 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			if (type.equals(PotionType.INSTANT_DAMAGE) && !converted) {
 				effecttype = e.getEffectType();
 				effectduration = e.getDuration();
-				meta.setDisplayName("¡×fÅõÃ´¿ë " + effecttype.getManifest().displayName() + "¡×f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.°ú¿Í) + " ¡×4°íÅë¡×fÀÇ Æ÷¼Ç");
+				meta.setDisplayName("Â§fíˆ¬ì²™ìš© " + effecttype.getManifest().displayName() + "Â§f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.ê³¼ì™€) + " Â§4ê³ í†µÂ§fì˜ í¬ì…˜");
 				@SuppressWarnings("serial")
 				List<String> lores = new ArrayList<String>() {
 					{
-						add("¡×f" + effecttype.getManifest().displayName() + " (" + (effectduration / 1200) + ":" + ((effectduration / 20) % 60) + ") ");
+						add("Â§f" + effecttype.getManifest().displayName() + " (" + (effectduration / 1200) + ":" + ((effectduration / 20) % 60) + ") ");
 					}
 				};
 				meta.setLore(lores);
 				item.setItemMeta(meta);
 				converted = true;
-				getPlayer().sendMessage("¡×6[¡×a!¡×e] Æ÷¼Ç È¿°ú¿¡ " + effecttype.getManifest().displayName() + "¡×f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.À»¸¦) + " Ãß°¡Çß½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§6[Â§a!Â§e] í¬ì…˜ íš¨ê³¼ì— " + effecttype.getManifest().displayName() + "Â§f" + KoreanUtil.getJosa(effecttype.getManifest().displayName(), Josa.ì„ë¥¼) + " ì¶”ê°€í–ˆìŠµë‹ˆë‹¤.");
 				e.setCancelled(true);
 			}
 		}
@@ -488,6 +488,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 					else if (effecttype.equals(Confusion.registration)) Confusion.apply(p, TimeUnit.TICKS, effectduration, 10);
 					else if (effecttype.equals(Madness.registration)) Madness.apply(p, TimeUnit.TICKS, effectduration, 10);
 					else if (effecttype.equals(SnowflakeMark.registration)) SnowflakeMark.apply(p, TimeUnit.TICKS, effectduration, 1);
+					else if (effecttype.equals(Fear.registration)) Fear.apply(p, TimeUnit.TICKS, effectduration, getPlayer());
 					else effecttype.apply(p, TimeUnit.TICKS, effectduration);	
 				}
 			}
@@ -543,7 +544,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 						} else {
 							messagestack++;
 							e.setCancelled(true);
-							if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+							if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 						}
 					} else {
 						e.setCancelled(true);
@@ -578,7 +579,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 						} else {
 							messagestack++;
 							e.setCancelled(true);
-							if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+							if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 						}
 					} else if (getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET)) {
 						Block block = getPlayer().getWorld().getBlockAt(e.getClickedBlock().getRelative(e.getBlockFace()).getLocation());
@@ -598,7 +599,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 							} else {
 								messagestack++;
 								e.setCancelled(true);
-								if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+								if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 							}
 						}
 					}
@@ -617,7 +618,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 					} else {
 						messagestack++;
 						e.setCancelled(true);
-						if (messagestack % 5 == 0) getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¿ø ¾È¿¡ ÇÃ·¹ÀÌ¾î°¡ ÀÖ¾î¾ß Æ÷¼ÇÀ» ´øÁú ¼ö ÀÖ½À´Ï´Ù.");
+						if (messagestack % 5 == 0) getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì› ì•ˆì— í”Œë ˆì´ì–´ê°€ ìˆì–´ì•¼ í¬ì…˜ì„ ë˜ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 					}
 				}	
 			}

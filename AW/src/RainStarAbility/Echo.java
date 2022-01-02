@@ -31,47 +31,47 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "¸Ş¾Æ¸®", rank = Rank.S, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÄ«¿îÅÍ¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô ±ÙÁ¢ ÇÇÇØ¸¦ ¹ŞÀ» ¶§",
-		" ´ë»ó¿¡°Ô 0.5ÃÊ ³»·Î ±ÙÁ¢ ÇÇÇØ¸¦ ÀÔÈú ½Ã ÇÇÇØ·®¸¸Å­ È¸º¹ÇÏ°í",
-		" ´ë»óÀÌ ÁØ ÇÇÇØ·®À» µÇµ¹·ÁÁİ´Ï´Ù. $[COOLDOWN]",
-		" ÀÌ¶§ ¹İ°İ±îÁö °É¸° ½Ã°£¿¡ ¹İºñ·ÊÇØ ¹İ°İ ÇÇÇØ°¡ 1.5¹è¿¡¼­ 0.1¹è±îÁö º¯µ¿µË´Ï´Ù.",
-		"¡×7ÄğÅ¸ÀÓ ÆĞ½Ãºê ¡×8- ¡×c¸®ÇÃ·º½º¡×f: ÄğÅ¸ÀÓ µµÁß Ä«¿îÅÍ Á¶°ÇÀ» ÃæÁ·ÇÒ ½Ã,",
-		" Ä«¿îÅÍ È¿°ú°¡ ¹ßµ¿µÇÁö ¾Ê°í ÄğÅ¸ÀÓÀÌ 5ÃÊ¾¿ ÁÙ¾îµì´Ï´Ù."})
+@AbilityManifest(name = "ë©”ì•„ë¦¬", rank = Rank.S, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì¹´ìš´í„°Â§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ ê·¼ì ‘ í”¼í•´ë¥¼ ë°›ì„ ë•Œ",
+		" ëŒ€ìƒì—ê²Œ 0.5ì´ˆ ë‚´ë¡œ ê·¼ì ‘ í”¼í•´ë¥¼ ì…í ì‹œ í”¼í•´ëŸ‰ë§Œí¼ íšŒë³µí•˜ê³ ",
+		" ëŒ€ìƒì´ ì¤€ í”¼í•´ëŸ‰ì„ ë˜ëŒë ¤ì¤ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´ë•Œ ë°˜ê²©ê¹Œì§€ ê±¸ë¦° ì‹œê°„ì— ë°˜ë¹„ë¡€í•´ ë°˜ê²© í”¼í•´ê°€ 1.5ë°°ì—ì„œ 0.1ë°°ê¹Œì§€ ë³€ë™ë©ë‹ˆë‹¤.",
+		"Â§7ì¿¨íƒ€ì„ íŒ¨ì‹œë¸Œ Â§8- Â§cë¦¬í”Œë ‰ìŠ¤Â§f: ì¿¨íƒ€ì„ ë„ì¤‘ ì¹´ìš´í„° ì¡°ê±´ì„ ì¶©ì¡±í•  ì‹œ,",
+		" ì¹´ìš´í„° íš¨ê³¼ê°€ ë°œë™ë˜ì§€ ì•Šê³  ì¿¨íƒ€ì„ì´ 5ì´ˆì”© ì¤„ì–´ë“­ë‹ˆë‹¤."})
 
 @Tips(tip = {
-        "µéÀÌ´ÚÄ¡´Â ±ÙÁ¢ ÇÇÇØ¸¦ µÇµ¹·ÁÁÖ´Â ¹İ°İ ±ÙÁ¢ ´É·ÂÀÔ´Ï´Ù.",
-        "³» ±âº» ÇÇÇØ¿¡ ´õÇØ ´ë»óÀÌ ÁØ ÇÇÇØ·®À» ÀÔÇô ´ë»ó¿¡°Ô Ä¡¸íÀûÀÎ",
-        "ÇÇÇØ¸¦ ÀÔÈ÷°í, ³ª ÀÚ½ÅÀº ´ë»óÀÌ ÁØ ÇÇÇØ¸¸Å­ ´Ù½Ã È¸º¹ÇÕ´Ï´Ù.",
-        "ÇÏÁö¸¸ ±Ù°Å¸® ÇÇÇØ·Î¸¸ ¹ßµ¿µÇ±â¿¡, ¿ø°Å¸® ÇÇÇØ³ª ¸¶¹ı ÇÇÇØ¸¦",
-        "ÁÖÀÇÇØ¾ß ÇÕ´Ï´Ù."
+        "ë“¤ì´ë‹¥ì¹˜ëŠ” ê·¼ì ‘ í”¼í•´ë¥¼ ë˜ëŒë ¤ì£¼ëŠ” ë°˜ê²© ê·¼ì ‘ ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "ë‚´ ê¸°ë³¸ í”¼í•´ì— ë”í•´ ëŒ€ìƒì´ ì¤€ í”¼í•´ëŸ‰ì„ ì…í˜€ ëŒ€ìƒì—ê²Œ ì¹˜ëª…ì ì¸",
+        "í”¼í•´ë¥¼ ì…íˆê³ , ë‚˜ ìì‹ ì€ ëŒ€ìƒì´ ì¤€ í”¼í•´ë§Œí¼ ë‹¤ì‹œ íšŒë³µí•©ë‹ˆë‹¤.",
+        "í•˜ì§€ë§Œ ê·¼ê±°ë¦¬ í”¼í•´ë¡œë§Œ ë°œë™ë˜ê¸°ì—, ì›ê±°ë¦¬ í”¼í•´ë‚˜ ë§ˆë²• í”¼í•´ë¥¼",
+        "ì£¼ì˜í•´ì•¼ í•©ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "ÇÑ ¹æÀÇ ´ë¹ÌÁö°¡ ³ôÀº ´ë»ó", explain = {
-                "´Ü ÇÑ ¹æ¸¸ ³ôÀº ´ë¹ÌÁöÀÎ ¹ö¼­Ä¿ µîÀÇ ´É·ÂÀÌ¶ó¸é",
-                "ÀÌ ´É·ÂÀ¸·Î °£´ÜÈ÷ ¹İ°İÇØ ´ë»ó¿¡°Ô ¿ª°øÀ» ÃëÇÒ ¼ö",
-                "ÀÖ½À´Ï´Ù."
+        @Description(subject = "í•œ ë°©ì˜ ëŒ€ë¯¸ì§€ê°€ ë†’ì€ ëŒ€ìƒ", explain = {
+                "ë‹¨ í•œ ë°©ë§Œ ë†’ì€ ëŒ€ë¯¸ì§€ì¸ ë²„ì„œì»¤ ë“±ì˜ ëŠ¥ë ¥ì´ë¼ë©´",
+                "ì´ ëŠ¥ë ¥ìœ¼ë¡œ ê°„ë‹¨íˆ ë°˜ê²©í•´ ëŒ€ìƒì—ê²Œ ì—­ê³µì„ ì·¨í•  ìˆ˜",
+                "ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "±ÙÁ¢Çü ´É·Â", explain = {
-                "±ÙÁ¢ ÀüÅõ¸¦ ¿äÇÏ´Â ÀÌ ´É·Â¿¡°Ô´Â ´ë»óÀÌ µé°í ÀÖ´ø",
-                "³»°¡ µé°í ÀÖ´ø ±ÙÁ¢Çü ´É·ÂÀÌ ÁÁ½À´Ï´Ù."
+        @Description(subject = "ê·¼ì ‘í˜• ëŠ¥ë ¥", explain = {
+                "ê·¼ì ‘ ì „íˆ¬ë¥¼ ìš”í•˜ëŠ” ì´ ëŠ¥ë ¥ì—ê²ŒëŠ” ëŒ€ìƒì´ ë“¤ê³  ìˆë˜",
+                "ë‚´ê°€ ë“¤ê³  ìˆë˜ ê·¼ì ‘í˜• ëŠ¥ë ¥ì´ ì¢‹ìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "°¡½Ã ÀÎÃ¦Æ®", explain = {
-                "°¡½Ã´Â ±ÙÁ¢ ´ë¹ÌÁö ÆÇÁ¤ÀÇ ¹İ°İ ÀÎÃ¦Æ®ÀÔ´Ï´Ù.",
-                "°¡½Ã ÀÎÃ¦Æ®¿Í Á¶ÇÕÇÑ´Ù¸é, ¹İ°İ ´ë¹ÌÁö¸¦ ÀÔÈ÷·Á ÇÏ±âµµ",
-                "Àü¿¡ Áï½Ã ¹İ°İµÇ°ÚÁÒ?"
+        @Description(subject = "ê°€ì‹œ ì¸ì±ˆíŠ¸", explain = {
+                "ê°€ì‹œëŠ” ê·¼ì ‘ ëŒ€ë¯¸ì§€ íŒì •ì˜ ë°˜ê²© ì¸ì±ˆíŠ¸ì…ë‹ˆë‹¤.",
+                "ê°€ì‹œ ì¸ì±ˆíŠ¸ì™€ ì¡°í•©í•œë‹¤ë©´, ë°˜ê²© ëŒ€ë¯¸ì§€ë¥¼ ì…íˆë ¤ í•˜ê¸°ë„",
+                "ì „ì— ì¦‰ì‹œ ë°˜ê²©ë˜ê² ì£ ?"
         }),
-        @Description(subject = "Á¼Àº °ø°£", explain = {
-                "Àçºü¸£°Ô ¹İ°İÇØ¾ß ÇÏ´Â ÀÌ ´É·Â¿¡°Õ ´ë»óÀÇ °ø°İ¿¡°Ô",
-                "³Ë¹éµÇ¾îµµ ¸Ö¸® ³¯¾Æ°¡Áö ¾Ê´Â Á¼Àº °ø°£ÀÌ À¯¸®ÇÕ´Ï´Ù."
+        @Description(subject = "ì¢ì€ ê³µê°„", explain = {
+                "ì¬ë¹ ë¥´ê²Œ ë°˜ê²©í•´ì•¼ í•˜ëŠ” ì´ ëŠ¥ë ¥ì—ê² ëŒ€ìƒì˜ ê³µê²©ì—ê²Œ",
+                "ë„‰ë°±ë˜ì–´ë„ ë©€ë¦¬ ë‚ ì•„ê°€ì§€ ì•ŠëŠ” ì¢ì€ ê³µê°„ì´ ìœ ë¦¬í•©ë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "±ÙÁ¢ ÇÇÇØ ¿Ü ´Ù¸¥ Å¸ÀÔÀÇ ÇÇÇØ", explain = {
-                "¿ø°Å¸® ÀüÅõ, ³¯¾Æ¿À´Â Æ÷¼Ç µî. ¸Ş¾Æ¸®´Â ¾Æ¹«°Íµµ",
-                "¹İ°İÇÒ ¼ö ¾ø½À´Ï´Ù. ÃÖ´ëÇÑ ÇÇÇØ´Ù´Ï¼¼¿ä."
+        @Description(subject = "ê·¼ì ‘ í”¼í•´ ì™¸ ë‹¤ë¥¸ íƒ€ì…ì˜ í”¼í•´", explain = {
+                "ì›ê±°ë¦¬ ì „íˆ¬, ë‚ ì•„ì˜¤ëŠ” í¬ì…˜ ë“±. ë©”ì•„ë¦¬ëŠ” ì•„ë¬´ê²ƒë„",
+                "ë°˜ê²©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. ìµœëŒ€í•œ í”¼í•´ë‹¤ë‹ˆì„¸ìš”."
         }),
-        @Description(subject = "³Ë¹é", explain = {
-                "°­ÇÑ ³Ë¹éÀ» °¡Áø °ø°İÀ¸·Î ¸ÂÀ» ½Ã ´ë»ó¿¡°Ô ¹İ°İÇÏ·¯ °¡±â Àü¿¡",
-                "¹İ°İ ½Ã°£ÀÌ ³¡³¯ ¼ö ÀÖ½À´Ï´Ù..."
+        @Description(subject = "ë„‰ë°±", explain = {
+                "ê°•í•œ ë„‰ë°±ì„ ê°€ì§„ ê³µê²©ìœ¼ë¡œ ë§ì„ ì‹œ ëŒ€ìƒì—ê²Œ ë°˜ê²©í•˜ëŸ¬ ê°€ê¸° ì „ì—",
+                "ë°˜ê²© ì‹œê°„ì´ ëë‚  ìˆ˜ ìˆìŠµë‹ˆë‹¤..."
         })
 }, stats = @Stats(offense = Level.FIVE, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.NORMAL)
 
@@ -87,7 +87,7 @@ public class Echo extends AbilityBase {
 	private static final RGB color = RGB.of(189, 189, 189);
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Echo.class,
-			"cooldown", 30, "# ¹İ°İ ÄğÅ¸ÀÓ") {
+			"cooldown", 30, "# ë°˜ê²© ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -107,7 +107,7 @@ public class Echo extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			ac.update("¡×c¹İ°İ Âù½º¡×f: ¡×e" + target.getName() + "¡×f, " + (getCount() / 20.0) + "ÃÊ");
+			ac.update("Â§cë°˜ê²© ì°¬ìŠ¤Â§f: Â§e" + target.getName() + "Â§f, " + (getCount() / 20.0) + "ì´ˆ");
 		}
 		
 		@Override
@@ -161,34 +161,34 @@ public class Echo extends AbilityBase {
 					getPlayer().setHealth(Math.min(getPlayer().getHealth() + finaldmg, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 					if (counter.getCount() <= 1) {
 						e.setDamage(e.getDamage() + (dmg * 0.1));
-						getPlayer().sendMessage("¡×b>>> ¡×c0.1¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c0.1ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 2) {
 						e.setDamage(e.getDamage() + (dmg * 0.2));
-						getPlayer().sendMessage("¡×b>>> ¡×c0.2¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c0.2ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 3) {
 						e.setDamage(e.getDamage() + (dmg * 0.25));
-						getPlayer().sendMessage("¡×b>>> ¡×c0.25¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c0.25ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 4) {
 						e.setDamage(e.getDamage() + (dmg * 0.5));
-						getPlayer().sendMessage("¡×b>>> ¡×c0.5¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c0.5ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 5) {
 						e.setDamage(e.getDamage() + (dmg * 0.75));
-						getPlayer().sendMessage("¡×b>>> ¡×c0.75¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c0.75ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 6) {
 						e.setDamage(e.getDamage() + (dmg * 1));
-						getPlayer().sendMessage("¡×b>>> ¡×c1¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c1ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 7) {
 						e.setDamage(e.getDamage() + (dmg * 1.2));
-						getPlayer().sendMessage("¡×b>>> ¡×c1.2¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c1.2ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 8) {
 						e.setDamage(e.getDamage() + (dmg * 1.3));
-						getPlayer().sendMessage("¡×b>>> ¡×c1.3¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c1.3ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else if (counter.getCount() <= 9) {
 						e.setDamage(e.getDamage() + (dmg * 1.4));
-						getPlayer().sendMessage("¡×b>>> ¡×c1.4¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c1.4ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					} else {
 						e.setDamage(e.getDamage() + (dmg * 1.5));
-						getPlayer().sendMessage("¡×b>>> ¡×c1.5¹è ´ë¹ÌÁö ¹İ°İ!");
+						getPlayer().sendMessage("Â§b>>> Â§c1.5ë°° ëŒ€ë¯¸ì§€ ë°˜ê²©!");
 					}
 					counter.stop(false);
 					cool.start();

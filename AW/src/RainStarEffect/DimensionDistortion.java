@@ -24,11 +24,11 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "Â÷¿ø ¿Ö°î", displayName = "¡×3Â÷¿ø ¿Ö°î", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ì°¨ì› ì™œê³¡", displayName = "Â§3ì°¨ì› ì™œê³¡", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"Á¡ÇÁ ¹× ÀÌµ¿ ¼Óµµ°¡ ±Ş°İÇÏ°Ô °¨¼ÒÇÕ´Ï´Ù.",
-		"ÁÖ´Â ¸ğµç ÇÇÇØ°¡ Àı¹İÀ¸·Î °¨¼ÒÇÕ´Ï´Ù."
+		"ì í”„ ë° ì´ë™ ì†ë„ê°€ ê¸‰ê²©í•˜ê²Œ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"ì£¼ëŠ” ëª¨ë“  í”¼í•´ê°€ ì ˆë°˜ìœ¼ë¡œ ê°ì†Œí•©ë‹ˆë‹¤."
 })
 public class DimensionDistortion extends AbstractGame.Effect implements Listener {
 

@@ -58,19 +58,19 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
-		name = "Äí·Î¡¸°³¾È¡¹", rank = Rank.S, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×c- ¡×8¾îµÒ ±ºÁÖ¡×f: ÀÚ½ÅÀÇ À§Ä¡°¡ ¾îµÎ¿ï¼ö·Ï ½ºÅ³ ÇÇÇØ·®ÀÌ °­ÇØÁı´Ï´Ù.",
-		"¡×7°Ë µé°í F ¡×8- ¡×b½Ã°£ Àı´Ü¡×f: ½ºÅ³ »ç¿ë ÈÄ ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÀÌµ¿ÇÑ",
-		" ½Ã°£ÀÇ ÈçÀûÀÌ ³²°í, ´Ù½Ã ´É·ÂÀ» »ç¿ë È¤Àº ÀÚµ¿ Áß´ÜÇÒ ¶§ ¹üÀ§ ³»ÀÇ",
-		" ½Ã°£ÀÇ ÈçÀûÀÇ ÁÖÀÎµé¿¡°Ô ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù. $[COOLDOWN]",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×c¸¶¾È ÆøÁÖ¡×f: È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		" È¸º¹·®ÀÇ 10%¸¸Å­ Ãß°¡ °ø°İ·ÂÀ» ÃÖ´ë $[MAX_DAMAGE]±îÁö È¹µæÇÒ ¼ö ÀÖ½À´Ï´Ù."
+		name = "ì¿ ë¡œã€Œê°œì•ˆã€", rank = Rank.S, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§c- Â§8ì–´ë‘  êµ°ì£¼Â§f: ìì‹ ì˜ ìœ„ì¹˜ê°€ ì–´ë‘ìš¸ìˆ˜ë¡ ìŠ¤í‚¬ í”¼í•´ëŸ‰ì´ ê°•í•´ì§‘ë‹ˆë‹¤.",
+		"Â§7ê²€ ë“¤ê³  F Â§8- Â§bì‹œê°„ ì ˆë‹¨Â§f: ìŠ¤í‚¬ ì‚¬ìš© í›„ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì´ë™í•œ",
+		" ì‹œê°„ì˜ í”ì ì´ ë‚¨ê³ , ë‹¤ì‹œ ëŠ¥ë ¥ì„ ì‚¬ìš© í˜¹ì€ ìë™ ì¤‘ë‹¨í•  ë•Œ ë²”ìœ„ ë‚´ì˜",
+		" ì‹œê°„ì˜ í”ì ì˜ ì£¼ì¸ë“¤ì—ê²Œ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë§ˆì•ˆ í­ì£¼Â§f: íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" íšŒë³µëŸ‰ì˜ 10%ë§Œí¼ ì¶”ê°€ ê³µê²©ë ¥ì„ ìµœëŒ€ $[MAX_DAMAGE]ê¹Œì§€ íšë“í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."
 		},
 		summarize = {
-		"Ã¼·Â È¸º¹À» ÇÏÁö ¸øÇÏ´Â ´ë½Å È¸º¹·®ÀÇ 10%¸¸Å­ Ãß°¡ °ø°İ·ÂÀ» È¹µæÇÕ´Ï´Ù.",
-		"¡×7°ËÀ» µé°í FÅ°¡×f¸¦ ´©¸£¸é ¸ğµç ÇÃ·¹ÀÌ¾î°¡ Áö³ª°¡´Â °ú°ÅÀÇ ±â·ÏÀÌ ³²¾Æ",
-		"ÇÃ·¹ÀÌ¾îÀÇ °ú°ÅÀÇ ±â·ÏÀÌ ¹üÀ§ ³»¿¡ ÀÖÀ» ¶§ ´Ù½Ã ¡×7°ËÀ» µé°í FÅ°¡×f¸¦ ´©¸£°Å³ª",
-		"Áö¼Ó ½Ã°£ÀÌ Á¾·áµÉ ¶§ ´ë»ó¿¡°Ô Å« ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ½À´Ï´Ù.",
+		"ì²´ë ¥ íšŒë³µì„ í•˜ì§€ ëª»í•˜ëŠ” ëŒ€ì‹  íšŒë³µëŸ‰ì˜ 10%ë§Œí¼ ì¶”ê°€ ê³µê²©ë ¥ì„ íšë“í•©ë‹ˆë‹¤.",
+		"Â§7ê²€ì„ ë“¤ê³  Fí‚¤Â§fë¥¼ ëˆ„ë¥´ë©´ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì§€ë‚˜ê°€ëŠ” ê³¼ê±°ì˜ ê¸°ë¡ì´ ë‚¨ì•„",
+		"í”Œë ˆì´ì–´ì˜ ê³¼ê±°ì˜ ê¸°ë¡ì´ ë²”ìœ„ ë‚´ì— ìˆì„ ë•Œ ë‹¤ì‹œ Â§7ê²€ì„ ë“¤ê³  Fí‚¤Â§fë¥¼ ëˆ„ë¥´ê±°ë‚˜",
+		"ì§€ì† ì‹œê°„ì´ ì¢…ë£Œë  ë•Œ ëŒ€ìƒì—ê²Œ í° í”¼í•´ë¥¼ ì…í ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
 		" $[COOLDOWN]"
 		})
 
@@ -82,8 +82,8 @@ public class KuroEye extends AbilityBase {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(KuroEye.class,
-			"cooldown", 60, "# ½Ã°£ Àı´Ü ÄğÅ¸ÀÓ",
-			"# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ ÃÖ´ë 50%±îÁö ¹Ş½À´Ï´Ù.") {
+			"cooldown", 60, "# ì‹œê°„ ì ˆë‹¨ ì¿¨íƒ€ì„",
+			"# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ ìµœëŒ€ 50%ê¹Œì§€ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -97,7 +97,7 @@ public class KuroEye extends AbilityBase {
 	
 	public static final SettingObject<Integer> MAX_DAMAGE 
 	= abilitySettings.new SettingObject<Integer>(KuroEye.class,
-			"max-damage", 10, "# ÃÖ´ë Ãß°¡ ÇÇÇØ·®") {
+			"max-damage", 10, "# ìµœëŒ€ ì¶”ê°€ í”¼í•´ëŸ‰") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -106,7 +106,7 @@ public class KuroEye extends AbilityBase {
 	
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	ac.update("¡×c¸¶¾È ÆøÁÖ¡×f: ¡×7" + df.format(stack));
+	    	ac.update("Â§cë§ˆì•ˆ í­ì£¼Â§f: Â§7" + df.format(stack));
 	    }
 	}
 	
@@ -114,7 +114,7 @@ public class KuroEye extends AbilityBase {
 	private double stack = 0;
 	private final ActionbarChannel ac = newActionbarChannel();
 	private static final Set<Material> swords;
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "½Ã°£ Àı´Ü", CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "ì‹œê°„ ì ˆë‹¨", CooldownDecrease._50);
 	private static final Circle circle = Circle.of(6, 70);
 	private Map<Player, LogParticle> logMap = new HashMap<>();
 	private Set<Player> damaged = new HashSet<>();
@@ -158,7 +158,7 @@ public class KuroEye extends AbilityBase {
 	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			stack = Math.min(MAX_DAMAGE.getValue(), stack + (e.getAmount() * 0.1));
-			ac.update("¡×c¸¶¾È ÆøÁÖ¡×f: ¡×7" + df.format(stack));
+			ac.update("Â§cë§ˆì•ˆ í­ì£¼Â§f: Â§7" + df.format(stack));
 			e.setCancelled(true);
 		}
 	}
@@ -187,8 +187,8 @@ public class KuroEye extends AbilityBase {
     		if (!cool.isCooldown()) {
         		if (skill.isRunning()) {
         			if (skill.getCount() >= 7) {
-        				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¾ÆÁ÷ ÃÖ¼ÒÇÑÀÇ °ËÀÇ ÈûÀÌ ¸ğ¾ÆÁöÁö ¾Ê¾Ò½À´Ï´Ù.");
-        				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×3ÃÖ¼Ò ´ë±â ½Ã°£¡×f: ¾ÕÀ¸·Î ¡×e" + Math.abs(6 - skill.getCount()) + "¡×fÃÊ");
+        				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì•„ì§ ìµœì†Œí•œì˜ ê²€ì˜ í˜ì´ ëª¨ì•„ì§€ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+        				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§3ìµœì†Œ ëŒ€ê¸° ì‹œê°„Â§f: ì•ìœ¼ë¡œ Â§e" + Math.abs(6 - skill.getCount()) + "Â§fì´ˆ");
         			} else {
         				skill.stop(false);
         			}
@@ -227,7 +227,7 @@ public class KuroEye extends AbilityBase {
 		@Override
 		public void run(int count) {
 			if (count <= 3) {
-				getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×e" + skill.getCount() + "¡×fÃÊ ÈÄ Áï½Ã ¡×3»ç¿ë¡×fµË´Ï´Ù!");
+				getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§e" + skill.getCount() + "Â§fì´ˆ í›„ ì¦‰ì‹œ Â§3ì‚¬ìš©Â§fë©ë‹ˆë‹¤!");
 				SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
 			}
 		}

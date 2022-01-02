@@ -49,20 +49,20 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "µ¥¹Ì¼Ò´Ù", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×b½ºÆÄÅ¬¸µ¡×f: ºÒ ¼Ó¼ºÀÇ ÇÇÇØ, ¸ğµç »óÅÂÀÌ»ó¿¡ ¸é¿ª È¿°ú¸¦",
-		" °¡Áı´Ï´Ù. ¶ÇÇÑ ½Å¹ßÀ» ½Å°í ¹° ¼Ó¿¡ µé¾î°¥ ¶§ ¹°°¥Äû ÀÎÃ¦Æ®¸¦ ÀÚµ¿ È¹µæÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×a¹«½¼ ¸ÀÀ¸·Î?¡×f: ÇÇÇØ¸¦ ÀÔÀ» ¶§¸¶´Ù $[CHANCE_CONFIG]% È®·ü·Î ÇöÀç ³» Åº»êÀ½·áÀÇ ¸À¿¡",
-		" µû¸¥ Á¦°¢±âÀÇ ¹öÇÁ¸¦ $[BUFF_DURATION]ÃÊ°£ È¹µæÇÕ´Ï´Ù.",
-		" ÀÌ È¿°ú°¡ ¹ßµ¿ÇÏ¸é, ¹«ÀÛÀ§ÀÇ ¸ÀÀ¸·Î ±³Ã¼µË´Ï´Ù.",
-		" ¡×cÀÚ¸ù ¸À¡×7: ¡×cÀç»ı ¡×7| ¡×6¿À·»Áö ¸À¡×7: ¡×6Èû ¡×7| ¡×e·¹¸ó ¸À¡×7: ¡×eÈí¼ö",
-		" ¡×a»ç°ú ¸À¡×7: ¡×aÀúÇ× ¡×7| ¡×bÃ»Æ÷µµ ¸À¡×7: ¡×b½Å¼Ó ¡×7| ¡×dº¹¼ş¾Æ ¸À¡×7: ¡×dÄ¡À¯",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×b¸®ÇÁ·¹½¬¡×f: $[DURATION_CONFIG]ÃÊ°£ Åº»êÀ½·á°¡ µÇ¾î, Å¸°ÔÆÃ ºÒ´É ¹× ¹«Àû »óÅÂ°¡ µË´Ï´Ù.",
-		" Åº»êÀ½·á°¡ µÈ µ¿¾È Áö¸é¿¡ ¸Â´ê¾Æ¼­¸¸ ÀÌµ¿ÇÒ ¼ö ÀÖÀ¸¸ç, Áö¼Ó ½Ã°£ÀÌ ³¡³¯ ¶§ ",
-		" Åº»êÀ½·á »óÅÂ°¡ ÇØÁ¦µÇ°í ÁÖº¯ $[RANGE_CONFIG]Ä­ ³» Àû¿¡°Ô $[EFFECT_DURATION]ÃÊ°£",
-		" ºÎ½Ä »óÅÂÀÌ»óÀ» °É°í $[NO_CHANGE_DURATION]ÃÊ°£ ÇöÀçÀÇ ¸ÀÀ» °íÁ¤½ÃÅµ´Ï´Ù. $[COOLDOWN_CONFIG]",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×7ºÎ½Ä¡×f: Ã¶ ±¤¹°À» »ç¿ëÇÏ´Â ¸ğµç ¾ÆÀÌÅÛÀ» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù.",
-		" ¶ÇÇÑ °©¿ÊÀÇ ¹æ¾î·ÂÀÌ Âø¿ë ±¤¹°¿¡ ºñ·ÊÇØ Èñ±Í¼ºÀÌ ³·À»¼ö·Ï ´õ ¸¹ÀÌ °¨¼ÒÇÕ´Ï´Ù."
+		name = "ë°ë¯¸ì†Œë‹¤", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bìŠ¤íŒŒí´ë§Â§f: ë¶ˆ ì†ì„±ì˜ í”¼í•´, ëª¨ë“  ìƒíƒœì´ìƒì— ë©´ì—­ íš¨ê³¼ë¥¼",
+		" ê°€ì§‘ë‹ˆë‹¤. ë˜í•œ ì‹ ë°œì„ ì‹ ê³  ë¬¼ ì†ì— ë“¤ì–´ê°ˆ ë•Œ ë¬¼ê°ˆí€´ ì¸ì±ˆíŠ¸ë¥¼ ìë™ íšë“í•©ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§aë¬´ìŠ¨ ë§›ìœ¼ë¡œ?Â§f: í”¼í•´ë¥¼ ì…ì„ ë•Œë§ˆë‹¤ $[CHANCE_CONFIG]% í™•ë¥ ë¡œ í˜„ì¬ ë‚´ íƒ„ì‚°ìŒë£Œì˜ ë§›ì—",
+		" ë”°ë¥¸ ì œê°ê¸°ì˜ ë²„í”„ë¥¼ $[BUFF_DURATION]ì´ˆê°„ íšë“í•©ë‹ˆë‹¤.",
+		" ì´ íš¨ê³¼ê°€ ë°œë™í•˜ë©´, ë¬´ì‘ìœ„ì˜ ë§›ìœ¼ë¡œ êµì²´ë©ë‹ˆë‹¤.",
+		" Â§cìëª½ ë§›Â§7: Â§cì¬ìƒ Â§7| Â§6ì˜¤ë Œì§€ ë§›Â§7: Â§6í˜ Â§7| Â§eë ˆëª¬ ë§›Â§7: Â§eí¡ìˆ˜",
+		" Â§aì‚¬ê³¼ ë§›Â§7: Â§aì €í•­ Â§7| Â§bì²­í¬ë„ ë§›Â§7: Â§bì‹ ì† Â§7| Â§dë³µìˆ­ì•„ ë§›Â§7: Â§dì¹˜ìœ ",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bë¦¬í”„ë ˆì‰¬Â§f: $[DURATION_CONFIG]ì´ˆê°„ íƒ„ì‚°ìŒë£Œê°€ ë˜ì–´, íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ë° ë¬´ì  ìƒíƒœê°€ ë©ë‹ˆë‹¤.",
+		" íƒ„ì‚°ìŒë£Œê°€ ëœ ë™ì•ˆ ì§€ë©´ì— ë§ë‹¿ì•„ì„œë§Œ ì´ë™í•  ìˆ˜ ìˆìœ¼ë©°, ì§€ì† ì‹œê°„ì´ ëë‚  ë•Œ ",
+		" íƒ„ì‚°ìŒë£Œ ìƒíƒœê°€ í•´ì œë˜ê³  ì£¼ë³€ $[RANGE_CONFIG]ì¹¸ ë‚´ ì ì—ê²Œ $[EFFECT_DURATION]ì´ˆê°„",
+		" ë¶€ì‹ ìƒíƒœì´ìƒì„ ê±¸ê³  $[NO_CHANGE_DURATION]ì´ˆê°„ í˜„ì¬ì˜ ë§›ì„ ê³ ì •ì‹œí‚µë‹ˆë‹¤. $[COOLDOWN_CONFIG]",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§7ë¶€ì‹Â§f: ì²  ê´‘ë¬¼ì„ ì‚¬ìš©í•˜ëŠ” ëª¨ë“  ì•„ì´í…œì„ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" ë˜í•œ ê°‘ì˜·ì˜ ë°©ì–´ë ¥ì´ ì°©ìš© ê´‘ë¬¼ì— ë¹„ë¡€í•´ í¬ê·€ì„±ì´ ë‚®ì„ìˆ˜ë¡ ë” ë§ì´ ê°ì†Œí•©ë‹ˆë‹¤."
 		})
 
 public class Demisoda extends Synergy implements ActiveHandler {
@@ -73,7 +73,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"duration", 7, "# ¹° »óÅÂ Áö¼Ó½Ã°£") {
+			"duration", 7, "# ë¬¼ ìƒíƒœ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -83,7 +83,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> EFFECT_DURATION 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"effect-duration", 7, "# ºÎ½Ä Áö¼Ó½Ã°£") {
+			"effect-duration", 7, "# ë¶€ì‹ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -93,7 +93,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> BUFF_DURATION 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"buff-duration", 5, "# È¿°ú Áö¼Ó½Ã°£") {
+			"buff-duration", 5, "# íš¨ê³¼ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -103,7 +103,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CHANCE_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"chance", 22, "# ÇÇ°İ½Ã ¹öÇÁ¸¦ ¹ŞÀ» È®·ü",
+			"chance", 22, "# í”¼ê²©ì‹œ ë²„í”„ë¥¼ ë°›ì„ í™•ë¥ ",
 			"# 30 = 30%") {
 
 		@Override
@@ -115,7 +115,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"range", 5, "# ºÎ½Ä ¹üÀ§") {
+			"range", 5, "# ë¶€ì‹ ë²”ìœ„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -125,7 +125,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> NO_CHANGE_DURATION 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"no-change-duration", 10, "# ¸À °íÁ¤ Áö¼Ó½Ã°£") {
+			"no-change-duration", 10, "# ë§› ê³ ì • ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -135,7 +135,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG 
 	= synergySettings.new SettingObject<Integer>(Demisoda.class,
-			"cooldown", 30, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 30, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -247,22 +247,22 @@ public class Demisoda extends Synergy implements ActiveHandler {
     		}
     		switch(taste) {
     		case 0:
-    			ac.update((nochange.isRunning() ? "¡×c¡×l" : "¡×c") + "ÀÚ¸ù ¸À");
+    			ac.update((nochange.isRunning() ? "Â§cÂ§l" : "Â§c") + "ìëª½ ë§›");
     			break;
     		case 1:
-    			ac.update((nochange.isRunning() ? "¡×6¡×l" : "¡×6") + "¿À·»Áö ¸À");
+    			ac.update((nochange.isRunning() ? "Â§6Â§l" : "Â§6") + "ì˜¤ë Œì§€ ë§›");
     			break;
     		case 2:
-    			ac.update((nochange.isRunning() ? "¡×e¡×l" : "¡×e") + "·¹¸ó ¸À");
+    			ac.update((nochange.isRunning() ? "Â§eÂ§l" : "Â§e") + "ë ˆëª¬ ë§›");
     			break;
     		case 3:
-    			ac.update((nochange.isRunning() ? "¡×a¡×l" : "¡×a") + "»ç°ú ¸À");
+    			ac.update((nochange.isRunning() ? "Â§aÂ§l" : "Â§a") + "ì‚¬ê³¼ ë§›");
     			break;
     		case 4:
-    			ac.update((nochange.isRunning() ? "¡×b¡×l" : "¡×b") + "Ã»Æ÷µµ ¸À");
+    			ac.update((nochange.isRunning() ? "Â§bÂ§l" : "Â§b") + "ì²­í¬ë„ ë§›");
     			break;
     		case 5:
-    			ac.update((nochange.isRunning() ? "¡×d¡×l" : "¡×d") + "º¹¼ş¾Æ ¸À");
+    			ac.update((nochange.isRunning() ? "Â§dÂ§l" : "Â§d") + "ë³µìˆ­ì•„ ë§›");
     			break;
     		}
     	}

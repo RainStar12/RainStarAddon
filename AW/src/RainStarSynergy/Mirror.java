@@ -58,17 +58,17 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "°Å¿ï", rank = Rank.S, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×2¸®ÅÏ¡×f: ¾î¶°ÇÑ ÇÇÇØ¸¦ ÀÔ´ø ¹æ¾îµÈ ¸¸Å­ÀÇ ÇÇÇØ·®ÀÇ $[RETURN]%¸¦",
-		" ÇÇÇØ¸¦ ÀÔÈù ´ë»ó¿¡°Ô 1ÃÊ ÈÄ ´Ù½Ã µÇµ¹·ÁÁİ´Ï´Ù.",
-		" ÀÌÈÄ ¡×c¹İ°İ¡×fÀ¸·Î ÀÔÈù ÇÇÇØÀÇ $[REGEN]%¸¸Å­ ¡×dÃ¼·ÂÀ» È¸º¹¡×fÇÕ´Ï´Ù.",
-		" ¹İ°İ ´ë»óÀÌ Á¸ÀçÇÏÁö ¾Ê´Â ÀÚ¿¬Àû ÇÇÇØ´Â ³»°Ô ´Ù½Ã ¡×c¹İ°İ¡×fµË´Ï´Ù.",
-		"¡×7°Ë ÈÖµÎ¸£±â ¡×8- ¡×3¿¡ÄÚ¡×f: ¹ß»çÃ¼¸¦ ¹Ù¶óº¸°í Æ¨°Ü³¾ ¼ö ÀÖ½À´Ï´Ù.",
-		" $[ARROW_COUNT]¹ø Æ¨°Ü³¾ ¶§¸¶´Ù ¹æ¾î °è¿­ ¹öÇÁ Áß ÇÏ³ª¸¦ ¹«ÀÛÀ§·Î ¾ò½À´Ï´Ù.",
-		" È¤Àº ±ÙÁ¢ ÇÇÇØ¸¦ ºü¸£°Ô $[DAMAGE_COUNT]¹ø µÇ¹Ş¾ÆÄ¥ ¶§¿¡µµ ÀÌ È¿°ú¸¦ ¾ò½À´Ï´Ù.",
-		" ¡×7ÀúÇ× 1 15ÃÊ¡×f, ¡×3¹æ¾î·Â 3Ä­ 10ÃÊ »ó½Â¡×f, ¡×eÈí¼ö Ã¼·Â 2.5Ä­ ¿µ±¸ Áõ°¡¡×f,",
-		" ¡×cÈ­¿° ÀúÇ× 1ºĞ¡×f, ¡×b´ÙÀ½ ÇÇÇØ 1È¸ ¹«½Ã¡×f, ¡×a30ÃÊ ³» ºÒ»çÀÇ ÅäÅÛ 1È¸ ¹ßµ¿,¡×f",
-		" ¡×6»óÅÂÀÌ»ó Áï½Ã ÇØÁ¦ ¹× ´ÙÀ½ »óÅÂÀÌ»ó 1È¸ ¹«½Ã"
+@AbilityManifest(name = "ê±°ìš¸", rank = Rank.S, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§2ë¦¬í„´Â§f: ì–´ë– í•œ í”¼í•´ë¥¼ ì…ë˜ ë°©ì–´ëœ ë§Œí¼ì˜ í”¼í•´ëŸ‰ì˜ $[RETURN]%ë¥¼",
+		" í”¼í•´ë¥¼ ì…íŒ ëŒ€ìƒì—ê²Œ 1ì´ˆ í›„ ë‹¤ì‹œ ë˜ëŒë ¤ì¤ë‹ˆë‹¤.",
+		" ì´í›„ Â§cë°˜ê²©Â§fìœ¼ë¡œ ì…íŒ í”¼í•´ì˜ $[REGEN]%ë§Œí¼ Â§dì²´ë ¥ì„ íšŒë³µÂ§fí•©ë‹ˆë‹¤.",
+		" ë°˜ê²© ëŒ€ìƒì´ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ìì—°ì  í”¼í•´ëŠ” ë‚´ê²Œ ë‹¤ì‹œ Â§cë°˜ê²©Â§fë©ë‹ˆë‹¤.",
+		"Â§7ê²€ íœ˜ë‘ë¥´ê¸° Â§8- Â§3ì—ì½”Â§f: ë°œì‚¬ì²´ë¥¼ ë°”ë¼ë³´ê³  íŠ•ê²¨ë‚¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		" $[ARROW_COUNT]ë²ˆ íŠ•ê²¨ë‚¼ ë•Œë§ˆë‹¤ ë°©ì–´ ê³„ì—´ ë²„í”„ ì¤‘ í•˜ë‚˜ë¥¼ ë¬´ì‘ìœ„ë¡œ ì–»ìŠµë‹ˆë‹¤.",
+		" í˜¹ì€ ê·¼ì ‘ í”¼í•´ë¥¼ ë¹ ë¥´ê²Œ $[DAMAGE_COUNT]ë²ˆ ë˜ë°›ì•„ì¹  ë•Œì—ë„ ì´ íš¨ê³¼ë¥¼ ì–»ìŠµë‹ˆë‹¤.",
+		" Â§7ì €í•­ 1 15ì´ˆÂ§f, Â§3ë°©ì–´ë ¥ 3ì¹¸ 10ì´ˆ ìƒìŠ¹Â§f, Â§eí¡ìˆ˜ ì²´ë ¥ 2.5ì¹¸ ì˜êµ¬ ì¦ê°€Â§f,",
+		" Â§cí™”ì—¼ ì €í•­ 1ë¶„Â§f, Â§bë‹¤ìŒ í”¼í•´ 1íšŒ ë¬´ì‹œÂ§f, Â§a30ì´ˆ ë‚´ ë¶ˆì‚¬ì˜ í† í…œ 1íšŒ ë°œë™,Â§f",
+		" Â§6ìƒíƒœì´ìƒ ì¦‰ì‹œ í•´ì œ ë° ë‹¤ìŒ ìƒíƒœì´ìƒ 1íšŒ ë¬´ì‹œ"
 })
 
 public class Mirror extends Synergy {
@@ -78,7 +78,7 @@ public class Mirror extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> ARROW_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"arrow-count", 2, "# È­»ìÀ» Æ¨°Ü³»´Â È½¼ö") {
+			"arrow-count", 2, "# í™”ì‚´ì„ íŠ•ê²¨ë‚´ëŠ” íšŸìˆ˜") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -88,7 +88,7 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"damage-count", 3, "# ±ÙÁ¢ °ø°İÀ» ¹İ°İÇÏ´Â È½¼ö") {
+			"damage-count", 3, "# ê·¼ì ‘ ê³µê²©ì„ ë°˜ê²©í•˜ëŠ” íšŸìˆ˜") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -98,7 +98,7 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> REGEN = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"regen", 15, "# È¸º¹·®", "# ´ÜÀ§: %") {
+			"regen", 15, "# íšŒë³µëŸ‰", "# ë‹¨ìœ„: %") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -108,7 +108,7 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> RETURN = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"return", 75, "# ¹İ°İ ÇÇÇØ·®", "# ´ÜÀ§: %") {
+			"return", 75, "# ë°˜ê²© í”¼í•´ëŸ‰", "# ë‹¨ìœ„: %") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -165,10 +165,10 @@ public class Mirror extends Synergy {
 		@Override
 		public void run(int count) {
 			String A, B, C;
-			A = block ? "¡×bO" : "¡×cX";
-			B = effectblock ? "¡×bO" : "¡×cX";
-			C = undying.isRunning() ? "¡×bO" : "¡×cX";
-			ac.update("¡×3ÇÇÇØ ¹«½Ã¡×f: " + A + " ¡×7| ¡×6»óÅÂÀÌ»ó ¹«½Ã¡×f: " + B + " ¡×7| ¡×aºÒ»çÀÇ ÅäÅÛ¡×f: " + C);
+			A = block ? "Â§bO" : "Â§cX";
+			B = effectblock ? "Â§bO" : "Â§cX";
+			C = undying.isRunning() ? "Â§bO" : "Â§cX";
+			ac.update("Â§3í”¼í•´ ë¬´ì‹œÂ§f: " + A + " Â§7| Â§6ìƒíƒœì´ìƒ ë¬´ì‹œÂ§f: " + B + " Â§7| Â§aë¶ˆì‚¬ì˜ í† í…œÂ§f: " + C);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -217,7 +217,7 @@ public class Mirror extends Synergy {
 	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
 		if (effectblock) {
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation());
-			getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×f»óÅÂÀÌ»óÀ» ¹«È¿È­½ÃÄ×½À´Ï´Ù.");
+			getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§fìƒíƒœì´ìƒì„ ë¬´íš¨í™”ì‹œì¼°ìŠµë‹ˆë‹¤.");
 			e.setCancelled(true);
 			effectblock = false;
 		}
@@ -279,28 +279,28 @@ public class Mirror extends Synergy {
 			String string = null;
 			switch(random.nextInt(7)) {
 			case 0:
-				string = "¡×7ÀúÇ×";
+				string = "Â§7ì €í•­";
 				break;
 			case 1:
-				string = "¡×3¹æ¾î·Â";
+				string = "Â§3ë°©ì–´ë ¥";
 				break;
 			case 2:
-				string = "¡×eÈí¼ö Ã¼·Â";
+				string = "Â§eí¡ìˆ˜ ì²´ë ¥";
 				break;
 			case 3:
-				string = "¡×cÈ­¿° ÀúÇ×";
+				string = "Â§cí™”ì—¼ ì €í•­";
 				break;
 			case 4:
-				string = "¡×bÇÇÇØ ¹«½Ã";
+				string = "Â§bí”¼í•´ ë¬´ì‹œ";
 				break;
 			case 5:
-				string = "¡×aºÒ»çÀÇ ÅäÅÛ";
+				string = "Â§aë¶ˆì‚¬ì˜ í† í…œ";
 				break;
 			case 6:
-				string = "¡×6»óÅÂÀÌ»ó ÇØÁ¦";
+				string = "Â§6ìƒíƒœì´ìƒ í•´ì œ";
 				break;
 			}
-			NMS.sendTitle(getPlayer(), "¡×d¹«ÀÛÀ§ ¹öÇÁ", string, 0, 6, 0);
+			NMS.sendTitle(getPlayer(), "Â§dë¬´ì‘ìœ„ ë²„í”„", string, 0, 6, 0);
 		}
 		
 		@Override
@@ -321,7 +321,7 @@ public class Mirror extends Synergy {
 					String string = null;
 					switch(number) {
 					case 0:
-						string = "¡×7ÀúÇ×";
+						string = "Â§7ì €í•­";
 						if (getPlayer().hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
 							PotionEffect pe = getPlayer().getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 							if (pe.getAmplifier() < 1 || pe.getDuration() <= 300) {
@@ -329,20 +329,20 @@ public class Mirror extends Synergy {
 							}
 						}
 						getPlayer().addPotionEffect(resistance);
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×7ÀúÇ× 1 15ÃÊ ¹öÇÁ!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§7ì €í•­ 1 15ì´ˆ ë²„í”„!");
 						break;
 					case 1:
-						string = "¡×3¹æ¾î·Â";
+						string = "Â§3ë°©ì–´ë ¥";
 						defenceUp.start();
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×310ÃÊ°£ ¹æ¾î·Â 3Ä­ »ó½Â!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§310ì´ˆê°„ ë°©ì–´ë ¥ 3ì¹¸ ìƒìŠ¹!");
 						break;
 					case 2:
-						string = "¡×eÈí¼ö Ã¼·Â";
+						string = "Â§eí¡ìˆ˜ ì²´ë ¥";
 						NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + 5));
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×e¿µ±¸ Èí¼öÃ¼·Â 2.5Ä­ Áõ°¡!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§eì˜êµ¬ í¡ìˆ˜ì²´ë ¥ 2.5ì¹¸ ì¦ê°€!");
 						break;
 					case 3:
-						string = "¡×cÈ­¿° ÀúÇ×";
+						string = "Â§cí™”ì—¼ ì €í•­";
 						if (getPlayer().hasPotionEffect(PotionEffectType.FIRE_RESISTANCE)) {
 							PotionEffect pe = getPlayer().getPotionEffect(PotionEffectType.FIRE_RESISTANCE);
 							if (pe.getDuration() <= 300) {
@@ -350,27 +350,27 @@ public class Mirror extends Synergy {
 							}
 						}
 						getPlayer().addPotionEffect(fireresistance);
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cÈ­¿° ÀúÇ× 1ºĞ ¹öÇÁ!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cí™”ì—¼ ì €í•­ 1ë¶„ ë²„í”„!");
 						break;
 					case 4:
-						string = "¡×bÇÇÇØ ¹«½Ã";
+						string = "Â§bí”¼í•´ ë¬´ì‹œ";
 						block = true;
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×b´ÙÀ½ ÇÇÇØ 1È¸ ¹«½Ã!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§bë‹¤ìŒ í”¼í•´ 1íšŒ ë¬´ì‹œ!");
 						break;
 					case 5:
-						string = "¡×aºÒ»çÀÇ ÅäÅÛ";
+						string = "Â§aë¶ˆì‚¬ì˜ í† í…œ";
 						if (undying.isRunning()) undying.setCount(600);
 						else undying.start();
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×a30ÃÊ ³»¿¡ ºÒ»çÀÇ ÅäÅÛ 1È¸ ¹ßµ¿!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§a30ì´ˆ ë‚´ì— ë¶ˆì‚¬ì˜ í† í…œ 1íšŒ ë°œë™!");
 						break;
 					case 6:
-						string = "¡×6»óÅÂÀÌ»ó ÇØÁ¦";
+						string = "Â§6ìƒíƒœì´ìƒ í•´ì œ";
 						effectblock = true;
 						getParticipant().removeEffects(effectpredicate);
-						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×6»óÅÂÀÌ»ó Áï½Ã ÇØÁ¦ ¹× ´ÙÀ½ »óÅÂÀÌ»ó 1È¸ ¹«½Ã!");
+						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§6ìƒíƒœì´ìƒ ì¦‰ì‹œ í•´ì œ ë° ë‹¤ìŒ ìƒíƒœì´ìƒ 1íšŒ ë¬´ì‹œ!");
 						break;
 					}
-					NMS.sendTitle(getPlayer(), "¡×d¹«ÀÛÀ§ ¹öÇÁ", string, 0, 6, 0);
+					NMS.sendTitle(getPlayer(), "Â§dë¬´ì‘ìœ„ ë²„í”„", string, 0, 6, 0);
 				}
 				
 				@Override

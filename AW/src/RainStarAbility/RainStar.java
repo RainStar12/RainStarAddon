@@ -95,7 +95,8 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7검 공격 §8- §a별소나기§f: 다른 플레이어를 근접 공격할 때마다 15%의 확률로",
 		" 내 주변을 맴도는 별소나기를 총 7개까지 소환합니다.",
 		"§7철괴 우클릭 §8- §3은하수의 밤§f: 7칸의 필드를 $[FIELD_DURATION]초간 전개합니다. 필드 위에서 별소나기가",
-		" 항상 발동하며, 근접 공격 피해량이 1.4배로 증가합니다. $[RIGHT_COOLDOWN]", 
+		" 항상 발동하며, 근접 공격 피해량이 1.4배로 증가합니다. $[RIGHT_COOLDOWN]",
+		" 은하수 내의 생명체들은 은하수의 중심으로 매우 강력하게 끌어당겨집니다.",
 		"§7철괴 좌클릭 §8- §b별의 일주§f: 별자리 효과를 다음 별자리로 넘깁니다. $[LEFT_COOLDOWN]"
 		},
 		summarize = {
@@ -186,7 +187,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 	private final Cooldown arrowcool = new Cooldown(ARROW_COOLDOWN.getValue(), "혜성", CooldownDecrease._50);
 
 	private AttributeModifier movespeed;
-	private Circle circle = Circle.of(7, 140);
+	private Circle circle = Circle.of(7, 120);
 	private Circle crabcircle1 = Circle.of(1, 3);
 	private Circle crabcircle2 = Circle.of(2, 5);
 	private int constellation = new Random().nextInt(12);
@@ -296,6 +297,34 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			add(gradation21);
 		}
 	};
+	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler &&
+								((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(
+							entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant)
+							|| (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -385,7 +414,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
-    		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", 0.1, Operation.ADD_NUMBER);
+    		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", 0.07, Operation.ADD_NUMBER);
     		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(movespeed);
 		}
 		
@@ -578,7 +607,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (getPlayer().equals(damager)) {
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double health = getPlayer().getHealth();
-			if (constellation == 4) e.setDamage(e.getDamage() * (((1 - (health / maxHealth)) * 1.5) + 1));
+			if (constellation == 4) e.setDamage(e.getDamage() * (((1 - (health / maxHealth)) * 0.75) + 1));
 			if (constellation == 6) {
 				if (health > (maxHealth / 2)) e.setDamage(e.getDamage() * 1.2);
 				else if (health < (maxHealth / 2)) e.setDamage(e.getDamage() * 0.7);
@@ -728,7 +757,12 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationProcess(int count) {
 			if (count % 40 == 0) {
-				ParticleLib.VILLAGER_HAPPY.spawnParticle(mylocation.clone().add(0, 2, 0), 4, 2, 4, 200, 0);
+				ParticleLib.VILLAGER_HAPPY.spawnParticle(mylocation.clone().add(0, 2, 0), 4, 2, 4, 150, 0);
+			}
+			if (count % 3 == 0) {
+				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, mylocation, 7, predicate)) {
+					livingEntity.setVelocity(VectorUtil.validateVector(mylocation.toVector().subtract(livingEntity.getLocation().toVector()).normalize().setY(0).multiply(0.2)));
+				}
 			}
 			if (count % 4 == 0) {
 				if (lemonlimeturns)
@@ -1245,7 +1279,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		private void onProjectileHit(final ProjectileHitEvent e) {
 			if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity().equals(arrow)) {
 				if (e.getHitBlock() != null) {
-					setCount(20);
+					setCount(constellation == 11 ? 10 : 20);
 					if (constellation == 11) arrowLoc = arrow.getLocation().clone();
 					hit = true;
 				}

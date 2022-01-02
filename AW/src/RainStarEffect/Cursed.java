@@ -21,12 +21,12 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 
-@EffectManifest(name = "ÀúÁÖ", displayName = "¡×5ÀúÁÖ", method = ApplicationMethod.UNIQUE_STACK, type = {
+@EffectManifest(name = "ì €ì£¼", displayName = "Â§5ì €ì£¼", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"»óÅÂÀÌ»óÀÌ Áö¼ÓµÇ´Â µ¿¾È °©¿Ê¿¡ ±Í¼Ó ÀúÁÖ°¡ ºÎ¿©µË´Ï´Ù.",
-		"ÀúÁÖ¸¦ Á¦¿ÜÇÑ ¹Ş°Ô µÉ ¸ğµç »óÅÂÀÌ»ó Áö¼Ó½Ã°£ÀÌ 2¹è Áõ°¡ÇÕ´Ï´Ù.",
-		"ÀÌ È¿°ú´Â Áßº¹À¸·Î ¹ŞÀ¸¸é Áö¼Ó ½Ã°£ÀÌ °è¼ÓÇØ¼­ ½×ÀÌ°Ô µË´Ï´Ù."
+		"ìƒíƒœì´ìƒì´ ì§€ì†ë˜ëŠ” ë™ì•ˆ ê°‘ì˜·ì— ê·€ì† ì €ì£¼ê°€ ë¶€ì—¬ë©ë‹ˆë‹¤.",
+		"ì €ì£¼ë¥¼ ì œì™¸í•œ ë°›ê²Œ ë  ëª¨ë“  ìƒíƒœì´ìƒ ì§€ì†ì‹œê°„ì´ 2ë°° ì¦ê°€í•©ë‹ˆë‹¤.",
+		"ì´ íš¨ê³¼ëŠ” ì¤‘ë³µìœ¼ë¡œ ë°›ìœ¼ë©´ ì§€ì† ì‹œê°„ì´ ê³„ì†í•´ì„œ ìŒ“ì´ê²Œ ë©ë‹ˆë‹¤."
 })
 public class Cursed extends AbstractGame.Effect implements Listener {
 

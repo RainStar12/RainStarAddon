@@ -54,26 +54,26 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "±¸¹ÌÈ£(µĞ°©)", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cµĞ°©¡×f: È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		" Ã¼·ÂÀ» ÀüºÎ ¼Ò¸ğÇÒ ¶§ ÀüÃ¼ Ã¼·ÂÀÇ 40%¸¸ ³²°í ±¸¹ÌÈ£·Î µ¹¾Æ°©´Ï´Ù.",
-		"¡×7°ø°İ ¡×8- ¡×c»ç¶ûÀÇ ¸ÅÁú¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ °ø°İÇÒ ¶§ $[STACK_COOL]ÃÊ¸¶´Ù Ç¥½ÄÀ» ½×°í,",
-		" Ç¥½ÄÀÌ $[STACK_MAX]°³°¡ µÉ ¶§ ´ë»óÀ» $[CHARM_DURATION]ÃÊ°£ À¯È¤ÇÕ´Ï´Ù. À¯È¤ µµÁß¿£ Ç¥½ÄÀ» ½×Áö ¸øÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×cÁıÂø¡×f: ¹Ù¶óº¸´Â ¹æÇâ¿¡ 10ÃÊ°£ ¿ø ÆÄÆ¼Å¬ÀÌ »ı±â°í,",
-		" ´Ù½Ã ÁÂÅ¬¸¯ ½Ã ²öÀ» ´øÁ® ¹üÀ§ÀÇ Áß½É¿¡ °¡Àå °¡±î¿î ´ë»ó¿¡°Ô µ¹ÁøÇÕ´Ï´Ù.",
-		" ÀÌ¶§ ¹üÀ§ ³» ¸ğµç ´ë»ó¿¡°Ô ¹æ¾î ¹«½Ã ´ë¹ÌÁö¸¦ ÀÔÈü´Ï´Ù. ¸¸¾à ¹üÀ§ ³» ´ë»ó Áß",
-		" À¯È¤ ÁßÀÎ ´ë»óÀÌ ÀÖ´Ù¸é À¯È¤À» Ç®°í ³²Àº ½Ã°£¿¡ ¹İºñ·ÊÇÏ¿© ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.",
+@AbilityManifest(name = "êµ¬ë¯¸í˜¸(ë‘”ê°‘)", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë‘”ê°‘Â§f: íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" ì²´ë ¥ì„ ì „ë¶€ ì†Œëª¨í•  ë•Œ ì „ì²´ ì²´ë ¥ì˜ 40%ë§Œ ë‚¨ê³  êµ¬ë¯¸í˜¸ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.",
+		"Â§7ê³µê²© Â§8- Â§cì‚¬ë‘ì˜ ë§¤ì§ˆÂ§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ê³µê²©í•  ë•Œ $[STACK_COOL]ì´ˆë§ˆë‹¤ í‘œì‹ì„ ìŒ“ê³ ,",
+		" í‘œì‹ì´ $[STACK_MAX]ê°œê°€ ë  ë•Œ ëŒ€ìƒì„ $[CHARM_DURATION]ì´ˆê°„ ìœ í˜¹í•©ë‹ˆë‹¤. ìœ í˜¹ ë„ì¤‘ì—” í‘œì‹ì„ ìŒ“ì§€ ëª»í•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§cì§‘ì°©Â§f: ë°”ë¼ë³´ëŠ” ë°©í–¥ì— 10ì´ˆê°„ ì› íŒŒí‹°í´ì´ ìƒê¸°ê³ ,",
+		" ë‹¤ì‹œ ì¢Œí´ë¦­ ì‹œ ëˆì„ ë˜ì ¸ ë²”ìœ„ì˜ ì¤‘ì‹¬ì— ê°€ì¥ ê°€ê¹Œìš´ ëŒ€ìƒì—ê²Œ ëŒì§„í•©ë‹ˆë‹¤.",
+		" ì´ë•Œ ë²”ìœ„ ë‚´ ëª¨ë“  ëŒ€ìƒì—ê²Œ ë°©ì–´ ë¬´ì‹œ ëŒ€ë¯¸ì§€ë¥¼ ì…í™ë‹ˆë‹¤. ë§Œì•½ ë²”ìœ„ ë‚´ ëŒ€ìƒ ì¤‘",
+		" ìœ í˜¹ ì¤‘ì¸ ëŒ€ìƒì´ ìˆë‹¤ë©´ ìœ í˜¹ì„ í’€ê³  ë‚¨ì€ ì‹œê°„ì— ë°˜ë¹„ë¡€í•˜ì—¬ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤.",
 		" $[COOLDOWN]",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×dÀ¯È¤¡×f: ´ë»óÀÌ °­Á¦·Î ³ª¸¦ ¹Ù¶óº¸°Ô µÇ°í,",
-		" ´ë»óÀÌ ³»°Ô ÁÖ´Â ÇÇÇØ·®ÀÌ $[CHARM_DECREASE]% °¨¼ÒÇÕ´Ï´Ù. ´ë»óÀ» °ø°İÇÒ ¶§¸¶´Ù",
-		" ÁØ ÃÖÁ¾ ´ë¹ÌÁöÀÇ $[CHARM_HEAL]%¸¸Å­ Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù."
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§dìœ í˜¹Â§f: ëŒ€ìƒì´ ê°•ì œë¡œ ë‚˜ë¥¼ ë°”ë¼ë³´ê²Œ ë˜ê³ ,",
+		" ëŒ€ìƒì´ ë‚´ê²Œ ì£¼ëŠ” í”¼í•´ëŸ‰ì´ $[CHARM_DECREASE]% ê°ì†Œí•©ë‹ˆë‹¤. ëŒ€ìƒì„ ê³µê²©í•  ë•Œë§ˆë‹¤",
+		" ì¤€ ìµœì¢… ëŒ€ë¯¸ì§€ì˜ $[CHARM_HEAL]%ë§Œí¼ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×dÀ¯È¤ »óÅÂ¡×fÀÎ ÀûÀ» Å¸°İÇØ È¸º¹ÇÏ´Â °Í ¿Ü¿£ È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		"Ã¼·ÂÀ» ÀüºÎ ¼Ò¸ğÇÏ¸é ÀüÃ¼ Ã¼·ÂÀÇ 40%¸¸ ³²°í ±¸¹ÌÈ£·Î µÇµ¹¾Æ°©´Ï´Ù.",
-		"´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ °ø°İÇÒ ¶§¸¶´Ù Ç¥½ÄÀ» ½×¾Æ $[STACK_MAX]°³°¡ µÉ ¶§ ´ë»óÀ» ¡×dÀ¯È¤¡×fÇÕ´Ï´Ù.",
-		"¡×dÀ¯È¤¡×fµÈ ´ë»óÀº ³ª¸¦ °­Á¦·Î ¹Ù¶óº¸¸ç ³»°Ô ÁÖ´Â ÇÇÇØ·®ÀÌ °¨¼ÒÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯¡×fÀ¸·Î ²öÀ» ´øÁ® ´ë»óÀÇ À§Ä¡±îÁö ÀÌµ¿ÇØ °ø°İÇÕ´Ï´Ù. $[COOLDOWN]"
+		"Â§dìœ í˜¹ ìƒíƒœÂ§fì¸ ì ì„ íƒ€ê²©í•´ íšŒë³µí•˜ëŠ” ê²ƒ ì™¸ì—” íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"ì²´ë ¥ì„ ì „ë¶€ ì†Œëª¨í•˜ë©´ ì „ì²´ ì²´ë ¥ì˜ 40%ë§Œ ë‚¨ê³  êµ¬ë¯¸í˜¸ë¡œ ë˜ëŒì•„ê°‘ë‹ˆë‹¤.",
+		"ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ê³µê²©í•  ë•Œë§ˆë‹¤ í‘œì‹ì„ ìŒ“ì•„ $[STACK_MAX]ê°œê°€ ë  ë•Œ ëŒ€ìƒì„ Â§dìœ í˜¹Â§fí•©ë‹ˆë‹¤.",
+		"Â§dìœ í˜¹Â§fëœ ëŒ€ìƒì€ ë‚˜ë¥¼ ê°•ì œë¡œ ë°”ë¼ë³´ë©° ë‚´ê²Œ ì£¼ëŠ” í”¼í•´ëŸ‰ì´ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­Â§fìœ¼ë¡œ ëˆì„ ë˜ì ¸ ëŒ€ìƒì˜ ìœ„ì¹˜ê¹Œì§€ ì´ë™í•´ ê³µê²©í•©ë‹ˆë‹¤. $[COOLDOWN]"
 		})
 
 public class NineTailFoxC extends AbilityBase implements ActiveHandler {
@@ -84,7 +84,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "cooldown", 90,
-            "# ÄğÅ¸ÀÓ") {
+            "# ì¿¨íƒ€ì„") {
 
         @Override
         public boolean condition(Integer value) {
@@ -100,7 +100,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Double> STACK_COOL = 
 			abilitySettings.new SettingObject<Double>(NineTailFoxC.class, "stack-cooldown", 1.0,
-            "# ½ºÅÃÀ» ½×À» ¶§ ³»ºÎ ÄğÅ¸ÀÓ") {
+            "# ìŠ¤íƒì„ ìŒ“ì„ ë•Œ ë‚´ë¶€ ì¿¨íƒ€ì„") {
 
         @Override
         public boolean condition(Double value) {
@@ -111,7 +111,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> STACK_MAX = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "stack-max", 4,
-            "# ÃÖ´ë ½ºÅÃ °³¼ö") {
+            "# ìµœëŒ€ ìŠ¤íƒ ê°œìˆ˜") {
 
         @Override
         public boolean condition(Integer value) {
@@ -122,7 +122,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> CHARM_DURATION = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-duration", 4,
-            "# À¯È¤ Áö¼Ó ½Ã°£") {
+            "# ìœ í˜¹ ì§€ì† ì‹œê°„") {
 
         @Override
         public boolean condition(Integer value) {
@@ -133,7 +133,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> CHARM_DECREASE = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-decrease", 35,
-            "# À¯È¤ µµÁß ´ë¹ÌÁö °¨¼ÒÀ² (´ÜÀ§: %)") {
+            "# ìœ í˜¹ ë„ì¤‘ ëŒ€ë¯¸ì§€ ê°ì†Œìœ¨ (ë‹¨ìœ„: %)") {
 
         @Override
         public boolean condition(Integer value) {
@@ -144,7 +144,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-heal", 55,
-            "# À¯È¤µÈ ´ë»ó Å¸°İ½Ã È¸º¹·ü (´ÜÀ§: %)") {
+            "# ìœ í˜¹ëœ ëŒ€ìƒ íƒ€ê²©ì‹œ íšŒë³µë¥  (ë‹¨ìœ„: %)") {
 
         @Override
         public boolean condition(Integer value) {
@@ -155,7 +155,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> DAMAGE = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage", 4,
-            "# Ã¶±« ÁÂÅ¬¸¯ ÇÇÇØ·®") {
+            "# ì² ê´´ ì¢Œí´ë¦­ í”¼í•´ëŸ‰") {
 
         @Override
         public boolean condition(Integer value) {
@@ -225,7 +225,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(DamageCause.FALL)) {
-				getPlayer().sendMessage("¡×a³«ÇÏ ´ë¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§aë‚™í•˜ ëŒ€ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				e.setCancelled(true);
 			}
@@ -234,7 +234,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 				double nowhp = ((4 * (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 10));
 				getPlayer().setHealth(nowhp);
 			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
-			   	getPlayer().sendMessage("¡×5[¡×d!¡×5] ¡×cµĞ°©ÀÌ Ç®·È½À´Ï´Ù. ±¸¹ÌÈ£·Î µÇµ¹¾Æ°©´Ï´Ù. ¡×7/aw check È¤Àº /aw sum");
+			   	getPlayer().sendMessage("Â§5[Â§d!Â§5] Â§cë‘”ê°‘ì´ í’€ë ¸ìŠµë‹ˆë‹¤. êµ¬ë¯¸í˜¸ë¡œ ë˜ëŒì•„ê°‘ë‹ˆë‹¤. Â§7/aw check í˜¹ì€ /aw sum");
 		    	AbilityBase ab = getParticipant().getAbility();
 		    	if (ab.getClass().equals(Mix.class)) {
 		    		final Mix mix = (Mix) ab;
@@ -415,7 +415,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
-					Strings.repeat("¡×d¢¾", stack).concat(Strings.repeat("¡×d¢½", maxstack - stack)));
+					Strings.repeat("Â§dâ™¥", stack).concat(Strings.repeat("Â§dâ™¡", maxstack - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(player, this);
 			addStack();
@@ -431,7 +431,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 		private boolean addStack() {
 			setCount(100);
 			stack++;
-			hologram.setText(Strings.repeat("¡×d¢¾", stack).concat(Strings.repeat("¡×d¢½", maxstack - stack)));
+			hologram.setText(Strings.repeat("Â§dâ™¥", stack).concat(Strings.repeat("Â§dâ™¡", maxstack - stack)));
 			if (stack >= maxstack) {
 				stop(false);
 				return true;

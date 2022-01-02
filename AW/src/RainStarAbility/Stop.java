@@ -30,16 +30,16 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "¸ØÃç!", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¡×7Ã¤ÆÃ ¡×8- ¡×cÆø·Â ¸ØÃç!¡×f: ÀÚ½ÅÀÌ 3ÃÊ ³»·Î °ø°İÇÏÁö ¾ÊÀº ´ë»ó¿¡°Ô",
-		" ÀüÅõ·Î ÀÎÇÑ ÇÇÇØ¸¦ ¹Ş°í ÀÖ´Â µµÁß ¡×c¸ØÃç!¡×f¶ó°í ¿ÜÄ¥ °æ¿ì,",
-		" ±Ù¹æ $[LOOK_RANGE]ºí·Ï ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ´ë»óÀ» ¹Ù¶óº¸¸ç ¸ØÃç¸¦ ¿ÜÄ¡°í,",
-		" ´ë»óÀº °æÁ÷ »óÅÂÀÌ»ó¿¡ °É¸®°Ô µË´Ï´Ù. $[STOP_COOLDOWN]",
-		" ÇÑ ¹ø °æÁ÷µÈ Àû¿¡°Ô´Â ³»°¡ ÇÇÇØ¸¦ ÁÖ±â Àü±îÁö ÇÇÇØÀÔÁö ¾Ê½À´Ï´Ù.",
-		"¡×7Ã¤ÆÃ ¡×8- ¡×c´É·Â ¸ØÃç!¡×f: ¡×c´É·Â ¸ØÃç!¡×f¸¦ ¿ÜÄ¡¸é ÁÖº¯ $[ABILITY_STOP_RANGE]Ä­ ³»ÀÇ",
-		" ¸ğµç ÇÃ·¹ÀÌ¾îÀÇ ´É·Â Å¸ÀÌ¸Ó°¡ $[ABILITY_STOP_DURATION]ÃÊ°£ ¸ØÃß°Ô µË´Ï´Ù. $[ABILITY_STOP_COOLDOWN]",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×c°æÁ÷¡×f: ÀÌµ¿, °ø°İ, Ã¼·Â È¸º¹, ´É·Â »ç¿ëÀÌ ºÒ°¡ÇÕ´Ï´Ù.",
-		" ¶ÇÇÑ ¹Ş´Â ¸ğµç ÇÇÇØ¸¦ 80% °æ°¨ÇÏ¿© ¹Ş½À´Ï´Ù."})
+@AbilityManifest(name = "ë©ˆì¶°!", rank = Rank.A, species = Species.HUMAN, explain = {
+		"Â§7ì±„íŒ… Â§8- Â§cí­ë ¥ ë©ˆì¶°!Â§f: ìì‹ ì´ 3ì´ˆ ë‚´ë¡œ ê³µê²©í•˜ì§€ ì•Šì€ ëŒ€ìƒì—ê²Œ",
+		" ì „íˆ¬ë¡œ ì¸í•œ í”¼í•´ë¥¼ ë°›ê³  ìˆëŠ” ë„ì¤‘ Â§cë©ˆì¶°!Â§fë¼ê³  ì™¸ì¹  ê²½ìš°,",
+		" ê·¼ë°© $[LOOK_RANGE]ë¸”ë¡ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ëŒ€ìƒì„ ë°”ë¼ë³´ë©° ë©ˆì¶°ë¥¼ ì™¸ì¹˜ê³ ,",
+		" ëŒ€ìƒì€ ê²½ì§ ìƒíƒœì´ìƒì— ê±¸ë¦¬ê²Œ ë©ë‹ˆë‹¤. $[STOP_COOLDOWN]",
+		" í•œ ë²ˆ ê²½ì§ëœ ì ì—ê²ŒëŠ” ë‚´ê°€ í”¼í•´ë¥¼ ì£¼ê¸° ì „ê¹Œì§€ í”¼í•´ì…ì§€ ì•ŠìŠµë‹ˆë‹¤.",
+		"Â§7ì±„íŒ… Â§8- Â§cëŠ¥ë ¥ ë©ˆì¶°!Â§f: Â§cëŠ¥ë ¥ ë©ˆì¶°!Â§fë¥¼ ì™¸ì¹˜ë©´ ì£¼ë³€ $[ABILITY_STOP_RANGE]ì¹¸ ë‚´ì˜",
+		" ëª¨ë“  í”Œë ˆì´ì–´ì˜ ëŠ¥ë ¥ íƒ€ì´ë¨¸ê°€ $[ABILITY_STOP_DURATION]ì´ˆê°„ ë©ˆì¶”ê²Œ ë©ë‹ˆë‹¤. $[ABILITY_STOP_COOLDOWN]",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§cê²½ì§Â§f: ì´ë™, ê³µê²©, ì²´ë ¥ íšŒë³µ, ëŠ¥ë ¥ ì‚¬ìš©ì´ ë¶ˆê°€í•©ë‹ˆë‹¤.",
+		" ë˜í•œ ë°›ëŠ” ëª¨ë“  í”¼í•´ë¥¼ 80% ê²½ê°í•˜ì—¬ ë°›ìŠµë‹ˆë‹¤."})
 
 @SuppressWarnings("deprecation")
 public class Stop extends AbilityBase {
@@ -49,7 +49,7 @@ public class Stop extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> ABILITY_STOP_COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"ability-stop-cooldown", 100, "# ´É·Â ¸ØÃç! ÄğÅ¸ÀÓ") {
+			"ability-stop-cooldown", 100, "# ëŠ¥ë ¥ ë©ˆì¶°! ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -62,7 +62,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> STOP_COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"stop-cooldown", 170, "# ¸ØÃç! ÄğÅ¸ÀÓ") {
+			"stop-cooldown", 170, "# ë©ˆì¶°! ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -75,7 +75,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> LOOK_RANGE = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"look-range", 10, "# ¸ØÃç!¸¦ µû¶óÇØÁÖ´Â ÇÃ·¹ÀÌ¾î ¹üÀ§") {
+			"look-range", 10, "# ë©ˆì¶°!ë¥¼ ë”°ë¼í•´ì£¼ëŠ” í”Œë ˆì´ì–´ ë²”ìœ„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -83,7 +83,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> ABILITY_STOP_RANGE = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"ability-stop-range", 8, "# ´É·Â ¸ØÃç! ¹üÀ§") {
+			"ability-stop-range", 8, "# ëŠ¥ë ¥ ë©ˆì¶°! ë²”ìœ„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -91,7 +91,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> ABILITY_STOP_DURATION = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"ability-stop-duration", 5, "# Áö¼Ó½Ã°£") {
+			"ability-stop-duration", 5, "# ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -176,7 +176,7 @@ public class Stop extends AbilityBase {
 	@SubscribeEvent(ignoreCancelled = false)
 	public void onPlayerChat(PlayerChatEvent e) {
 		if (e.getPlayer().equals(getPlayer()) && !stopcooldown.isRunning()) {
-			if (e.getMessage().equals("¸ØÃç!") || e.getMessage().equals("Æø·Â ¸ØÃç!")) {
+			if (e.getMessage().equals("ë©ˆì¶°!") || e.getMessage().equals("í­ë ¥ ë©ˆì¶°!")) {
 				e.setCancelled(true);
 				if (damaged.isRunning() && !attacked.isRunning()) {
 					for (Player p : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), lookrange, lookrange, predicate)) {
@@ -186,19 +186,19 @@ public class Stop extends AbilityBase {
 							if (!p.equals(damager)) NMS.rotateHead(allplayer, p, yaw, pitch);	
 						}
 						if (!p.equals(damager)) {
-							p.chat("¡×6[¡×e´É·Â¡×6] ¡×c¸ØÃç!");	
+							p.chat("Â§6[Â§eëŠ¥ë ¥Â§6] Â§cë©ˆì¶°!");	
 						}
 					}
 					Stiffen.apply(getGame().getParticipant(damager), TimeUnit.SECONDS, 10);
-					getPlayer().chat("¡×6[¡×e´É·Â¡×6] ¡×c¸ØÃç!");
+					getPlayer().chat("Â§6[Â§eëŠ¥ë ¥Â§6] Â§cë©ˆì¶°!");
 					players.add(damager);
 					stopcooldown.start();
 				} else {
-					getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×fÇÇÇØ¸¦ ¹ŞÀº ÀûÀÌ ¾ø°Å³ª º»ÀÎµµ Æø·ÂÀ» Çà»çÇÏ¿´½À´Ï´Ù.");
+					getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fí”¼í•´ë¥¼ ë°›ì€ ì ì´ ì—†ê±°ë‚˜ ë³¸ì¸ë„ í­ë ¥ì„ í–‰ì‚¬í•˜ì˜€ìŠµë‹ˆë‹¤.");
 				}	
 			}
 		}
-		if (e.getPlayer().equals(getPlayer()) && e.getMessage().equals("´É·Â ¸ØÃç!")) {
+		if (e.getPlayer().equals(getPlayer()) && e.getMessage().equals("ëŠ¥ë ¥ ë©ˆì¶°!")) {
 			if (!astopcooldown.isCooldown()) {
 				for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), stoprange, stoprange, notarget)) {
 					Participant p = getGame().getParticipant(player);
@@ -209,7 +209,7 @@ public class Stop extends AbilityBase {
 						}
 					}
 				}
-				getPlayer().chat("¡×6[¡×e´É·Â¡×6] ¡×c´É·Â ¸ØÃç!");
+				getPlayer().chat("Â§6[Â§eëŠ¥ë ¥Â§6] Â§cëŠ¥ë ¥ ë©ˆì¶°!");
 				astopcooldown.start();
 			}
 			e.setCancelled(true);

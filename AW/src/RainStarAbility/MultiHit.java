@@ -20,29 +20,36 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "´Ù´ÜÈ÷Æ®", rank = Rank.A, species = Species.HUMAN, explain = {
-		"±ÙÁ¢ °ø°İ ÇÇÇØ¸¦ ÀÔÈú ¶§ 40%ÀÇ ÇÇÇØ·Î 3¹ø °ø°İÇÕ´Ï´Ù.",
-		"¶ÇÇÑ ÇÇÇØ¸¦ ÀÔÀ» ¶§¸¶´Ù $[InvConfig]Æ½°£ ¹«Àû »óÅÂ°¡ µË´Ï´Ù."
+@AbilityManifest(name = "ë‹¤ë‹¨íˆíŠ¸", rank = Rank.A, species = Species.HUMAN, explain = {
+		"ê·¼ì ‘ ê³µê²© í”¼í•´ë¥¼ ì…í ë•Œ $[DAMAGE_CONFIG]%ì˜ í”¼í•´ë¡œ $[COUNT_CONFIG]ë²ˆ ê³µê²©í•©ë‹ˆë‹¤.",
+		"ë˜í•œ í”¼í•´ë¥¼ ì…ì„ ë•Œë§ˆë‹¤ $[INV_CONFIG]ì´ˆê°„ ë¬´ì  ìƒíƒœê°€ ë©ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "´ë¹ÌÁö°¡ ÀÏ½ÃÀûÀ¸·Î ³·¾ÆÁöÁö¸¸, ÃÑ 3¹øÀ» °ø°İÇÏ±â¿¡ ÃÖÁ¾ÀûÀ¸·Î",
-        "1.2¹èÀÇ ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ´Â ´É·ÂÀÔ´Ï´Ù. ¶ÇÇÑ ¹İÄ­ ÀÌÇÏÀÇ ÇÇÇØ¸¦",
-        "ÀüºÎ ¹«½ÃÇÒ ¼ö ÀÖ¾î ´Ù´ÜÈ÷Æ® ´É·Â¿¡°Ô °­ÇÕ´Ï´Ù."
+        "ëŒ€ë¯¸ì§€ê°€ ì¼ì‹œì ìœ¼ë¡œ ë‚®ì•„ì§€ì§€ë§Œ, ì´ 3ë²ˆì„ ê³µê²©í•˜ê¸°ì— ìµœì¢…ì ìœ¼ë¡œ",
+        "1.5ë°°ì˜ í”¼í•´ë¥¼ ì…í ìˆ˜ ìˆëŠ” ëŠ¥ë ¥ì…ë‹ˆë‹¤. ë˜í•œ ë°˜ì¹¸ ì´í•˜ì˜ í”¼í•´ë¥¼",
+        "ì „ë¶€ ë¬´ì‹œí•  ìˆ˜ ìˆì–´ ë‹¤ë‹¨íˆíŠ¸ ëŠ¥ë ¥ì—ê²Œ ê°•í•©ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "¹æ¾î·ÂÀÌ ³·Àº ´ë»ó", explain = {
-        		"³·Àº ´ë¹ÌÁö·Î ¿©·¯ ¹ø Å¸°İÇÏ±â ¶§¹®¿¡,",
-        		"¹æ¾î·ÂÀÌ ÀûÀº ´ë»ó¿¡°Ô ´ë¹ÌÁö¸¦ Á¦´ë·Î ²ÈÀ» ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ë°©ì–´ë ¥ì´ ë‚®ì€ ëŒ€ìƒ", explain = {
+        		"ë‚®ì€ ëŒ€ë¯¸ì§€ë¡œ ì—¬ëŸ¬ ë²ˆ íƒ€ê²©í•˜ê¸° ë•Œë¬¸ì—,",
+        		"ë°©ì–´ë ¥ì´ ì ì€ ëŒ€ìƒì—ê²Œ ëŒ€ë¯¸ì§€ë¥¼ ì œëŒ€ë¡œ ê½‚ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "´Ù´ÜÈ÷Æ®¸¦ °¡ÇÏ´Â ´ë»ó", explain = {
-        		"¾Æ·¹½º µîÀÇ °í¼ÓÀ¸·Î ¿¬¼Ó°ø°İÀ» ÇÏ´Â ÇÇÇØ¸¦",
-        		"0.5ÃÊÀÇ ¹«ÀûÀ¸·Î »ıÁ¸·ÂÀ» ³ôÀÏ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ë‹¤ë‹¨íˆíŠ¸ë¥¼ ê°€í•˜ëŠ” ëŒ€ìƒ", explain = {
+        		"ì•„ë ˆìŠ¤ ë“±ì˜ ê³ ì†ìœ¼ë¡œ ì—°ì†ê³µê²©ì„ í•˜ëŠ” í”¼í•´ë¥¼",
+        		"0.5ì´ˆì˜ ë¬´ì ìœ¼ë¡œ ìƒì¡´ë ¥ì„ ë†’ì¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "¹æ¾î·ÂÀÌ ³ôÀº ´ë»ó", explain = {
-        		"³·Àº ´ë¹ÌÁö·Î ¿©·¯ ¹ø Å¸°İÇÏ´Â ¼ºÁú ¶§¹®¿¡",
-        		"¹æ¾î·ÂÀÌ ³ôÀº ´ë»ó¿¡°Ô´Â ´ë¹ÌÁö°¡ ¿ÀÈ÷·Á ´ú",
-        		"³ª¿Ã °¡´É¼ºÀÌ ÀÖ½À´Ï´Ù."
+        @Description(subject = "ë°©ì–´ë ¥ì´ ë†’ì€ ëŒ€ìƒ", explain = {
+        		"ë‚®ì€ ëŒ€ë¯¸ì§€ë¡œ ì—¬ëŸ¬ ë²ˆ íƒ€ê²©í•˜ëŠ” ì„±ì§ˆ ë•Œë¬¸ì—",
+        		"ë°©ì–´ë ¥ì´ ë†’ì€ ëŒ€ìƒì—ê²ŒëŠ” ëŒ€ë¯¸ì§€ê°€ ì˜¤íˆë ¤ ëœ",
+        		"ë‚˜ì˜¬ ê°€ëŠ¥ì„±ì´ ìˆìŠµë‹ˆë‹¤."
+        }),
+        @Description(subject = "ëŒ€ë¯¸ì§€ ê°ê²½", explain = {
+        		"ì ì´ ì–´ë– í•œ ìˆ˜ë‹¨ì´ë¼ë„ ë°›ëŠ” í”¼í•´ë¥¼ ê°ê²½í•  ìˆ˜ ìˆë‹¤ë©´",
+        		"í”¼í•´ ê°ê²½ì„ ì—¬ëŸ¬ë²ˆ ì ìš©í•˜ëŠ” ê¼´ì´ê¸°ì—",
+        		"ëŒ€ë¯¸ì§€ê°€ ë” ì ê²Œ ë“¤ì–´ê°‘ë‹ˆë‹¤.",
+        		"ì˜ˆì‹œë¡œ ë² ë¥´íˆ¬ìŠ¤ ê°™ì€ ì ì„ ë§Œë‚œë‹¤ë©´,",
+        		"ëŒ€ë¯¸ì§€ 75% ê°ì†Œë„ ì„¸ë²ˆ ì ìš©ë˜ëŠ” ì‹ì´ì£ ."
         })
 }, stats = @Stats(offense = Level.FOUR, survival = Level.FOUR, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.VERY_EASY)
 
@@ -55,10 +62,21 @@ public class MultiHit extends AbilityBase {
 	private LivingEntity target;
 	private double dmg = 0;
 	
-	private final int invincibility = InvConfig.getValue();
+	private final int multiply = DAMAGE_CONFIG.getValue();
+	private final int invincibility = (int) (INV_CONFIG.getValue() * 20);
 	
-	public static final SettingObject<Integer> InvConfig = abilitySettings.new SettingObject<Integer>(MultiHit.class,
-			"Inv Time", 10, "# ¹«Àû ½Ã°£", "# ´ÜÀ§´Â Æ½ÀÔ´Ï´Ù. 20Æ½ = 1ÃÊ") {
+	public static final SettingObject<Double> INV_CONFIG = abilitySettings.new SettingObject<Double>(MultiHit.class,
+			"invulnerable-time", 0.5, "# ë¬´ì  ì‹œê°„", "# ë‹¨ìœ„ëŠ” ì´ˆì…ë‹ˆë‹¤.") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(MultiHit.class,
+			"damage-count", 2, "# íƒ€ê²© íšŸìˆ˜") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -67,7 +85,17 @@ public class MultiHit extends AbilityBase {
 
 	};
 	
-	private final AbilityTimer attacking = new AbilityTimer(2) {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(MultiHit.class,
+			"damage", 50, "# ëŒ€ë¯¸ì§€", "# ë‹¨ìœ„: % (50 = 50%)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	private final AbilityTimer attacking = new AbilityTimer(COUNT_CONFIG.getValue()) {
 
 		@Override
 		protected void run(int arg0) {
@@ -101,7 +129,7 @@ public class MultiHit extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
 		if (e.getDamager().equals(getPlayer()) && !attacking.isRunning()) {
-			dmg = (2 * (e.getDamage() / 5));
+			dmg = e.getDamage() * (multiply / (double) 100);
 			e.setDamage(dmg);
 			target = (LivingEntity) e.getEntity();
 			attacking.start();

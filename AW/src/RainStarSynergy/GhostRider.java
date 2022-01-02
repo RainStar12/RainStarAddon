@@ -62,16 +62,16 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "°í½ºÆ® ¶óÀÌ´õ", rank = Rank.L, species = Species.OTHERS, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÁö¿ÁºÒ ÁúÁÖ¡×f: ¸Å¿ì ºü¸¥ ¼Óµµ·Î ÀÌµ¿ÇÏ¸ç, Áö³ª°¡´Â ÀÚ¸®¸¦ ºÒÁö¸¨´Ï´Ù.",
-		" È­¿° °è¿­ ÇÇÇØ¸¦ ¹«½ÃÇÏ°í, ÀÚ½Å ÁÖº¯ $[RANGE]Ä­ ÀÌ³»ÀÇ È­¿°°è ÇÇÇØ¸¦ ¹Ş´Â »ı¸íÃ¼µéÀº",
-		" ÇØ´ç È­¿° ÇÇÇØ¸¦ 2¹è·Î ¹Ş½À´Ï´Ù. ´Ş¸®¸ç ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ ½ºÃÄ Áö³ª°¡¸é",
-		" ÃÖ´ë 3´Ü°è±îÁö ´õ ºü¸£°Ô °¡¼ÓÇÏ°í ´ë»óÀÌ °¡Áø ¹ßÈ­ ½Ã°£À» 1.5¹è·Î ´Ã¸³´Ï´Ù.",
-		" ¹°¿¡ µé¾î°¡¸é ÃàÃàÇÔ È¿°ú°¡ »ı°Ü 2ÃÊ°£ »¡¶óÁöÁö ¸øÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×cÂüÈ¸ÀÇ ½Ã¼±¡×f: ´ë»ó°ú ÀÚ½ÅÀÌ ¼­·Î ¸¶ÁÖº¸°í ÀÖÀ» ¶§",
-		" ´ë»óÀÌ ´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô ÀÔÈù ÇÇÇØ·®¿¡ ºñ·ÊÇØ ´ë»óÀ» ÇÇÇØÀÔÈ÷°í,",
-		" ´ë»óÀÌ Á×ÀÎ ´Ù¸¥ ÇÃ·¹ÀÌ¾îÀÇ ¼ö¿¡ ºñ·ÊÇØ ´ë»óÀ» ±âÀı½ÃÅµ´Ï´Ù. $[COOLDOWN]",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×dhorn1111"
+		name = "ê³ ìŠ¤íŠ¸ ë¼ì´ë”", rank = Rank.L, species = Species.OTHERS, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì§€ì˜¥ë¶ˆ ì§ˆì£¼Â§f: ë§¤ìš° ë¹ ë¥¸ ì†ë„ë¡œ ì´ë™í•˜ë©°, ì§€ë‚˜ê°€ëŠ” ìë¦¬ë¥¼ ë¶ˆì§€ë¦…ë‹ˆë‹¤.",
+		" í™”ì—¼ ê³„ì—´ í”¼í•´ë¥¼ ë¬´ì‹œí•˜ê³ , ìì‹  ì£¼ë³€ $[RANGE]ì¹¸ ì´ë‚´ì˜ í™”ì—¼ê³„ í”¼í•´ë¥¼ ë°›ëŠ” ìƒëª…ì²´ë“¤ì€",
+		" í•´ë‹¹ í™”ì—¼ í”¼í•´ë¥¼ 2ë°°ë¡œ ë°›ìŠµë‹ˆë‹¤. ë‹¬ë¦¬ë©° ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ìŠ¤ì³ ì§€ë‚˜ê°€ë©´",
+		" ìµœëŒ€ 3ë‹¨ê³„ê¹Œì§€ ë” ë¹ ë¥´ê²Œ ê°€ì†í•˜ê³  ëŒ€ìƒì´ ê°€ì§„ ë°œí™” ì‹œê°„ì„ 1.5ë°°ë¡œ ëŠ˜ë¦½ë‹ˆë‹¤.",
+		" ë¬¼ì— ë“¤ì–´ê°€ë©´ ì¶•ì¶•í•¨ íš¨ê³¼ê°€ ìƒê²¨ 2ì´ˆê°„ ë¹¨ë¼ì§€ì§€ ëª»í•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cì°¸íšŒì˜ ì‹œì„ Â§f: ëŒ€ìƒê³¼ ìì‹ ì´ ì„œë¡œ ë§ˆì£¼ë³´ê³  ìˆì„ ë•Œ",
+		" ëŒ€ìƒì´ ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ ì…íŒ í”¼í•´ëŸ‰ì— ë¹„ë¡€í•´ ëŒ€ìƒì„ í”¼í•´ì…íˆê³ ,",
+		" ëŒ€ìƒì´ ì£½ì¸ ë‹¤ë¥¸ í”Œë ˆì´ì–´ì˜ ìˆ˜ì— ë¹„ë¡€í•´ ëŒ€ìƒì„ ê¸°ì ˆì‹œí‚µë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§dhorn1111"
 		})
 
 public class GhostRider extends Synergy implements ActiveHandler {
@@ -89,7 +89,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		    running.start();
 		    getPlayer().setWalkSpeed(0.3f);
 		    getPlayer().setFlySpeed(0.2f);
-		    actionbarChannel.update("¡×3°¡¼Ó ¡×b0¡×3´Ü°è");
+		    actionbarChannel.update("Â§3ê°€ì† Â§b0Â§3ë‹¨ê³„");
 		    circle.start();
 		} else if (update == AbilityBase.Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
 			for (Block block : blocks) {
@@ -104,7 +104,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	}
 
 	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(GhostRider.class,
-			"range", 5, "# È­¿° ÇÇÇØ Áõ°¡ ¹üÀ§") {
+			"range", 5, "# í™”ì—¼ í”¼í•´ ì¦ê°€ ë²”ìœ„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -114,7 +114,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(GhostRider.class, 
-			"COOLDOWN", 100, "# ÄğÅ¸ÀÓ") {
+			"COOLDOWN", 100, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -247,7 +247,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 				} else if (!getPlayer().isSprinting() && attacking.isRunning() && attacking.stack >= 1) {
 					attacking.stack--;
 					attacking.stop(true);
-					actionbarChannel.update("¡×3°¡¼Ó ¡×b" + attacking.stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: ¡×fÁ¾·á");
+					actionbarChannel.update("Â§3ê°€ì† Â§b" + attacking.stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: Â§fì¢…ë£Œ");
 					if (attacking.stack == 0) {
 						getPlayer().setWalkSpeed(0.3f);
 						getPlayer().setFlySpeed(0.2f);
@@ -390,7 +390,6 @@ public class GhostRider extends Synergy implements ActiveHandler {
 				spirits[a].setVisible(false);
 				spirits[a].setInvulnerable(true);
 				spirits[a].setSmall(true);
-				spirits[a].setGravity(false);
 				NMS.removeBoundingBox(spirits[a]);
 				spirits_head[a] = Skulls.createSkull(killedwho.get(player).get(a).getName());
 				
@@ -436,7 +435,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update("¡×3°¡¼Ó ¡×b" + stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: " + getFixedCount() + "ÃÊ");
+			actionbarChannel.update("Â§3ê°€ì† Â§b" + stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: " + getFixedCount() + "ì´ˆ");
 			
 			if (!getPlayer().isDead() && getPlayer().isSprinting()) {		
 				if (pentity == null) {
@@ -462,7 +461,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 			}
 			if (isRunning()) {
 				setCount(200);
-				actionbarChannel.update("¡×3°¡¼Ó ¡×b" + stack + "¡×3´Ü°è, ¡×6Áö¼Ó ½Ã°£¡×f: " + getFixedCount() + "ÃÊ");
+				actionbarChannel.update("Â§3ê°€ì† Â§b" + stack + "Â§3ë‹¨ê³„, Â§6ì§€ì† ì‹œê°„Â§f: " + getFixedCount() + "ì´ˆ");
 			}
 			if (stack == 1) {
 				getPlayer().setWalkSpeed(0.325f);
@@ -484,7 +483,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void onEnd() {
-			actionbarChannel.update("¡×6Áö¼Ó ½Ã°£ ¡×fÁ¾·á");
+			actionbarChannel.update("Â§6ì§€ì† ì‹œê°„ Â§fì¢…ë£Œ");
 			stack = 0;
 			getPlayer().setWalkSpeed(0.3f);
 			getPlayer().setFlySpeed(0.2f);
@@ -506,7 +505,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update("¡×bÃàÃàÇÔ¡×f: " + (getCount() / 5.0) + "ÃÊ");
+			actionbarChannel.update("Â§bì¶•ì¶•í•¨Â§f: " + (getCount() / 5.0) + "ì´ˆ");
 		}
 
 		private void reset() {
@@ -523,6 +522,5 @@ public class GhostRider extends Synergy implements ActiveHandler {
 			actionbarChannel.update(null);
 		}
 	}
-
 	
 }

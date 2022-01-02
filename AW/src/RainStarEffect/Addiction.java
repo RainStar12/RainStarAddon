@@ -17,9 +17,9 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
-@EffectManifest(name = "Æ÷¼Ç Áßµ¶", displayName = "¡×5Æ÷¼Ç Áßµ¶", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "í¬ì…˜ ì¤‘ë…", displayName = "Â§5í¬ì…˜ ì¤‘ë…", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 }, description = {
-		"ºÎÁ¤ °è¿­ÀÇ Æ÷¼Ç È¿°úµéÀÇ °è¼ö°¡ 1 ³ô¾ÆÁı´Ï´Ù."
+		"ë¶€ì • ê³„ì—´ì˜ í¬ì…˜ íš¨ê³¼ë“¤ì˜ ê³„ìˆ˜ê°€ 1 ë†’ì•„ì§‘ë‹ˆë‹¤."
 })
 public class Addiction extends Effect {
 
@@ -34,19 +34,19 @@ public class Addiction extends Effect {
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES_BAD 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.POISON, Pair.of("¡×2µ¶", PotionEffectType.POISON.getColor()))
-			.put(PotionEffectType.WEAKNESS, Pair.of("¡×7³ª¾àÇÔ", PotionEffectType.WEAKNESS.getColor()))
-			.put(PotionEffectType.SLOW, Pair.of("¡×8±¸¼Ó", PotionEffectType.SLOW.getColor()))
-			.put(PotionEffectType.HARM, Pair.of("¡×4°íÅë", PotionEffectType.HARM.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.WITHER, Pair.of("¡×0½Ãµê", Color.fromRGB(1, 1, 1)))
-			.put(PotionEffectType.BLINDNESS, Pair.of("¡×7½Ç¸í", Color.fromRGB(140, 140, 140)))
-			.put(PotionEffectType.CONFUSION, Pair.of("¡×5¸Ö¹Ì", Color.fromRGB(171, 130, 18)))
-			.put(PotionEffectType.GLOWING, Pair.of("¡×f¹ß±¤", Color.fromRGB(254, 254, 254)))
-			.put(PotionEffectType.HUNGER, Pair.of("¡×2Çã±â", Color.fromRGB(134, 229, 127)))
-			.put(PotionEffectType.LEVITATION, Pair.of("¡×5°øÁß ºÎ¾ç", Color.fromRGB(171, 18, 151)))
-			.put(PotionEffectType.SLOW_DIGGING, Pair.of("¡×8Ã¤±¼ ÇÇ·Î", Color.fromRGB(93, 93, 93)))
-			.put(PotionEffectType.UNLUCK, Pair.of("¡×aºÒ¿î", Color.fromRGB(206, 242, 121)))
+			.put(PotionEffectType.POISON, Pair.of("Â§2ë…", PotionEffectType.POISON.getColor()))
+			.put(PotionEffectType.WEAKNESS, Pair.of("Â§7ë‚˜ì•½í•¨", PotionEffectType.WEAKNESS.getColor()))
+			.put(PotionEffectType.SLOW, Pair.of("Â§8êµ¬ì†", PotionEffectType.SLOW.getColor()))
+			.put(PotionEffectType.HARM, Pair.of("Â§4ê³ í†µ", PotionEffectType.HARM.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.WITHER, Pair.of("Â§0ì‹œë“¦", Color.fromRGB(1, 1, 1)))
+			.put(PotionEffectType.BLINDNESS, Pair.of("Â§7ì‹¤ëª…", Color.fromRGB(140, 140, 140)))
+			.put(PotionEffectType.CONFUSION, Pair.of("Â§5ë©€ë¯¸", Color.fromRGB(171, 130, 18)))
+			.put(PotionEffectType.GLOWING, Pair.of("Â§fë°œê´‘", Color.fromRGB(254, 254, 254)))
+			.put(PotionEffectType.HUNGER, Pair.of("Â§2í—ˆê¸°", Color.fromRGB(134, 229, 127)))
+			.put(PotionEffectType.LEVITATION, Pair.of("Â§5ê³µì¤‘ ë¶€ì–‘", Color.fromRGB(171, 18, 151)))
+			.put(PotionEffectType.SLOW_DIGGING, Pair.of("Â§8ì±„êµ´ í”¼ë¡œ", Color.fromRGB(93, 93, 93)))
+			.put(PotionEffectType.UNLUCK, Pair.of("Â§aë¶ˆìš´", Color.fromRGB(206, 242, 121)))
 			.build();
 
 	public Addiction(Participant participant, TimeUnit timeUnit, int duration) {

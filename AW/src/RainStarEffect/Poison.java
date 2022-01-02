@@ -20,12 +20,12 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "Áßµ¶", displayName = "¡×2Áßµ¶", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ì¤‘ë…", displayName = "Â§2ì¤‘ë…", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.HEALING_BAN
 }, description = {
-		"¡×2Áßµ¶¡×fµÇ¾î Áö¼ÓÀû ÇÇÇØ¸¦ ÀÔ½À´Ï´Ù.",
-		"¡×fÃ¼·ÂÀÌ ¹İ Ä­ ÀÌÇÏÀÏ ¶§´Â ÇÇÇØ¸¦ ÀÔÈ÷Áö ¾Ê°í,",
-		"¡×fÁßµ¶ µµÁß È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¶§ ´ë½Å ÇÇÇØ¸¦ ¹Ş½À´Ï´Ù."
+		"Â§2ì¤‘ë…Â§fë˜ì–´ ì§€ì†ì  í”¼í•´ë¥¼ ì…ìŠµë‹ˆë‹¤.",
+		"Â§fì²´ë ¥ì´ ë°˜ ì¹¸ ì´í•˜ì¼ ë•ŒëŠ” í”¼í•´ë¥¼ ì…íˆì§€ ì•Šê³ ,",
+		"Â§fì¤‘ë… ë„ì¤‘ íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ë•Œ ëŒ€ì‹  í”¼í•´ë¥¼ ë°›ìŠµë‹ˆë‹¤."
 })
 public class Poison extends AbstractGame.Effect implements Listener {
 

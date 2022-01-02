@@ -47,46 +47,46 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 
-@AbilityManifest(name = "Å©¸®½ºÅ»", rank = Rank.A, species = Species.OTHERS, explain = {
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×d»ý¸í ¼öÁ¤¡×f: Ã¼·Â 1.5Ä­À» ¼Ò¸ðÇØ Èí¼ö Ã¼·Â 1Ä­À» È¹µæÇÕ´Ï´Ù.",
-		" Èí¼ö Ã¼·Â·®ÀÌ ÃÖ´ë Ã¼·ÂÀÇ Àý¹Ý ÀÌÇÏ¿©¾ß »ç¿ë °¡´ÉÇÕ´Ï´Ù.",
-		"¡×7È° ¹ß»ç ¡×8- ¡×b¼öÁ¤ È­»ì¡×f: È­»ì µÎ ¹ßÀ» ¼Ò¸ðÇØ ¼öÁ¤ È­»ìÀ» ¹ß»çÇÕ´Ï´Ù.",
-		" ¼öÁ¤ È­»ìÀº ¹Ýµå½Ã Å©¸®Æ¼ÄÃÀÌ°í, ³ª¾Æ°¡´Â °Å¸®¿¡ ºñ·ÊÇÏ¿© °Å¸® ºñ·Ê ´ë¹ÌÁö ¹×",
-		" Å¸°ÝÇÑ ÀûÀ» ÃÖ´ë 5ÃÊ°£ ±¸¼Ó½ÃÅµ´Ï´Ù. ¸¸¾à ´ÙÀÌ¾Æ¸óµå°¡ ÀÖ´Ù¸é ÇÏ³ª¸¦ ¼Ò¸ðÇØ",
-		" ¼öÁ¤ È­»ìÀ» °­È­ÇÏ¿© ´õ »¡¸® ³¯¾Æ°¡°í ´ë»óÀ» °­ÇÏ°Ô ¹ÐÃÄ³À´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×3¼öÁ¤ ¹æº®¡×f: Èí¼ö Ã¼·ÂÀ» °¡Áö°í ÀÖÀ» ¶§ Èí¼ö Ã¼·Â·®À» ³Ñ´Â",
-		" ÇÇÇØ·®ÀÌ µé¾î¿Â´Ù¸é, ¿ÀÁ÷ Èí¼ö Ã¼·Â¸¸ÀÌ ¼ÒÁøµË´Ï´Ù.",
-		"¡×8[¡×7HIDDEN¡×8] ¡×5¸¶ÅºÀÇ »ç¼ö¡×f: Á¤¹Ð Á¶ÁØ µûÀ§°¡ ¾ø¾îµµ ¹é¹ß¹éÁß."
+@AbilityManifest(name = "í¬ë¦¬ìŠ¤íƒˆ", rank = Rank.A, species = Species.OTHERS, explain = {
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§dìƒëª… ìˆ˜ì •Â§f: ì²´ë ¥ 1.5ì¹¸ì„ ì†Œëª¨í•´ í¡ìˆ˜ ì²´ë ¥ 1ì¹¸ì„ íšë“í•©ë‹ˆë‹¤.",
+		" í¡ìˆ˜ ì²´ë ¥ëŸ‰ì´ ìµœëŒ€ ì²´ë ¥ì˜ ì ˆë°˜ ì´í•˜ì—¬ì•¼ ì‚¬ìš© ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§7í™œ ë°œì‚¬ Â§8- Â§bìˆ˜ì • í™”ì‚´Â§f: í™”ì‚´ ë‘ ë°œì„ ì†Œëª¨í•´ ìˆ˜ì • í™”ì‚´ì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" ìˆ˜ì • í™”ì‚´ì€ ë°˜ë“œì‹œ í¬ë¦¬í‹°ì»¬ì´ê³ , ë‚˜ì•„ê°€ëŠ” ê±°ë¦¬ì— ë¹„ë¡€í•˜ì—¬ ê±°ë¦¬ ë¹„ë¡€ ëŒ€ë¯¸ì§€ ë°",
+		" íƒ€ê²©í•œ ì ì„ ìµœëŒ€ 5ì´ˆê°„ êµ¬ì†ì‹œí‚µë‹ˆë‹¤. ë§Œì•½ ë‹¤ì´ì•„ëª¬ë“œê°€ ìžˆë‹¤ë©´ í•˜ë‚˜ë¥¼ ì†Œëª¨í•´",
+		" ìˆ˜ì • í™”ì‚´ì„ ê°•í™”í•˜ì—¬ ë” ë¹¨ë¦¬ ë‚ ì•„ê°€ê³  ëŒ€ìƒì„ ê°•í•˜ê²Œ ë°€ì³ëƒ…ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ìˆ˜ì • ë°©ë²½Â§f: í¡ìˆ˜ ì²´ë ¥ì„ ê°€ì§€ê³  ìžˆì„ ë•Œ í¡ìˆ˜ ì²´ë ¥ëŸ‰ì„ ë„˜ëŠ”",
+		" í”¼í•´ëŸ‰ì´ ë“¤ì–´ì˜¨ë‹¤ë©´, ì˜¤ì§ í¡ìˆ˜ ì²´ë ¥ë§Œì´ ì†Œì§„ë©ë‹ˆë‹¤.",
+		"Â§8[Â§7HIDDENÂ§8] Â§5ë§ˆíƒ„ì˜ ì‚¬ìˆ˜Â§f: ì •ë°€ ì¡°ì¤€ ë”°ìœ„ê°€ ì—†ì–´ë„ ë°±ë°œë°±ì¤‘."
 		},
 		summarize = {
-		"¡×7Ã¶±« ÁÂÅ¬¸¯¡×fÀ¸·Î ³» Ã¼·ÂÀ» »ç¿ëÇØ ¡×eÈí¼ö Ã¼·Â¡×fÀ» ¸¸µé¾î",
-		"¡×eÈí¼ö Ã¼·Â¡×fÀÌ ÀÖÀ» ¶§ ¡×eÈí¼ö Ã¼·Â·®¡×fº¸´Ùµµ ¸¹Àº ÇÇÇØ¸¦ ¹æ¾îÇØÁÝ´Ï´Ù.",
-		"È­»ìÀ» ¹ß»çÇÒ ¶§ µÎ ¹ßÀ» ¼Ò¸ðÇÏ¿© ÀûÁß ´ë»óÀ» ´À¸®°Ô ¸¸µé°í,",
-		"°Å¸® ºñ·Ê ÇÇÇØ¸¦ Ãß°¡·Î ÁÖ¸ç ¹Ýµå½Ã Ä¡¸íÅ¸°¡ ¹ß»ýÇÕ´Ï´Ù."
+		"Â§7ì² ê´´ ì¢Œí´ë¦­Â§fìœ¼ë¡œ ë‚´ ì²´ë ¥ì„ ì‚¬ìš©í•´ Â§eí¡ìˆ˜ ì²´ë ¥Â§fì„ ë§Œë“¤ì–´",
+		"Â§eí¡ìˆ˜ ì²´ë ¥Â§fì´ ìžˆì„ ë•Œ Â§eí¡ìˆ˜ ì²´ë ¥ëŸ‰Â§fë³´ë‹¤ë„ ë§Žì€ í”¼í•´ë¥¼ ë°©ì–´í•´ì¤ë‹ˆë‹¤.",
+		"í™”ì‚´ì„ ë°œì‚¬í•  ë•Œ ë‘ ë°œì„ ì†Œëª¨í•˜ì—¬ ì ì¤‘ ëŒ€ìƒì„ ëŠë¦¬ê²Œ ë§Œë“¤ê³ ,",
+		"ê±°ë¦¬ ë¹„ë¡€ í”¼í•´ë¥¼ ì¶”ê°€ë¡œ ì£¼ë©° ë°˜ë“œì‹œ ì¹˜ëª…íƒ€ê°€ ë°œìƒí•©ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "È°À» ½ÅÁßÇÏ°Ô Àß ¸ÂÃç¾ß ÇÏ´Â ¿ø°Å¸® µô·¯ ¹× ÅÊÄ¿ÀÔ´Ï´Ù. 20ÃÊ¸¶´Ù È¹µæÇÏ´Â",
-        "Èí¼ö Ã¼·ÂÀ» ¼ÒÁö Áß ´ë»óÀ» È°·Î ¸ÂÃß¸é ´ë»ó¿¡°Ô ¹Þ´Â ÇÇÇØ·®ÀÌ 1Ä­À»",
-        "³ÑÁö ¾Ê°Ô µÇ´Â Á¡, µµÁÖ¸¦ ÀúÁöÇÏ´Â ±¸¼Ó È¿°ú, 100% Å©¸®Æ¼ÄÃÀÇ",
-        "È¿°ú¸¦ ¹ÞÀ» ¼ö ÀÖ´Â È°ÀÌÁö¸¸ È­»ìÀ» 2°³¾¿ ¼Ò¸ðÇÔÀ» ÁÖÀÇÇÏ¼¼¿ä."
+        "í™œì„ ì‹ ì¤‘í•˜ê²Œ ìž˜ ë§žì¶°ì•¼ í•˜ëŠ” ì›ê±°ë¦¬ ë”œëŸ¬ ë° íƒ±ì»¤ìž…ë‹ˆë‹¤. 20ì´ˆë§ˆë‹¤ íšë“í•˜ëŠ”",
+        "í¡ìˆ˜ ì²´ë ¥ì„ ì†Œì§€ ì¤‘ ëŒ€ìƒì„ í™œë¡œ ë§žì¶”ë©´ ëŒ€ìƒì—ê²Œ ë°›ëŠ” í”¼í•´ëŸ‰ì´ 1ì¹¸ì„",
+        "ë„˜ì§€ ì•Šê²Œ ë˜ëŠ” ì , ë„ì£¼ë¥¼ ì €ì§€í•˜ëŠ” êµ¬ì† íš¨ê³¼, 100% í¬ë¦¬í‹°ì»¬ì˜",
+        "íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ìžˆëŠ” í™œì´ì§€ë§Œ í™”ì‚´ì„ 2ê°œì”© ì†Œëª¨í•¨ì„ ì£¼ì˜í•˜ì„¸ìš”."
 }, strong = {
-        @Description(subject = "¾ÈÁ¤ÀûÀÎ È­»ì ´ë¹ÌÁö", explain = {
-                "±âº»ÀûÀÎ È­»ìÀÇ Ä¡¸íÅ¸´Â È®·üÀÌÁö¸¸,",
-                "Ä¡¸íÅ¸°¡ º¸ÀåµÇ±â¿¡ ¾ÈÁ¤ÀûÀ¸·Î °í´ë¹ÌÁö¸¦ ³¾ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ì•ˆì •ì ì¸ í™”ì‚´ ëŒ€ë¯¸ì§€", explain = {
+                "ê¸°ë³¸ì ì¸ í™”ì‚´ì˜ ì¹˜ëª…íƒ€ëŠ” í™•ë¥ ì´ì§€ë§Œ,",
+                "ì¹˜ëª…íƒ€ê°€ ë³´ìž¥ë˜ê¸°ì— ì•ˆì •ì ìœ¼ë¡œ ê³ ëŒ€ë¯¸ì§€ë¥¼ ë‚¼ ìˆ˜ ìžˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "¼ø°£ ³ôÀº ´ë¹ÌÁö¸¦ ³»´Â ´ë»ó", explain = {
-                "¹ö¼­Ä¿³ª ³Ø½º µî ÇÑ ¹æÀÇ ÈûÀ» ½Ç¸° °ø°ÝÀ»",
-                "Èí¼ö Ã¼·Â ÇÑ Ä­ÀÇ ÇÇÇØ·Î ¹«¸¶½ÃÅ³ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ìˆœê°„ ë†’ì€ ëŒ€ë¯¸ì§€ë¥¼ ë‚´ëŠ” ëŒ€ìƒ", explain = {
+                "ë²„ì„œì»¤ë‚˜ ë„¥ìŠ¤ ë“± í•œ ë°©ì˜ íž˜ì„ ì‹¤ë¦° ê³µê²©ì„",
+                "í¡ìˆ˜ ì²´ë ¥ í•œ ì¹¸ì˜ í”¼í•´ë¡œ ë¬´ë§ˆì‹œí‚¬ ìˆ˜ ìžˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "ÀÌµ¿ ¼Óµµ°¡ ³ôÀº ´ë»ó", explain = {
-                "±¸¼Ó µð¹öÇÁ¸¦ °É¾î ´ë»óÀÇ ÀÌµ¿ ¼Óµµ¸¦ ´ÊÃçº¸¼¼¿ä."
+        @Description(subject = "ì´ë™ ì†ë„ê°€ ë†’ì€ ëŒ€ìƒ", explain = {
+                "êµ¬ì† ë””ë²„í”„ë¥¼ ê±¸ì–´ ëŒ€ìƒì˜ ì´ë™ ì†ë„ë¥¼ ëŠ¦ì¶°ë³´ì„¸ìš”."
         })
 }, weak = {
-        @Description(subject = "´Ù´ÜÈ÷Æ®", explain = {
-                "¼öÁ¤ ¹æº®Àº ÃÖ´ë 1Ä­±îÁöÀÇ ÇÇÇØ·Î ÁÙ¿©ÁÖ´Â °ÍÀÌÁö¸¸,",
-                "¿¬¼ÓÇØ¼­ ´ë¹ÌÁö¸¦ °¡ÇÏ´Â ´É·Â¿¡°Ô´Â Èí¼ö Ã¼·ÂÀÇ ¼Ò¸ð·ÂÀÌ »¡¶ó",
-                "¼öÁ¤ ¹æº®ÀÇ ÈûÀ» Á¦´ë·Î »ì¸®±â Èûµì´Ï´Ù."
+        @Description(subject = "ë‹¤ë‹¨ížˆíŠ¸", explain = {
+                "ìˆ˜ì • ë°©ë²½ì€ ìµœëŒ€ 1ì¹¸ê¹Œì§€ì˜ í”¼í•´ë¡œ ì¤„ì—¬ì£¼ëŠ” ê²ƒì´ì§€ë§Œ,",
+                "ì—°ì†í•´ì„œ ëŒ€ë¯¸ì§€ë¥¼ ê°€í•˜ëŠ” ëŠ¥ë ¥ì—ê²ŒëŠ” í¡ìˆ˜ ì²´ë ¥ì˜ ì†Œëª¨ë ¥ì´ ë¹¨ë¼",
+                "ìˆ˜ì • ë°©ë²½ì˜ íž˜ì„ ì œëŒ€ë¡œ ì‚´ë¦¬ê¸° íž˜ë“­ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.NINE, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.NORMAL)
 
@@ -113,8 +113,8 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 		    		SoundLib.BLOCK_BREWING_STAND_BREW.playSound(getPlayer().getLocation(), 1, 1.5f);
 		    		ParticleLib.SPELL_MOB.spawnParticle(getPlayer().getLocation(), RGB.YELLOW);
 			    	return true;
-	    		} else getPlayer().sendMessage("¡×c[¡×4!¡×c] ¡×dÃ¼·Â¡×fÀÌ ¸ðÀÚ¶ø´Ï´Ù.");
-	    	} else getPlayer().sendMessage("¡×c[¡×4!¡×c] ¡×eÈí¼ö Ã¼·Â¡×fÀÌ ³Ê¹« ¸¹½À´Ï´Ù.");
+	    		} else getPlayer().sendMessage("Â§c[Â§4!Â§c] Â§dì²´ë ¥Â§fì´ ëª¨ìžëžë‹ˆë‹¤.");
+	    	} else getPlayer().sendMessage("Â§c[Â§4!Â§c] Â§eí¡ìˆ˜ ì²´ë ¥Â§fì´ ë„ˆë¬´ ë§ŽìŠµë‹ˆë‹¤.");
 	    }
 		return false;
 	}
@@ -182,8 +182,8 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 			    				if (checktarget.contains(target)) {
 				    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 200, 1, true);
 				    				e.setDamage(e.getDamage() * 2);
-					    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×f100m ¹ÛÀÇ ÀûÀ» 2¿¬¼ÓÀ¸·Î ¸ÂÈ÷¼Ì½À´Ï´Ù.");
-					    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×5¸¶ÅºÀÇ »ç¼ö¡×f¸¦ ´Þ¼ºÇÏ¿´½À´Ï´Ù.");
+					    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§f100m ë°–ì˜ ì ì„ 2ì—°ì†ìœ¼ë¡œ ë§žížˆì…¨ìŠµë‹ˆë‹¤.");
+					    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§5ë§ˆíƒ„ì˜ ì‚¬ìˆ˜Â§fë¥¼ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 					    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());	
 					    			checktarget.clear();
 			    				} else {
@@ -195,8 +195,8 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 		    				if (checktarget.contains(target)) {
 			    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 200, 1, true);
 			    				e.setDamage(e.getDamage() * 2);
-				    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×f100m ¹ÛÀÇ ÀûÀ» 2¿¬¼ÓÀ¸·Î ¸ÂÈ÷¼Ì½À´Ï´Ù.");
-				    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×5¸¶ÅºÀÇ »ç¼ö¡×f¸¦ ´Þ¼ºÇÏ¿´½À´Ï´Ù.");
+				    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§f100m ë°–ì˜ ì ì„ 2ì—°ì†ìœ¼ë¡œ ë§žížˆì…¨ìŠµë‹ˆë‹¤.");
+				    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§5ë§ˆíƒ„ì˜ ì‚¬ìˆ˜Â§fë¥¼ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 				    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 				    			checktarget.clear();
 		    				} else {

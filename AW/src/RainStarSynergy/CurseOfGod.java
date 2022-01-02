@@ -47,17 +47,17 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "½ÅÀÇ ÀúÁÖ", rank = Rank.S, species = Species.GOD, explain = {
-		"¡×7Ã¶±« Å¸°ÔÆÃ ¡×8- ¡×c½Å¹ú¡×f: ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ 13Ä­ ³»¿¡¼­ Ã¶±« ¿ìÅ¬¸¯ ½Ã",
-		" $[DURATION]ÃÊ°£ Áö¼ÓµÇ´Â ´ë»óÀÇ ¡×bºĞ½Å¡×fÀ» ¼ÒÈ¯ÇØ³À´Ï´Ù. $[COOLDOWN]",
-		" ¡×bºĞ½Å¡×fÀ¸·ÎºÎÅÍ 6.5Ä­ ³» ¸ğµç ÇÃ·¹ÀÌ¾î´Â ¡×bºĞ½Å¡×fÀ» ¹Ù¶óº¸¸ç ¡×bºĞ½Å¡×fÀ» Å¸°İÇÒ ¶§",
-		" 50%ÀÇ ÇÇÇØ·®À» ¡×bºĞ½Å¡×fÀÇ ÁÖÀÎ¿¡°Ô ÀÔÈ÷°í, ¡×5ÀúÁÖ¡×f »óÅÂÀÌ»óÀ» °É¸ç ²ø¾î¿É´Ï´Ù.",
-		" ÀÌÈÄ ±×µéÀÌ ºĞ½Å¿¡°Ô ÀÔÈù ÇÇÇØ·®¿¡ ºñ·ÊÇØ ¼Ó¹Ú´çÇÕ´Ï´Ù.",
-		" ¡×bºĞ½Å¡×fÀÌ ÀÖÀ» ¶§, ÀÚ½ÅÀÌ ÁÖ´Â ÇÇÇØ·®ÀÌ 25% °¨¼ÒÇÕ´Ï´Ù.",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×5ÀúÁÖ¡×f: »óÅÂÀÌ»óÀÌ Áö¼ÓµÇ´Â µ¿¾È °©¿Ê¿¡ ¡×c±Í¼Ó ÀúÁÖ¡×f°¡ ºÎ¿©µË´Ï´Ù.",
-		" ¡×5ÀúÁÖ¡×f¸¦ Á¦¿ÜÇÑ ¹Ş°Ô µÉ ¸ğµç »óÅÂÀÌ»ó Áö¼Ó½Ã°£ÀÌ 2¹è Áõ°¡ÇÕ´Ï´Ù.",
-		" ÀÌ È¿°ú´Â Áßº¹À¸·Î ¹ŞÀ¸¸é Áö¼Ó ½Ã°£ÀÌ °è¼ÓÇØ¼­ ½×ÀÌ°Ô µË´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×ecommon_Mango"
+		name = "ì‹ ì˜ ì €ì£¼", rank = Rank.S, species = Species.GOD, explain = {
+		"Â§7ì² ê´´ íƒ€ê²ŒíŒ… Â§8- Â§cì‹ ë²ŒÂ§f: ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ 13ì¹¸ ë‚´ì—ì„œ ì² ê´´ ìš°í´ë¦­ ì‹œ",
+		" $[DURATION]ì´ˆê°„ ì§€ì†ë˜ëŠ” ëŒ€ìƒì˜ Â§bë¶„ì‹ Â§fì„ ì†Œí™˜í•´ëƒ…ë‹ˆë‹¤. $[COOLDOWN]",
+		" Â§bë¶„ì‹ Â§fìœ¼ë¡œë¶€í„° 6.5ì¹¸ ë‚´ ëª¨ë“  í”Œë ˆì´ì–´ëŠ” Â§bë¶„ì‹ Â§fì„ ë°”ë¼ë³´ë©° Â§bë¶„ì‹ Â§fì„ íƒ€ê²©í•  ë•Œ",
+		" 50%ì˜ í”¼í•´ëŸ‰ì„ Â§bë¶„ì‹ Â§fì˜ ì£¼ì¸ì—ê²Œ ì…íˆê³ , Â§5ì €ì£¼Â§f ìƒíƒœì´ìƒì„ ê±¸ë©° ëŒì–´ì˜µë‹ˆë‹¤.",
+		" ì´í›„ ê·¸ë“¤ì´ ë¶„ì‹ ì—ê²Œ ì…íŒ í”¼í•´ëŸ‰ì— ë¹„ë¡€í•´ ì†ë°•ë‹¹í•©ë‹ˆë‹¤.",
+		" Â§bë¶„ì‹ Â§fì´ ìˆì„ ë•Œ, ìì‹ ì´ ì£¼ëŠ” í”¼í•´ëŸ‰ì´ 25% ê°ì†Œí•©ë‹ˆë‹¤.",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§5ì €ì£¼Â§f: ìƒíƒœì´ìƒì´ ì§€ì†ë˜ëŠ” ë™ì•ˆ ê°‘ì˜·ì— Â§cê·€ì† ì €ì£¼Â§fê°€ ë¶€ì—¬ë©ë‹ˆë‹¤.",
+		" Â§5ì €ì£¼Â§fë¥¼ ì œì™¸í•œ ë°›ê²Œ ë  ëª¨ë“  ìƒíƒœì´ìƒ ì§€ì†ì‹œê°„ì´ 2ë°° ì¦ê°€í•©ë‹ˆë‹¤.",
+		" ì´ íš¨ê³¼ëŠ” ì¤‘ë³µìœ¼ë¡œ ë°›ìœ¼ë©´ ì§€ì† ì‹œê°„ì´ ê³„ì†í•´ì„œ ìŒ“ì´ê²Œ ë©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§ecommon_Mango"
 		})
 
 public class CurseOfGod extends Synergy implements ActiveHandler {
@@ -93,7 +93,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "cooldown", 80,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -108,7 +108,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	};
 
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "duration", 10,
-			"# Áö¼Ó½Ã°£") {
+			"# ì§€ì†ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -146,7 +146,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 			armorStand = target.getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
 			if (ServerVersion.getVersion() >= 10 && ServerVersion.getVersion() < 15)
 				armorStand.setInvulnerable(true);
-			armorStand.setCustomName("¡×e" + target.getName() + "¡×fÀÇ ¡×bºĞ½Å");
+			armorStand.setCustomName("Â§e" + target.getName() + "Â§fì˜ Â§bë¶„ì‹ ");
 			armorStand.setCustomNameVisible(true);
 			armorStand.setBasePlate(false);
 			armorStand.setArms(true);
@@ -170,7 +170,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 			}
 			if (armorStand == null) {
 				this.stop(false);
-				getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cºĞ½ÅÀÌ »ç¶óÁ® ´É·ÂÀÌ Áï½Ã Á¾·áµÇ¾ú½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cë¶„ì‹ ì´ ì‚¬ë¼ì ¸ ëŠ¥ë ¥ì´ ì¦‰ì‹œ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
 			}
 			if (count % 8 == 0) {
 				for (Location loc : sphere.toLocations(armorStand.getLocation().clone().add(0, 1, 0))) {

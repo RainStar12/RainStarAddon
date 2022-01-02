@@ -44,13 +44,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "ÀÎ°£ ¾ß±¸", rank = Rank.S, species = Species.HUMAN, explain = {
-		"Ã¶±« ¿ìÅ¬¸¯ ½Ã ¡×cÃÖ±Ù¿¡ ³ª¸¦ ¶§¸° ´ë»ó¡×fÀÌ °æÁ÷µÈ Ã¤ ¶°¿À¸¨´Ï´Ù. $[COOLDOWN]",
-		"ÀÌ¶§ ´ë»ó¿¡°Ô °ËÀ» ¡×bÈÖµÎ¸£¸é¡×f ÇØ´ç ¹æÇâÀ¸·Î ¸Ö¸® ³¯¾Æ°©´Ï´Ù. ¡×3±ø!¡×f",
-		"ÀÌ ´É·ÂÀº ±âº» ±ÙÁ¢ °ø°İÀ¸·Îµµ ¾àÇÏ°Ô ¹ßµ¿ÇÕ´Ï´Ù.",
-		"´ë»óÀÌ ³¯¾Æ°¡´Â µµÁß »ı¸íÃ¼¸¦ ½ºÃÄ Áö³ª°¡°Ô µÈ´Ù¸é ´ë»ó°ú »ı¸íÃ¼´Â",
-		"¡×c¹ß»çÃ¼ ÇÇÇØ¡×f¸¦ $[DAMAGE_BY_ENTITY]¸¸Å­ ÀÔÀ¸¸ç, ´ë»óÀÌ º®¿¡ Ãæµ¹ÇÏ°Ô µÈ´Ù¸é",
-		"¡×c¹æ¾î·Â ¹«½Ã ÇÇÇØ¡×f¸¦ $[DAMAGE_BY_WALL]¸¸Å­ ÀÔ°í 0.25ÃÊ ÀÌ»ó Ã¼°ø ½Ã $[STUN_DURATION]Æ½°£ ¡×e±âÀı¡×fÇÕ´Ï´Ù."
+		name = "ì¸ê°„ ì•¼êµ¬", rank = Rank.S, species = Species.HUMAN, explain = {
+		"ì² ê´´ ìš°í´ë¦­ ì‹œ Â§cìµœê·¼ì— ë‚˜ë¥¼ ë•Œë¦° ëŒ€ìƒÂ§fì´ ê²½ì§ëœ ì±„ ë– ì˜¤ë¦…ë‹ˆë‹¤. $[COOLDOWN]",
+		"ì´ë•Œ ëŒ€ìƒì—ê²Œ ê²€ì„ Â§bíœ˜ë‘ë¥´ë©´Â§f í•´ë‹¹ ë°©í–¥ìœ¼ë¡œ ë©€ë¦¬ ë‚ ì•„ê°‘ë‹ˆë‹¤. Â§3ê¹¡!Â§f",
+		"ì´ ëŠ¥ë ¥ì€ ê¸°ë³¸ ê·¼ì ‘ ê³µê²©ìœ¼ë¡œë„ ì•½í•˜ê²Œ ë°œë™í•©ë‹ˆë‹¤.",
+		"ëŒ€ìƒì´ ë‚ ì•„ê°€ëŠ” ë„ì¤‘ ìƒëª…ì²´ë¥¼ ìŠ¤ì³ ì§€ë‚˜ê°€ê²Œ ëœë‹¤ë©´ ëŒ€ìƒê³¼ ìƒëª…ì²´ëŠ”",
+		"Â§cë°œì‚¬ì²´ í”¼í•´Â§fë¥¼ $[DAMAGE_BY_ENTITY]ë§Œí¼ ì…ìœ¼ë©°, ëŒ€ìƒì´ ë²½ì— ì¶©ëŒí•˜ê²Œ ëœë‹¤ë©´",
+		"Â§cë°©ì–´ë ¥ ë¬´ì‹œ í”¼í•´Â§fë¥¼ $[DAMAGE_BY_WALL]ë§Œí¼ ì…ê³  0.25ì´ˆ ì´ìƒ ì²´ê³µ ì‹œ $[STUN_DURATION]í‹±ê°„ Â§eê¸°ì ˆÂ§fí•©ë‹ˆë‹¤."
 		})
 
 public class HumanBaseball extends Synergy implements ActiveHandler {
@@ -61,7 +61,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"cooldown", 70, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 70, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -75,7 +75,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DAMAGE_BY_ENTITY 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"damage-by-entity", 12, "# »ı¸íÃ¼¿¡ ºÎµúÈú ¶§ ¾çÂÊÀÇ ÇÇÇØ", "# ÇÇÇØ Å¸ÀÔÀº ¹ß»çÃ¼ÀÔ´Ï´Ù.") {
+			"damage-by-entity", 12, "# ìƒëª…ì²´ì— ë¶€ë”ªí ë•Œ ì–‘ìª½ì˜ í”¼í•´", "# í”¼í•´ íƒ€ì…ì€ ë°œì‚¬ì²´ì…ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -84,7 +84,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DAMAGE_BY_WALL 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"damage-by-wall", 3, "# º®¿¡ ºÎµúÈú ¶§ ÇÇÇØ", "# ÇÇÇØ Å¸ÀÔÀº ¹æ¾î·Â ¹«½Ã ±ÙÁ¢ÀÔ´Ï´Ù.") {
+			"damage-by-wall", 3, "# ë²½ì— ë¶€ë”ªí ë•Œ í”¼í•´", "# í”¼í•´ íƒ€ì…ì€ ë°©ì–´ë ¥ ë¬´ì‹œ ê·¼ì ‘ì…ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -93,7 +93,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> STUN_DURATION 
 	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
-			"stun-duration", 40, "# º®¿¡ ºÎµúÈú ¶§ ±âÀı ½Ã°£ (´ÜÀ§: Æ½)", "# 20Æ½ = 1ÃÊ, 1Æ½ = 0.05ÃÊ") {
+			"stun-duration", 40, "# ë²½ì— ë¶€ë”ªí ë•Œ ê¸°ì ˆ ì‹œê°„ (ë‹¨ìœ„: í‹±)", "# 20í‹± = 1ì´ˆ, 1í‹± = 0.05ì´ˆ") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -158,10 +158,10 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 			if (target != null) {
-				getPlayer().sendMessage("¡×c[¡×b!¡×c] ¡×e" + target.getName() + "¡×f´ÔÀ» 5ÃÊ°£ ¸ØÃçµÓ´Ï´Ù.");
+				getPlayer().sendMessage("Â§c[Â§b!Â§c] Â§e" + target.getName() + "Â§fë‹˜ì„ 5ì´ˆê°„ ë©ˆì¶°ë‘¡ë‹ˆë‹¤.");
 				return stun.start();
 			} else {
-				getPlayer().sendMessage("¡×c[¡×b!¡×c] ¡×f¾ÆÁ÷ ´©±º°¡¿¡°Ô ÇÇÇØ¸¦ ÀÔÀº ÀûÀÌ ¾ø½À´Ï´Ù.");
+				getPlayer().sendMessage("Â§c[Â§b!Â§c] Â§fì•„ì§ ëˆ„êµ°ê°€ì—ê²Œ í”¼í•´ë¥¼ ì…ì€ ì ì´ ì—†ìŠµë‹ˆë‹¤.");
 			}
 		}
 		return false;

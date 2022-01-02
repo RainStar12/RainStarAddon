@@ -59,18 +59,19 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "¿©¿ì ±¸½½", rank = Rank.L, species = Species.OTHERS, explain = {
-		"ÁÖº¯ $[EATING_RANGE]Ä­ ³» »ı¸íÃ¼°¡ È¸º¹ÇÒ ¶§ Á¤±â¸¦ È¹µæÇÕ´Ï´Ù.",
-		"±¸½½ÀÇ È¿°ú´Â $[CHANGE_PERIOD]ÃÊ¸¶´Ù ÇöÀç »óÈ²¿¡ ÀûÇÕÇÏ°Ô º¯°æµË´Ï´Ù.",
-		"¡×aÈ¸º¹ ¡×7-¡×f 6ÃÊ Áö¼ÓÀÇ ¡×dÃÊÈ¸º¹¡×f »óÅÂ¸¦ ÇÏ³ª ºÎ¿©ÇÕ´Ï´Ù. $[MANA_HEAL]",
-		"¡×b¼Ó»ç ¡×7-¡×f $[RAPID_RANGE]Ä­ ³»ÀÇ °¡Àå °¡±î¿î Àû¿¡°Ô ¡×c°íÁ¤ ÇÇÇØ¡×f ¡×50.211¡×fÀÇ Åõ»çÃ¼¸¦ ¡×b¼Ó»ç¡×fÇÕ´Ï´Ù.",
-		" ¼Ó»ç ÇÇÇØ´Â ±âº» ¹«Àû ½Ã½ºÅÛÀ» ¹«½ÃÇÏ°í °è¼Ó ÀÔÈü´Ï´Ù. $[MANA_RAPID]",
-		"¡×dÀ¯µµ ¡×7-¡×f ´ë»óÀÇ ¹æÇâÀ¸·Î ºü¸£°Ô ³ª¾Æ°¡´Â ¡×dÀ¯µµ ¹Ì»çÀÏ¡×fÀ» ¹ß»çÇÕ´Ï´Ù.",
-		" ¹Ì»çÀÏÀº ÁöÇüÁö¹° È¤Àº »ı¸íÃ¼¿¡ Ãæµ¹ ½Ã Æø¹ßÇÕ´Ï´Ù. $[MANA_HOMING]",
-		"¡×e°üÅë ¡×7-¡×f $[PIERCE_RANGE]Ä­ ³»ÀÇ °¡Àå ¸Õ ´ë»ó¿¡°Ô Á÷°İÇÏ´Â Æ¯¼ö Åõ»çÃ¼¸¦ ¹ß»çÇÕ´Ï´Ù.",
-		" Åõ»çÃ¼´Â ÀûÀ» ±âÀı½ÃÅ°°í ÁöÇüÁö¹°°ú »ı¸íÃ¼¸¦ ¡×e°üÅë¡×fÇÕ´Ï´Ù. $[MANA_PIERCE]",
-		"¡×8Àº½Å ¡×7-¡×f ½Å¼Ó ¹× Å¸°ÔÆÃ ºÒ´É »óÅÂ°¡ µË´Ï´Ù. ¡×3¼Ò¸ğ ¡×7: ¡×f0",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×5Phillip_MS"
+@AbilityManifest(name = "ì—¬ìš° êµ¬ìŠ¬", rank = Rank.L, species = Species.OTHERS, explain = {
+		"ì£¼ë³€ $[EATING_RANGE]ì¹¸ ë‚´ ìƒëª…ì²´ê°€ íšŒë³µí•  ë•Œ ì •ê¸°ë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		"êµ¬ìŠ¬ì˜ íš¨ê³¼ëŠ” $[CHANGE_PERIOD]ì´ˆë§ˆë‹¤ í˜„ì¬ ìƒí™©ì— ì í•©í•˜ê²Œ ë³€ê²½ë©ë‹ˆë‹¤.",
+		"Â§aíšŒë³µ Â§7-Â§f 5ì´ˆ ì§€ì†ì˜ Â§dì´ˆíšŒë³µÂ§f ìƒíƒœë¥¼ í•˜ë‚˜ ë¶€ì—¬í•©ë‹ˆë‹¤. $[MANA_HEAL]",
+		"Â§bì†ì‚¬ Â§7-Â§f $[RAPID_RANGE]ì¹¸ ë‚´ì˜ ê°€ì¥ ê°€ê¹Œìš´ ì ì—ê²Œ Â§cê³ ì • í”¼í•´Â§f Â§50.211Â§fì˜ íˆ¬ì‚¬ì²´ë¥¼ Â§bì†ì‚¬Â§fí•©ë‹ˆë‹¤.",
+		" ì†ì‚¬ í”¼í•´ëŠ” ê¸°ë³¸ ë¬´ì  ì‹œìŠ¤í…œì„ ë¬´ì‹œí•˜ê³  ê³„ì† ì…í™ë‹ˆë‹¤. $[MANA_RAPID]",
+		" ì†ì‚¬ í”¼í•´ë¥¼ ì…ì€ ì ì€ ë°€ë ¤ë‚˜ì§€ ì•Šê³  ë°˜ëŒ€ë¡œ ëŒë ¤ì˜µë‹ˆë‹¤.",
+		"Â§dìœ ë„ Â§7-Â§f ëŒ€ìƒì˜ ë°©í–¥ìœ¼ë¡œ ë¹ ë¥´ê²Œ ë‚˜ì•„ê°€ëŠ” Â§dìœ ë„ ë¯¸ì‚¬ì¼Â§fì„ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" ë¯¸ì‚¬ì¼ì€ ì§€í˜•ì§€ë¬¼ í˜¹ì€ ìƒëª…ì²´ì— ì¶©ëŒ ì‹œ í­ë°œí•©ë‹ˆë‹¤. $[MANA_HOMING]",
+		"Â§eê´€í†µ Â§7-Â§f $[PIERCE_RANGE]ì¹¸ ë‚´ì˜ ê°€ì¥ ë¨¼ ëŒ€ìƒì—ê²Œ ì§ê²©í•˜ëŠ” íŠ¹ìˆ˜ íˆ¬ì‚¬ì²´ë¥¼ ë°œì‚¬í•©ë‹ˆë‹¤.",
+		" íˆ¬ì‚¬ì²´ëŠ” ì ì„ ê¸°ì ˆì‹œí‚¤ê³  ì§€í˜•ì§€ë¬¼ê³¼ ìƒëª…ì²´, ë°©ì–´ë ¥ì„ Â§eê´€í†µÂ§fí•©ë‹ˆë‹¤. $[MANA_PIERCE]",
+		"Â§8ì€ì‹  Â§7-Â§f ì‹ ì† ë° íƒ€ê²ŒíŒ… ë¶ˆëŠ¥ ìƒíƒœê°€ ë©ë‹ˆë‹¤. Â§3ì†Œëª¨ Â§7: Â§f0",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§5Phillip_MS"
 		})
 
 public class FoxCrystalBall extends AbilityBase {
@@ -79,12 +80,12 @@ public class FoxCrystalBall extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> PIERCE_DAMAGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"pierce-damage", 12, "# °üÅëÀÇ ´ë¹ÌÁö") {
+	public static final SettingObject<Double> PIERCE_DAMAGE 
+	= abilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
+			"pierce-damage", 1.0, "# ê´€í†µì˜ ëŒ€ë¯¸ì§€") {
 		
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 		
@@ -92,7 +93,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> HOMING_DAMAGE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"homing-damage", 25, "# Æø¹ßÀÇ À§·Â", "# 10Àº 1FÀÔ´Ï´Ù.") {
+			"homing-damage", 15, "# í­ë°œ ëŒ€ë¯¸ì§€") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -103,7 +104,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> EATING_RANGE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"eating-range", 15, "# Á¤±â Èí¼öÀÇ ¹üÀ§") {
+			"eating-range", 15, "# ì •ê¸° í¡ìˆ˜ì˜ ë²”ìœ„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -114,7 +115,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> PIERCE_RANGE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"pierce-range", 14, "# °üÅë »óÅÂÀÇ ¹üÀ§") {
+			"pierce-range", 14, "# ê´€í†µ ìƒíƒœì˜ ë²”ìœ„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -123,12 +124,12 @@ public class FoxCrystalBall extends AbilityBase {
 		
 	};
 	
-	public static final SettingObject<Integer> RAPID_RANGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"rapid-range", 5, "# ¼Ó»ç »óÅÂÀÇ ¹üÀ§") {
+	public static final SettingObject<Double> RAPID_RANGE 
+	= abilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
+			"rapid-range", 4.5, "# ì†ì‚¬ ìƒíƒœì˜ ë²”ìœ„") {
 		
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 		
@@ -136,7 +137,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> HOMING_RANGE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"homing-range", 20, "# À¯µµ »óÅÂÀÇ Àû µµ¸ÁÀ» ÀÎ½ÄÇÏ´Â ¹üÀ§") {
+			"homing-range", 20, "# ìœ ë„ ìƒíƒœì˜ ì  ë„ë§ì„ ì¸ì‹í•˜ëŠ” ë²”ìœ„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -147,7 +148,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> CHANGE_PERIOD 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"change-period", 10, "# ±¸½½ È¿°úÀÇ º¯°æ ÁÖ±â (´ÜÀ§: ÃÊ)") {
+			"change-period", 10, "# êµ¬ìŠ¬ íš¨ê³¼ì˜ ë³€ê²½ ì£¼ê¸° (ë‹¨ìœ„: ì´ˆ)") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -158,7 +159,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	public static final SettingObject<Integer> MANA_PIERCE 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-pierce", 20, "# °üÅë »óÅÂÀÇ ¸¶³ª ¼Ò¸ğ·®") {
+			"mana-pierce", 20, "# ê´€í†µ ìƒíƒœì˜ ë§ˆë‚˜ ì†Œëª¨ëŸ‰") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -167,14 +168,14 @@ public class FoxCrystalBall extends AbilityBase {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
 	
 	public static final SettingObject<Integer> MANA_HEAL 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-heal", 50, "# È¸º¹ »óÅÂÀÇ ¸¶³ª ¼Ò¸ğ·®") {
+			"mana-heal", 50, "# íšŒë³µ ìƒíƒœì˜ ë§ˆë‚˜ ì†Œëª¨ëŸ‰") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -183,14 +184,14 @@ public class FoxCrystalBall extends AbilityBase {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
 	
 	public static final SettingObject<Integer> MANA_RAPID 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-rapid", 2, "# ¼Ó»ç »óÅÂÀÇ ¸¶³ª ¼Ò¸ğ·®") {
+			"mana-rapid", 2, "# ì†ì‚¬ ìƒíƒœì˜ ë§ˆë‚˜ ì†Œëª¨ëŸ‰") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -199,14 +200,14 @@ public class FoxCrystalBall extends AbilityBase {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
 	
 	public static final SettingObject<Integer> MANA_HOMING 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-homing", 75, "# À¯µµ »óÅÂÀÇ ¸¶³ª ¼Ò¸ğ·®") {
+			"mana-homing", 75, "# ìœ ë„ ìƒíƒœì˜ ë§ˆë‚˜ ì†Œëª¨ëŸ‰") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -215,7 +216,7 @@ public class FoxCrystalBall extends AbilityBase {
 		
 		@Override
 		public String toString() {
-			return "¡×3¼Ò¸ğ ¡×7: ¡×f" + getValue();
+			return "Â§3ì†Œëª¨ Â§7: Â§f" + getValue();
         }
 		
 	};
@@ -260,7 +261,7 @@ public class FoxCrystalBall extends AbilityBase {
 	
 	private int type = 0;
 	private int rapidcount = 0;
-	private String skillName = "¡×8Àº½Å";
+	private String skillName = "Â§8ì€ì‹ ";
 	private int mana = 0;
 	private int requireMana = 0;
 	private BossBar bossBar = null;
@@ -282,13 +283,13 @@ public class FoxCrystalBall extends AbilityBase {
 	private boolean isFar = false;
 	private boolean isAttackable = false;
 	
-	private final int damage = PIERCE_DAMAGE.getValue();
+	private final double damage = PIERCE_DAMAGE.getValue();
 	private final int explosion = HOMING_DAMAGE.getValue();
 	private final int period = CHANGE_PERIOD.getValue();
 	
 	private final int eatRange = EATING_RANGE.getValue();
 	private final int pierceRange = PIERCE_RANGE.getValue();
-	private final int rapidRange = RAPID_RANGE.getValue();
+	private final double rapidRange = RAPID_RANGE.getValue();
 	private final int homingRange = HOMING_RANGE.getValue();
 	
 	private final int pierceMana = MANA_PIERCE.getValue();
@@ -300,7 +301,7 @@ public class FoxCrystalBall extends AbilityBase {
 		
     	@Override
     	public void onStart() {
-    		bossBar = Bukkit.createBossBar("¡×b¸¶³ª¡×7: ¡×c" + mana + " ¡×7| " + skillName, BarColor.WHITE, BarStyle.SEGMENTED_10);
+    		bossBar = Bukkit.createBossBar("Â§bë§ˆë‚˜Â§7: Â§c" + mana + " Â§7| " + skillName, BarColor.WHITE, BarStyle.SEGMENTED_10);
     		bossBar.setProgress(mana * 0.01);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -340,9 +341,9 @@ public class FoxCrystalBall extends AbilityBase {
     			manaGain(1);
     		}
     		
-    		ac.update("¡×a´ÙÀ½ º¯°æ¡×f: " + (int) (10 - (count % (period * 20) / 20)) + "ÃÊ");
+    		ac.update("Â§aë‹¤ìŒ ë³€ê²½Â§f: " + (int) (10 - (count % (period * 20) / 20)) + "ì´ˆ");
     		bossBar.setProgress(mana * 0.01);
-			bossBar.setTitle("¡×b¸¶³ª¡×7: ¡×c" + mana + " ¡×7| " + skillName);
+			bossBar.setTitle("Â§bë§ˆë‚˜Â§7: Â§c" + mana + " Â§7| " + skillName);
     	}
     	
 		@Override
@@ -363,27 +364,27 @@ public class FoxCrystalBall extends AbilityBase {
 		if (isLowHealth) {
 			type = 1;
 			bossBar.setColor(BarColor.GREEN);
-			skillName = "¡×aÈ¸º¹";
+			skillName = "Â§aíšŒë³µ";
 			requireMana = healMana;
 		} else if (isClose) {
 			type = 2;
 			bossBar.setColor(BarColor.BLUE);
-			skillName = "¡×b¼Ó»ç";
+			skillName = "Â§bì†ì‚¬";
 			requireMana = rapidMana;
 		} else if (isFar) {
 			type = 3;
 			bossBar.setColor(BarColor.PURPLE);
-			skillName = "¡×dÀ¯µµ";
+			skillName = "Â§dìœ ë„";
 			requireMana = homingMana;
 		} else if (isAttackable) {
 			type = 4;
 			bossBar.setColor(BarColor.YELLOW);
-			skillName = "¡×e°üÅë";
+			skillName = "Â§eê´€í†µ";
 			requireMana = pierceMana;
 		} else {
 			type = 0;
 			bossBar.setColor(BarColor.WHITE);
-			skillName = "¡×8Àº½Å";
+			skillName = "Â§8ì€ì‹ ";
 			requireMana = 0;
 		}
 		SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
@@ -419,7 +420,7 @@ public class FoxCrystalBall extends AbilityBase {
 			}
 			break;
 		case 1:
-			SuperRegen.apply(getParticipant(), TimeUnit.TICKS, 120);
+			SuperRegen.apply(getParticipant(), TimeUnit.TICKS, 100);
 			if (!location.equals(getPlayer().getLocation())) {
 				for (Location loc : Line.between(location, getPlayer().getLocation().clone().add(0, 1, 0), 15).toLocations(location)) {
 					ParticleLib.REDSTONE.spawnParticle(loc, RGB.LIME);
@@ -468,7 +469,7 @@ public class FoxCrystalBall extends AbilityBase {
 							Location next = iterator.next();
 							ParticleLib.REDSTONE.spawnParticle(next, RGB.YELLOW);
 							for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, next, 1.25, 1.25, predicate)) {
-								Damages.damageMagic(damageable, getPlayer(), false, damage);
+								Damages.damageFixed(damageable, getPlayer(), (float) damage);
 								PotionEffects.BLINDNESS.addPotionEffect((LivingEntity) damageable, 20, 1, true);
 								if (damageable instanceof Player) Stun.apply(getGame().getParticipant((Player) damageable), TimeUnit.TICKS, 5);
 							}
@@ -530,7 +531,7 @@ public class FoxCrystalBall extends AbilityBase {
 			break;
 		case 2:
 			if (rapidcount >= 10) {
-				shotDelay =+ 39;
+				shotDelay =+ 79;
 				rapidcount = 0;
 			} else shotDelay =+ 1;
 			break;
@@ -538,7 +539,7 @@ public class FoxCrystalBall extends AbilityBase {
 			shotDelay =+ 129;
 			break;
 		case 4:
-			shotDelay =+ 39;
+			shotDelay =+ 59;
 			break;
 		}
 	}
@@ -675,6 +676,7 @@ public class FoxCrystalBall extends AbilityBase {
 							Damages.damageArrow(player, shooter, (float) 0.000001);
 							Healths.setHealth(player, player.getHealth() - 0.211);
 							player.setNoDamageTicks(1);
+							player.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(player.getLocation().toVector()).normalize().setY(0).multiply(0.15)));
 						}
 						stop(true);
 						return;
@@ -829,14 +831,22 @@ public class FoxCrystalBall extends AbilityBase {
 				final Material type = block.getType();
 				if (i < 180) {
 					if (type.isSolid()) {
-						entity.getLocation().getWorld().createExplosion(entity.getLocation(), (float) (explosion * 0.1), true, false);
+						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(entity.getLocation(), 1f, 1f);
+						for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, entity.getLocation(), 5, 5, predicate)) {
+							livingEntity.setNoDamageTicks(0);
+							Damages.damageExplosion(livingEntity, getPlayer(), explosion);
+						}
 						stop(true);
 						return;
 					}
 					entity.setLocation(location);
 					for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 						if (damageable.isValid() && !damageable.isDead() && !shooter.equals(damageable)) {
-							entity.getLocation().getWorld().createExplosion(entity.getLocation(), (float) (explosion * 0.1), true, false);
+							SoundLib.ENTITY_GENERIC_EXPLODE.playSound(entity.getLocation(), 1f, 1f);
+							for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, entity.getLocation(), 5, 5, predicate)) {
+								livingEntity.setNoDamageTicks(0);
+								Damages.damageExplosion(livingEntity, getPlayer(), explosion);
+							}
 							stop(false);
 							return;
 						}

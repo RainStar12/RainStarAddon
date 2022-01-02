@@ -46,18 +46,18 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "ÀÎ¼ºÁú", rank = Rank.C, species = Species.HUMAN, explain = {
-		"¾ß ²Ã¹Ş³Ä? ¤»¤»¤»¤»¤»¤»¤»",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×cµµ¹ß¡×f: ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ³» À§Ä¡¸¦ º¸°Ô µµ¹ßÇÏ¸ç",
-		" µµ¹ß¿¡ °É¸° ÇÃ·¹ÀÌ¾î´Â ³ª¸¦ Å¸°İÇÒ ¶§ Ãß°¡ ÇÇÇØ¸¦ Áİ´Ï´Ù. $[RIGHT_COOL]",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×c³ó¶ô¡×f: $[DURATION]ÃÊ°£ ³ó¶ô »óÅÂ°¡ µÇ¾î ´©±º°¡°¡ ³ª¸¦ Å¸°İ ½Ã",
-		" ÇÇÇØ¸¦ ÀÔÁö ¾Ê°í ·£´ıÇÑ À§Ä¡·Î ÅÚ·¹Æ÷Æ®ÇÕ´Ï´Ù. ³ª¸¦ Å¸°İÇÑ ÀûÀº",
-		" ÀÎº¥Åä¸® ½½·ÔÀÌ µÚ¼¯ÀÌ°Ô µË´Ï´Ù. $[LEFT_COOL]",
-		" ÀÌ »óÅÂµ¿¾È ÀÚ½Åµµ ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ ¶§¸± ¼ö ¾ø½À´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÆ¼¹è±ë¡×f: ´©±º°¡°¡ ³ª¸¦ ¹Ù¶óº¼ ¶§ ¿õÅ©¸®±â¸¦ ¿¬Å¸ÇÒ ¶§¸¶´Ù",
-		" ´ë»óÀ» 0.5ÃÊ°£ ±âÀı½ÃÅ°°í ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.",
-		"¡×7»ç¸Á ¡×8- ¡×cÈÆ¼ö¡×f: ³ª¸¦ Á×ÀÎ ÇÃ·¹ÀÌ¾î°¡ Æ¯Á¤ Çàµ¿À» ÃëÇÒ ¶§¸¶´Ù",
-		" ±×°Å ±×·¸°Ô ÇÏ´Â °Å ¾Æ´Ñµ¥~¸¦ µéÀ¸¸ç Àá±ñ ½Ç¸í´çÇÕ´Ï´Ù."
+		name = "ì¸ì„±ì§ˆ", rank = Rank.C, species = Species.HUMAN, explain = {
+		"ì•¼ ê¼´ë°›ëƒ? ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cë„ë°œÂ§f: ëª¨ë“  í”Œë ˆì´ì–´ê°€ ë‚´ ìœ„ì¹˜ë¥¼ ë³´ê²Œ ë„ë°œí•˜ë©°",
+		" ë„ë°œì— ê±¸ë¦° í”Œë ˆì´ì–´ëŠ” ë‚˜ë¥¼ íƒ€ê²©í•  ë•Œ ì¶”ê°€ í”¼í•´ë¥¼ ì¤ë‹ˆë‹¤. $[RIGHT_COOL]",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§cë†ë½Â§f: $[DURATION]ì´ˆê°„ ë†ë½ ìƒíƒœê°€ ë˜ì–´ ëˆ„êµ°ê°€ê°€ ë‚˜ë¥¼ íƒ€ê²© ì‹œ",
+		" í”¼í•´ë¥¼ ì…ì§€ ì•Šê³  ëœë¤í•œ ìœ„ì¹˜ë¡œ í…”ë ˆí¬íŠ¸í•©ë‹ˆë‹¤. ë‚˜ë¥¼ íƒ€ê²©í•œ ì ì€",
+		" ì¸ë²¤í† ë¦¬ ìŠ¬ë¡¯ì´ ë’¤ì„ì´ê²Œ ë©ë‹ˆë‹¤. $[LEFT_COOL]",
+		" ì´ ìƒíƒœë™ì•ˆ ìì‹ ë„ ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ë•Œë¦´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cí‹°ë°°ê¹…Â§f: ëˆ„êµ°ê°€ê°€ ë‚˜ë¥¼ ë°”ë¼ë³¼ ë•Œ ì›…í¬ë¦¬ê¸°ë¥¼ ì—°íƒ€í•  ë•Œë§ˆë‹¤",
+		" ëŒ€ìƒì„ 0.5ì´ˆê°„ ê¸°ì ˆì‹œí‚¤ê³  í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤.",
+		"Â§7ì‚¬ë§ Â§8- Â§cí›ˆìˆ˜Â§f: ë‚˜ë¥¼ ì£½ì¸ í”Œë ˆì´ì–´ê°€ íŠ¹ì • í–‰ë™ì„ ì·¨í•  ë•Œë§ˆë‹¤",
+		" ê·¸ê±° ê·¸ë ‡ê²Œ í•˜ëŠ” ê±° ì•„ë‹Œë°~ë¥¼ ë“¤ìœ¼ë©° ì ê¹ ì‹¤ëª…ë‹¹í•©ë‹ˆë‹¤."
 		})
 
 public class BadManner extends Synergy implements ActiveHandler {
@@ -72,8 +72,8 @@ public class BadManner extends Synergy implements ActiveHandler {
 	    } 
 	}
 	
-	private final Cooldown rightcool = new Cooldown(RIGHT_COOL.getValue(), "µµ¹ß", CooldownDecrease._25);
-	private final Cooldown leftcool = new Cooldown(LEFT_COOL.getValue(), "³ó¶ô", CooldownDecrease._50);
+	private final Cooldown rightcool = new Cooldown(RIGHT_COOL.getValue(), "ë„ë°œ", CooldownDecrease._25);
+	private final Cooldown leftcool = new Cooldown(LEFT_COOL.getValue(), "ë†ë½", CooldownDecrease._50);
 	
 	private Map<Player, Integer> teabaggingcount = new HashMap<>();
 	private Set<Player> bagged = new HashSet<>();
@@ -152,7 +152,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RIGHT_COOL 
 	= synergySettings.new SettingObject<Integer>(BadManner.class,
-			"right-cooldown", 20, "# ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ") {
+			"right-cooldown", 20, "# ìš°í´ë¦­ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -166,7 +166,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> LEFT_COOL
 	= synergySettings.new SettingObject<Integer>(BadManner.class,
-			"left-cooldown", 80, "# ÁÂÅ¬¸¯ ÄğÅ¸ÀÓ") {
+			"left-cooldown", 80, "# ì¢Œí´ë¦­ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -180,7 +180,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION
 	= synergySettings.new SettingObject<Integer>(BadManner.class,
-			"duration", 10, "# ³ó¶ô Áö¼Ó½Ã°£") {
+			"duration", 10, "# ë†ë½ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -237,21 +237,21 @@ public class BadManner extends Synergy implements ActiveHandler {
         						if (random.nextInt(10) == 0) {
         							SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
         							switch(random.nextInt(8)) {
-        							case 0: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤»¤» ¾ß ²Ã¹Ş³Ä?");
+        							case 0: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cã…‹ã…‹ ì•¼ ê¼´ë°›ëƒ?");
         							break;
-        							case 1: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cez");
+        							case 1: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cez");
         							break;
-        							case 2: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¸øÀâÁê?");
+        							case 2: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cëª»ì¡ì¥¬?");
         							break;
-        							case 3: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤»");
+        							case 3: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cã…‹");
         							break;
-        							case 4: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cÁñ~");
+        							case 4: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cì¦~");
         							break;
-        							case 5: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cºıÃÆ¾î¿ä? ¾îÂ¼¶ó°í¿ä~");
+        							case 5: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cë¹¡ì³¤ì–´ìš”? ì–´ì©Œë¼ê³ ìš”~");
         							break;
-        							case 6: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤µ¤©¤º¤·~");
+        							case 6: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cã……ã„¹ã…Šã…‡~");
         							break;
-        							case 7: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cÅ©Å©·ç»æ»§»Í~");
+        							case 7: player.sendMessage("Â§3[Â§bëŠ¥ë ¥Â§3] Â§e" + getPlayer().getName() + " Â§b>Â§e " + player.getName() + "Â§7: Â§cí¬í¬ë£¨ì‚¥ë¹µë½•~");
         							break;
         							}
         						}
@@ -279,7 +279,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 				randomTeleport();
 				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
 				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
-				p.sendMessage("¡×e" + getPlayer().getName() + " ¡×b>¡×e " + p.getName() + "¡×7: ¡×c¾ÈµÇÁö ¾ÈµÇÁö~ Àı´ë ¸ø ÀâÁö~");
+				p.sendMessage("Â§e" + getPlayer().getName() + " Â§b>Â§e " + p.getName() + "Â§7: Â§cì•ˆë˜ì§€ ì•ˆë˜ì§€~ ì ˆëŒ€ ëª» ì¡ì§€~");
 				Inventory inv = p.getPlayer().getInventory();
 				List<ItemStack> slots = new ArrayList<>();
 				slots.add(inv.getItem(0));
@@ -311,7 +311,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 						randomTeleport();
 						SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
 						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
-						p.sendMessage("¡×e" + getPlayer().getName() + " ¡×b>¡×e " + p.getName() + "¡×7: ¡×c¾ÈµÇÁö ¾ÈµÇÁö~ Àı´ë ¸ø ÀâÁö~");
+						p.sendMessage("Â§e" + getPlayer().getName() + " Â§b>Â§e " + p.getName() + "Â§7: Â§cì•ˆë˜ì§€ ì•ˆë˜ì§€~ ì ˆëŒ€ ëª» ì¡ì§€~");
 						Inventory inv = p.getPlayer().getInventory();
 						List<ItemStack> slots = new ArrayList<>();
 						slots.add(inv.getItem(0));
@@ -334,7 +334,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 		}
 	}
 	
-	private final Duration skill = new Duration(200, leftcool, "³ó¶ô") {
+	private final Duration skill = new Duration(200, leftcool, "ë†ë½") {
 
 		@Override
 		protected void onDurationProcess(int seconds) {

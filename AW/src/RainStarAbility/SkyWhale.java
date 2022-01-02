@@ -78,18 +78,18 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 
-@AbilityManifest(name = "ÇÏ´Ã°í·¡", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×dµå¸² ÀÌÅÍ¡×f: ´©±º°¡¸¦ Á×ÀÌ¸é ÀûÀÇ ¡×e²Ş¡×fÀ» ¸Ô¾î ¡×a²Ş ·¹º§¡×fÀ» ¿Ã¸³´Ï´Ù.",
-		" ¡×e²Ş¡×fÀ» ¸ÔÀ» ¶§ Ã¼·ÂÀ» ¡×b12¡×f% È¸º¹ÇÏ°í, ³²Àº ÄğÅ¸ÀÓÀÌ ¡×b28¡×f%·Î ÁÙ¾îµì´Ï´Ù.",
-		" ¸¸¾à ´É·Â Áö¼Ó Áß¿¡ ¡×e²Ş¡×fÀ» ¸Ô¾ú´Ù¸é Áö¼Ó½Ã°£À» $[ADD_DURATION]ÃÊ ¿¬ÀåÇÕ´Ï´Ù.",
-		" ¡×a²Ş ·¹º§¡×f·Î ¾ò´Â È¿°ú´Â ¡×7Ã¶±«¸¦ ÁÂÅ¬¸¯¡×fÇÏ¿© º¼ ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×bµå¸² ¾ÆÄí¾Æ¸®¿ò¡×f: $[DURATION]ÃÊ°£ ³ª°¥ ¼ö ¾ø´Â ¡×b²Ş¡×fÀÇ ¡×bµéÆÇ¡×fÀ» ÆîÄ¨´Ï´Ù.",
-		" ¿µ¿ª ³»¿¡¼­ ÀÚ½ÅÀÌ ÀÒÀº Ã¼·ÂÀÇ $[HEAL_PERCENT]%´Â ¿µ¿ª Áö¼ÓÀÌ ³¡³¯ ¶§ ¡×dÈ¸º¹¡×fµË´Ï´Ù.",
-		" ¶ÇÇÑ ¡×a²Ş ·¹º§¡×f¿¡ µû¸¥ Ãß°¡ È¿°ú¸¦ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù. $[COOLDOWN]",
-		"¡×7¿µ¿ª ³» ÆĞ½Ãºê ¡×8- ¡×3¿şÀÌºê¡×f: ¿µ¿ªÀÇ Áß½É¿¡¼­ºÎÅÍ ÆÄµµ°¡ ÆÛÁ®³ª°¡",
-		" ÀûÀ» ÇÇÇØÀÔÈ÷¸ç ¹ĞÃÄ³À´Ï´Ù. ÇÇÇØ´Â Áß½É¿¡¼­ ¸Ö¾îÁú¼ö·Ï °­·ÂÇØÁı´Ï´Ù.",
-		" ÇÇÇØ´Â ¿µ¿ª¿¡¼­ ÀÚ½ÅÀÇ ÃÖ°í ´ë¹ÌÁö¿¡ ºñ·Ê¡×8(¡×7¡¿ 0.5~1.5¡×8)¡×fÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×bSleepground"
+@AbilityManifest(name = "í•˜ëŠ˜ê³ ë˜", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§dë“œë¦¼ ì´í„°Â§f: ëˆ„êµ°ê°€ë¥¼ ì£½ì´ë©´ ì ì˜ Â§eê¿ˆÂ§fì„ ë¨¹ì–´ Â§aê¿ˆ ë ˆë²¨Â§fì„ ì˜¬ë¦½ë‹ˆë‹¤.",
+		" Â§eê¿ˆÂ§fì„ ë¨¹ì„ ë•Œ ì²´ë ¥ì„ Â§b12Â§f% íšŒë³µí•˜ê³ , ë‚¨ì€ ì¿¨íƒ€ì„ì´ Â§b28Â§f%ë¡œ ì¤„ì–´ë“­ë‹ˆë‹¤.",
+		" ë§Œì•½ ëŠ¥ë ¥ ì§€ì† ì¤‘ì— Â§eê¿ˆÂ§fì„ ë¨¹ì—ˆë‹¤ë©´ ì§€ì†ì‹œê°„ì„ $[ADD_DURATION]ì´ˆ ì—°ì¥í•©ë‹ˆë‹¤.",
+		" Â§aê¿ˆ ë ˆë²¨Â§fë¡œ ì–»ëŠ” íš¨ê³¼ëŠ” Â§7ì² ê´´ë¥¼ ì¢Œí´ë¦­Â§fí•˜ì—¬ ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§bë“œë¦¼ ì•„ì¿ ì•„ë¦¬ì›€Â§f: $[DURATION]ì´ˆê°„ ë‚˜ê°ˆ ìˆ˜ ì—†ëŠ” Â§bê¿ˆÂ§fì˜ Â§bë“¤íŒÂ§fì„ í¼ì¹©ë‹ˆë‹¤.",
+		" ì˜ì—­ ë‚´ì—ì„œ ìì‹ ì´ ìƒì€ ì²´ë ¥ì˜ $[HEAL_PERCENT]%ëŠ” ì˜ì—­ ì§€ì†ì´ ëë‚  ë•Œ Â§díšŒë³µÂ§fë©ë‹ˆë‹¤.",
+		" ë˜í•œ Â§aê¿ˆ ë ˆë²¨Â§fì— ë”°ë¥¸ ì¶”ê°€ íš¨ê³¼ë¥¼ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[COOLDOWN]",
+		"Â§7ì˜ì—­ ë‚´ íŒ¨ì‹œë¸Œ Â§8- Â§3ì›¨ì´ë¸ŒÂ§f: ì˜ì—­ì˜ ì¤‘ì‹¬ì—ì„œë¶€í„° íŒŒë„ê°€ í¼ì ¸ë‚˜ê°€",
+		" ì ì„ í”¼í•´ì…íˆë©° ë°€ì³ëƒ…ë‹ˆë‹¤. í”¼í•´ëŠ” ì¤‘ì‹¬ì—ì„œ ë©€ì–´ì§ˆìˆ˜ë¡ ê°•ë ¥í•´ì§‘ë‹ˆë‹¤.",
+		" í”¼í•´ëŠ” ì˜ì—­ì—ì„œ ìì‹ ì˜ ìµœê³  ëŒ€ë¯¸ì§€ì— ë¹„ë¡€Â§8(Â§7Ã— 0.5~1.5Â§8)Â§fí•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§bSleepground"
 		})
 
 public class SkyWhale extends AbilityBase implements ActiveHandler {
@@ -99,7 +99,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> ADD_DURATION = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "add-duration", 10, "# Ãß°¡ Áö¼Ó ½Ã°£") {
+			SkyWhale.class, "add-duration", 10, "# ì¶”ê°€ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -109,7 +109,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "duration", 20, "# Áö¼Ó ½Ã°£") {
+			SkyWhale.class, "duration", 20, "# ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -119,7 +119,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "cooldown", 135, "# ÄğÅ¸ÀÓ") {
+			SkyWhale.class, "cooldown", 135, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -134,7 +134,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> WAVE_PERIOD = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "wave-period", 40, "# ÆÄµµÀÇ ÁÖ±â (´ÜÀ§: Æ½, 1Æ½ = 0.05ÃÊ)") {
+			SkyWhale.class, "wave-period", 60, "# íŒŒë„ì˜ ì£¼ê¸° (ë‹¨ìœ„: í‹±, 1í‹± = 0.05ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -144,7 +144,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> HEAL_PERCENT = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "heal-percent", 70, "# ¿µ¿ªÀÌ ³¡³­ ÈÄ È¸º¹·® (´ÜÀ§: %)") {
+			SkyWhale.class, "heal-percent", 70, "# ì˜ì—­ì´ ëë‚œ í›„ íšŒë³µëŸ‰ (ë‹¨ìœ„: %)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -154,7 +154,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> INCREASE_DAMAGE = abilitySettings.new SettingObject<Double>(
-			SkyWhale.class, "increase-damage", 1.0, "# ²Ş ·¹º§´ç Ãß°¡ °ø°İ·Â") {
+			SkyWhale.class, "increase-damage", 0.8, "# ê¿ˆ ë ˆë²¨ë‹¹ ì¶”ê°€ ê³µê²©ë ¥") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -166,7 +166,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("¡×b²Ş ·¹º§¡×f: ¡×a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
+			ac.update("Â§bê¿ˆ ë ˆë²¨Â§f: Â§a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
 			if (isSkillRunning == true) isSkillRunning = false;
 		}
 	}
@@ -283,26 +283,26 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		    	   		return true;		
 		    		}
 		    	} else {
-		    		getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×c¾ÆÁ÷ ½ºÅ³ÀÌ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+		    		getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cì•„ì§ ìŠ¤í‚¬ì´ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 		    	}	
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
-	    		getPlayer().sendMessage("¡×e=========== ¡×b²Ş ½ºÅ³ ¡×e===========");
+	    		getPlayer().sendMessage("Â§e=========== Â§bê¿ˆ ìŠ¤í‚¬ Â§e===========");
 	    		final StringJoiner joiner = new StringJoiner("\n");
-	    		joiner.add("¡×aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel) + " ¡×7| ¡×cÃß°¡ °ø°İ·Â ¡×e+" + (dreamlevel * increasedamage));
-	    		if (dreamlevel == 0) joiner.add("¡×7¾ÆÁ÷ È°¼ºÈ­µÈ ½ºÅ³ÀÌ ¾ø½À´Ï´Ù.");
-	    		if (dreamlevel >= 1) joiner.add("¡×cÈ­¿° ³»¼º¡×7: ¡×f¸ğµç È­¿°°è ÇÇÇØ¿¡ ³»¼ºÀÌ »ı±é´Ï´Ù.");
-	    		if (dreamlevel >= 2) joiner.add("¡×aÁ¤º¸ ÅëÁ¦¡×7: ¡×fÀûÀÇ Ã¼·ÂÀ» ½Ç½Ã°£À¸·Î È®ÀÎ °¡´ÉÇÕ´Ï´Ù.");
-	    		if (dreamlevel >= 3) joiner.add("¡×bÀÚÀ¯ ºñÇà¡×7: ¡×fÀÚÀ¯·Ó°Ô ºñÇàÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+	    		joiner.add("Â§aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel) + " Â§7| Â§cì¶”ê°€ ê³µê²©ë ¥ Â§e+" + (dreamlevel * increasedamage));
+	    		if (dreamlevel == 0) joiner.add("Â§7ì•„ì§ í™œì„±í™”ëœ ìŠ¤í‚¬ì´ ì—†ìŠµë‹ˆë‹¤.");
+	    		if (dreamlevel >= 1) joiner.add("Â§cí™”ì—¼ ë‚´ì„±Â§7: Â§fëª¨ë“  í™”ì—¼ê³„ í”¼í•´ì— ë‚´ì„±ì´ ìƒê¹ë‹ˆë‹¤.");
+	    		if (dreamlevel >= 2) joiner.add("Â§aì •ë³´ í†µì œÂ§7: Â§fì ì˜ ì²´ë ¥ì„ ì‹¤ì‹œê°„ìœ¼ë¡œ í™•ì¸ ê°€ëŠ¥í•©ë‹ˆë‹¤.");
+	    		if (dreamlevel >= 3) joiner.add("Â§bììœ  ë¹„í–‰Â§7: Â§fììœ ë¡­ê²Œ ë¹„í–‰í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 	    		if (dreamlevel >= 4) {
-	    			joiner.add("¡×d°ø°£ ÃÊ¿ù¡×7: ¡×f3ÃÊ¸¶´Ù »ç°Å¸®°¡ ¸Å¿ì ±æ°í ÁöÇüÁö¹°À» °üÅëÇÏ´Â");
-	    			joiner.add("           ¡×fÆ¯¼öÇÑ ±ÙÁ¢ °ø°İÀ» »ç¿ë °¡´ÉÇÕ´Ï´Ù.");
+	    			joiner.add("Â§dê³µê°„ ì´ˆì›”Â§7: Â§f3ì´ˆë§ˆë‹¤ ì‚¬ê±°ë¦¬ê°€ ë§¤ìš° ê¸¸ê³  ì§€í˜•ì§€ë¬¼ì„ ê´€í†µí•˜ëŠ”");
+	    			joiner.add("           Â§fíŠ¹ìˆ˜í•œ ê·¼ì ‘ ê³µê²©ì„ ì‚¬ìš© ê°€ëŠ¥í•©ë‹ˆë‹¤.");
 	    		}	
 	    		if (dreamlevel == 5) {
-	    			joiner.add("¡×6½Ã°£ ´ÜÃà¡×7: ¡×f»ç¸Á À§±â¿¡ ºüÁö¸é ´É·Â Áö¼Ó½Ã°£À» 0ÃÊ·Î ¸¸µé°í");
-	    			joiner.add("           ¡×f¿µ¿ªÀÌ ³¡³ª¸é ¹Ş´Â È¸º¹À» ¹Ù·Î ¹Ş½À´Ï´Ù.");
+	    			joiner.add("Â§6ì‹œê°„ ë‹¨ì¶•Â§7: Â§fì‚¬ë§ ìœ„ê¸°ì— ë¹ ì§€ë©´ ëŠ¥ë ¥ ì§€ì†ì‹œê°„ì„ 0ì´ˆë¡œ ë§Œë“¤ê³ ");
+	    			joiner.add("           Â§fì˜ì—­ì´ ëë‚˜ë©´ ë°›ëŠ” íšŒë³µì„ ë°”ë¡œ ë°›ìŠµë‹ˆë‹¤.");
 	    		}
 	    		getPlayer().sendMessage(joiner.toString());
-	    		getPlayer().sendMessage("¡×e================================");
+	    		getPlayer().sendMessage("Â§e================================");
 	    	}
 	    }
 		return false;
@@ -460,7 +460,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
 			if (dreamlevel < 5) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
 			dreamlevel = Math.min(5, dreamlevel + 1);
-			ac.update("¡×b²Ş ·¹º§¡×f: ¡×a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
+			ac.update("Â§bê¿ˆ ë ˆë²¨Â§f: Â§a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
 		}
 	}
 	
@@ -763,7 +763,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
-					Strings.repeat("¡×a|", health).concat(Strings.repeat("¡×7|", maxHealth - health)));
+					Strings.repeat("Â§a|", health).concat(Strings.repeat("Â§7|", maxHealth - health)));
 			hologram.display(getPlayer());
 		}
 		
@@ -774,7 +774,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			hologram.teleport(player.getWorld(), player.getLocation().getX(), 
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
 					player.getLocation().getYaw(), 0);
-			hologram.setText(Strings.repeat("¡×c|", health).concat(Strings.repeat("¡×7|", maxHealth - health)));
+			hologram.setText(Strings.repeat("Â§c|", health).concat(Strings.repeat("Â§7|", maxHealth - health)));
 			if (!skill.isRunning()) this.stop(false);
 			if (health <= 0) this.stop(false);
 		}

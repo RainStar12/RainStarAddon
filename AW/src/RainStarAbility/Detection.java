@@ -41,40 +41,40 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
-		name = "°£ÆÄ",
+		name = "ê°„íŒŒ",
 		rank = Rank.A, 
 		species = Species.HUMAN, 
 		explain = {
-		"¡×7°Ë µé°í F ¡×8- ¡×2¼ö ÀĞ±â¡×f: °ËÀ» µé°í ´ë»óÀ» 3Ä­ ³»¿¡¼­ ¹Ù¶óº» Ã¤ F¸¦ ´©¸¦ ½Ã",
-		" ´ë»óÀÇ ¼ö¸¦ $[DURATION]ÃÊ°£ ¡×2°£ÆÄ¡×fÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ¼ö¸¦ ¡×2°£ÆÄ¡×f´çÇÑ ´ë»óÀÇ ±ÙÁ¢ °ø°İÀ» ÀüºÎ È¸ÇÇÇÕ´Ï´Ù.",
-		" ¡×7±¤¿ª °£ÆÄ¡×f: $[CHANGE]",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×2µÎ ¹øÀº ¾È ÅëÇÏÁö¡×f: µ¿ÀÏ ´ë»óÀ» °£ÆÄÇÒ ¶§¸¶´Ù ´ë»ó¿¡°Ô¼­ÀÇ",
-		" Áö¼Ó½Ã°£ÀÌ ¸Å¹ø 1ÃÊ¾¿ ´Ã¾î³³´Ï´Ù. ÀÌ È¿°ú´Â ±¤¿ª °£ÆÄ¿¡¼­´Â ¹ßµ¿ÇÏÁö ¾Ê½À´Ï´Ù."
+		"Â§7ê²€ ë“¤ê³  F Â§8- Â§2ìˆ˜ ì½ê¸°Â§f: ê²€ì„ ë“¤ê³  ëŒ€ìƒì„ 3ì¹¸ ë‚´ì—ì„œ ë°”ë¼ë³¸ ì±„ Fë¥¼ ëˆ„ë¥¼ ì‹œ",
+		" ëŒ€ìƒì˜ ìˆ˜ë¥¼ $[DURATION]ì´ˆê°„ Â§2ê°„íŒŒÂ§fí•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ìˆ˜ë¥¼ Â§2ê°„íŒŒÂ§fë‹¹í•œ ëŒ€ìƒì˜ ê·¼ì ‘ ê³µê²©ì„ ì „ë¶€ íšŒí”¼í•©ë‹ˆë‹¤.",
+		" Â§7ê´‘ì—­ ê°„íŒŒÂ§f: $[CHANGE]",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§2ë‘ ë²ˆì€ ì•ˆ í†µí•˜ì§€Â§f: ë™ì¼ ëŒ€ìƒì„ ê°„íŒŒí•  ë•Œë§ˆë‹¤ ëŒ€ìƒì—ê²Œì„œì˜",
+		" ì§€ì†ì‹œê°„ì´ ë§¤ë²ˆ 1ì´ˆì”© ëŠ˜ì–´ë‚©ë‹ˆë‹¤. ì´ íš¨ê³¼ëŠ” ê´‘ì—­ ê°„íŒŒì—ì„œëŠ” ë°œë™í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "±ÙÁ¢ °ø°İÀ» ºÀÀÎÇÔÀ¸·Î¼­ ´ë»ó¿¡°Ô 2~3Å¸ Á¤µµÀÇ ÇÁ¸®µôÀ» ³ÖÀ» ¼ö ÀÖ½À´Ï´Ù.",
-        "¶ÇÇÑ ¹ö¼­Ä¿ °°Àº ÇÑ ¹æÀÇ °ø°İÀÌ °­·ÂÇÑ °ø°İÀ» ¿ÏÀüÈ÷ ¸·À» ¼ö ÀÖ½À´Ï´Ù.",
-        "´Ù¸¸ ´ë»ó¿¡°Ô¼­ °£ÆÄ µµÁß È° °ø°İ µîÀ¸·Î ÇÇÇØ¸¦ ÀÔ´Â´Ù¸é µ¶ÀÌ µÇ´Ï,",
-        "»ó´ëÀÇ ´É·ÂÀ» Àß ÆÄ¾ÇÇÏ°í »ç¿ëÇÏ½Ã´Â °ÍÀ» ÃßÃµÇÕ´Ï´Ù."
+        "ê·¼ì ‘ ê³µê²©ì„ ë´‰ì¸í•¨ìœ¼ë¡œì„œ ëŒ€ìƒì—ê²Œ 2~3íƒ€ ì •ë„ì˜ í”„ë¦¬ë”œì„ ë„£ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+        "ë˜í•œ ë²„ì„œì»¤ ê°™ì€ í•œ ë°©ì˜ ê³µê²©ì´ ê°•ë ¥í•œ ê³µê²©ì„ ì™„ì „íˆ ë§‰ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+        "ë‹¤ë§Œ ëŒ€ìƒì—ê²Œì„œ ê°„íŒŒ ë„ì¤‘ í™œ ê³µê²© ë“±ìœ¼ë¡œ í”¼í•´ë¥¼ ì…ëŠ”ë‹¤ë©´ ë…ì´ ë˜ë‹ˆ,",
+        "ìƒëŒ€ì˜ ëŠ¥ë ¥ì„ ì˜ íŒŒì•…í•˜ê³  ì‚¬ìš©í•˜ì‹œëŠ” ê²ƒì„ ì¶”ì²œí•©ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "±ÙÁ¢Àü", explain = {
-                "±ÙÁ¢ÀüÀÌ¾ß¸»·Î ÀÌ ´É·ÂÀ» ÃÖ´ë È°¿ë °¡´ÉÇÑ °­Á¡ÀÔ´Ï´Ù.",
-                "»ó´ëÀÇ ±ÙÁ¢ °ø°İÀ» ¹«½ÃÇÏ¿© »ıÁ¸·ÂÀ» ³ôÀÏ ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ê·¼ì ‘ì „", explain = {
+                "ê·¼ì ‘ì „ì´ì•¼ë§ë¡œ ì´ ëŠ¥ë ¥ì„ ìµœëŒ€ í™œìš© ê°€ëŠ¥í•œ ê°•ì ì…ë‹ˆë‹¤.",
+                "ìƒëŒ€ì˜ ê·¼ì ‘ ê³µê²©ì„ ë¬´ì‹œí•˜ì—¬ ìƒì¡´ë ¥ì„ ë†’ì¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "Á¼Àº °ø°£", explain = {
-                "Á¼Àº °ø°£ÀÏ¼ö·Ï °£ÆÄ µµÁß ´ë»óÀÌ µµ¸ÁÄ¡Áö ¸øÇÏ°Ô ¸·¾Æ",
-                "°ø°İÀ» °¡ÇÏ±â ´õ ¿ëÀÌÇÕ´Ï´Ù."
+        @Description(subject = "ì¢ì€ ê³µê°„", explain = {
+                "ì¢ì€ ê³µê°„ì¼ìˆ˜ë¡ ê°„íŒŒ ë„ì¤‘ ëŒ€ìƒì´ ë„ë§ì¹˜ì§€ ëª»í•˜ê²Œ ë§‰ì•„",
+                "ê³µê²©ì„ ê°€í•˜ê¸° ë” ìš©ì´í•©ë‹ˆë‹¤."
         }),
-        @Description(subject = "¼ø°£ ³ôÀº ±ÙÁ¢´ë¹ÌÁö¸¦ ³»´Â ´ë»ó", explain = {
-                "¹ö¼­Ä¿³ª ³Ø½º µî ÇÑ ¹æÀÇ ÈûÀ» ½Ç¸° °ø°İÀ» ¹«½ÃÇÏ¿©,",
-                "»ó´ëÀÇ ´É·Â ÇÇÇØ¸¦ ÃÖ¼ÒÈ­½ÃÅµ´Ï´Ù."
+        @Description(subject = "ìˆœê°„ ë†’ì€ ê·¼ì ‘ëŒ€ë¯¸ì§€ë¥¼ ë‚´ëŠ” ëŒ€ìƒ", explain = {
+                "ë²„ì„œì»¤ë‚˜ ë„¥ìŠ¤ ë“± í•œ ë°©ì˜ í˜ì„ ì‹¤ë¦° ê³µê²©ì„ ë¬´ì‹œí•˜ì—¬,",
+                "ìƒëŒ€ì˜ ëŠ¥ë ¥ í”¼í•´ë¥¼ ìµœì†Œí™”ì‹œí‚µë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "¿ø°Å¸®Àü", explain = {
-                "´ë»óÀÌ È° ´É·ÂÀ» ¼ÒÁöÇÏ°í ÀÖ°Å³ª ¿ø°Å¸®ÀüÀ¸·Î µ¹ÀÔÇÑ´Ù¸é",
-                "¿ÀÈ÷·Á ´ë»ó¿¡°Ô¼­ ¸Å¹ø 2ÀÇ Ãß°¡ ÇÇÇØ¸¦ ÀÔÀ¸¹Ç·Î ÁÖÀÇÇØ¾ß ÇÕ´Ï´Ù."
+        @Description(subject = "ì›ê±°ë¦¬ì „", explain = {
+                "ëŒ€ìƒì´ í™œ ëŠ¥ë ¥ì„ ì†Œì§€í•˜ê³  ìˆê±°ë‚˜ ì›ê±°ë¦¬ì „ìœ¼ë¡œ ëŒì…í•œë‹¤ë©´",
+                "ì˜¤íˆë ¤ ëŒ€ìƒì—ê²Œì„œ ë§¤ë²ˆ 2ì˜ ì¶”ê°€ í”¼í•´ë¥¼ ì…ìœ¼ë¯€ë¡œ ì£¼ì˜í•´ì•¼ í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.SEVEN, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TWO), difficulty = Difficulty.EASY)
 
@@ -92,7 +92,7 @@ public class Detection extends AbilityBase {
 	private boolean config = CHANGE.getValue();
 	private int range = RANGE.getValue();
 	
-	private final DecimalFormat df = new DecimalFormat("0.00");
+	private final DecimalFormat df = new DecimalFormat("0.0");
 	
 	private static final Set<Material> swords;
 	
@@ -106,7 +106,7 @@ public class Detection extends AbilityBase {
 	
 	public static final SettingObject<Integer> DURATION = 
 			abilitySettings.new SettingObject<Integer>(Detection.class,
-			"duration", 3, "# ´É·Â Áö¼Ó½Ã°£") {
+			"duration", 2, "# ëŠ¥ë ¥ ì§€ì†ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -117,7 +117,7 @@ public class Detection extends AbilityBase {
 	
 	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(
 			Detection.class,
-			"range", 3, "# ¹üÀ§ ¼³Á¤", "# ÁÖÀÇ! ¹üÀ§ ¸ğµå·Î change ÄÜÇÇ±× º¯°æ ÈÄ Àû¿ëµË´Ï´Ù.") {
+			"range", 3, "# ë²”ìœ„ ì„¤ì •", "# ì£¼ì˜! ë²”ìœ„ ëª¨ë“œë¡œ change ì½˜í”¼ê·¸ ë³€ê²½ í›„ ì ìš©ë©ë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -127,19 +127,19 @@ public class Detection extends AbilityBase {
 	};	
 	
 	public static final SettingObject<Boolean> CHANGE = abilitySettings.new SettingObject<Boolean>(
-			Detection.class, "change", false, "# true·Î º¯°æÇÏ½Ã¸é °£ÆÄ ½Ãµµ½Ã ´ë»óÀÇ",
-			"ÀÏºÎ ¹üÀ§ ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾îÀÇ ±ÙÁ¢ °ø°İÀ» °£ÆÄÇÕ´Ï´Ù.") {
+			Detection.class, "change", false, "# trueë¡œ ë³€ê²½í•˜ì‹œë©´ ê°„íŒŒ ì‹œë„ì‹œ ëŒ€ìƒì˜",
+			"ì¼ë¶€ ë²”ìœ„ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ì˜ ê·¼ì ‘ ê³µê²©ì„ ê°„íŒŒí•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public String toString() {
-                return getValue() ? "¡×bÄÑÁü" : "¡×c²¨Áü";
+                return getValue() ? "Â§bì¼œì§" : "Â§cêº¼ì§";
         }
 	
 	};
 	 
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Detection.class, "cooldown", 45,
-            "# ÄğÅ¸ÀÓ") {
+			abilitySettings.new SettingObject<Integer>(Detection.class, "cooldown", 20,
+            "# ì¿¨íƒ€ì„") {
 
         @Override
         public boolean condition(Integer value) {
@@ -204,7 +204,7 @@ public class Detection extends AbilityBase {
 
 								@Override
 								protected void run(int count) {
-									actionbarChannel.update("¡×e" + getPlayer().getName() + " ¡×f¿¡°Ô ¡×c±ÙÁ¢ °ø°İ ºÒ´É ¡×7: ¡×f" + df.format(count * 0.05) + " ÃÊ");
+									actionbarChannel.update("Â§e" + getPlayer().getName() + " Â§fì—ê²Œ Â§cê·¼ì ‘ ê³µê²© ë¶ˆëŠ¥ Â§7: Â§f" + df.format(count * 0.05) + " ì´ˆ");
 								}
 
 								@Override
@@ -229,7 +229,7 @@ public class Detection extends AbilityBase {
 								
 							}.setPeriod(TimeUnit.TICKS, 1).start();		
 							SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
-							getPlayer().sendMessage("¡×2[¡×a!¡×2] ¡×e" + target.getPlayer().getName() + " ¡×f´ÔÀÇ °ø°İÀ» ¡×2°£ÆÄ¡×fÇÏ¿´½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§2[Â§a!Â§2] Â§e" + target.getPlayer().getName() + " Â§fë‹˜ì˜ ê³µê²©ì„ Â§2ê°„íŒŒÂ§fí•˜ì˜€ìŠµë‹ˆë‹¤.");
 						}
 						SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
 						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
@@ -247,7 +247,7 @@ public class Detection extends AbilityBase {
 
 							@Override
 							protected void run(int count) {
-								actionbarChannel.update("¡×e" + getPlayer().getName() + " ¡×f¿¡°Ô ¡×c±ÙÁ¢ °ø°İ ºÒ´É ¡×7: ¡×f" + df.format(count * 0.05) + " ÃÊ");
+								actionbarChannel.update("Â§e" + getPlayer().getName() + " Â§fì—ê²Œ Â§cê·¼ì ‘ ê³µê²© ë¶ˆëŠ¥ Â§7: Â§f" + df.format(count * 0.05) + " ì´ˆ");
 							}
 
 							@Override
@@ -273,7 +273,7 @@ public class Detection extends AbilityBase {
 						}.setPeriod(TimeUnit.TICKS, 1).start();		
 						SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
 						SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
-						getPlayer().sendMessage("¡×2[¡×a!¡×2] ¡×e" + target.getPlayer().getName() + " ¡×f´ÔÀÇ °ø°İÀ» ¡×2°£ÆÄ¡×fÇÏ¿´½À´Ï´Ù.");
+						getPlayer().sendMessage("Â§2[Â§a!Â§2] Â§e" + target.getPlayer().getName() + " Â§fë‹˜ì˜ ê³µê²©ì„ Â§2ê°„íŒŒÂ§fí•˜ì˜€ìŠµë‹ˆë‹¤.");
 						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
 						
 						cool.start();

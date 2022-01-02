@@ -44,15 +44,15 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import kotlin.ranges.RangesKt;
 
-@AbilityManifest(name = "ÇïÃ¢", rank = Rank.S, species = Species.OTHERS, explain = {
-		"¿õÅ©¸®°í ÀÖÀ» ¶§ È¸º¹ ¼Óµµ°¡ »¡¶óÁö°í °ø°İ·ÂÀÌ °­ÇØÁı´Ï´Ù.",
-		"¿À·§µ¿¾È ¿¬¼ÓÇØ ¿õÅ©¸®°í ÀÖÀ»¼ö·Ï È¿°úµéÀÌ Á¡Á¡ ´õ °­ÇØÁı´Ï´Ù.",
-		"¿õÅ©¸®Áö ¾ÊÀº Ã¤ ¿òÁ÷ÀÏ °æ¿ì ±Ù¼Õ½ÇÀÌ ¿É´Ï´Ù.",
-		"ÀûÀ» Ã³Ä¡ÇÒ ¶§¸¶´Ù ÇÁ·ÎÆ¾À» È¹µæÇÏ°í ¼Ò¸ğ ½Ã ¿©·¯ °¡Áö ¹öÇÁ¸¦ È¹µæÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×6_Choco_pie"},
+@AbilityManifest(name = "í—¬ì°½", rank = Rank.S, species = Species.OTHERS, explain = {
+		"ì›…í¬ë¦¬ê³  ìˆì„ ë•Œ íšŒë³µ ì†ë„ê°€ ë¹¨ë¼ì§€ê³  ê³µê²©ë ¥ì´ ê°•í•´ì§‘ë‹ˆë‹¤.",
+		"ì˜¤ë«ë™ì•ˆ ì—°ì†í•´ ì›…í¬ë¦¬ê³  ìˆì„ìˆ˜ë¡ íš¨ê³¼ë“¤ì´ ì ì  ë” ê°•í•´ì§‘ë‹ˆë‹¤.",
+		"ì›…í¬ë¦¬ì§€ ì•Šì€ ì±„ ì›€ì§ì¼ ê²½ìš° ê·¼ì†ì‹¤ì´ ì˜µë‹ˆë‹¤.",
+		"ì ì„ ì²˜ì¹˜í•  ë•Œë§ˆë‹¤ í”„ë¡œí‹´ì„ íšë“í•˜ê³  ì†Œëª¨ ì‹œ ì—¬ëŸ¬ ê°€ì§€ ë²„í”„ë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§6_Choco_pie"},
 		summarize = {
-		"¿õÅ©¸®°í ÀÖÀ» ¶§ È¸º¹ ¼Óµµ°¡ »¡¶óÁö°í °ø°İ·ÂÀÌ °­ÇØÁı´Ï´Ù.",
-		"´©±º°¡¸¦ Á×ÀÌ¸é ÇÁ·ÎÆ¾À» ¾ò¾î ¼Ò¸ğ ½Ã ¿©·¯ °¡Áö ¹öÇÁ¸¦ È¹µæÇÕ´Ï´Ù."
+		"ì›…í¬ë¦¬ê³  ìˆì„ ë•Œ íšŒë³µ ì†ë„ê°€ ë¹¨ë¼ì§€ê³  ê³µê²©ë ¥ì´ ê°•í•´ì§‘ë‹ˆë‹¤.",
+		"ëˆ„êµ°ê°€ë¥¼ ì£½ì´ë©´ í”„ë¡œí‹´ì„ ì–»ì–´ ì†Œëª¨ ì‹œ ì—¬ëŸ¬ ê°€ì§€ ë²„í”„ë¥¼ íšë“í•©ë‹ˆë‹¤."
 		})
 
 public class HealthFreak extends AbilityBase {
@@ -63,9 +63,9 @@ public class HealthFreak extends AbilityBase {
 	
 	public static final SettingObject<Integer> MAX_DAMAGE = 
 			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "max-damage", 5,
-			"# ÃÖ´ë ´ë¹ÌÁö",
-			"# ÃÖ´ë ´ë¹ÌÁö°¡ ´Ã¾î³ª´Â ¸¸Å­",
-			"# È¸º¹ ¼Óµµµµ °°ÀÌ ´Ã¾î³³´Ï´Ù.") {
+			"# ìµœëŒ€ ëŒ€ë¯¸ì§€",
+			"# ìµœëŒ€ ëŒ€ë¯¸ì§€ê°€ ëŠ˜ì–´ë‚˜ëŠ” ë§Œí¼",
+			"# íšŒë³µ ì†ë„ë„ ê°™ì´ ëŠ˜ì–´ë‚©ë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -76,7 +76,7 @@ public class HealthFreak extends AbilityBase {
 	
 	public static final SettingObject<Integer> PROTEIN_DURATION = 
 			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "protein-duration", 30,
-			"# ÇÁ·ÎÆ¾ È¿°úÀÇ Áö¼Ó ½Ã°£") {
+			"# í”„ë¡œí‹´ íš¨ê³¼ì˜ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -108,14 +108,14 @@ public class HealthFreak extends AbilityBase {
 	@SuppressWarnings("serial")
 	private List<String> lores = new ArrayList<String>() {
 		{
-			add("¡×7");
-			add("¡×6Áö¼Ó ½Ã°£¡×7: ¡×c" + duration + "¡×7ÃÊ");
-			add("¡×7ÃÖ´ë Ã¼·ÂÀÌ 2Ä­ ´Ã¾î³³´Ï´Ù.");
-			add("¡×7´Ù¸¥ È¸º¹ È¿°ú¸¦ ¹«½ÃÇÏ°í ¸Å ÃÊ¸¶´Ù Ã¼·ÂÀ»");
-			add("¡×70.75¸¸Å­ È¸º¹ÇÏ´Â ÃÊÈ¸º¹ È¿°ú¸¦ ¹Ş½À´Ï´Ù.");
-			add("¡×7¶ÇÇÑ ±ÙÀ°ÀÌ »¡¸® ºÙ°í ±Ù¼Õ½ÇÀÌ ´À·ÁÁı´Ï´Ù.");
-			add("¡×cÇÁ·ÎÆ¾ÀÇ ÁÖÀÎÀÌ »ç¸ÁÇÏ¸é, È¿°ú¸¦ ¾òÀ» ¼ö ¾ø½À´Ï´Ù.");
-			add("¡×7¿ø ÁÖÀÎ: ¡×e" + getPlayer().getName());
+			add("Â§7");
+			add("Â§6ì§€ì† ì‹œê°„Â§7: Â§c" + duration + "Â§7ì´ˆ");
+			add("Â§7ìµœëŒ€ ì²´ë ¥ì´ 2ì¹¸ ëŠ˜ì–´ë‚©ë‹ˆë‹¤.");
+			add("Â§7ë‹¤ë¥¸ íšŒë³µ íš¨ê³¼ë¥¼ ë¬´ì‹œí•˜ê³  ë§¤ ì´ˆë§ˆë‹¤ ì²´ë ¥ì„");
+			add("Â§70.75ë§Œí¼ íšŒë³µí•˜ëŠ” ì´ˆíšŒë³µ íš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
+			add("Â§7ë˜í•œ ê·¼ìœ¡ì´ ë¹¨ë¦¬ ë¶™ê³  ê·¼ì†ì‹¤ì´ ëŠë ¤ì§‘ë‹ˆë‹¤.");
+			add("Â§cí”„ë¡œí‹´ì˜ ì£¼ì¸ì´ ì‚¬ë§í•˜ë©´, íš¨ê³¼ë¥¼ ì–»ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+			add("Â§7ì› ì£¼ì¸: Â§e" + getPlayer().getName());
 		}
 	};
 	
@@ -123,7 +123,7 @@ public class HealthFreak extends AbilityBase {
     	
     	@Override
     	public void onStart() {
-    		bossBar = Bukkit.createBossBar("Ãß°¡ ÇÇÇØ·®", BarColor.RED, BarStyle.SOLID);
+    		bossBar = Bukkit.createBossBar("ì¶”ê°€ í”¼í•´ëŸ‰", BarColor.RED, BarStyle.SOLID);
     		bossBar.setProgress(0);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -131,7 +131,7 @@ public class HealthFreak extends AbilityBase {
     	
     	@Override
 		public void run(int count) {
-    		bossBar.setTitle("¡×cÃß°¡ ÇÇÇØ·® ¡×7: ¡×e" + df.format(addDamage));
+    		bossBar.setTitle("Â§cì¶”ê°€ í”¼í•´ëŸ‰ Â§7: Â§e" + df.format(addDamage));
     		bossBar.setProgress(RangesKt.coerceIn(addDamage / maxDamage, 0, 1));
     		if (getPlayer().isSneaking()) {
     			if (getParticipant().hasEffect(SuperRegen.registration)) addDamage = Math.min(maxDamage, addDamage + (0.04 + ((longsneak / maxDamage) * 0.06)));
@@ -186,7 +186,7 @@ public class HealthFreak extends AbilityBase {
     			ItemStack protein = new ItemStack(Material.POTION, 1);
     			PotionMeta proteinmeta = (PotionMeta) protein.getItemMeta();
     			
-    			proteinmeta.setDisplayName("¡×f¡×lÇÁ·ÎÆ¾");
+    			proteinmeta.setDisplayName("Â§fÂ§lí”„ë¡œí‹´");
     			proteinmeta.setColor(Color.WHITE);
     			
     			proteinmeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, (duration * 20), 1), false);

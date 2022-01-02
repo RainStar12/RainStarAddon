@@ -32,32 +32,32 @@ import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "ÀÜ·ù È­»ì", rank = Rank.B, species = Species.HUMAN, explain = {
-		"È°·Î ÇÃ·¹ÀÌ¾î¸¦ ÀûÁßÇÒ ¶§ ´ë»óÀÇ À§Ä¡¿¡ ¹«ÀÛÀ§ÀÇ",
-		"Æ÷¼Ç Áö´ë¸¦ ÀÜ·ù½ÃÅµ´Ï´Ù. $[CooldownConfig]",
-		"´ÙÀ½ Æ÷¼Ç È¿°ú¸¦ ¹Ì¸® ¾Ë ¼ö ÀÖÀ¸¸ç, Ã¶±« ¿ìÅ¬¸¯ ½Ã",
-		"ÇØ´ç È¿°ú¸¦ ³Ñ±æ ¼ö ÀÖ½À´Ï´Ù. $[ActiveConfig]"
+@AbilityManifest(name = "ì”ë¥˜ í™”ì‚´", rank = Rank.B, species = Species.HUMAN, explain = {
+		"í™œë¡œ í”Œë ˆì´ì–´ë¥¼ ì ì¤‘í•  ë•Œ ëŒ€ìƒì˜ ìœ„ì¹˜ì— ë¬´ì‘ìœ„ì˜",
+		"í¬ì…˜ ì§€ëŒ€ë¥¼ ì”ë¥˜ì‹œí‚µë‹ˆë‹¤. $[CooldownConfig]",
+		"ë‹¤ìŒ í¬ì…˜ íš¨ê³¼ë¥¼ ë¯¸ë¦¬ ì•Œ ìˆ˜ ìˆìœ¼ë©°, ì² ê´´ ìš°í´ë¦­ ì‹œ",
+		"í•´ë‹¹ íš¨ê³¼ë¥¼ ë„˜ê¸¸ ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[ActiveConfig]"
 		})
 
 @Tips(tip = {
-        "ÀûÀÇ À§Ä¡¿¡ 5~20ÃÊ Áö¼ÓÀÇ ¹«ÀÛÀ§ Æ÷¼Ç È¿°ú¸¦ °Å´Â",
-        "ÀÜ·ù ±¸¸§À» 10ÃÊ°£ À¯Áö½ÃÅ°´Â ´É·ÂÀÔ´Ï´Ù.",
-        "ÇÏÁö¸¸ ÁÁÀº È¿°úµµ, ³ª»Û È¿°úµµ, Áß¸³Àû È¿°úµµ ÀüºÎ",
-        "³ª¿Ã ¼ö ÀÖÀ¸´Ï Çà¿îÀÌ µû¸£±æ ±âµµÇÏ¼¼¿ä."
+        "ì ì˜ ìœ„ì¹˜ì— 5~20ì´ˆ ì§€ì†ì˜ ë¬´ì‘ìœ„ í¬ì…˜ íš¨ê³¼ë¥¼ ê±°ëŠ”",
+        "ì”ë¥˜ êµ¬ë¦„ì„ 10ì´ˆê°„ ìœ ì§€ì‹œí‚¤ëŠ” ëŠ¥ë ¥ì…ë‹ˆë‹¤.",
+        "í•˜ì§€ë§Œ ì¢‹ì€ íš¨ê³¼ë„, ë‚˜ìœ íš¨ê³¼ë„, ì¤‘ë¦½ì  íš¨ê³¼ë„ ì „ë¶€",
+        "ë‚˜ì˜¬ ìˆ˜ ìˆìœ¼ë‹ˆ í–‰ìš´ì´ ë”°ë¥´ê¸¸ ê¸°ë„í•˜ì„¸ìš”."
 }, strong = {
-        @Description(subject = "ÆÇ´Ü·Â", explain = {
-        		"Àû¿¡°Ô °Ç Æ÷¼Ç ¹öÇÁ È¿°ú¸¦ º¸°í ºü¸¥ ÆÇ´Ü·ÂÀ¸·Î",
-        		"Àû¿¡°Ô¼­ °Å¸®¸¦ ¹ú¸± Áö, °°ÀÌ ¹öÇÁ¸¦ ¹ŞÀ» Áö",
-        		"È¤Àº ÀûÀ» °ø°İÇÒ Áö °á´Ü³»·Á¾ß ÇÕ´Ï´Ù."
+        @Description(subject = "íŒë‹¨ë ¥", explain = {
+        		"ì ì—ê²Œ ê±´ í¬ì…˜ ë²„í”„ íš¨ê³¼ë¥¼ ë³´ê³  ë¹ ë¥¸ íŒë‹¨ë ¥ìœ¼ë¡œ",
+        		"ì ì—ê²Œì„œ ê±°ë¦¬ë¥¼ ë²Œë¦´ ì§€, ê°™ì´ ë²„í”„ë¥¼ ë°›ì„ ì§€",
+        		"í˜¹ì€ ì ì„ ê³µê²©í•  ì§€ ê²°ë‹¨ë‚´ë ¤ì•¼ í•©ë‹ˆë‹¤."
         }),
-        @Description(subject = "Çà¿î", explain = {
-        		"°á°úÀûÀ¸·Î ³ª»Û È¿°úÀÇ È­»ìÀÌ °É¸®´Â °ÍÀÌ ÁÁ½À´Ï´Ù.",
-        		"Çà¿îÀÌ µû¸£±æ ±âµµÇÏ¼¼¿ä."
+        @Description(subject = "í–‰ìš´", explain = {
+        		"ê²°ê³¼ì ìœ¼ë¡œ ë‚˜ìœ íš¨ê³¼ì˜ í™”ì‚´ì´ ê±¸ë¦¬ëŠ” ê²ƒì´ ì¢‹ìŠµë‹ˆë‹¤.",
+        		"í–‰ìš´ì´ ë”°ë¥´ê¸¸ ê¸°ë„í•˜ì„¸ìš”."
         })
 }, weak = {
-        @Description(subject = "ºÒ¿î", explain = {
-        		"Àû¿¡°Ô ÁÁÀº È¿°úÀÇ È­»ìÀ» °É¾î¹ö¸®¸é ¿ªÈ¿°ú°¡ ³ª°ÚÁÒ?",
-        		"ºÒ¿îÀÌ ¾ø±â¸¦ ±âµµÇÏ¼¼¿ä."
+        @Description(subject = "ë¶ˆìš´", explain = {
+        		"ì ì—ê²Œ ì¢‹ì€ íš¨ê³¼ì˜ í™”ì‚´ì„ ê±¸ì–´ë²„ë¦¬ë©´ ì—­íš¨ê³¼ê°€ ë‚˜ê² ì£ ?",
+        		"ë¶ˆìš´ì´ ì—†ê¸°ë¥¼ ê¸°ë„í•˜ì„¸ìš”."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.TWO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 
@@ -74,7 +74,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CooldownConfig 
 	= abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
-			"Cooldown", 12, "# ÄğÅ¸ÀÓ") {
+			"Cooldown", 12, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -85,7 +85,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 			return Formatter.formatCooldown(getValue());
 		}
 	}, ActiveConfig = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
-			"Active_Cooldown", 30, "# º¯°æ ÄğÅ¸ÀÓ") {
+			"Active_Cooldown", 30, "# ë³€ê²½ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -103,14 +103,14 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
-			actionbar.update("¡×b´ÙÀ½ È¿°ú¡×f: ¡×e" + POTION_TYPES.get(potionEffect).getLeft());
+			actionbar.update("Â§bë‹¤ìŒ íš¨ê³¼Â§f: Â§e" + POTION_TYPES.get(potionEffect).getLeft());
 		}
 	}
 
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !activeC.isCooldown()) {
 			potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
-			actionbar.update("¡×b´ÙÀ½ È¿°ú¡×f: ¡×e" + POTION_TYPES.get(potionEffect).getLeft());
+			actionbar.update("Â§bë‹¤ìŒ íš¨ê³¼Â§f: Â§e" + POTION_TYPES.get(potionEffect).getLeft());
 			return activeC.start();
 		}
 		return false;
@@ -118,34 +118,34 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
-			.put(PotionEffectType.REGENERATION, Pair.of("¡×dÀç»ı", PotionEffectType.REGENERATION.getColor()))
-			.put(PotionEffectType.SPEED, Pair.of("¡×b½Å¼Ó", PotionEffectType.SPEED.getColor()))
-			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("¡×cÈ­¿° ÀúÇ×", PotionEffectType.FIRE_RESISTANCE.getColor()))
-			.put(PotionEffectType.HEAL, Pair.of("¡×dÄ¡À¯", PotionEffectType.HEAL.getColor()))
-			.put(PotionEffectType.NIGHT_VISION, Pair.of("¡×9¾ß°£ Åõ½Ã", PotionEffectType.NIGHT_VISION.getColor()))
-			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("¡×6Èû", PotionEffectType.INCREASE_DAMAGE.getColor()))
-			.put(PotionEffectType.JUMP, Pair.of("¡×aÁ¡ÇÁ °­È­", PotionEffectType.JUMP.getColor()))
-			.put(PotionEffectType.WATER_BREATHING, Pair.of("¡×3¼öÁß È£Èí", PotionEffectType.WATER_BREATHING.getColor()))
-			.put(PotionEffectType.INVISIBILITY, Pair.of("¡×7Åõ¸íÈ­", PotionEffectType.INVISIBILITY.getColor()))
-			.put(PotionEffectType.LUCK, Pair.of("¡×aÇà¿î", PotionEffectType.LUCK.getColor()))
-			.put(PotionEffectType.POISON, Pair.of("¡×2µ¶", PotionEffectType.POISON.getColor()))
-			.put(PotionEffectType.WEAKNESS, Pair.of("¡×7³ª¾àÇÔ", PotionEffectType.WEAKNESS.getColor()))
-			.put(PotionEffectType.SLOW, Pair.of("¡×8±¸¼Ó", PotionEffectType.SLOW.getColor()))
-			.put(PotionEffectType.HARM, Pair.of("¡×4°íÅë", PotionEffectType.HARM.getColor()))
-			// ÀÌ ¾Æ·¡´Â ¾ø´Â È¿°úµé
-			.put(PotionEffectType.WITHER, Pair.of("¡×0½Ãµê", Color.fromRGB(1, 1, 1)))
-			.put(PotionEffectType.ABSORPTION, Pair.of("¡×eÈí¼ö", Color.fromRGB(254, 246, 18)))
-			.put(PotionEffectType.BLINDNESS, Pair.of("¡×7½Ç¸í", Color.fromRGB(140, 140, 140)))
-			.put(PotionEffectType.CONFUSION, Pair.of("¡×5¸Ö¹Ì", Color.fromRGB(171, 130, 18)))
-			.put(PotionEffectType.FAST_DIGGING, Pair.of("¡×e¼º±ŞÇÔ", Color.fromRGB(254, 254, 143)))
-			.put(PotionEffectType.GLOWING, Pair.of("¡×f¹ß±¤", Color.fromRGB(254, 254, 254)))
-			.put(PotionEffectType.HEALTH_BOOST, Pair.of("¡×c»ı¸í·Â °­È­", Color.fromRGB(254, 178, 217)))
-			.put(PotionEffectType.HUNGER, Pair.of("¡×2Çã±â", Color.fromRGB(134, 229, 127)))
-			.put(PotionEffectType.LEVITATION, Pair.of("¡×5°øÁß ºÎ¾ç", Color.fromRGB(171, 18, 151)))
-			.put(PotionEffectType.SATURATION, Pair.of("¡×eÆ÷¸¸°¨", Color.fromRGB(254, 221, 115)))
-			.put(PotionEffectType.SLOW_DIGGING, Pair.of("¡×8Ã¤±¼ ÇÇ·Î", Color.fromRGB(93, 93, 93)))
-			.put(PotionEffectType.UNLUCK, Pair.of("¡×aºÒ¿î", Color.fromRGB(206, 242, 121)))
-			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("¡×8ÀúÇ×", Color.fromRGB(1, 96, 106)))
+			.put(PotionEffectType.REGENERATION, Pair.of("Â§dì¬ìƒ", PotionEffectType.REGENERATION.getColor()))
+			.put(PotionEffectType.SPEED, Pair.of("Â§bì‹ ì†", PotionEffectType.SPEED.getColor()))
+			.put(PotionEffectType.FIRE_RESISTANCE, Pair.of("Â§cí™”ì—¼ ì €í•­", PotionEffectType.FIRE_RESISTANCE.getColor()))
+			.put(PotionEffectType.HEAL, Pair.of("Â§dì¹˜ìœ ", PotionEffectType.HEAL.getColor()))
+			.put(PotionEffectType.NIGHT_VISION, Pair.of("Â§9ì•¼ê°„ íˆ¬ì‹œ", PotionEffectType.NIGHT_VISION.getColor()))
+			.put(PotionEffectType.INCREASE_DAMAGE, Pair.of("Â§6í˜", PotionEffectType.INCREASE_DAMAGE.getColor()))
+			.put(PotionEffectType.JUMP, Pair.of("Â§aì í”„ ê°•í™”", PotionEffectType.JUMP.getColor()))
+			.put(PotionEffectType.WATER_BREATHING, Pair.of("Â§3ìˆ˜ì¤‘ í˜¸í¡", PotionEffectType.WATER_BREATHING.getColor()))
+			.put(PotionEffectType.INVISIBILITY, Pair.of("Â§7íˆ¬ëª…í™”", PotionEffectType.INVISIBILITY.getColor()))
+			.put(PotionEffectType.LUCK, Pair.of("Â§aí–‰ìš´", PotionEffectType.LUCK.getColor()))
+			.put(PotionEffectType.POISON, Pair.of("Â§2ë…", PotionEffectType.POISON.getColor()))
+			.put(PotionEffectType.WEAKNESS, Pair.of("Â§7ë‚˜ì•½í•¨", PotionEffectType.WEAKNESS.getColor()))
+			.put(PotionEffectType.SLOW, Pair.of("Â§8êµ¬ì†", PotionEffectType.SLOW.getColor()))
+			.put(PotionEffectType.HARM, Pair.of("Â§4ê³ í†µ", PotionEffectType.HARM.getColor()))
+			// ì´ ì•„ë˜ëŠ” ì—†ëŠ” íš¨ê³¼ë“¤
+			.put(PotionEffectType.WITHER, Pair.of("Â§0ì‹œë“¦", Color.fromRGB(1, 1, 1)))
+			.put(PotionEffectType.ABSORPTION, Pair.of("Â§eí¡ìˆ˜", Color.fromRGB(254, 246, 18)))
+			.put(PotionEffectType.BLINDNESS, Pair.of("Â§7ì‹¤ëª…", Color.fromRGB(140, 140, 140)))
+			.put(PotionEffectType.CONFUSION, Pair.of("Â§5ë©€ë¯¸", Color.fromRGB(171, 130, 18)))
+			.put(PotionEffectType.FAST_DIGGING, Pair.of("Â§eì„±ê¸‰í•¨", Color.fromRGB(254, 254, 143)))
+			.put(PotionEffectType.GLOWING, Pair.of("Â§fë°œê´‘", Color.fromRGB(254, 254, 254)))
+			.put(PotionEffectType.HEALTH_BOOST, Pair.of("Â§cìƒëª…ë ¥ ê°•í™”", Color.fromRGB(254, 178, 217)))
+			.put(PotionEffectType.HUNGER, Pair.of("Â§2í—ˆê¸°", Color.fromRGB(134, 229, 127)))
+			.put(PotionEffectType.LEVITATION, Pair.of("Â§5ê³µì¤‘ ë¶€ì–‘", Color.fromRGB(171, 18, 151)))
+			.put(PotionEffectType.SATURATION, Pair.of("Â§eí¬ë§Œê°", Color.fromRGB(254, 221, 115)))
+			.put(PotionEffectType.SLOW_DIGGING, Pair.of("Â§8ì±„êµ´ í”¼ë¡œ", Color.fromRGB(93, 93, 93)))
+			.put(PotionEffectType.UNLUCK, Pair.of("Â§aë¶ˆìš´", Color.fromRGB(206, 242, 121)))
+			.put(PotionEffectType.DAMAGE_RESISTANCE, Pair.of("Â§8ì €í•­", Color.fromRGB(1, 96, 106)))
 			.build();
 	
 	
@@ -163,11 +163,11 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 				AEC.addCustomEffect(new PotionEffect((potionEffect), (random.nextInt(15) + 5) * 20, 0), true);
 				AEC.setColor(POTION_TYPES.get(potionEffect).getRight());
 				AEC.setWaitTime(0);
-				getPlayer().sendMessage(POTION_TYPES.get(potionEffect).getLeft() + "¡×f Áö´ë°¡ »ı¼ºµÇ¾ú½À´Ï´Ù.");
+				getPlayer().sendMessage(POTION_TYPES.get(potionEffect).getLeft() + "Â§f ì§€ëŒ€ê°€ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤.");
 				arrowC.start();
 
 				potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
-				actionbar.update("¡×b´ÙÀ½ È¿°ú¡×f: ¡×e" + POTION_TYPES.get(potionEffect).getLeft());
+				actionbar.update("Â§bë‹¤ìŒ íš¨ê³¼Â§f: Â§e" + POTION_TYPES.get(potionEffect).getLeft());
 			}
 		}
 	}

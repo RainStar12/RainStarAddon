@@ -49,8 +49,8 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "정밀 조준", rank = Rank.B, species = Species.HUMAN, explain = {
-		"$[Reload]초마다 다음 $[AmmoSizeConfig]발의 화살을 정밀하게 조준합니다.",
-		"화살로부터 $[RangeConfig]칸 내 가장 가까운 플레이어에게 §5유도§f됩니다.",
+		"$[RELOAD]초마다 다음 $[AMMO_SIZE]발의 화살을 정밀하게 조준합니다.",
+		"화살로부터 $[RANGE]칸 내 가장 가까운 플레이어에게 §5유도§f됩니다.",
 		"§8[§7HIDDEN§8] §c아직 한 발 남았다§f: 최후의 순간에 최고의 한 발을."
 		})
 
@@ -75,32 +75,32 @@ public class PrecisionAiming extends AbilityBase {
 		super(participant);
 	}
 	
-	private final int range = RangeConfig.getValue();
-	private final int ammo = AmmoSizeConfig.getValue();
-	private final int reload = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * Reload.getValue() : Reload.getValue());
+	private final int range = RANGE.getValue();
+	private final int ammo = AMMO_SIZE.getValue();
+	private final int reload = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * RELOAD.getValue() : RELOAD.getValue());
 	private final ActionbarChannel ac = newActionbarChannel();
 	private Player target = null;
 	private int stack = 0;
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
 	
-	public static final SettingObject<Integer> Reload 
-	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "Reload", 40, "# 강화 대기 시간") {
+	public static final SettingObject<Integer> RELOAD 
+	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "reload-time", 40, "# 강화 대기 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> RangeConfig 
-	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "Range", 3, "# 유도 범위") {
+	public static final SettingObject<Integer> RANGE 
+	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "range", 3, "# 유도 범위") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> AmmoSizeConfig 
-	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "Ammo Size", 7, "# 강화할 화살의 수") {
+	public static final SettingObject<Integer> AMMO_SIZE 
+	= abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "ammo-size", 7, "# 강화할 화살의 수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

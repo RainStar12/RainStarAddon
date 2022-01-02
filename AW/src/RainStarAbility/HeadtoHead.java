@@ -16,10 +16,10 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "Á¤¸é½ÂºÎ", rank = Rank.A, species = Species.HUMAN, explain = {
-		"´Ù¸¥ »ı¸íÃ¼°¡ ³» Ãø¸éÀÌ³ª ÈÄ¹æÀ» °ø°İÇÏ¸é ÇÇÇØ·®ÀÌ ¡×c50% °¨¼Ò¡×fÇÕ´Ï´Ù.",
-		"´Ù¸¥ »ı¸íÃ¼ÀÇ Ãø¸éÀÌ³ª ÈÄ¹æÀ» Å¸°İÇÒ ¶§ ÇÇÇØ·®ÀÌ ¡×c35% °¨¼Ò¡×fÇÏ°í,",
-		"Á¤¸éÀ» Å¸°İÇÒ ¶§ ÇÇÇØ·®ÀÌ ¡×c15% Áõ°¡¡×fÇÕ´Ï´Ù."
+@AbilityManifest(name = "ì •ë©´ìŠ¹ë¶€", rank = Rank.A, species = Species.HUMAN, explain = {
+		"ë‹¤ë¥¸ ìƒëª…ì²´ê°€ ë‚´ ì¸¡ë©´ì´ë‚˜ í›„ë°©ì„ ê³µê²©í•˜ë©´ í”¼í•´ëŸ‰ì´ Â§c50% ê°ì†ŒÂ§fí•©ë‹ˆë‹¤.",
+		"ë‹¤ë¥¸ ìƒëª…ì²´ì˜ ì¸¡ë©´ì´ë‚˜ í›„ë°©ì„ íƒ€ê²©í•  ë•Œ í”¼í•´ëŸ‰ì´ Â§c35% ê°ì†ŒÂ§fí•˜ê³ ,",
+		"ì •ë©´ì„ íƒ€ê²©í•  ë•Œ í”¼í•´ëŸ‰ì´ Â§c15% ì¦ê°€Â§fí•©ë‹ˆë‹¤."
 		})
 
 public class HeadtoHead extends AbilityBase {

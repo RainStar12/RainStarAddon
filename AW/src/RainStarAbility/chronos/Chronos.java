@@ -38,28 +38,28 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "Å©·Î³ë½º", rank = Rank.S, species = Species.GOD, explain = {
-		"½Ã°£ÀÇ ½Å Å©·Î³ë½º.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×3½Ã°£ °¡¼Ó¡×f: °ÔÀÓ ³»¿¡ Å©·Î³ë½º°¡ ÇÑ ¸íÀÌ¶óµµ ÀÖÀ¸¸é",
-		" ¼¼»óÀÇ ½Ã°£ÀÌ ¸Å¿ì ºü¸£°Ô Èå¸¨´Ï´Ù. ½Ã°£ÀÌ ÇÏ·ç¸¦ ÀÏÁÖÇÒ ¶§¸¶´Ù,",
-		" Å©·Î³ë½º ¼ÒÀ¯ÀÚÀÇ ¸ğµç ´É·Â ¡×cÄğÅ¸ÀÓ¡×fÀÌ ÃÊ±âÈ­µË´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×5½Ã°£ Áö¹è¡×f: ÁÖº¯ $[RANGE]Ä­ ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾îÀÇ ½Ã°£À» $[DURATION]ÃÊ°£ Á¶ÀÛÇØ",
-		" ¡×fÀÌµ¿ ¼Óµµ¡×7 ¡¤ ¡×f°ø°İ ¼Óµµ¡×7 ¡¤ ¡×fÄğÅ¸ÀÓÀ» ¡×e´À¸®°Ô¡×f Èå¸£°Ô ÇÏ°í,",
-		" ¡×fÁö¼Ó ½Ã°£¡×7 ¡¤ ¡×f±âº» ¹«Àû ½Ã°£¡×fÀ» ¡×bºü¸£°Ô¡×f Èå¸£°Ô ÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ÀÌ È¿°ú¸¦ ¹ŞÀº »ç¶÷ ¼ö¿¡ ºñ·ÊÇØ ´õ ¿À·§µ¿¾È ÀÚ½ÅÀÇ ½Ã°£À» Á¶ÀÛÇÏ¿©,",
-		" È¸º¹ ¡×7¡¤¡×f ÀÌµ¿ ¡×7¡¤¡×f °ø°İ ¼Óµµ°¡ ¡×b»¡¶ó¡×fÁö°í ±âº» ¹«Àû ½Ã°£ÀÌ ¡×e´À·Á¡×fÁı´Ï´Ù."
+@AbilityManifest(name = "í¬ë¡œë…¸ìŠ¤", rank = Rank.S, species = Species.GOD, explain = {
+		"ì‹œê°„ì˜ ì‹  í¬ë¡œë…¸ìŠ¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§3ì‹œê°„ ê°€ì†Â§f: ê²Œì„ ë‚´ì— í¬ë¡œë…¸ìŠ¤ê°€ í•œ ëª…ì´ë¼ë„ ìˆìœ¼ë©´",
+		" ì„¸ìƒì˜ ì‹œê°„ì´ ë§¤ìš° ë¹ ë¥´ê²Œ íë¦…ë‹ˆë‹¤. ì‹œê°„ì´ í•˜ë£¨ë¥¼ ì¼ì£¼í•  ë•Œë§ˆë‹¤,",
+		" í¬ë¡œë…¸ìŠ¤ ì†Œìœ ìì˜ ëª¨ë“  ëŠ¥ë ¥ Â§cì¿¨íƒ€ì„Â§fì´ ì´ˆê¸°í™”ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§5ì‹œê°„ ì§€ë°°Â§f: ì£¼ë³€ $[RANGE]ì¹¸ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ì˜ ì‹œê°„ì„ $[DURATION]ì´ˆê°„ ì¡°ì‘í•´",
+		" Â§fì´ë™ ì†ë„Â§7 Â· Â§fê³µê²© ì†ë„Â§7 Â· Â§fì¿¨íƒ€ì„ì„ Â§eëŠë¦¬ê²ŒÂ§f íë¥´ê²Œ í•˜ê³ ,",
+		" Â§fì§€ì† ì‹œê°„Â§7 Â· Â§fê¸°ë³¸ ë¬´ì  ì‹œê°„Â§fì„ Â§bë¹ ë¥´ê²ŒÂ§f íë¥´ê²Œ í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´ íš¨ê³¼ë¥¼ ë°›ì€ ì‚¬ëŒ ìˆ˜ì— ë¹„ë¡€í•´ ë” ì˜¤ë«ë™ì•ˆ ìì‹ ì˜ ì‹œê°„ì„ ì¡°ì‘í•˜ì—¬,",
+		" íšŒë³µ Â§7Â·Â§f ì´ë™ Â§7Â·Â§f ê³µê²© ì†ë„ê°€ Â§bë¹¨ë¼Â§fì§€ê³  ê¸°ë³¸ ë¬´ì  ì‹œê°„ì´ Â§eëŠë ¤Â§fì§‘ë‹ˆë‹¤."
 		},
 		summarize = {
-		"¡×3Å©·Î³ë½º¡×f°¡ ÀÖ´Â ¼¼»óÀº ½Ã°£ÀÌ ¸Å¿ì ºü¸£°Ô Èå¸¨´Ï´Ù.",
-		"ÇÏ·ç°¡ Áö³¯ ¶§¸¶´Ù ¡×3Å©·Î³ë½º¡×f¸¦ °¡Áø ¸ğµç ÇÃ·¹ÀÌ¾î´Â ÄğÅ¸ÀÓÀÌ ÃÊ±âÈ­µË´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ½Ã¡×f ½Ã°£À» ¿Ö°î½ÃÄÑ ÁÖº¯ ÇÃ·¹ÀÌ¾î¿¡°Ô µğ¹öÇÁ¸¦,",
-		"ÀÌ È¿°ú¸¦ ¹ŞÀº »ç¶÷ ¼ö¿¡ ºñ·ÊÇØ ÀÚ½Å¿¡°Ô ¹öÇÁ¸¦ °Ì´Ï´Ù."
+		"Â§3í¬ë¡œë…¸ìŠ¤Â§fê°€ ìˆëŠ” ì„¸ìƒì€ ì‹œê°„ì´ ë§¤ìš° ë¹ ë¥´ê²Œ íë¦…ë‹ˆë‹¤.",
+		"í•˜ë£¨ê°€ ì§€ë‚  ë•Œë§ˆë‹¤ Â§3í¬ë¡œë…¸ìŠ¤Â§fë¥¼ ê°€ì§„ ëª¨ë“  í”Œë ˆì´ì–´ëŠ” ì¿¨íƒ€ì„ì´ ì´ˆê¸°í™”ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ ì‹œÂ§f ì‹œê°„ì„ ì™œê³¡ì‹œì¼œ ì£¼ë³€ í”Œë ˆì´ì–´ì—ê²Œ ë””ë²„í”„ë¥¼,",
+		"ì´ íš¨ê³¼ë¥¼ ë°›ì€ ì‚¬ëŒ ìˆ˜ì— ë¹„ë¡€í•´ ìì‹ ì—ê²Œ ë²„í”„ë¥¼ ê²ë‹ˆë‹¤."
 		})
 
 public class Chronos extends AbilityBase implements ActiveHandler {
 
 	private static final SettingObject<Integer> TIME_SPEED = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "time-speed", 10, "# ½Ã°£ °¡¼ÓÀÇ ¼Óµµ ¹èÀ²") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "time-speed", 10, "# ì‹œê°„ ê°€ì†ì˜ ì†ë„ ë°°ìœ¨") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -69,7 +69,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> RANGE = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "range", 7, "# ½Ã°£ Áö¹èÀÇ »ç°Å¸®") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "range", 10, "# ì‹œê°„ ì§€ë°°ì˜ ì‚¬ê±°ë¦¬") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -79,7 +79,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "duration", 7, "# ½Ã°£ Á¶ÀÛÀÇ Áö¼Ó ½Ã°£") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "duration", 7, "# ì‹œê°„ ì¡°ì‘ì˜ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -89,7 +89,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> BUFF_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 7, "# Á¶ÀÛÀ¸·Î ¾ò´Â ±âº» ¹öÇÁ Áö¼Ó½Ã°£") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 7, "# ì¡°ì‘ìœ¼ë¡œ ì–»ëŠ” ê¸°ë³¸ ë²„í”„ ì§€ì†ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -99,7 +99,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> BUFF_ADD_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-add-duration", 30, "# Á¶ÀÛÇÑ ´ë»ó ÇÏ³ª´ç ¾ò´Â Ãß°¡ Áö¼Ó½Ã°£", "# ´ÜÀ§: Æ½ (20Æ½ = 1ÃÊ)") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-add-duration", 30, "# ì¡°ì‘í•œ ëŒ€ìƒ í•˜ë‚˜ë‹¹ ì–»ëŠ” ì¶”ê°€ ì§€ì†ì‹œê°„", "# ë‹¨ìœ„: í‹± (20í‹± = 1ì´ˆ)") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -109,7 +109,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 140, "# ÄğÅ¸ÀÓ") {
+			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 80, "# ì¿¨íƒ€ì„") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -159,7 +159,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), 50);
 	private final int duration = DURATION.getValue();
 	private final int buffduration = BUFF_DURATION.getValue();
 	private final int addduration = BUFF_ADD_DURATION.getValue();
@@ -169,7 +169,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	
 	private ActionbarChannel ac = newActionbarChannel();
 	private AttributeModifier movespeed, attackspeed;
-	private Circle circle = Circle.of(range, (range * 11));
+	private Circle circle = Circle.of(range, (range * 12));
 	private int effectedcount = 0;	
 	private boolean timechanged = false;
 	
@@ -197,7 +197,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     						}
     					}
     					if (cleared) {
-    						getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×eÇÏ·ç¡×f°¡ Áö³ª ¸ğµç ´É·Â ¡×cÄğÅ¸ÀÓ¡×fÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+    						getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§eí•˜ë£¨Â§fê°€ ì§€ë‚˜ ëª¨ë“  ëŠ¥ë ¥ Â§cì¿¨íƒ€ì„Â§fì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
     					}
     				}
@@ -212,7 +212,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onStart() {
-    		ac.update("¡×5½Ã°£ Áö¹è¡×7: ¡×f" + df.format((buffduration * 20) + (effectedcount * (addduration))));
+    		ac.update("Â§5ì‹œê°„ ì§€ë°°Â§7: Â§f" + df.format((buffduration * 20) + (effectedcount * (addduration))));
     		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", 0.1, Operation.ADD_NUMBER);
     		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(movespeed);
     		attackspeed = new AttributeModifier(UUID.randomUUID(), "attackspeed", 1.5, Operation.ADD_NUMBER);
@@ -226,7 +226,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     			if (count % 14 == 0) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
     			else SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
     		}
-    		ac.update("¡×5½Ã°£ Áö¹è¡×7: ¡×f" + df.format((double) count / 20) + "ÃÊ");
+    		ac.update("Â§5ì‹œê°„ ì§€ë°°Â§7: Â§f" + df.format((double) count / 20) + "ì´ˆ");
     		if (getPlayer().getHealth() > 0) {
     			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.05, RegainReason.CUSTOM);
     			Bukkit.getPluginManager().callEvent(event);

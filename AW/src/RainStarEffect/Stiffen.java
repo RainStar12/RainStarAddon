@@ -24,12 +24,12 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "°æÁ÷", displayName = "¡×c°æÁ÷", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ê²½ì§", displayName = "Â§cê²½ì§", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_BAN, EffectType.ABILITY_RESTRICTION,
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"ÀÌµ¿, °ø°İ, ´É·Â »ç¿ë, Ã¼·Â È¸º¹ÀÌ ºÒ°¡ÇÕ´Ï´Ù.",
-		"¸ğµç ÇÇÇØ¸¦ 80% °æ°¨ÇÏ¿© ¹Ş½À´Ï´Ù."
+		"ì´ë™, ê³µê²©, ëŠ¥ë ¥ ì‚¬ìš©, ì²´ë ¥ íšŒë³µì´ ë¶ˆê°€í•©ë‹ˆë‹¤.",
+		"ëª¨ë“  í”¼í•´ë¥¼ 80% ê²½ê°í•˜ì—¬ ë°›ìŠµë‹ˆë‹¤."
 })
 public class Stiffen extends AbstractGame.Effect implements Listener {
 
@@ -51,7 +51,7 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 		hologram.setInvulnerable(true);
 		NMS.removeBoundingBox(hologram);
 		hologram.setCustomNameVisible(true);
-		hologram.setCustomName("¡×8°æÁ÷!");
+		hologram.setCustomName("Â§8ê²½ì§!");
 		setPeriod(TimeUnit.TICKS, 2);
 	}
 	

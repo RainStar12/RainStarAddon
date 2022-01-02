@@ -59,19 +59,19 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
-@AbilityManifest(name = "½Ã°£ ¿©Çà", rank = Rank.L, species = Species.HUMAN, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×d½Ã°£ ÀúÀå¡×f:  ÇöÀç ³ªÀÇ ¸ğµç »óÅÂ¸¦ ÀúÀåÇÕ´Ï´Ù. $[RIGHT_COOLDOWN]",
-		" °ú°Å ¿©Çà ¹ßµ¿ ÈÄ »ç¿ë ½Ã, ÀúÀåµÈ ½Ã°£À¸·Î ¿ªÇàÇÕ´Ï´Ù.",
-		" ÀÌ ¿ªÇàÀ¸·Î´Â ÃÖ´ë Ã¼·ÂÀÇ Àı¹İ ÀÌ»óÀÇ Ã¼·ÂÀ» È¸º¹ÇÒ ¼ö ¾ø½À´Ï´Ù.",
-		"¡×7»ç¸Á ¡×8- ¡×a°ú°Å ¿©Çà¡×f: Ä¡¸íÀûÀÎ ÇÇÇØ¸¦ ÀÔ¾úÀ» ¶§ ´Ü ÇÑ ¹ø »ç¸ÁÇÏÁö ¾Ê°í",
-		" ÀúÀåµÈ ½Ã°£À¸·Î ÀÚ½ÅÀÇ »óÅÂ¸¦ µÇµ¹¸³´Ï´Ù. ÀÌÈÄ ´Ù½Ã´Â ½Ã°£À» ÀúÀåÇÒ ¼ö ¾øÀ¸¸ç",
-		" »ç¸Á Á÷ÀüÀÇ ½Ã°£À¸·Î ½Ã°£ÀÌ °íÁ¤ ÀúÀåµË´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×b¹Ì·¡ ¿©Çà¡×f: $[DURATION]ÃÊ°£ ¡×c¹«Àû ¡×f/ ¡×d°ø°İ ºÒ´É ¡×f¹× ¡×3Å¸°ÔÆÃ ºÒ°¡ ¡×f»óÅÂ°¡ µÇ¸ç",
-		" Áßµµ¿¡ ´Ù½Ã ÁÂÅ¬¸¯ÇÏ¿© Áï½Ã ¡×b¹Ì·¡ ¿©Çà¡×fÀ» ±×¸¸µÑ ¼ö ÀÖ½À´Ï´Ù. $[LEFT_COOLDOWN]",
-		" ¡×b¹Ì·¡ ¿©Çà¡×f¿¡¼­ ³ª¿Ã ¶§, ÁÖº¯ $[RANGE]Ä­ ³» ÇÃ·¹ÀÌ¾îÀÇ ½Ã°£À» ¡×7¿Ö°î¡×fÇÏ¿©",
-		" $[EFFECT]ÃÊ°£ ÀÌµ¿ ¼Óµµ¿Í °ø°İ ¼Óµµ¸¦ ´À¸®°Ô ÇÏ°í, ÀÚ½ÅÀº »¡¶óÁı´Ï´Ù.",
-		" ÀÌÈÄ ´ÙÀ½À¸·Î ¹Ş´Â Ã¹ ÇÇÇØ¸¦ ¹«½ÃÇÕ´Ï´Ù. ÀÌ È¿°ú´Â ÁßÃ¸µÇÁö ¾Ê½À´Ï´Ù.",
-		"¡×2[¡×a!¡×2] ¡×b_Daybreak_¡×f´ÔÀÌ ½Ã°è ÆÄÆ¼Å¬ Á¦ÀÛ¿¡ µµ¿òÁÖ¼Ì½À´Ï´Ù."
+@AbilityManifest(name = "ì‹œê°„ ì—¬í–‰", rank = Rank.L, species = Species.HUMAN, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§dì‹œê°„ ì €ì¥Â§f:  í˜„ì¬ ë‚˜ì˜ ëª¨ë“  ìƒíƒœë¥¼ ì €ì¥í•©ë‹ˆë‹¤. $[RIGHT_COOLDOWN]",
+		" ê³¼ê±° ì—¬í–‰ ë°œë™ í›„ ì‚¬ìš© ì‹œ, ì €ì¥ëœ ì‹œê°„ìœ¼ë¡œ ì—­í–‰í•©ë‹ˆë‹¤.",
+		" ì´ ì—­í–‰ìœ¼ë¡œëŠ” ìµœëŒ€ ì²´ë ¥ì˜ ì ˆë°˜ ì´ìƒì˜ ì²´ë ¥ì„ íšŒë³µí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		"Â§7ì‚¬ë§ Â§8- Â§aê³¼ê±° ì—¬í–‰Â§f: ì¹˜ëª…ì ì¸ í”¼í•´ë¥¼ ì…ì—ˆì„ ë•Œ ë‹¨ í•œ ë²ˆ ì‚¬ë§í•˜ì§€ ì•Šê³ ",
+		" ì €ì¥ëœ ì‹œê°„ìœ¼ë¡œ ìì‹ ì˜ ìƒíƒœë¥¼ ë˜ëŒë¦½ë‹ˆë‹¤. ì´í›„ ë‹¤ì‹œëŠ” ì‹œê°„ì„ ì €ì¥í•  ìˆ˜ ì—†ìœ¼ë©°",
+		" ì‚¬ë§ ì§ì „ì˜ ì‹œê°„ìœ¼ë¡œ ì‹œê°„ì´ ê³ ì • ì €ì¥ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§bë¯¸ë˜ ì—¬í–‰Â§f: $[DURATION]ì´ˆê°„ Â§cë¬´ì  Â§f/ Â§dê³µê²© ë¶ˆëŠ¥ Â§fë° Â§3íƒ€ê²ŒíŒ… ë¶ˆê°€ Â§fìƒíƒœê°€ ë˜ë©°",
+		" ì¤‘ë„ì— ë‹¤ì‹œ ì¢Œí´ë¦­í•˜ì—¬ ì¦‰ì‹œ Â§bë¯¸ë˜ ì—¬í–‰Â§fì„ ê·¸ë§Œë‘˜ ìˆ˜ ìˆìŠµë‹ˆë‹¤. $[LEFT_COOLDOWN]",
+		" Â§bë¯¸ë˜ ì—¬í–‰Â§fì—ì„œ ë‚˜ì˜¬ ë•Œ, ì£¼ë³€ $[RANGE]ì¹¸ ë‚´ í”Œë ˆì´ì–´ì˜ ì‹œê°„ì„ Â§7ì™œê³¡Â§fí•˜ì—¬",
+		" $[EFFECT]ì´ˆê°„ ì´ë™ ì†ë„ì™€ ê³µê²© ì†ë„ë¥¼ ëŠë¦¬ê²Œ í•˜ê³ , ìì‹ ì€ ë¹¨ë¼ì§‘ë‹ˆë‹¤.",
+		" ì´í›„ ë‹¤ìŒìœ¼ë¡œ ë°›ëŠ” ì²« í”¼í•´ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤. ì´ íš¨ê³¼ëŠ” ì¤‘ì²©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.",
+		"Â§2[Â§a!Â§2] Â§b_Daybreak_Â§fë‹˜ì´ ì‹œê³„ íŒŒí‹°í´ ì œì‘ì— ë„ì›€ì£¼ì…¨ìŠµë‹ˆë‹¤."
 })
 
 public class TimeTravel extends Synergy implements ActiveHandler {
@@ -81,8 +81,8 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> RIGHT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"right-cooldown", 45, "# °ú°Å ÄğÅ¸ÀÓ",
-			"# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ 50%±îÁö¸¸ ¹Ş½À´Ï´Ù.") {
+			"right-cooldown", 45, "# ê³¼ê±° ì¿¨íƒ€ì„",
+			"# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ 50%ê¹Œì§€ë§Œ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -95,8 +95,8 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> LEFT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"left-cooldown", 45, "# ¹Ì·¡ ÄğÅ¸ÀÓ",
-			"# ÄğÅ¸ÀÓ °¨¼Ò È¿°ú¸¦ 50%±îÁö¸¸ ¹Ş½À´Ï´Ù.") {
+			"left-cooldown", 45, "# ë¯¸ë˜ ì¿¨íƒ€ì„",
+			"# ì¿¨íƒ€ì„ ê°ì†Œ íš¨ê³¼ë¥¼ 50%ê¹Œì§€ë§Œ ë°›ìŠµë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -109,7 +109,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"duration", 12, "# ¹Ì·¡ ¿©Çà Áö¼Ó ½Ã°£") {
+			"duration", 12, "# ë¯¸ë˜ ì—¬í–‰ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -119,7 +119,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> EFFECT = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"effect-duration", 7, "# È¿°ú Áö¼Ó ½Ã°£") {
+			"effect-duration", 7, "# íš¨ê³¼ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -129,7 +129,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(TimeTravel.class,
-			"range", 7, "# È¿°ú ¹üÀ§", "¡×2[¡×c!¡×2] ¡×7ÁÖÀÇ! ÆÄÆ¼Å¬ÀÌ º¯°æµÇÁö ¾Ê½À´Ï´Ù.") {
+			"range", 7, "# íš¨ê³¼ ë²”ìœ„", "Â§2[Â§c!Â§2] Â§7ì£¼ì˜! íŒŒí‹°í´ì´ ë³€ê²½ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -138,8 +138,8 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 
 	};
 	
-	private final Cooldown PastTravel = new Cooldown(RIGHT_COOLDOWN.getValue(), "°ú°Å", 50);
-	private final Cooldown FutureTravel = new Cooldown(LEFT_COOLDOWN.getValue(), "¹Ì·¡", 50);
+	private final Cooldown PastTravel = new Cooldown(RIGHT_COOLDOWN.getValue(), "ê³¼ê±°", 50);
+	private final Cooldown FutureTravel = new Cooldown(LEFT_COOLDOWN.getValue(), "ë¯¸ë˜", 50);
 	private final int effect = EFFECT.getValue();
 	private final int range = RANGE.getValue();
 	private final ActionbarChannel ac = newActionbarChannel();
@@ -233,10 +233,10 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 		    		savefall = getPlayer().getFallDistance();
 		    		savepotion = getPlayer().getActivePotionEffects();
 		    		saveinv = getPlayer().getInventory().getContents();
-		    		getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×f½Ã°£À» ¡×aÀúÀå¡×fÇÏ¿´½À´Ï´Ù.");	
+		    		getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§fì‹œê°„ì„ Â§aì €ì¥Â§fí•˜ì˜€ìŠµë‹ˆë‹¤.");	
 	    		} else {
 	    			pastTraveling();
-	    			getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×f½Ã°£À» ¡×e¿ªÇà¡×fÇÕ´Ï´Ù.");
+	    			getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§fì‹œê°„ì„ Â§eì—­í–‰Â§fí•©ë‹ˆë‹¤.");
 	    		}
 	    		return PastTravel.start();
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
@@ -262,7 +262,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	@SubscribeEvent(priority = 6)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (timeshield && !e.isCancelled() && e.getEntity().equals(getPlayer())) {
-			getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×cÃÖÃÊ ÇÇÇØ¡×f¸¦ ¡×3½Ã°£ÀÇ º¸È£¸·¡×fÀÌ º¸È£ÇØÁÖ¾ú½À´Ï´Ù.");
+			getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§cìµœì´ˆ í”¼í•´Â§fë¥¼ Â§3ì‹œê°„ì˜ ë³´í˜¸ë§‰Â§fì´ ë³´í˜¸í•´ì£¼ì—ˆìŠµë‹ˆë‹¤.");
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 			e.setCancelled(true);
 			timeshield = false;
@@ -276,7 +276,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 			    savefiretick2 = getPlayer().getFireTicks();
 			    savefall2 = getPlayer().getFallDistance();
 			    savepotion2 = getPlayer().getActivePotionEffects();
-			    getPlayer().sendMessage("¡×3[¡×b!¡×3] ¡×f½Ã°£ÀÌ ¡×c°­Á¦ ¡×aÀúÀå¡×fµÇ¾ú½À´Ï´Ù.");	
+			    getPlayer().sendMessage("Â§3[Â§b!Â§3] Â§fì‹œê°„ì´ Â§cê°•ì œ Â§aì €ì¥Â§fë˜ì—ˆìŠµë‹ˆë‹¤.");	
 				pastTraveling();
 				e.setCancelled(true);
 			}
@@ -337,7 +337,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 		protected void onDurationProcess(int arg0) {
 			getPlayer().setGameMode(GameMode.SPECTATOR);
 			getParticipant().attributes().TARGETABLE.setValue(false);
-			ac.update("¡×b¹Ì·¡ ¿©Çà Áß");
+			ac.update("Â§bë¯¸ë˜ ì—¬í–‰ ì¤‘");
 			getPlayer().setFlySpeed(0.15f);
 		}
 		

@@ -28,12 +28,12 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
-@EffectManifest(name = "³Ã±â", displayName = "¡×9³Ã±â", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ëƒ‰ê¸°", displayName = "Â§9ëƒ‰ê¸°", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"ÀÌµ¿ ¼Óµµ ¹× °ø°İ ¼Óµµ°¡ °¨¼ÒÇÕ´Ï´Ù.",
-		"È¸º¹ È¿°ú°¡ 25% °¨¼ÒÇÕ´Ï´Ù.",
-		"¶ÇÇÑ Áö¼Ó½Ã°£ ¹× ÄğÅ¸ÀÓÀÌ ÃµÃµÈ÷ Èå¸¨´Ï´Ù."
+		"ì´ë™ ì†ë„ ë° ê³µê²© ì†ë„ê°€ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"íšŒë³µ íš¨ê³¼ê°€ 25% ê°ì†Œí•©ë‹ˆë‹¤.",
+		"ë˜í•œ ì§€ì†ì‹œê°„ ë° ì¿¨íƒ€ì„ì´ ì²œì²œíˆ íë¦…ë‹ˆë‹¤."
 })
 @SuppressWarnings("deprecation")
 public class Chill extends AbstractGame.Effect implements Listener {

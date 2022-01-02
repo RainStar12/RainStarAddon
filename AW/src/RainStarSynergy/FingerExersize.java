@@ -17,8 +17,8 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "¼Õ°¡¶ô ¿îµ¿", rank = Rank.A, species = Species.HUMAN, explain = {
-		"$[COUNT]¹ø ¿õÅ©¸± ¶§¸¶´Ù $[DURATION]ÃÊ°£ À¯ÁöµÇ´Â ¡×cÃß°¡ °ø°İ·Â¡×f $[DAMAGE]À» ¾ò½À´Ï´Ù."
+@AbilityManifest(name = "ì†ê°€ë½ ìš´ë™", rank = Rank.A, species = Species.HUMAN, explain = {
+		"$[COUNT]ë²ˆ ì›…í¬ë¦´ ë•Œë§ˆë‹¤ $[DURATION]ì´ˆê°„ ìœ ì§€ë˜ëŠ” Â§cì¶”ê°€ ê³µê²©ë ¥Â§f $[DAMAGE]ì„ ì–»ìŠµë‹ˆë‹¤."
 		})
 
 public class FingerExersize extends Synergy {
@@ -29,7 +29,7 @@ public class FingerExersize extends Synergy {
 	
 	public static final SettingObject<Integer> COUNT = 
 			synergySettings.new SettingObject<Integer>(FingerExersize.class, "count", 7,
-			"# Ãß°¡ °ø°İ·ÂÀ» È¹µæÇÏ±â À§ÇÑ ¿ä±¸ ¿õÅ©¸®±â È½¼ö") {
+			"# ì¶”ê°€ ê³µê²©ë ¥ì„ íšë“í•˜ê¸° ìœ„í•œ ìš”êµ¬ ì›…í¬ë¦¬ê¸° íšŸìˆ˜") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -40,7 +40,7 @@ public class FingerExersize extends Synergy {
 	
 	public static final SettingObject<Integer> DURATION = 
 			synergySettings.new SettingObject<Integer>(FingerExersize.class, "duration", 12,
-			"# Ãß°¡ °ø°İ·ÂÀÇ Áö¼Ó ½Ã°£") {
+			"# ì¶”ê°€ ê³µê²©ë ¥ì˜ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -51,7 +51,7 @@ public class FingerExersize extends Synergy {
 	
 	public static final SettingObject<Integer> DAMAGE = 
 			synergySettings.new SettingObject<Integer>(FingerExersize.class, "damage", 1,
-			"# Á¶°Ç ÃæÁ·½Ã ¾ò´Â Ãß°¡ °ø°İ·Â") {
+			"# ì¡°ê±´ ì¶©ì¡±ì‹œ ì–»ëŠ” ì¶”ê°€ ê³µê²©ë ¥") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -70,7 +70,7 @@ public class FingerExersize extends Synergy {
 	
 	protected void onUpdate(Update update) {
 	    if (update == Update.RESTRICTION_CLEAR) {
-	    	ac.update("¡×cÃß°¡ ´ë¹ÌÁö¡×7: ¡×e" + (damages.size() * damage));
+	    	ac.update("Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§7: Â§e" + (damages.size() * damage));
 	    	lifting.start();
 	    }
 	}
@@ -98,7 +98,7 @@ public class FingerExersize extends Synergy {
     			} else {
     				liftcount = 0;
     				new Damage().start();
-    				ac.update("¡×cÃß°¡ ´ë¹ÌÁö¡×7: ¡×e" + (damages.size() * damage));
+    				ac.update("Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§7: Â§e" + (damages.size() * damage));
     				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.2f);
     			}
     			lift = true;
@@ -125,7 +125,7 @@ public class FingerExersize extends Synergy {
 		@Override
 		public void onSilentEnd() {
 			damages.remove(this);
-			ac.update("¡×cÃß°¡ ´ë¹ÌÁö¡×7: ¡×e" + (damages.size() * damage));
+			ac.update("Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§7: Â§e" + (damages.size() * damage));
 			SoundLib.ENTITY_ARROW_HIT.playSound(getPlayer(), 1, 0.5f);
 		}
 		

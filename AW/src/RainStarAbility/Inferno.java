@@ -43,25 +43,25 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "ÀÎÆä¸£³ë", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"¡×cºÒ ¼Ó¼º¡×fÀÇ È­¿° °Ë»ç, ÀÎÆä¸£³ë.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×c¾÷È­ÀÇ ÁÖÀÎ¡×f: È­¿°ÀÌ ºÙÀº ÀûÀ» Å¸°ÝÇÏ¸é ¡×4ºÒ²É¡×fÀ» È¹µæÇØ",
-		" ¡×4ºÒ²É¡×fÀÌ ÀÚ½ÅÀÇ È­¿° ÇÇÇØ¸¦ ´ëÃ¼ÇÏ°í, ÇÏ³ª´ç È­¿° ÇÇÇØ¸¦ 10% ´õ ÀÔ½À´Ï´Ù.",
-		"¡×7°Ë °ø°Ý ¡×8- ¡×c¿­È­ÆøÂü¡×f: ÀÚ½ÅÀÌ Å¸°ÝÇÑ ´ë»óÀ» 2ÃÊ°£ Ãß°¡ ¹ßÈ­½ÃÅµ´Ï´Ù.",
-		" ´ë»óÀÌ ÀÌ¹Ì 5ÃÊ ÀÌ»ó ¹ßÈ­ µµÁßÀÌ¸é ´ë½Å ´ë»ó¿¡°Ô Ãß°¡ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.",
-		" ¡×7Ãß°¡ ÇÇÇØ·®¡×f: ¡×e(¡×7(¡×c´ë»óÀÌ °¡Áø È­¿° Áö¼Ó½Ã°£¡×e + ¡×4ºÒ²É¡×e¡×7) ¡¿ ¡×b0.2¡×e)",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×cÈ­·ÂÀü°³¡×f: ³ª¿Í $[RANGE]Ä­ ÀÌ³»ÀÇ ¸ðµç ÇÃ·¹ÀÌ¾î¸¦ $[DURATION]ÃÊ°£ Ãß°¡ ¹ßÈ­½ÃÅ°°í,",
-		" ³ª¸¦ Æ÷ÇÔÇÑ ¸ðµç ´ë»ó¿¡°Ô ¡×4È­»ó¡×f »óÅÂÀÌ»óÀ» °Ì´Ï´Ù. $[COOLDOWN]",
-		" ¡×4È­»ó¡×fÀÌ Áö¼ÓÇÏ´Â µ¿¾È, ÀÚ½ÅÀº È­¿°°è ÇÇÇØ¸¦ Àý¹Ý¸¸Å­ ¿ªÀ¸·Î È¸º¹ÇÕ´Ï´Ù.",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×4È­»ó¡×f: ¸ðµç È­¿° °è¿­ ÇÇÇØ¸¦ ¹«½ÃÇÒ ¼ö ¾øÀ¸¸ç 2.5¹è·Î ÀÔ½À´Ï´Ù.",
-		" È­¿°ÀÌ ²¨Áú ¶§ ²¨Áö±â ÀüÀÇ È­¿° Áö¼Ó½Ã°£¿¡ ºñ·ÊÇØ ÇÇÇØ¸¦ ÀÔ½À´Ï´Ù."},
+@AbilityManifest(name = "ì¸íŽ˜ë¥´ë…¸", rank = Rank.S, species = Species.DEMIGOD, explain = {
+		"Â§cë¶ˆ ì†ì„±Â§fì˜ í™”ì—¼ ê²€ì‚¬, ì¸íŽ˜ë¥´ë…¸.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì—…í™”ì˜ ì£¼ì¸Â§f: í™”ì—¼ì´ ë¶™ì€ ì ì„ íƒ€ê²©í•˜ë©´ Â§4ë¶ˆê½ƒÂ§fì„ íšë“í•´",
+		" Â§4ë¶ˆê½ƒÂ§fì´ ìžì‹ ì˜ í™”ì—¼ í”¼í•´ë¥¼ ëŒ€ì²´í•˜ê³ , í•˜ë‚˜ë‹¹ í™”ì—¼ í”¼í•´ë¥¼ 10% ë” ìž…ìŠµë‹ˆë‹¤.",
+		"Â§7ê²€ ê³µê²© Â§8- Â§cì—´í™”í­ì°¸Â§f: ìžì‹ ì´ íƒ€ê²©í•œ ëŒ€ìƒì„ 2ì´ˆê°„ ì¶”ê°€ ë°œí™”ì‹œí‚µë‹ˆë‹¤.",
+		" ëŒ€ìƒì´ ì´ë¯¸ 5ì´ˆ ì´ìƒ ë°œí™” ë„ì¤‘ì´ë©´ ëŒ€ì‹  ëŒ€ìƒì—ê²Œ ì¶”ê°€ í”¼í•´ë¥¼ ìž…íž™ë‹ˆë‹¤.",
+		" Â§7ì¶”ê°€ í”¼í•´ëŸ‰Â§f: Â§e(Â§7(Â§cëŒ€ìƒì´ ê°€ì§„ í™”ì—¼ ì§€ì†ì‹œê°„Â§e + Â§4ë¶ˆê½ƒÂ§eÂ§7) Ã— Â§b0.2Â§e)",
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§cí™”ë ¥ì „ê°œÂ§f: ë‚˜ì™€ $[RANGE]ì¹¸ ì´ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ë¥¼ $[DURATION]ì´ˆê°„ ì¶”ê°€ ë°œí™”ì‹œí‚¤ê³ ,",
+		" ë‚˜ë¥¼ í¬í•¨í•œ ëª¨ë“  ëŒ€ìƒì—ê²Œ Â§4í™”ìƒÂ§f ìƒíƒœì´ìƒì„ ê²ë‹ˆë‹¤. $[COOLDOWN]",
+		" Â§4í™”ìƒÂ§fì´ ì§€ì†í•˜ëŠ” ë™ì•ˆ, ìžì‹ ì€ í™”ì—¼ê³„ í”¼í•´ë¥¼ ì ˆë°˜ë§Œí¼ ì—­ìœ¼ë¡œ íšŒë³µí•©ë‹ˆë‹¤.",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§4í™”ìƒÂ§f: ëª¨ë“  í™”ì—¼ ê³„ì—´ í”¼í•´ë¥¼ ë¬´ì‹œí•  ìˆ˜ ì—†ìœ¼ë©° 2.5ë°°ë¡œ ìž…ìŠµë‹ˆë‹¤.",
+		" í™”ì—¼ì´ êº¼ì§ˆ ë•Œ êº¼ì§€ê¸° ì „ì˜ í™”ì—¼ ì§€ì†ì‹œê°„ì— ë¹„ë¡€í•´ í”¼í•´ë¥¼ ìž…ìŠµë‹ˆë‹¤."},
 		summarize = {
-		"¡×7±ÙÁ¢ °ø°Ý ½Ã¡×f 5ÃÊ ÀÌÇÏ ¹ßÈ­Áß ´ë»ó¿¡°Ô 2ÃÊ°£ Ãß°¡ ¡×c¹ßÈ­¡×f½ÃÅµ´Ï´Ù.",
-		"5ÃÊ ÀÌ»ó ¡×c¹ßÈ­¡×fÁßÀÎ ´ë»ó¿¡°Ô´Â Ãß°¡ ÇÇÇØ¸¦ ÀÔÈú ¼ö ÀÖ½À´Ï´Ù.",
-		"±âº»ÀûÀ¸·Î È­¿°°è ÇÇÇØ¸¦ ¹«½ÃÇÏÁö¸¸ ¡×c¹ßÈ­ ÁßÀÎ ´ë»ó¡×fÀ» Å¸°ÝÇÏ¸é ¡×c¹ßÈ­¡×fÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ½Ã¡×f ³ª¿Í ÁÖº¯ ´ë»óµéÀ» $[DURATION]ÃÊ Ãß°¡ ¹ßÈ­½ÃÅ°¸ç, ¡×4È­»ó¡×fÀ» °Ì´Ï´Ù.",
-		"¡×4È­»ó¡×f¿¡ °É¸° ÀûÀº È­¿°°è ÇÇÇØ¸¦ ¹«Á¶°Ç ¹ÞÀ¸¸ç 2.5¹è·Î ÀÔ½À´Ï´Ù.",
-		"º»ÀÎÀº È­»ó Áö¼Ó½Ã°£ µ¿¾È È­¿°°è ÇÇÇØ¸¦ ¿ªÈ¸º¹ÇÕ´Ï´Ù."
+		"Â§7ê·¼ì ‘ ê³µê²© ì‹œÂ§f 5ì´ˆ ì´í•˜ ë°œí™”ì¤‘ ëŒ€ìƒì—ê²Œ 2ì´ˆê°„ ì¶”ê°€ Â§cë°œí™”Â§fì‹œí‚µë‹ˆë‹¤.",
+		"5ì´ˆ ì´ìƒ Â§cë°œí™”Â§fì¤‘ì¸ ëŒ€ìƒì—ê²ŒëŠ” ì¶”ê°€ í”¼í•´ë¥¼ ìž…íž ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		"ê¸°ë³¸ì ìœ¼ë¡œ í™”ì—¼ê³„ í”¼í•´ë¥¼ ë¬´ì‹œí•˜ì§€ë§Œ Â§cë°œí™” ì¤‘ì¸ ëŒ€ìƒÂ§fì„ íƒ€ê²©í•˜ë©´ Â§cë°œí™”Â§fí•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ìš°í´ë¦­ ì‹œÂ§f ë‚˜ì™€ ì£¼ë³€ ëŒ€ìƒë“¤ì„ $[DURATION]ì´ˆ ì¶”ê°€ ë°œí™”ì‹œí‚¤ë©°, Â§4í™”ìƒÂ§fì„ ê²ë‹ˆë‹¤.",
+		"Â§4í™”ìƒÂ§fì— ê±¸ë¦° ì ì€ í™”ì—¼ê³„ í”¼í•´ë¥¼ ë¬´ì¡°ê±´ ë°›ìœ¼ë©° 2.5ë°°ë¡œ ìž…ìŠµë‹ˆë‹¤.",
+		"ë³¸ì¸ì€ í™”ìƒ ì§€ì†ì‹œê°„ ë™ì•ˆ í™”ì—¼ê³„ í”¼í•´ë¥¼ ì—­íšŒë³µí•©ë‹ˆë‹¤."
 		})
 
 public class Inferno extends AbilityBase implements ActiveHandler {
@@ -72,7 +72,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Inferno.class, "cooldown", 80,
-            "# ÄðÅ¸ÀÓ") {
+            "# ì¿¨íƒ€ìž„") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -85,7 +85,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> RANGE = 
 			abilitySettings.new SettingObject<Integer>(Inferno.class, "range", 5,
-            "# »ç°Å¸®") {
+            "# ì‚¬ê±°ë¦¬") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -94,7 +94,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     
 	public static final SettingObject<Integer> DURATION = 
 			abilitySettings.new SettingObject<Integer>(Inferno.class, "duration", 10,
-            "# Áö¼Ó½Ã°£") {
+            "# ì§€ì†ì‹œê°„") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -194,12 +194,12 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 				burningflame = Math.min(10, burningflame + value);	
 			}
 		}
-		ac.update("¡×c¢Í ¡×e" + burningflame);
+		ac.update("Â§câ™¨ Â§e" + burningflame);
 	}
 	
 	public void flameOverSet(int value) {
 		burningflame = burningflame + value;
-		ac.update("¡×c¢Í ¡×e" + burningflame);
+		ac.update("Â§câ™¨ Â§e" + burningflame);
 	}
 	
     @SubscribeEvent

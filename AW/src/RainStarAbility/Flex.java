@@ -56,32 +56,30 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 
 @Beta
 
-@AbilityManifest(name = "ÇÃ·º½º", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×eÀÚº»ÁÖÀÇ¡×f: °ÔÀÓ ½ÃÀÛ ½Ã ÀÚ½ÅÀÇ ÃÖ´ë Ã¼·Â¿¡ ºñ·ÊÇÏ´Â ±İ¾×À» È¹µæÇÕ´Ï´Ù.",
-		" ÇÇÇØ¸¦ ÀÔÀ» ¶§¸¶´Ù Ã¼·ÂÀ» ÀÒ´Â ´ë½Å µ·À» ÀÒÀ¸¸ç, ¼ÒÁö ±İ¾×ÀÌ 0ÀÌ µÉ ¶§ »ç¸ÁÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×e°­¸Å¡×f: GUI¸¦ ¿­¾î °¡Àå °¡±î¿î ÀûÀÌ °¡Áø ¹«¾ğ°¡¸¦ °­¸ÅÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		" ¹°Ç°ÀÇ Á¾·ù´Â ",
-		"¡×8[¡×7HIDDEN¡×8] ¡×e¸Ó´Ï°Ç¡×f: ±İµµ ¸· ½÷¹ö·Á!"})
+@AbilityManifest(name = "í”Œë ‰ìŠ¤", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7ì›…í¬ë¦° ì±„ ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§eìë³¸ì£¼ì˜Â§f: ê°€ì§„ ê´‘ë¬¼ì„ ì „ë¶€ ì†Œëª¨í•˜ì—¬",
+		" ë²„í”„ë¥¼ íšë“í•©ë‹ˆë‹¤.",
+		"Â§8[Â§7HIDDENÂ§8] Â§eë¨¸ë‹ˆê±´Â§f: ê¸ˆë„ ë§‰ ì´ë²„ë ¤!"})
 
 @Tips(tip = {
-        "ÀÎ»ıÀº ¿ø·¡ ÇÑ ¹æÀÔ´Ï´Ù... ´Ü ÇÑ ¹øÀÇ ±âÈ¸¸¦ ³õÄ¡Áö ¸¶¼¼¿ä.",
-        "ÀÚ½ÅÀÇ ±¤¹°À» ¡×e¡×lF¡×a¡×lL¡×e¡×lE¡×a¡×lX¡×fÇÏ°í µ·ÀÇ ¸ÀÀ» º¸¿©ÁÖ¼¼¿ä."
+        "ì¸ìƒì€ ì›ë˜ í•œ ë°©ì…ë‹ˆë‹¤... ë‹¨ í•œ ë²ˆì˜ ê¸°íšŒë¥¼ ë†“ì¹˜ì§€ ë§ˆì„¸ìš”.",
+        "ìì‹ ì˜ ê´‘ë¬¼ì„ Â§eÂ§lFÂ§aÂ§lLÂ§eÂ§lEÂ§aÂ§lXÂ§fí•˜ê³  ëˆì˜ ë§›ì„ ë³´ì—¬ì£¼ì„¸ìš”."
 }, strong = {
-        @Description(subject = "¸¹Àº ±¤¹° ¼ÒÀ¯", explain = {
-                "±¤¹°À» ¸¹ÀÌ ¼ÒÁöÇÏ¸é ¼ÒÁöÇÒ¼ö·Ï ¾×Æ¼ºê ¹ßµ¿ ½Ã",
-                "¾ò´Â ¹öÇÁÀÇ ¼öÄ¡°¡ °­·ÂÇØÁı´Ï´Ù."
+        @Description(subject = "ë§ì€ ê´‘ë¬¼ ì†Œìœ ", explain = {
+                "ê´‘ë¬¼ì„ ë§ì´ ì†Œì§€í•˜ë©´ ì†Œì§€í• ìˆ˜ë¡ ì•¡í‹°ë¸Œ ë°œë™ ì‹œ",
+                "ì–»ëŠ” ë²„í”„ì˜ ìˆ˜ì¹˜ê°€ ê°•ë ¥í•´ì§‘ë‹ˆë‹¤."
         }),
-        @Description(subject = "¾î±×·Î", explain = {
-                "³» ±¤¹° º¸ÀÌÁö?",
-                "±¤¿ª ¾î±×·Î¸¦ ²ø¾îº¸¼¼¿ä!"
+        @Description(subject = "ì–´ê·¸ë¡œ", explain = {
+                "ë‚´ ê´‘ë¬¼ ë³´ì´ì§€?",
+                "ê´‘ì—­ ì–´ê·¸ë¡œë¥¼ ëŒì–´ë³´ì„¸ìš”!"
         })
 }, weak = {
-        @Description(subject = "¸¹Àº ±¤¹° ¼ÒÀ¯", explain = {
-                "¹İ´ë·Î ¸»ÇÏ¸é, ¸¹Àº ±¤¹°À» ´Ù ÀÒ¾î¹ö¸± °¢¿À°¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù..."
+        @Description(subject = "ë§ì€ ê´‘ë¬¼ ì†Œìœ ", explain = {
+                "ë°˜ëŒ€ë¡œ ë§í•˜ë©´, ë§ì€ ê´‘ë¬¼ì„ ë‹¤ ìƒì–´ë²„ë¦´ ê°ì˜¤ê°€ ìˆì–´ì•¼ í•©ë‹ˆë‹¤..."
         }),
-        @Description(subject = "µÚ°¡ ¾øÀ½", explain = {
-                "ÇÑ ¹ø ¾²¸é ±¤¹°À» ´Ù½Ã Ä³¿À±â Àü±îÁø ¾Æ¹« ´É·Âµµ",
-                "Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù..."
+        @Description(subject = "ë’¤ê°€ ì—†ìŒ", explain = {
+                "í•œ ë²ˆ ì“°ë©´ ê´‘ë¬¼ì„ ë‹¤ì‹œ ìºì˜¤ê¸° ì „ê¹Œì§„ ì•„ë¬´ ëŠ¥ë ¥ë„",
+                "ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤..."
         })
 }, stats = @Stats(offense = Level.TWO, survival = Level.TWO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.VERY_EASY)
 
@@ -122,7 +120,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
 	
 	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Flex.class,
-			"Cooldown", 30, "# ÄğÅ¸ÀÓ") {
+			"Cooldown", 30, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -135,7 +133,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Flex.class,
-			"Duration", 10, "# Áö¼Ó ½Ã°£") {
+			"Duration", 10, "# ì§€ì† ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -209,7 +207,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 		    		FireworkUtil.spawnRandomFirework(getPlayer().getLocation(), colors, colors, types, 1);
 				}	
 			}.runTaskLater(AbilityWar.getPlugin(), 40L);
-    		ac.update("¡×7" + (0.05 * Iron) + " ¡×f|¡×e " + (0.03 * Gold) + " ¡×f|¡×b " + (0.005 * Diamond) + " ¡×f|¡×a " + (0.5 * Emerald));
+    		ac.update("Â§7" + (0.05 * Iron) + " Â§f|Â§e " + (0.03 * Gold) + " Â§f|Â§b " + (0.005 * Diamond) + " Â§f|Â§a " + (0.5 * Emerald));
 			new AbilityTimer(100) {
 				 	@Override
 	                protected void run(int count) {
@@ -300,7 +298,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
     		Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if (off.equals(Material.GOLD_INGOT)) {
 				if (onetime) {
-	    			getPlayer().sendMessage("¡×8[¡×7HIDDEN¡×8] ¡×e¸Ó´Ï°Ç¡×fÀ» ´Ş¼ºÇÏ¿´½À´Ï´Ù.");
+	    			getPlayer().sendMessage("Â§8[Â§7HIDDENÂ§8] Â§eë¨¸ë‹ˆê±´Â§fì„ ë‹¬ì„±í•˜ì˜€ìŠµë‹ˆë‹¤.");
 	    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 					onetime = false;
 				}

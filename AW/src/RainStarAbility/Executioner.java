@@ -91,7 +91,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "cooldown", 35,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "cooldown", 30,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -104,7 +104,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> RANGE_CONFIG = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "range", 4,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "range", 7,
             "# 철괴 우클릭 사거리", "# 단위: 칸") {
         @Override
         public boolean condition(Integer value) {
@@ -140,7 +140,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CLOSE_ATTACK_COUNTER = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "close-attack-counter", 4,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "close-attack-counter", 3,
             "# 타격 카운터", "# 몇 회 근접 공격마다 발동시킬 건지 결정합니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -212,7 +212,7 @@ public class Executioner extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_INCREASE_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase-amount", 145,
+			abilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase-amount", 160,
             "# 패시브 [집행] 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {

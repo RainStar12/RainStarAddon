@@ -38,12 +38,12 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "ÆÇ´Ù", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"¿õÅ©¸° Ã¤ Ã¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ¡×3¹æ¾î »óÅÂ¡×f°¡ µË´Ï´Ù. $[COOLDOWN]",
-		"¿õÅ©¸®±â¸¦ Ç®°Å³ª ¡×79.15ÃÊ¡×f¸¦ ³ÑÀ¸¸é ¡×3¹æ¾î »óÅÂ¡×f´Â ÀÚµ¿ ÇØÁ¦µË´Ï´Ù.",
-		"¡×3¹æ¾î »óÅÂ¡×f°£ ¸ğµç ´ë¹ÌÁö °¨¼Ò È¿°ú(¹æ¾î·Â, ÀúÇ× µî)¸¦ 2¹è·Î ¹Ş½À´Ï´Ù.",
-		"¡×3¹æ¾î »óÅÂ¡×f°¡ ÇØÁ¦µÉ ¶§, °ø°İÀÚ°¡ ³»°Ô ÁØ ÃÖ°í ´ë¹ÌÁöÀÇ $[COUNTER_DAMAGE_MULTIPLY]¹è¸¦ ¹İ°İÇÕ´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×7PaintingSF"
+@AbilityManifest(name = "íŒë‹¤", rank = Rank.S, species = Species.ANIMAL, explain = {
+		"ì›…í¬ë¦° ì±„ ì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ Â§3ë°©ì–´ ìƒíƒœÂ§fê°€ ë©ë‹ˆë‹¤. $[COOLDOWN]",
+		"ì›…í¬ë¦¬ê¸°ë¥¼ í’€ê±°ë‚˜ Â§79.15ì´ˆÂ§fë¥¼ ë„˜ìœ¼ë©´ Â§3ë°©ì–´ ìƒíƒœÂ§fëŠ” ìë™ í•´ì œë©ë‹ˆë‹¤.",
+		"Â§3ë°©ì–´ ìƒíƒœÂ§fê°„ ëª¨ë“  ëŒ€ë¯¸ì§€ ê°ì†Œ íš¨ê³¼(ë°©ì–´ë ¥, ì €í•­ ë“±)ë¥¼ 2ë°°ë¡œ ë°›ìŠµë‹ˆë‹¤.",
+		"Â§3ë°©ì–´ ìƒíƒœÂ§fê°€ í•´ì œë  ë•Œ, ê³µê²©ìê°€ ë‚´ê²Œ ì¤€ ìµœê³  ëŒ€ë¯¸ì§€ì˜ $[COUNTER_DAMAGE_MULTIPLY]ë°°ë¥¼ ë°˜ê²©í•©ë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§7Woojaekkun"
 		})
 
 public class Panda extends AbilityBase implements ActiveHandler {
@@ -55,7 +55,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	private ActionbarChannel ac = newActionbarChannel();
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Panda.class, "cooldown", 85, "# ÄğÅ¸ÀÓ") {
+			Panda.class, "cooldown", 85, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -70,7 +70,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Double> COUNTER_DAMAGE_MULTIPLY = abilitySettings.new SettingObject<Double>(Panda.class,
-			"counter-damage-multiply", 1.5, "# ¹İ°İ ´ë¹ÌÁö ¹èÀ²") {
+			"counter-damage-multiply", 1.5, "# ë°˜ê²© ëŒ€ë¯¸ì§€ ë°°ìœ¨") {
 
 		@Override
 		public boolean condition(Double arg0) {
@@ -251,14 +251,14 @@ public class Panda extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onStart() {
 			SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer().getLocation(), 1, 0.65f);
-			if (getPlayer().getName().equals("PaintingSF")) particle.start();
+			if (getPlayer().getName().equals("Woojaekkun")) particle.start();
 			else if (random.nextInt(10) < 2) particle.start();
 			new ShieldSpin(getPlayer()).start();
 		}
 		
 		@Override
 		public void run(int count) {
-			ac.update("¡×8¹æ¾î ¸ğµå¡×7: " + df.format((double) count / 20));
+			ac.update("Â§8ë°©ì–´ ëª¨ë“œÂ§7: " + df.format((double) count / 20));
 		}
 		
 		@Override
@@ -463,7 +463,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 			this.livingEntity = livingEntity;
 			this.hologram = NMS.newHologram(livingEntity.getWorld(), livingEntity.getLocation().getX(),
 					livingEntity.getLocation().getY() + livingEntity.getEyeHeight() + 0.6, livingEntity.getLocation().getZ());
-			hologram.setText("¡×c¡×l0");
+			hologram.setText("Â§cÂ§l0");
 			hologram.display(getPlayer());
 			stackMap.put(livingEntity, this);
 		}
@@ -474,7 +474,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 					livingEntity.getLocation().getY() + livingEntity.getEyeHeight() + 0.6, livingEntity.getLocation().getZ(), 
 					livingEntity.getLocation().getYaw(), 0);
 			if (damageMap.containsKey(livingEntity)) {
-				hologram.setText("¡×c¡×l" + df.format(damageMap.get(livingEntity) * counter));
+				hologram.setText("Â§cÂ§l" + df.format(damageMap.get(livingEntity) * counter));
 			}
 		}
 		

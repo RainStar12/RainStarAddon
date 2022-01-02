@@ -28,33 +28,33 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(
-		name = "À¯¸® ´ëÆ÷",
+		name = "ìœ ë¦¬ ëŒ€í¬",
 		rank = Rank.B, 
 		species = Species.OTHERS, 
 		explain = {
-		"³»°¡ ÁÖ´Â ¡×cÃß°¡ ´ë¹ÌÁö¡×f¸¸Å­ ³»°¡ ÇÇÇØÀÔÀ» ¶§ ¡×cÃß°¡ ÇÇÇØ¡×f¸¦ ÀÔ½À´Ï´Ù.",
-		"Ã¶±«¸¦ µé°í ¿õÅ©¸° »óÅÂ·Î ¸¶¿ì½º ÈÙÀ» ÀÌ¿ëÇÏ¿©,",
-		"³»°¡ ¹ŞÀ» ¡×cÃß°¡ ÇÇÇØ·®¡× ¹× ¡×cÃß°¡ ´ë¹ÌÁö¡×f¸¦ Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		"ÀÌ ¼öÄ¡´Â ÃÖ´ë 5±îÁö ¼³Á¤ °¡´ÉÇÕ´Ï´Ù."
+		"ë‚´ê°€ ì£¼ëŠ” Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§fë§Œí¼ ë‚´ê°€ í”¼í•´ì…ì„ ë•Œ Â§cì¶”ê°€ í”¼í•´Â§fë¥¼ ì…ìŠµë‹ˆë‹¤.",
+		"ì² ê´´ë¥¼ ë“¤ê³  ì›…í¬ë¦° ìƒíƒœë¡œ ë§ˆìš°ìŠ¤ íœ ì„ ì´ìš©í•˜ì—¬,",
+		"ë‚´ê°€ ë°›ì„ Â§cì¶”ê°€ í”¼í•´ëŸ‰Â§ ë° Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§fë¥¼ ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		"ì´ ìˆ˜ì¹˜ëŠ” ìµœëŒ€ 5ê¹Œì§€ ì„¤ì • ê°€ëŠ¥í•©ë‹ˆë‹¤."
 		})
 
 @Tips(tip = {
-        "°­ÇÑ °ø°İ·ÂÀ» °¡Áö´Â ´ë½Å ±×¸¸Å­ÀÇ Ãß°¡ ÇÇÇØ¸¦ ¹ŞÀ» °¢¿À¸¦ ÇØ¾ßÇÏ´Â",
-        "´É·ÂÀ¸·Î, Ãß°¡ ´ë¹ÌÁö¿Í Ãß°¡ ÇÇÇØ·®ÀÌ µ¿ÀÏÇÏ±â ¶§¹®¿¡",
-        "º»ÀÎÀÇ PVP ½Ç·Â¿¡ Å« ¿µÇâÀ» ¹Ş½À´Ï´Ù."
+        "ê°•í•œ ê³µê²©ë ¥ì„ ê°€ì§€ëŠ” ëŒ€ì‹  ê·¸ë§Œí¼ì˜ ì¶”ê°€ í”¼í•´ë¥¼ ë°›ì„ ê°ì˜¤ë¥¼ í•´ì•¼í•˜ëŠ”",
+        "ëŠ¥ë ¥ìœ¼ë¡œ, ì¶”ê°€ ëŒ€ë¯¸ì§€ì™€ ì¶”ê°€ í”¼í•´ëŸ‰ì´ ë™ì¼í•˜ê¸° ë•Œë¬¸ì—",
+        "ë³¸ì¸ì˜ PVP ì‹¤ë ¥ì— í° ì˜í–¥ì„ ë°›ìŠµë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "³ôÀº °ø°İ·Â", explain = {
-                "ÃÖ´ë 7±îÁöÀÇ ³ôÀº °ø°İ·ÂÀ» »ó´ë¿¡°Ô °¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-                "ÀÏ¹İ ´ÙÀÌ¾Æ¸óµå Ä® ±âÁØ, 2¹èÀÇ ´ë¹ÌÁö¸¦ °¡ÇÏ´Â ¼ÀÀÔ´Ï´Ù."
+        @Description(subject = "ë†’ì€ ê³µê²©ë ¥", explain = {
+                "ìµœëŒ€ 7ê¹Œì§€ì˜ ë†’ì€ ê³µê²©ë ¥ì„ ìƒëŒ€ì—ê²Œ ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+                "ì¼ë°˜ ë‹¤ì´ì•„ëª¬ë“œ ì¹¼ ê¸°ì¤€, 2ë°°ì˜ ëŒ€ë¯¸ì§€ë¥¼ ê°€í•˜ëŠ” ì…ˆì…ë‹ˆë‹¤."
         }),
-        @Description(subject = "±Ş½À", explain = {
-                "±Ş½ÀÀ¸·Î ´ë»óº¸´Ù 1È¸ÀÇ Å¸°İÀÌ¶óµµ ÀÌµæÀ» º¸¸é",
-                "³ôÀº ´ë¹ÌÁö ´ö¿¡ »ó´ë¿ÍÀÇ °İÂ÷°¡ Ä¿Áı´Ï´Ù."
+        @Description(subject = "ê¸‰ìŠµ", explain = {
+                "ê¸‰ìŠµìœ¼ë¡œ ëŒ€ìƒë³´ë‹¤ 1íšŒì˜ íƒ€ê²©ì´ë¼ë„ ì´ë“ì„ ë³´ë©´",
+                "ë†’ì€ ëŒ€ë¯¸ì§€ ë•ì— ìƒëŒ€ì™€ì˜ ê²©ì°¨ê°€ ì»¤ì§‘ë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "³·Àº ¹æ¾î·Â", explain = {
-                "´ë¹ÌÁö¸¦ ³ôÀÌ´Â ´ë½Å ±×¸¸Å­ÀÇ ´ë¹ÌÁö¸¦ ¹ŞÀ» ¼ö ÀÖ±â¿¡,",
-                "±× Á¡À» °¨¾ÈÇÏ°í ´ë¹ÌÁö¸¦ Àß Á¶ÀıÇØ¼­ ½Î¿ö¾ß ÇÕ´Ï´Ù."
+        @Description(subject = "ë‚®ì€ ë°©ì–´ë ¥", explain = {
+                "ëŒ€ë¯¸ì§€ë¥¼ ë†’ì´ëŠ” ëŒ€ì‹  ê·¸ë§Œí¼ì˜ ëŒ€ë¯¸ì§€ë¥¼ ë°›ì„ ìˆ˜ ìˆê¸°ì—,",
+                "ê·¸ ì ì„ ê°ì•ˆí•˜ê³  ëŒ€ë¯¸ì§€ë¥¼ ì˜ ì¡°ì ˆí•´ì„œ ì‹¸ì›Œì•¼ í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.NINE, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.HARD)
 
@@ -96,16 +96,16 @@ public class GlassCannon extends AbilityBase {
 			switch (state) {
 				case UP:
 					damage = limit(damage + 1, 5, 1);
-					ac.update("¡×e´ë¹ÌÁö ¹× ÇÇÇØ Áõ°¡ ¡×7: ¡×c" + damage);
+					ac.update("Â§eëŒ€ë¯¸ì§€ ë° í”¼í•´ ì¦ê°€ Â§7: Â§c" + damage);
 					break;
 				case DOWN:
 					damage = limit(damage - 1, 5, 1);
-					ac.update("¡×e´ë¹ÌÁö ¹× ÇÇÇØ Áõ°¡ ¡×7: ¡×c" + damage);
+					ac.update("Â§eëŒ€ë¯¸ì§€ ë° í”¼í•´ ì¦ê°€ Â§7: Â§c" + damage);
 					break;
 				default:
 					break;
 			}
-			NMS.sendTitle(getPlayer(), state == State.UP ? "¡×c¡è" : "¡×9¡é", String.valueOf(damage), 0, 20, 0);
+			NMS.sendTitle(getPlayer(), state == State.UP ? "Â§câ†‘" : "Â§9â†“", String.valueOf(damage), 0, 20, 0);
 			if (!titleClear.start()) {
 				titleClear.setCount(10);
 			}
@@ -149,7 +149,7 @@ public class GlassCannon extends AbilityBase {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("¡×e´ë¹ÌÁö ¹× ÇÇÇØ Áõ°¡ ¡×7: ¡×c" + damage);
+			ac.update("Â§eëŒ€ë¯¸ì§€ ë° í”¼í•´ ì¦ê°€ Â§7: Â§c" + damage);
 		}
 	}
 	
@@ -184,9 +184,9 @@ public class GlassCannon extends AbilityBase {
 				SoundLib.BLOCK_GLASS_BREAK.playSound((Player) arrow.getShooter(), 1, (float) speed);
 				ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 
 						2, 0, amount, 1, MaterialX.GLASS);
-		}
+			}
 		
-	}
+		}
 	
-}
+	}
 }

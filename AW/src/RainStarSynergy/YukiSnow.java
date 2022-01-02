@@ -1,6 +1,5 @@
 package RainStarSynergy;
 
-
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -53,19 +52,19 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
-@AbilityManifest(name = "À¯Å°<´«²É>", rank = Rank.L, species = Species.HUMAN, explain = {
-		"³Ã±â¸¦ ÀÚÀ¯ÀÚÀç·Î ´Ù·ç´Â ¡×b¾óÀ½ ¼Ó¼º¡×fÀÇ ´«²É ¸¶¹ı»ç, À¯Å°.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×bÄİµå ¸¶½ºÅÍ¡×f: ºù°á, ³Ã±â, ´«²É Ç¥½Ä, ÇÁ·ÎÁğ ÇÏÆ® »óÅÂÀÌ»óÀ»",
-		" ¹«È¿È­½ÃÅ°°í È¿°ú¸¦ ¹ŞÀ» ¶§¸¶´Ù ÃÖ´ë 10ÀÇ ´«²É °áÁ¤ ½ºÅÃÀ» ½×¾Æ",
-		" À©ÅÍ ÆÛ·¹ÀÌµåÀÇ ÇÇÇØ¸¦ °­È­ÇÕ´Ï´Ù.",
-		"¡×7ÁöÆÎÀÌ ¿ìÅ¬¸¯ ¡×8- ¡×bÀ©ÅÍ ÆÛ·¹ÀÌµå¡×f: ¿µÃ¢À» ½ÃÀÛÇÕ´Ï´Ù. ÃÖ´ë ´Ü°è »óÅÂ¿¡¼­ ´Ù½Ã",
-		" ÁöÆÎÀÌ¸¦ ¿ìÅ¬¸¯ÇÏ¸é 7Ä­ÀÇ ¹üÀ§¿¡ $[DURATION]ÃÊ°£ Áö¼ÓÀûÀ¸·Î ¸¶¹ı ÇÇÇØ¸¦ ÀÔÈ÷°í",
-		" ÀûÁß ´ë»óÀ» $[EFFECT_DURATION]ÃÊ°£ ÇÁ·ÎÁğ ÇÏÆ® »óÅÂ·Î ¸¸µì´Ï´Ù. $[CAST_COOLDOWN]",
-		" ´«°ú ¾óÀ½ À§¿¡¼­ ´ë¹ÌÁö°¡ 2 Áõ°¡ÇÏ¸ç ½Å¼Ó ¹öÇÁ¸¦ ¹Ş½À´Ï´Ù.",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×3ÇÁ·ÎÁğ ÇÏÆ®¡×f: ¸ğµç È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		" ½½·ÔÀ» º¯°æÇÒ ¶§¸¶´Ù 2.5ÃÊ¸¦ ´ë±âÇØ¾ß ÇÏ°í, ÀÌµ¿ ¼Óµµ¿Í °ø°İ ¼Óµµ°¡ °¨¼ÒÇÕ´Ï´Ù.",
-		" È¿°ú°¡ ÇØÁ¦µÉ ¶§, ¿ø·¡ ¹ŞÀ» È¸º¹ È¿°ú¸¦ Àı¹İÀ¸·Î ÁÙ¿©¼­ ÇÑ²¨¹ø¿¡ ¹Ş½À´Ï´Ù.",
-		" ÀÌ È¿°ú´Â ÀÌµ¿ÇÒ ¶§¸¶´Ù ´õ »¡¸® Áö¼Ó½Ã°£ÀÌ ÁÙ¾îµì´Ï´Ù."
+@AbilityManifest(name = "ìœ í‚¤<ëˆˆê½ƒ>", rank = Rank.L, species = Species.HUMAN, explain = {
+		"ëƒ‰ê¸°ë¥¼ ììœ ìì¬ë¡œ ë‹¤ë£¨ëŠ” Â§bì–¼ìŒ ì†ì„±Â§fì˜ ëˆˆê½ƒ ë§ˆë²•ì‚¬, ìœ í‚¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bì½œë“œ ë§ˆìŠ¤í„°Â§f: ë¹™ê²°, ëƒ‰ê¸°, ëˆˆê½ƒ í‘œì‹, í”„ë¡œì¦Œ í•˜íŠ¸ ìƒíƒœì´ìƒì„",
+		" ë¬´íš¨í™”ì‹œí‚¤ê³  íš¨ê³¼ë¥¼ ë°›ì„ ë•Œë§ˆë‹¤ ìµœëŒ€ 10ì˜ ëˆˆê½ƒ ê²°ì • ìŠ¤íƒì„ ìŒ“ì•„",
+		" ìœˆí„° í¼ë ˆì´ë“œì˜ í”¼í•´ë¥¼ ê°•í™”í•©ë‹ˆë‹¤.",
+		"Â§7ì§€íŒ¡ì´ ìš°í´ë¦­ Â§8- Â§bìœˆí„° í¼ë ˆì´ë“œÂ§f: ì˜ì°½ì„ ì‹œì‘í•©ë‹ˆë‹¤. ìµœëŒ€ ë‹¨ê³„ ìƒíƒœì—ì„œ ë‹¤ì‹œ",
+		" ì§€íŒ¡ì´ë¥¼ ìš°í´ë¦­í•˜ë©´ 7ì¹¸ì˜ ë²”ìœ„ì— $[DURATION]ì´ˆê°„ ì§€ì†ì ìœ¼ë¡œ ë§ˆë²• í”¼í•´ë¥¼ ì…íˆê³ ",
+		" ì ì¤‘ ëŒ€ìƒì„ $[EFFECT_DURATION]ì´ˆê°„ í”„ë¡œì¦Œ í•˜íŠ¸ ìƒíƒœë¡œ ë§Œë“­ë‹ˆë‹¤. $[CAST_COOLDOWN]",
+		" ëˆˆê³¼ ì–¼ìŒ ìœ„ì—ì„œ ëŒ€ë¯¸ì§€ê°€ 2 ì¦ê°€í•˜ë©° ì‹ ì† ë²„í”„ë¥¼ ë°›ìŠµë‹ˆë‹¤.",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§3í”„ë¡œì¦Œ í•˜íŠ¸Â§f: ëª¨ë“  íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" ìŠ¬ë¡¯ì„ ë³€ê²½í•  ë•Œë§ˆë‹¤ 2.5ì´ˆë¥¼ ëŒ€ê¸°í•´ì•¼ í•˜ê³ , ì´ë™ ì†ë„ì™€ ê³µê²© ì†ë„ê°€ ê°ì†Œí•©ë‹ˆë‹¤.",
+		" íš¨ê³¼ê°€ í•´ì œë  ë•Œ, ì›ë˜ ë°›ì„ íšŒë³µ íš¨ê³¼ë¥¼ ì ˆë°˜ìœ¼ë¡œ ì¤„ì—¬ì„œ í•œêº¼ë²ˆì— ë°›ìŠµë‹ˆë‹¤.",
+		" ì´ íš¨ê³¼ëŠ” ì´ë™í•  ë•Œë§ˆë‹¤ ë” ë¹¨ë¦¬ ì§€ì†ì‹œê°„ì´ ì¤„ì–´ë“­ë‹ˆë‹¤."
 		})
 
 @Materials(materials = {
@@ -91,7 +90,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	private static final Circle circle2 = Circle.of(6, 150);
 	private static final Circle circle3 = Circle.of(7, 200);
 	
-	private final Cooldown castcool = new Cooldown(CAST_COOLDOWN.getValue(), "¿µÃ¢", CooldownDecrease._25);
+	private final Cooldown castcool = new Cooldown(CAST_COOLDOWN.getValue(), "ì˜ì°½", CooldownDecrease._25);
 	private boolean snowman = SNOWMAN_SPAWN.getValue();
 	
 	private final ActionbarChannel ac = newActionbarChannel();
@@ -206,7 +205,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> CAST_COOLDOWN 
 	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
-			"cast-cooldown", 40, "# ¿µÃ¢ ÄğÅ¸ÀÓ") {
+			"cast-cooldown", 40, "# ì˜ì°½ ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -220,7 +219,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> DURATION 
 	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
-			"duration", 5, "# ÇÊµå Áö¼Ó½Ã°£") {
+			"duration", 5, "# í•„ë“œ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -229,7 +228,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Integer> EFFECT_DURATION 
 	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
-			"effect-duration", 15, "# ÇÁ·ÎÁğ ÇÏÆ® Áö¼Ó½Ã°£") {
+			"effect-duration", 15, "# í”„ë¡œì¦Œ í•˜íŠ¸ ì§€ì†ì‹œê°„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -238,8 +237,8 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	
 	public static final SettingObject<Boolean> SNOWMAN_SPAWN 
 	= synergySettings.new SettingObject<Boolean>(YukiSnow.class,
-			"snowman-spawn", true, "# À¯Å°°¡ ÇÃ·¹ÀÌ¾î¸¦ Á×ÀÏ ¶§ ´«»ç¶÷À»",
-			"# ¼ÒÈ¯ÇÒ Áö ¿©ºÎ¸¦ Á¤ÇÕ´Ï´Ù.") {
+			"snowman-spawn", true, "# ìœ í‚¤ê°€ í”Œë ˆì´ì–´ë¥¼ ì£½ì¼ ë•Œ ëˆˆì‚¬ëŒì„",
+			"# ì†Œí™˜í•  ì§€ ì—¬ë¶€ë¥¼ ì •í•©ë‹ˆë‹¤.") {
 	};
 	
 	@Override
@@ -249,9 +248,9 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 			ItemMeta stickmeta = stick.getItemMeta();	
 			
 			if (random.nextInt(100) == 0) {
-				stickmeta.setDisplayName("¡×6µüÃÑ³ª¹« ÁöÆÎÀÌ");
+				stickmeta.setDisplayName("Â§6ë”±ì´ë‚˜ë¬´ ì§€íŒ¡ì´");
 			} else {
-				stickmeta.setDisplayName("¡×b¼³ÇÑÀÇ ÁöÆÎÀÌ");
+				stickmeta.setDisplayName("Â§bì„¤í•œì˜ ì§€íŒ¡ì´");
 			}		
 			stickmeta.addEnchant(Enchantment.SILK_TOUCH, 1, true);
 			stickmeta.addEnchant(Enchantment.KNOCKBACK, 2, true);
@@ -309,7 +308,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 			e.setCancelled(true);
 			if (stack < 10) {
 				stack++;
-				ac.update("¡×b´«²É °áÁ¤ ½ºÅÃ¡×f: " + stack);
+				ac.update("Â§bëˆˆê½ƒ ê²°ì • ìŠ¤íƒÂ§f: " + stack);
 			}
 		}
 	}
@@ -419,7 +418,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
     			}
     			LAYER.rotateAroundAxisY(yaw);
 			}
-    		NMS.sendTitle(getPlayer(), Strings.repeat("¡×b¡×k|", cast).concat(Strings.repeat("¡×7¡×k|", 12 - cast)), "", 0, 100, 1);	
+    		NMS.sendTitle(getPlayer(), Strings.repeat("Â§bÂ§k|", cast).concat(Strings.repeat("Â§7Â§k|", 12 - cast)), "", 0, 100, 1);	
     	}
     	
     	@Override

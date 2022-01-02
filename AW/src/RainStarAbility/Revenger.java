@@ -34,23 +34,23 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "º¹¼ö±Í", rank = Rank.A, species = Species.UNDEAD, explain = {
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×c¼±ÀÎ¡×f: °ø°Ý ½Ã ¸ðµç ÇÇÇØ¸¦ 25%¸¸ ÁÝ´Ï´Ù.",
-		"¡×7»ç¸Á ¡×8- ¡×cÇÑ¡×f: ÇÃ·¹ÀÌ¾î¿¡°Ô »ç¸Á ½Ã »ç¸Á ¸Þ½ÃÁö¸¦ ¶ç¿ì°í ´Ù½Ã ºÎÈ°ÇÕ´Ï´Ù.",
-		" ÇÑ ¸ÎÈù Á¸Àç°¡ µÉ ¶§ºÎÅÍ Ã¼·ÂÀ» È¸º¹ÇÒ ¼ö ¾ø°í, ¼±ÀÎ È¿°ú°¡ »ç¶óÁý´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×cº¹¼ö¡×f: ¿ÀÁ÷ ³ª¸¦ Á×ÀÎ ´ë»ó°ú ½Î¿ï ¼ö ÀÖÀ¸¸ç,",
-		" ´ë»óÀÇ ¹æÇâÀÌ ³ªÅ¸³ª°í, ´ë»óÀ» °ø°ÝÇÒ ¶§ ¸ðµç ÇÇÇØ¸¦ »ç¸Á Àü ÃÖÁ¾ ÇÇÇØ·®¿¡",
-		" ºñ·ÊÇØ¼­ Áõ°¡½ÃÅµ´Ï´Ù. ´ë»óÀÌ ³ª¿¡°Ô »ç¸ÁÇÒ °æ¿ì, ÀÚ½Åµµ ¼ººÒÇÕ´Ï´Ù.",
-		" ´ë»óÀ» ¹Ù¶óº¼ ¶§¸¶´Ù 10ÃÊ ÁÖ±â·Î ´ë»óÀÌ ½Ç¸í¿¡ °É¸®°í ³ª¿Í °°Àº ¹æÇâÀ» ¹Ù¶óº¾´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×cÁõ¿ÀÀÇ ¾¾¡×f: ´ë»óÀÌ ´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô »ç¸Á ½Ã",
-		" º¹¼ö ´ë»óÀÌ ´ë»óÀ» »ç¸Á½ÃÅ² ÇÃ·¹ÀÌ¾î·Î ¿Å°Ü°©´Ï´Ù."
+@AbilityManifest(name = "ë³µìˆ˜ê·€", rank = Rank.A, species = Species.UNDEAD, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì„ ì¸Â§f: ê³µê²© ì‹œ ëª¨ë“  í”¼í•´ë¥¼ 25%ë§Œ ì¤ë‹ˆë‹¤.",
+		"Â§7ì‚¬ë§ Â§8- Â§cí•œÂ§f: í”Œë ˆì´ì–´ì—ê²Œ ì‚¬ë§ ì‹œ ì‚¬ë§ ë©”ì‹œì§€ë¥¼ ë„ìš°ê³  ë‹¤ì‹œ ë¶€í™œí•©ë‹ˆë‹¤.",
+		" í•œ ë§ºížŒ ì¡´ìž¬ê°€ ë  ë•Œë¶€í„° ì²´ë ¥ì„ íšŒë³µí•  ìˆ˜ ì—†ê³ , ì„ ì¸ íš¨ê³¼ê°€ ì‚¬ë¼ì§‘ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cë³µìˆ˜Â§f: ì˜¤ì§ ë‚˜ë¥¼ ì£½ì¸ ëŒ€ìƒê³¼ ì‹¸ìš¸ ìˆ˜ ìžˆìœ¼ë©°,",
+		" ëŒ€ìƒì˜ ë°©í–¥ì´ ë‚˜íƒ€ë‚˜ê³ , ëŒ€ìƒì„ ê³µê²©í•  ë•Œ ëª¨ë“  í”¼í•´ë¥¼ ì‚¬ë§ ì „ ìµœì¢… í”¼í•´ëŸ‰ì—",
+		" ë¹„ë¡€í•´ì„œ ì¦ê°€ì‹œí‚µë‹ˆë‹¤. ëŒ€ìƒì´ ë‚˜ì—ê²Œ ì‚¬ë§í•  ê²½ìš°, ìžì‹ ë„ ì„±ë¶ˆí•©ë‹ˆë‹¤.",
+		" ëŒ€ìƒì„ ë°”ë¼ë³¼ ë•Œë§ˆë‹¤ 10ì´ˆ ì£¼ê¸°ë¡œ ëŒ€ìƒì´ ì‹¤ëª…ì— ê±¸ë¦¬ê³  ë‚˜ì™€ ê°™ì€ ë°©í–¥ì„ ë°”ë¼ë´…ë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cì¦ì˜¤ì˜ ì”¨Â§f: ëŒ€ìƒì´ ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ ì‚¬ë§ ì‹œ",
+		" ë³µìˆ˜ ëŒ€ìƒì´ ëŒ€ìƒì„ ì‚¬ë§ì‹œí‚¨ í”Œë ˆì´ì–´ë¡œ ì˜®ê²¨ê°‘ë‹ˆë‹¤."
 		},
 		summarize = {
-		"ºÎÈ° Àü±îÁö ³»°¡ ÁÖ´Â ¸ðµç °ø°Ý ÇÇÇØ·®ÀÌ 75%°¡ °¨¼ÒÇÕ´Ï´Ù.",
-		"´Ù¸¥ ÇÃ·¹ÀÌ¾î¿¡°Ô »ç¸Á ½Ã ¡×cº¹¼ö¡×f¸¦ ½ÃÀÛÇØ, ¡×cº¹¼ö ´ë»ó¡×f ¿Ü¿¡°Õ ½Î¿ìÁö ¸øÇÏ°í",
-		"¡×cº¹¼ö ´ë»ó¡×f¿¡°Õ ´ë»óÀÌ ³¯ Á×ÀÏ¶§ ÁØ ÃÖÁ¾ ÇÇÇØ·®¿¡ ºñ·ÊÇØ Ãß°¡ ÇÇÇØ¸¦ ÁÝ´Ï´Ù.",
-		"´ë»óÀ» ¹Ù¶óº¸¸é ´ë»óÀº ½Ç¸í¿¡ °É¸®°í ³ª¿Í °°Àº ¹æÇâÀ» ¹Ù¶óº¾´Ï´Ù.",
-		"¡×cº¹¼ö¡×f¸¦ ½ÃÀÛÇÏ°í ³ª¸é Ã¼·ÂÀ» È¸º¹ÇÒ ¼ö ¾ø½À´Ï´Ù."
+		"ë¶€í™œ ì „ê¹Œì§€ ë‚´ê°€ ì£¼ëŠ” ëª¨ë“  ê³µê²© í”¼í•´ëŸ‰ì´ 75%ê°€ ê°ì†Œí•©ë‹ˆë‹¤.",
+		"ë‹¤ë¥¸ í”Œë ˆì´ì–´ì—ê²Œ ì‚¬ë§ ì‹œ Â§cë³µìˆ˜Â§fë¥¼ ì‹œìž‘í•´, Â§cë³µìˆ˜ ëŒ€ìƒÂ§f ì™¸ì—ê² ì‹¸ìš°ì§€ ëª»í•˜ê³ ",
+		"Â§cë³µìˆ˜ ëŒ€ìƒÂ§fì—ê² ëŒ€ìƒì´ ë‚  ì£½ì¼ë•Œ ì¤€ ìµœì¢… í”¼í•´ëŸ‰ì— ë¹„ë¡€í•´ ì¶”ê°€ í”¼í•´ë¥¼ ì¤ë‹ˆë‹¤.",
+		"ëŒ€ìƒì„ ë°”ë¼ë³´ë©´ ëŒ€ìƒì€ ì‹¤ëª…ì— ê±¸ë¦¬ê³  ë‚˜ì™€ ê°™ì€ ë°©í–¥ì„ ë°”ë¼ë´…ë‹ˆë‹¤.",
+		"Â§cë³µìˆ˜Â§fë¥¼ ì‹œìž‘í•˜ê³  ë‚˜ë©´ ì²´ë ¥ì„ íšŒë³µí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
 		})
 
 public class Revenger extends AbilityBase {
@@ -124,7 +124,7 @@ public class Revenger extends AbilityBase {
 		public void run(int count) {
 			Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
     		if (p != null && p.equals(target)) {
-    			ac.update("¡×cÁÖ½Ã Áß");
+    			ac.update("Â§cì£¼ì‹œ ì¤‘");
     			if (checkilook == true) {
         			target.addPotionEffect(blind);
         			SoundLib.AMBIENT_CAVE.playSound(target, 1, 1.5f);
@@ -190,9 +190,9 @@ public class Revenger extends AbilityBase {
 			if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && getPlayer().getKiller() instanceof Player && checkdeath == true) {
 				target = getPlayer().getKiller();
 				if (target != null) {
-					Bukkit.broadcastMessage("¡×f[¡×c´É·Â¡×f] ¡×c" + getPlayer().getName() + "¡×f´ÔÀÇ ´É·ÂÀº ¡×eº¹¼ö±Í¡×f¿´½À´Ï´Ù.");
-					Bukkit.broadcastMessage("¡×c" + getPlayer().getName() + "¡×f°¡ ¡×a" + getPlayer().getKiller().getName() + "¡×f¿¡°Ô »ìÇØ´çÇß½À´Ï´Ù. ¡×7ÄÆ!");
-					Bukkit.broadcastMessage("¡×c" + getPlayer().getName() + "¡×f´Â ÀÌÁ¦ ¡×a" + getPlayer().getKiller().getName() + "¡×f¿¡°Ô ¡×cº¹¼ö¡×f¸¦ ÁØºñÇÕ´Ï´Ù...");
+					Bukkit.broadcastMessage("Â§f[Â§cëŠ¥ë ¥Â§f] Â§c" + getPlayer().getName() + "Â§fë‹˜ì˜ ëŠ¥ë ¥ì€ Â§eë³µìˆ˜ê·€Â§fì˜€ìŠµë‹ˆë‹¤.");
+					Bukkit.broadcastMessage("Â§c" + getPlayer().getName() + "Â§fê°€ Â§a" + getPlayer().getKiller().getName() + "Â§fì—ê²Œ ì‚´í•´ë‹¹í–ˆìŠµë‹ˆë‹¤. Â§7ì»·!");
+					Bukkit.broadcastMessage("Â§c" + getPlayer().getName() + "Â§fëŠ” ì´ì œ Â§a" + getPlayer().getKiller().getName() + "Â§fì—ê²Œ Â§cë³µìˆ˜Â§fë¥¼ ì¤€ë¹„í•©ë‹ˆë‹¤...");
 					lastdmg = Math.min((2 * (e.getFinalDamage() / 3)), 4);
 					getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 					new BukkitRunnable() {
@@ -206,7 +206,7 @@ public class Revenger extends AbilityBase {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							if (!target.isDead()) target.sendMessage("¡×7´©±º°¡°¡ ÃÄ´Ùº¸´Â °Í °°Àº ±âºÐÀÌ µì´Ï´Ù...");
+							if (!target.isDead()) target.sendMessage("Â§7ëˆ„êµ°ê°€ê°€ ì³ë‹¤ë³´ëŠ” ê²ƒ ê°™ì€ ê¸°ë¶„ì´ ë“­ë‹ˆë‹¤...");
 						}	
 					}.runTaskLater(AbilityWar.getPlugin(), 200L);
 					checkdeath = false;
@@ -240,7 +240,7 @@ public class Revenger extends AbilityBase {
 					ilook.stop(false);
 				} else {
 					if (!target.getKiller().equals(getPlayer()) && target.getKiller() instanceof Player) {
-						Bukkit.broadcastMessage("¡×c" + getPlayer().getName() + "¡×f´Â ÀÌÁ¦ ¡×a" + target.getName() + "¡×fÀ» Á×ÀÎ ¡×a" + target.getKiller().getName() + "¡×f¿¡°Ô ¡×cº¹¼ö¡×f¸¦ ÁØºñÇÕ´Ï´Ù...");
+						Bukkit.broadcastMessage("Â§c" + getPlayer().getName() + "Â§fëŠ” ì´ì œ Â§a" + target.getName() + "Â§fì„ ì£½ì¸ Â§a" + target.getKiller().getName() + "Â§fì—ê²Œ Â§cë³µìˆ˜Â§fë¥¼ ì¤€ë¹„í•©ë‹ˆë‹¤...");
 						target = target.getKiller();
 					}
 					if (target.getKiller().equals(getPlayer())) {

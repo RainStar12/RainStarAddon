@@ -1,35 +1,27 @@
 package RainStarAbility;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "ÀÏ°İÇÊ»ì", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÇÑ ¹æ¿¡ °£´Ù¡×f: ´Ü ÇÑ ¹øµµ ±ÙÁ¢ Å¸°İÇÑ Àû ¾ø´Â ÀûÀ» Ã³À½À¸·Î",
-		" ±ÙÁ¢ Å¸°İÇÒ ¶§ ¡×c2.15¹èÀÇ ÇÇÇØ¡×f·Î ÀÔÈü´Ï´Ù. ÀÌÈÄ ±âº» ÇÇÇØ·®À¸·Î¸¸ °ø°İÇÏ°í,",
-		" ´ë»óÀ» Å¸°İÇÏ¸é Å¸°İÇÒ¼ö·Ï ´ë»ó¿¡°Ô ÁÖ´Â ±âº» ÇÇÇØ·®ÀÌ °è¼ÓÇØ °¨¼ÒÇÕ´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×c¿ø¼¦¿øÅ³¡×f: ´Ü ÇÑ ¹øµµ Å¸°İÇÑ Àû ¾ø´Â ÀûÀ» ÇÑ ¹ø¿¡ Ã³Ä¡ÇÒ °æ¿ì",
-		" ¸ğµç ÀûÀÇ Å¸°İ Ä«¿îÆÃÀÌ ÃÊ±âÈ­µÇ¸ç, Ã¼·ÂÀ» ÀÔÈù ÇÇÇØ·®¸¸Å­ È¸º¹ÇÕ´Ï´Ù."
-		},
-		summarize = {
-		"´Ü ÇÑ ¹øµµ ±ÙÁ¢ Å¸°İÇÑ Àû ¾ø´Â ÀûÀ» ±ÙÁ¢ Å¸°İ½Ã 2.5¹èÀÇ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.",
-		"ÀÌ È¿°ú·Î ÀûÀ» Ã³Ä¡½Ã ¸ğµç ÀûÀÇ Å¸°İ Ä«¿îÆÃÀÌ ¸®¼Â, Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù.",
-		"Å¸°İÇÑ ÀûÀÌ ÀÖ´Â Àû¿¡°Õ ±âº» ÇÇÇØ·®ÀÌ °è¼ÓÇØ °¨¼ÒÇÕ´Ï´Ù."
+@AbilityManifest(name = "ì¼ê²©í•„ì‚´", rank = Rank.A, species = Species.HUMAN, explain = {
+		"ì ì—ê²Œ ì…íˆëŠ” ì²« Â§3ê·¼ì ‘ Â§cì¹˜ëª…íƒ€ í”¼í•´Â§fê°€ Â§c$[MULTIPLY]%Â§fì˜ ëŒ€ë¯¸ì§€ë¥¼ ì…í™ë‹ˆë‹¤."
 		})
 
 public class OneShotOneKill extends AbilityBase {
@@ -38,16 +30,50 @@ public class OneShotOneKill extends AbilityBase {
 		super(participant);
 	}
 	
-	private Map<Player, Integer> attackCounter = new HashMap<>();
-	private double lastDamage = 0;
-	private Player dead;
+	private Set<Player> attacked = new HashSet<>();
+	private double multiply = MULTIPLY.getValue() * 0.01;
+	private boolean attackCooldown = false;
+	
+	@Override
+	protected void onUpdate(AbilityBase.Update update) {
+	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
+	    	attackCooldownChecker.start();
+	    }
+	}
+	
+	public static final SettingObject<Integer> MULTIPLY = abilitySettings.new SettingObject<Integer>(OneShotOneKill.class,
+			"damage-multiply", 235, "# ì¶”ê°€ ëŒ€ë¯¸ì§€ ë°°ìœ¨") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	private final AbilityTimer attackCooldownChecker = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			if (NMS.getAttackCooldown(getPlayer()) > 0.848 && attackCooldown) attackCooldown = false;
+			else if (NMS.getAttackCooldown(getPlayer()) <= 0.848 && !attackCooldown) attackCooldown = true;
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	@SuppressWarnings("deprecation")
+	public static boolean isCriticalHit(Player p, boolean attackcool) {
+		return (!p.isOnGround() && p.getFallDistance() > 0.0F && 
+	      !p.getLocation().getBlock().isLiquid() &&
+	      attackcool == false &&
+	      !p.isInsideVehicle() && !p.isSprinting() && p
+	      .getActivePotionEffects().stream().noneMatch(pe -> (pe.getType() == PotionEffectType.BLINDNESS)));
+	}
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
 			if (e.getEntity() instanceof Player) {
-				Player player = (Player) e.getEntity();
-				if (!attackCounter.containsKey(player)) {
+				if (isCriticalHit(getPlayer(), attackCooldown) && !attacked.contains(e.getEntity())) {
+					Player player = (Player) e.getEntity();
 					new AbilityTimer(5) {
 						
 						@Override
@@ -58,46 +84,10 @@ public class OneShotOneKill extends AbilityBase {
 					}.setPeriod(TimeUnit.TICKS, 1).start();
 					SoundLib.ENTITY_POLAR_BEAR_WARNING.playSound(getPlayer().getLocation());
 					ParticleLib.CRIT.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
-					e.setDamage(e.getDamage() * 2.15);
-					attackCounter.put(player, 1);
-					if (player.getHealth() - e.getFinalDamage() <= 0) {
-						new AbilityTimer(2) {
-							
-							@Override
-							public void onStart() {
-								dead = player;
-								lastDamage = e.getFinalDamage();
-							}
-							
-							@Override
-							public void onEnd() {
-								onSilentEnd();
-							}
-							
-							@Override
-							public void onSilentEnd() {
-								dead = null;
-								lastDamage = 0;
-							}
-							
-						}.setPeriod(TimeUnit.TICKS, 1).start();
-					}
-				} else {
-					e.setDamage(Math.max(e.getDamage() / 2, e.getDamage() - (attackCounter.get(player) * 0.15)));
-					attackCounter.put(player, attackCounter.get(player) + 1);
+					ParticleLib.ITEM_CRACK.spawnParticle(player.getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.REDSTONE);
+					e.setDamage(e.getDamage() * multiply);	
+					attacked.add(player);
 				}
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (dead != null) {
-			if (e.getEntity().equals(dead)) {
-				attackCounter.clear();
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + lastDamage);
-				SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.75f);
-				ParticleLib.ITEM_CRACK.spawnParticle(dead.getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.REDSTONE);
 			}
 		}
 	}

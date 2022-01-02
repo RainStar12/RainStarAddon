@@ -44,34 +44,34 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "²¿¸¶ ¾Ç¸¶",
+		name = "ê¼¬ë§ˆ ì•…ë§ˆ",
 		rank = Rank.A, 
 		species = Species.UNDEAD, 
 		explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×6Æ®¸¯ ¿À¾î Æ®¸´!¡×f: ÁÖº¯ $[RANGE_CONFIG]Ä­ ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾îÀÇ",
-		" ÀÎº¥Åä¸®¿¡ Æ÷¼Ç µîÀÇ ¼Ò¸ğÇü ¾ÆÀÌÅÛÀÌ ÀÖ´Ù¸é ÇÑ °³ ¹Ş¾Æ°©´Ï´Ù.",
-		" ¸¸¾à ¼Ò¸ğÇü ¾ÆÀÌÅÛÀÌ ´Ü ÇÏ³ªµµ ¾ø°Å³ª ÀÌ¹Ì Æ®¸´À» ½ÃÀüÇÑ ´ë»ó¿¡°Õ Àå³­À» ÃÄ",
-		" ´ë»óÀÇ ÇÖ¹Ù 1~9¹ø ¾ÆÀÌÅÛÀ» ¹«ÀÛÀ§·Î µÚ¼¯½À´Ï´Ù. $[COOLDOWN_CONFIG]"
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§6íŠ¸ë¦­ ì˜¤ì–´ íŠ¸ë¦¿!Â§f: ì£¼ë³€ $[RANGE_CONFIG]ì¹¸ ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ì˜",
+		" ì¸ë²¤í† ë¦¬ì— í¬ì…˜ ë“±ì˜ ì†Œëª¨í˜• ì•„ì´í…œì´ ìˆë‹¤ë©´ í•œ ê°œ ë°›ì•„ê°‘ë‹ˆë‹¤.",
+		" ë§Œì•½ ì†Œëª¨í˜• ì•„ì´í…œì´ ë‹¨ í•˜ë‚˜ë„ ì—†ê±°ë‚˜ ì´ë¯¸ íŠ¸ë¦¿ì„ ì‹œì „í•œ ëŒ€ìƒì—ê² ì¥ë‚œì„ ì³",
+		" ëŒ€ìƒì˜ í•«ë°” 1~9ë²ˆ ì•„ì´í…œì„ ë¬´ì‘ìœ„ë¡œ ë’¤ì„ìŠµë‹ˆë‹¤. $[COOLDOWN_CONFIG]"
 		})
 
 @Tips(tip = {
-        "´Ù¸¥ ÇÃ·¹ÀÌ¾îÀÇ ¼Ò¸ğÅÛÀ» °¡Á®¿Í ´ë»óÀÇ Àü·«À» ¹æÇØÇÏ°í,",
-        "³ª ÀÚ½ÅÀº ±× ¼Ò¸ğÅÛÀ» »ç¿ëÇÏ¿© ¾ÈÁ¤¼ºÀÌ³ª ±âµ¿¼º µîÀ» ²ÒÇÒ ¼ö",
-        "ÀÖ½À´Ï´Ù. ¸¸ÀÏ ´ë»ó¿¡°Ô ¼Ò¸ğÅÛÀÌ ¾ø´Ù¸é ´ë»óÀÇ ¾ÆÀÌÅÛÀ» ºÀÀÎÇØ",
-        "°ø°İ È¸ÇÇ³ª ´É·Â ºÀÀÎ µî º¯¼ö¸¦ Ã¢ÃâÇÒ ¼ö ÀÖ°í, »ıÁ¸·ÂÀÌ ³ô¾ÆÁı´Ï´Ù."
+        "ë‹¤ë¥¸ í”Œë ˆì´ì–´ì˜ ì†Œëª¨í…œì„ ê°€ì ¸ì™€ ëŒ€ìƒì˜ ì „ëµì„ ë°©í•´í•˜ê³ ,",
+        "ë‚˜ ìì‹ ì€ ê·¸ ì†Œëª¨í…œì„ ì‚¬ìš©í•˜ì—¬ ì•ˆì •ì„±ì´ë‚˜ ê¸°ë™ì„± ë“±ì„ ê¾€í•  ìˆ˜",
+        "ìˆìŠµë‹ˆë‹¤. ë§Œì¼ ëŒ€ìƒì—ê²Œ ì†Œëª¨í…œì´ ì—†ë‹¤ë©´ ëŒ€ìƒì˜ ì•„ì´í…œì„ ë´‰ì¸í•´",
+        "ê³µê²© íšŒí”¼ë‚˜ ëŠ¥ë ¥ ë´‰ì¸ ë“± ë³€ìˆ˜ë¥¼ ì°½ì¶œí•  ìˆ˜ ìˆê³ , ìƒì¡´ë ¥ì´ ë†’ì•„ì§‘ë‹ˆë‹¤."
 }, strong = {
-        @Description(subject = "º¯¼ö Ã¢Ãâ", explain = {
-                "´ë»óÀÇ ¼Ò¸ğÇü ¾ÆÀÌÅÛÀ» °¡Á®¿Í Àü·« ¹æÇØ ¹×",
-                "ÀÚ½Å¿¡°Ô ÀÌµæÀÌ µÇ´Â ¹öÇÁ¸¦ °É ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ë³€ìˆ˜ ì°½ì¶œ", explain = {
+                "ëŒ€ìƒì˜ ì†Œëª¨í˜• ì•„ì´í…œì„ ê°€ì ¸ì™€ ì „ëµ ë°©í•´ ë°",
+                "ìì‹ ì—ê²Œ ì´ë“ì´ ë˜ëŠ” ë²„í”„ë¥¼ ê±¸ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         }),
-        @Description(subject = "¼Ò¸ğÇü ¾ÆÀÌÅÛÀÌ ¸¹Àº ÇÃ·¹ÀÌ¾î", explain = {
-                "´ë»óÀÇ ¼Ò¸ğÇü ¾ÆÀÌÅÛÀÌ ¸¹À¸¸é ¸¹À»¼ö·Ï",
-                "´É·ÂÀ» ¾µ ¶§¸¶´Ù °è¼ÓÇØ¼­ °¡Á®¿Ã ¼ö ÀÖ½À´Ï´Ù."
+        @Description(subject = "ì†Œëª¨í˜• ì•„ì´í…œì´ ë§ì€ í”Œë ˆì´ì–´", explain = {
+                "ëŒ€ìƒì˜ ì†Œëª¨í˜• ì•„ì´í…œì´ ë§ìœ¼ë©´ ë§ì„ìˆ˜ë¡",
+                "ëŠ¥ë ¥ì„ ì“¸ ë•Œë§ˆë‹¤ ê³„ì†í•´ì„œ ê°€ì ¸ì˜¬ ìˆ˜ ìˆìŠµë‹ˆë‹¤."
         })
 }, weak = {
-        @Description(subject = "Å¸ÀÌ¹Ö", explain = {
-                "¿øÇÏ´Â ¾ÆÀÌÅÛÀ» ºÀÀÎÇÏ±â À§ÇØ¼­´Â ´ë»óÀÇ ¼ÕÀ»",
-                "Àß º¸¸ç Å¸ÀÌ¹ÖÀ» ¸ÂÃç¾ß ÇÕ´Ï´Ù."
+        @Description(subject = "íƒ€ì´ë°", explain = {
+                "ì›í•˜ëŠ” ì•„ì´í…œì„ ë´‰ì¸í•˜ê¸° ìœ„í•´ì„œëŠ” ëŒ€ìƒì˜ ì†ì„",
+                "ì˜ ë³´ë©° íƒ€ì´ë°ì„ ë§ì¶°ì•¼ í•©ë‹ˆë‹¤."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.THREE, crowdControl = Level.FOUR, mobility = Level.ZERO, utility = Level.SIX), difficulty = Difficulty.VERY_EASY)
 
@@ -83,7 +83,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(LittleDevil.class,
-			"cooldown", 60, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -97,7 +97,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
 	= abilitySettings.new SettingObject<Integer>(LittleDevil.class,
-			"range", 10, "# ´É·Â ¹üÀ§") {
+			"range", 10, "# ëŠ¥ë ¥ ë²”ìœ„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -193,7 +193,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 				cooldown.start();
 				return true;
 	    	} else {
-	    		getPlayer().sendMessage("¡×6[¡×e!¡×6] ¡×fÁÖº¯ ¡×6" + RANGE_CONFIG.getValue() + "Ä­¡×f ³»¿¡ Àå³­À» Ä¥ ´ë»óÀÌ ¾ø½À´Ï´Ù.");
+	    		getPlayer().sendMessage("Â§6[Â§e!Â§6] Â§fì£¼ë³€ Â§6" + RANGE_CONFIG.getValue() + "ì¹¸Â§f ë‚´ì— ì¥ë‚œì„ ì¹  ëŒ€ìƒì´ ì—†ìŠµë‹ˆë‹¤.");
 	    		return false;
 	    	}
 	    }

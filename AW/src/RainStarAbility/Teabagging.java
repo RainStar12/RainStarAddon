@@ -29,10 +29,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "Æ¼¹è±ë", rank = Rank.C, species = Species.HUMAN, explain = {
-		"´©±º°¡°¡ ³ª¸¦ º¸°í ÀÖÀ» ¶§ ¿õÅ©¸®±â¸¦ ¿¬Å¸ÇÒ °æ¿ì ÇÇÇØ¸¦ Áİ´Ï´Ù.",
-		"¸¸ÀÏ »ó´ë°¡ ³» µŞ¸ğ½ÀÀ» º¸°í ÀÖÀ» ¶§´Â ÇÇÇØ·®ÀÌ ´õ °­ÇØÁı´Ï´Ù.",
-		"³ª¸¦ Á×ÀÎ ´ë»óÀº ¡×cÈÆ¼ö¡×f »óÅÂÀÌ»óÀ» ¹Ş½À´Ï´Ù."
+		name = "í‹°ë°°ê¹…", rank = Rank.C, species = Species.HUMAN, explain = {
+		"ëˆ„êµ°ê°€ê°€ ë‚˜ë¥¼ ë³´ê³  ìˆì„ ë•Œ ì›…í¬ë¦¬ê¸°ë¥¼ ì—°íƒ€í•  ê²½ìš° í”¼í•´ë¥¼ ì¤ë‹ˆë‹¤.",
+		"ë§Œì¼ ìƒëŒ€ê°€ ë‚´ ë’·ëª¨ìŠµì„ ë³´ê³  ìˆì„ ë•ŒëŠ” í”¼í•´ëŸ‰ì´ ë” ê°•í•´ì§‘ë‹ˆë‹¤.",
+		"ë‚˜ë¥¼ ì£½ì¸ ëŒ€ìƒì€ Â§cí›ˆìˆ˜Â§f ìƒíƒœì´ìƒì„ ë°›ìŠµë‹ˆë‹¤."
 		})
 
 public class Teabagging extends AbilityBase {
@@ -144,21 +144,21 @@ public class Teabagging extends AbilityBase {
         						if (random.nextInt(10) == 0) {
             						SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
         							switch(random.nextInt(8)) {
-        							case 0: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤»¤» ¾ß ²Ã¹Ş³Ä?");
+        							case 0: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cã›ã› é†¤ åŠ é–¤åŠƒ?");
         							break;
-        							case 1: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cez");
+        							case 1: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cez");
         							break;
-        							case 2: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¸øÀâÁê?");
+        							case 2: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cå…¬èª¬ç›¸?");
         							break;
-        							case 3: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤»");
+        							case 3: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cã›");
         							break;
-        							case 4: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cÁñ~");
+        							case 4: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cè˜~");
         							break;
-        							case 5: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cºıÃÆ¾î¿ä? ¾îÂ¼¶ó°í¿ä~");
+        							case 5: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cå†Šå¼¾å¬¢æ¨? å¬¢æ‘è™å£±æ¨~");
         							break;
-        							case 6: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×c¤µ¤©¤º¤·~");
+        							case 6: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cã•ã‰ãšã—~");
         							break;
-        							case 7: player.sendMessage("¡×3[¡×b´É·Â¡×3] ¡×e" + getPlayer().getName() + " ¡×b>¡×e " + player.getName() + "¡×7: ¡×cÅ©Å©·ç»æ»§»Í~");
+        							case 7: player.sendMessage("ã€3[ã€bç®¡å¾„ã€3] ã€e" + getPlayer().getName() + " ã€b>ã€e " + player.getName() + "ã€7: ã€cæ»´æ»´æ¬ ç´™è–©å››~");
         							break;
         							}
         						}

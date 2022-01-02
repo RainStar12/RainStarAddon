@@ -27,16 +27,16 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(
-		name = "ÇÇÀÇ °¥¸Á", rank = Rank.L, species = Species.UNDEAD, explain = {
-		"¡×7±ÙÁ¢ °ø°Ý ¡×8- ¡×cÇÇÄ¥°©¡×f: ÀûÀÇ Ã¼·ÂÀÌ 50%º¸´Ù ÀûÀ» ¶§ ¡×cÃß°¡ ÇÇÇØ¡×8(¡×7Max ¡¿1.8¡×8)¡×f¸¦,",
-		" ÀûÀÇ Ã¼·ÂÀÌ 50%º¸´Ù ¸¹À» ¶§ ±âº» ´ë¹ÌÁö°¡ °¨¼Ò¡×8(¡×7Min ¡¿0.8¡×8)¡×fÇÕ´Ï´Ù.",
-		" ±ÙÁ¢ °ø°ÝÀ¸·Î ÀûÀ» Á×¿´À» °æ¿ì ÀÒÀº HPÀÇ $[HEAL_AMOUNT]%¸¦ È¸º¹ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×7ÆÐ½Ãºê ¡×8- ¡×cÇÇ ³¿»õ¡×f: ¸ðµç ÀûÀÇ Ã¼·ÂÀ» È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		" ¹Ù´Ú¿¡ ³ªÄ§¹ÝÀÌ »ý°Ü, °¡Àå Ã¼·ÂÀÌ ÀûÀº ÀûÀÇ À§Ä¡¸¦ ¾Ë·ÁÁÝ´Ï´Ù.",
-		"¡×7Ã¶±« Å¸°ÔÆÃ ¡×8- ¡×cÇÇÀÇ Çâ¿¬¡×f: $[RANGE]Ä­ ÀÌ³»ÀÇ ÀûÀ» ¹Ù¶óº¸°í Ã¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é",
-		" ´ë»óÀÇ ¹æÇâÀ¸·Î ºü¸£°Ô µ¹Áø, ÀÌÈÄ Ã¼·Â $[EXECUTION_HEALTH]% ÀÌÇÏÀÇ ÀûÀ» Ã³ÇüÇÕ´Ï´Ù. $[COOLDOWN]",
-		" Ã³ÇüµÈ Àû ÇÏ³ª´ç ÃÖ´ë Ã¼·ÂÀÌ »ó½ÂÇÏ¸ç, ¾Æ¹«µµ Ã³ÇüÇÏÁö ¸øÇÒ °æ¿ì",
-		" $[STUN_DURAITON]ÃÊ°£ ±âÀý »óÅÂ¿¡ ºüÁö°í ÄðÅ¸ÀÓÀ» 2¹è·Î °¡Áý´Ï´Ù."
+		name = "í”¼ì˜ ê°ˆë§", rank = Rank.L, species = Species.UNDEAD, explain = {
+		"Â§7ê·¼ì ‘ ê³µê²© Â§8- Â§cí”¼ì¹ ê°‘Â§f: ì ì˜ ì²´ë ¥ì´ 50%ë³´ë‹¤ ì ì„ ë•Œ Â§cì¶”ê°€ í”¼í•´Â§8(Â§7Max Ã—1.8Â§8)Â§fë¥¼,",
+		" ì ì˜ ì²´ë ¥ì´ 50%ë³´ë‹¤ ë§Žì„ ë•Œ ê¸°ë³¸ ëŒ€ë¯¸ì§€ê°€ ê°ì†ŒÂ§8(Â§7Min Ã—0.8Â§8)Â§fí•©ë‹ˆë‹¤.",
+		" ê·¼ì ‘ ê³µê²©ìœ¼ë¡œ ì ì„ ì£½ì˜€ì„ ê²½ìš° ìžƒì€ HPì˜ $[HEAL_AMOUNT]%ë¥¼ íšŒë³µí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cí”¼ ëƒ„ìƒˆÂ§f: ëª¨ë“  ì ì˜ ì²´ë ¥ì„ í™•ì¸í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
+		" ë°”ë‹¥ì— ë‚˜ì¹¨ë°˜ì´ ìƒê²¨, ê°€ìž¥ ì²´ë ¥ì´ ì ì€ ì ì˜ ìœ„ì¹˜ë¥¼ ì•Œë ¤ì¤ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ íƒ€ê²ŒíŒ… Â§8- Â§cí”¼ì˜ í–¥ì—°Â§f: $[RANGE]ì¹¸ ì´ë‚´ì˜ ì ì„ ë°”ë¼ë³´ê³  ì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´",
+		" ëŒ€ìƒì˜ ë°©í–¥ìœ¼ë¡œ ë¹ ë¥´ê²Œ ëŒì§„, ì´í›„ ì²´ë ¥ $[EXECUTION_HEALTH]% ì´í•˜ì˜ ì ì„ ì²˜í˜•í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì²˜í˜•ëœ ì  í•˜ë‚˜ë‹¹ ìµœëŒ€ ì²´ë ¥ì´ ìƒìŠ¹í•˜ë©°, ì•„ë¬´ë„ ì²˜í˜•í•˜ì§€ ëª»í•  ê²½ìš°",
+		" $[STUN_DURAITON]ì´ˆê°„ ê¸°ì ˆ ìƒíƒœì— ë¹ ì§€ê³  ì¿¨íƒ€ìž„ì„ 2ë°°ë¡œ ê°€ì§‘ë‹ˆë‹¤."
 		})
 
 public class Bloodlust extends Synergy {

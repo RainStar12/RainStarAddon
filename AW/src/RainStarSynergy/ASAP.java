@@ -30,11 +30,11 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(
-		name = "¼ÓÀü¼Ó°á", rank = Rank.B, species = Species.HUMAN, explain = {
-		"¡×cÁÖ´Â ´ë¹ÌÁö ¡×f¹× ¡×c¹Þ´Â ´ë¹ÌÁö¡×f°¡ ±âº»ÀûÀ¸·Î 0ÀÌ µË´Ï´Ù.",
-		"°°Àº ´ë»óÀ» 7È¸ Å¸°Ý ½Ã ´ë»óÀº ¡×c»ç¸Á¡×fÇÕ´Ï´Ù.",
-		"°°Àº ´ë»ó¿¡°Ô¼­ 7È¸ ÇÇ°Ý ½Ã Áï½Ã ¡×c»ç¸Á¡×fÇÕ´Ï´Ù.",
-		"ÀÌ È¿°ú·Î ¡×c»ç¸Á¡×fÇÑ ÀûÀº ºÎÈ° È¿°ú¸¦ ¹«½ÃÇÕ´Ï´Ù."
+		name = "ì†ì „ì†ê²°", rank = Rank.B, species = Species.HUMAN, explain = {
+		"Â§cì£¼ëŠ” ëŒ€ë¯¸ì§€ Â§fë° Â§cë°›ëŠ” ëŒ€ë¯¸ì§€Â§fê°€ ê¸°ë³¸ì ìœ¼ë¡œ 0ì´ ë©ë‹ˆë‹¤.",
+		"ê°™ì€ ëŒ€ìƒì„ 7íšŒ íƒ€ê²© ì‹œ ëŒ€ìƒì€ Â§cì‚¬ë§Â§fí•©ë‹ˆë‹¤.",
+		"ê°™ì€ ëŒ€ìƒì—ê²Œì„œ 7íšŒ í”¼ê²© ì‹œ ì¦‰ì‹œ Â§cì‚¬ë§Â§fí•©ë‹ˆë‹¤.",
+		"ì´ íš¨ê³¼ë¡œ Â§cì‚¬ë§Â§fí•œ ì ì€ ë¶€í™œ íš¨ê³¼ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤."
 		})
 
 public class ASAP extends Synergy {
@@ -84,8 +84,8 @@ public class ASAP extends Synergy {
 				if (mix.hasSynergy()) {
 					if (mix.getSynergy().getClass().equals(ASAP.class)) {
 						e.setCancelled(true);
-						getPlayer().sendMessage("[¡×c!¡×f] ´ë°áÀÌ ºûÀÇ ¼Óµµ·Î ³¡³µ½À´Ï´Ù...");
-						p.sendMessage("[¡×c!¡×f] ´ë°áÀÌ ºûÀÇ ¼Óµµ·Î ³¡³µ½À´Ï´Ù...");
+						getPlayer().sendMessage("[Â§c!Â§f] ëŒ€ê²°ì´ ë¹›ì˜ ì†ë„ë¡œ ëë‚¬ìŠµë‹ˆë‹¤...");
+						p.sendMessage("[Â§c!Â§f] ëŒ€ê²°ì´ ë¹›ì˜ ì†ë„ë¡œ ëë‚¬ìŠµë‹ˆë‹¤...");
 						if (!p.isDead()) p.setHealth(0);
 						if (!getPlayer().isDead()) getPlayer().setHealth(0);
 					}
@@ -148,7 +148,7 @@ public class ASAP extends Synergy {
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
-					Strings.repeat("¡×4¡×lX", stack).concat(Strings.repeat("¡×7¡×lX", 7 - stack)));
+					Strings.repeat("Â§4Â§lX", stack).concat(Strings.repeat("Â§7Â§lX", 7 - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(player, this);
 			addStack();
@@ -164,7 +164,7 @@ public class ASAP extends Synergy {
 		private boolean addStack() {
 			setCount(15);
 			stack++;
-			hologram.setText(Strings.repeat("¡×4¡×lX", stack).concat(Strings.repeat("¡×7¡×lX", 7 - stack)));
+			hologram.setText(Strings.repeat("Â§4Â§lX", stack).concat(Strings.repeat("Â§7Â§lX", 7 - stack)));
 			SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(player, 0.5f, 1.7f);
 			switch(stack) {
 			case 1: SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Tone.C));
@@ -221,7 +221,7 @@ public class ASAP extends Synergy {
 			this.player = player;
 			this.hologram = NMS.newHologram(getPlayer().getWorld(), getPlayer().getLocation().getX(),
 					getPlayer().getLocation().getY() + getPlayer().getEyeHeight() + 0.6, getPlayer().getLocation().getZ(), 
-					Strings.repeat("¡×4¡×lX", stack).concat(Strings.repeat("¡×7¡×lX", 7 - stack)));
+					Strings.repeat("Â§4Â§lX", stack).concat(Strings.repeat("Â§7Â§lX", 7 - stack)));
 			hologram.display(this.player);
 			deathMap.put(player, this);
 			addMyStack();
@@ -252,7 +252,7 @@ public class ASAP extends Synergy {
 			case 6: SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.D));
 			break;
 			}
-			hologram.setText(Strings.repeat("¡×4¡×lX", stack).concat(Strings.repeat("¡×7¡×lX", 7 - stack)));
+			hologram.setText(Strings.repeat("Â§4Â§lX", stack).concat(Strings.repeat("Â§7Â§lX", 7 - stack)));
 			if (stack >= 7) {
 				if (!getPlayer().isDead()) getPlayer().setHealth(0);
 				stop(false);

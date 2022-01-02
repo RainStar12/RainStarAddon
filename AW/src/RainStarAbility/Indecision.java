@@ -33,25 +33,25 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "¿ìÀ¯ºÎ´Ü", rank = Rank.A, species = Species.HUMAN, explain = {
-		"¿ø / ±Ù°Å¸® °ø°İ Áß ÇÏ³ª´Â ¡×cµô¡×f, ÇÏ³ª´Â ¡×dÈú¡×fÀ» ÇÕ´Ï´Ù.",
-		"¡×cµô¡×fÀÇ °æ¿ì¿¡´Â ¡×c2.5ÀÇ Ãß°¡ ´ë¹ÌÁö¡×f¸¦, ¡×dÈú¡×fÀÇ °æ¿ì¿¡´Â ¡×d1Ä­ È¸º¹¡×fÇØÁİ´Ï´Ù.",
-		"ÀÌ È¿°ú´Â ³ª¸¦ ÅëÇØ¼­µµ ¹ßµ¿ÇÕ´Ï´Ù. ¶ÇÇÑ »ı¸íÃ¼¸¦ $[CountConfig]¹ø Å¸°İÇÒ ¶§¸¶´Ù",
-		"°¢°¢ÀÇ °ø°İ Å¸ÀÔÀÌ µÚ¹Ù²ò´Ï´Ù.",
-		"Ã¶±« ¿ìÅ¬¸¯ ½Ã, ´©ÀûµÈ Å¸°İ È½¼ö¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù. $[CooldownConfig]"})
+@AbilityManifest(name = "ìš°ìœ ë¶€ë‹¨", rank = Rank.A, species = Species.HUMAN, explain = {
+		"ì› / ê·¼ê±°ë¦¬ ê³µê²© ì¤‘ í•˜ë‚˜ëŠ” Â§cë”œÂ§f, í•˜ë‚˜ëŠ” Â§díÂ§fì„ í•©ë‹ˆë‹¤.",
+		"Â§cë”œÂ§fì˜ ê²½ìš°ì—ëŠ” Â§c$[ADD_DAMAGE]%ì˜ ì¶”ê°€ ëŒ€ë¯¸ì§€Â§fë¥¼, Â§díÂ§fì˜ ê²½ìš°ì—ëŠ” Â§dìµœëŒ€ ì²´ë ¥ì˜ $[HEAL_AMOUNT]%ë¥¼ íšŒë³µÂ§fí•´ì¤ë‹ˆë‹¤.",
+		"ì´ íš¨ê³¼ëŠ” ë‚˜ë¥¼ í†µí•´ì„œë„ ë°œë™í•©ë‹ˆë‹¤. ë˜í•œ ìƒëª…ì²´ë¥¼ $[COUNT]ë²ˆ íƒ€ê²©í•  ë•Œë§ˆë‹¤",
+		"ê°ê°ì˜ ê³µê²© íƒ€ì…ì´ ë’¤ë°”ë€ë‹ˆë‹¤.",
+		"ì² ê´´ ìš°í´ë¦­ ì‹œ, ëˆ„ì ëœ íƒ€ê²© íšŸìˆ˜ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤. $[COOLDOWN]"})
 
 @Tips(tip = {
-        "±Ù°Å¸® / ¿ø°Å¸® °ø°İÀ» ¿Ïº®ÇÏ°Ô ¼öÇàÇØ³¾ ¼ö ÀÖ´Â ¿Ï¼ºÇü µô·¯ÀÔ´Ï´Ù.",
-        "´Ù¸¸ ¿ä±¸ÇÏ´Â °ø°İÀ¸·Î °ø°İÇÏÁö ¾Ê´Â´Ù¸é, ¿Ï¼ºÇü Èú·¯°¡ µÇ°ÚÁÒ?"
+        "ê·¼ê±°ë¦¬ / ì›ê±°ë¦¬ ê³µê²©ì„ ì™„ë²½í•˜ê²Œ ìˆ˜í–‰í•´ë‚¼ ìˆ˜ ìˆëŠ” ì™„ì„±í˜• ë”œëŸ¬ì…ë‹ˆë‹¤.",
+        "ë‹¤ë§Œ ìš”êµ¬í•˜ëŠ” ê³µê²©ìœ¼ë¡œ ê³µê²©í•˜ì§€ ì•ŠëŠ”ë‹¤ë©´, ì™„ì„±í˜• íëŸ¬ê°€ ë˜ê² ì£ ?"
 }, strong = {
-        @Description(subject = "½Ç·Â", explain = {
-        		"ÀÌ ´É·ÂÀº ´ç½ÅÀÇ ½Ç·Â¿¡ µû¶ó Ãß°¡´ë¹ÌÁö 2.5¸¦ ¸®½ºÅ© ¾øÀÌ",
-        		"°è¼ÓÇØ¼­ °¡ÇÒ ¼ö ÀÖ½À´Ï´Ù!"
+        @Description(subject = "ì‹¤ë ¥", explain = {
+        		"ì´ ëŠ¥ë ¥ì€ ë‹¹ì‹ ì˜ ì‹¤ë ¥ì— ë”°ë¼ ì¶”ê°€ëŒ€ë¯¸ì§€ 2.5ë¥¼ ë¦¬ìŠ¤í¬ ì—†ì´",
+        		"ê³„ì†í•´ì„œ ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤!"
         })
 }, weak = {
-        @Description(subject = "½Ç·Â", explain = {
-                "ÀÌ ´É·ÂÀº ´ç½ÅÀÇ ½Ç·Â¿¡ µû¶ó Àû¿¡°Ô ¸Å¹ø Ã¼·Â 1Ä­À»",
-                "°è¼ÓÇØ¼­ È¸º¹ÇØ ÁÙ ¼ö ÀÖ½À´Ï´Ù!"
+        @Description(subject = "ì‹¤ë ¥", explain = {
+                "ì´ ëŠ¥ë ¥ì€ ë‹¹ì‹ ì˜ ì‹¤ë ¥ì— ë”°ë¼ ì ì—ê²Œ ë§¤ë²ˆ ì²´ë ¥ 1ì¹¸ì„",
+                "ê³„ì†í•´ì„œ íšŒë³µí•´ ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤!"
         })
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.VERY_HARD)
 
@@ -69,26 +69,28 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 
 	private final ActionbarChannel ac = newActionbarChannel();
 	private final ActionbarChannel stackac = newActionbarChannel();
-	private final Cooldown reset = new Cooldown(CooldownConfig.getValue());
-	private final int count = CountConfig.getValue();
+	private final Cooldown reset = new Cooldown(COOLDOWN.getValue());
+	private final int count = COUNT.getValue();
+	private final int multiply = ADD_DAMAGE.getValue();
+	private final int healamount = HEAL_AMOUNT.getValue();
 	
 	public String getState() {
 		if (sword)
-			return "¡×b¿ø°Å¸® ¡×7: ¡×dHeal ¡×8| ¡×a±Ù°Å¸® ¡×7: ¡×cDeal";
+			return "Â§bì›ê±°ë¦¬ Â§7: Â§dHeal Â§8| Â§aê·¼ê±°ë¦¬ Â§7: Â§cDeal";
 		else
-			return "¡×b¿ø°Å¸® ¡×7: ¡×cDeal ¡×8| ¡×a±Ù°Å¸® ¡×7: ¡×dHeal";
+			return "Â§bì›ê±°ë¦¬ Â§7: Â§cDeal Â§8| Â§aê·¼ê±°ë¦¬ Â§7: Â§dHeal";
 	}
 
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			ac.update(getState());
-			stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+			stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 		}
 	}
 	
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Indecision.class,
-			"Cooldown", 60, "# ÄğÅ¸ÀÓ") {
+	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Indecision.class,
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -100,8 +102,24 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> CountConfig = abilitySettings.new SettingObject<Integer>(Indecision.class,
-			"Count", 3, "# Å¸°İ ¿ä±¸ È½¼ö") {
+	public static final SettingObject<Integer> COUNT = abilitySettings.new SettingObject<Integer>(Indecision.class,
+			"count", 3, "# íƒ€ê²© ìš”êµ¬ íšŸìˆ˜") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> ADD_DAMAGE = abilitySettings.new SettingObject<Integer>(Indecision.class,
+			"add-damage", 50, "# ë”œ ì¶”ê°€ ëŒ€ë¯¸ì§€ ë°°ìˆ˜") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};	
+	
+	public static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Indecision.class,
+			"heal-amount", 10, "# í ìµœëŒ€ ì²´ë ¥ ë¹„ë¡€ íšŒë³µë ¥") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -112,7 +130,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(AbilityBase.ClickType.RIGHT_CLICK)
 	    		&& !reset.isCooldown()) {
 	    	stack = 0;
-			stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+			stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 			reset.start();
 	    	return true;
 	    }
@@ -128,7 +146,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 				final LivingEntity target = (LivingEntity) e.getEntity();
 
 				if (sword == false) {
-					e.setDamage(e.getDamage() + 2.5);
+					e.setDamage(e.getDamage() * (1 + (multiply * 0.01)));
 
 					new AbilityTimer(5) {
 						@Override
@@ -143,10 +161,11 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 					SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 					SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 				} else {
-   					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 2, RegainReason.CUSTOM);
+					double heal = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (healamount * 0.01);
+					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(target, heal, RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						target.setHealth(Math.min(target.getHealth() + 2, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						target.setHealth(Math.min(target.getHealth() + heal, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 					}
 					e.setCancelled(true);
 					(arrow).remove();
@@ -165,12 +184,12 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 					SoundLib.CHIME.playInstrument(getPlayer(), new Note(1, Tone.G, false));
 				}
 				stack++;
-				stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+				stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 				if (stack >= count) {
 					sword = !sword;
 					ac.update(getState());
 					stack = 0;
-					stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+					stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 				}
 			}
 		}
@@ -179,7 +198,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 			final LivingEntity target = (LivingEntity) e.getEntity();
 
 			if (sword == true) {
-				e.setDamage(e.getDamage() + 2.5);
+				e.setDamage(e.getDamage() * (1 + (multiply * 0.01)));
 
 				new AbilityTimer(5) {
 					@Override
@@ -194,10 +213,11 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 				SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 				SoundLib.GUITAR.playInstrument(getPlayer(), new Note(1, Tone.A, false));
 			} else {
-				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 2, RegainReason.CUSTOM);
+				double heal = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * (healamount * 0.01);
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(target, heal, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					target.setHealth(Math.min(target.getHealth() + 2, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+					target.setHealth(Math.min(target.getHealth() + heal, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 				}
 				
 				e.setCancelled(true);
@@ -216,12 +236,12 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 				SoundLib.CHIME.playInstrument(getPlayer(), new Note(1, Tone.G, false));
 			}
 			stack++;
-			stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+			stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 			if (stack >= count) {
 				sword = !sword;
 				ac.update(getState());
 				stack = 0;
-				stackac.update("¡×7Å¸°İ È½¼ö : ¡×f" + stack + "¡×7 È¸");
+				stackac.update("Â§7íƒ€ê²© íšŸìˆ˜ : Â§f" + stack + "Â§7 íšŒ");
 			}
 		}
 	}

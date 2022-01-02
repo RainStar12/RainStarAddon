@@ -21,11 +21,11 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "ºÎ½Ä", displayName = "¡×7ºÎ½Ä", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "ë¶€ì‹", displayName = "Â§7ë¶€ì‹", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"Ã¶°ú °ü·ÃµÈ ¾ÆÀÌÅÛÀ» »ç¿ëÇÏÁö ¸øÇÕ´Ï´Ù. ¶ÇÇÑ ¹æ¾î·ÂÀÌ °¨¼ÒµË´Ï´Ù.",
-		"³·Àº µî±ŞÀÇ ±¤¹°À» »ç¿ëÇÑ °©¿ÊÀÏ¼ö·Ï ¹æ¾î·ÂÀÌ ´õ ¸¹ÀÌ °¨¼ÒµË´Ï´Ù."
+		"ì² ê³¼ ê´€ë ¨ëœ ì•„ì´í…œì„ ì‚¬ìš©í•˜ì§€ ëª»í•©ë‹ˆë‹¤. ë˜í•œ ë°©ì–´ë ¥ì´ ê°ì†Œë©ë‹ˆë‹¤.",
+		"ë‚®ì€ ë“±ê¸‰ì˜ ê´‘ë¬¼ì„ ì‚¬ìš©í•œ ê°‘ì˜·ì¼ìˆ˜ë¡ ë°©ì–´ë ¥ì´ ë” ë§ì´ ê°ì†Œë©ë‹ˆë‹¤."
 })
 public class Corrosion extends AbstractGame.Effect implements Listener {
 

@@ -51,18 +51,18 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
-		name = "º£¸£¼¼¸£Å©", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"¡×7Ã¶±« ¿ìÅ¬¸¯ ¡×8- ¡×6Àü»çÀÇ Èû¡×f: ±¤Àü»ç ¸ğµå¿¡ µ¹ÀÔÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ¸¶Áö¸·À¸·Î »ç¿ëÇßÀ» ¶§ ´ç½ÃÀÇ Ã¼·Â±îÁö º¹±¸ÇØ¾ß »ç¿ë °¡´ÉÇÕ´Ï´Ù.",
-		"¡×7¸ğµå ¡×8- ¡×c±¤Àü»ç¡×f: Ã¼·ÂÀÌ ¹İÄ­ÀÌ µÇ±â Àü±îÁö °è¼ÓÇÏ¿© À¯ÁöµË´Ï´Ù.",
-		" ¸Å ÃÊ ³» ÃÖ´ë Ã¼·ÂÀÇ 10%¸¦ ¡×3¼Ò¸ğ¡×fÇÏ°í, È¸º¹ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.",
-		" ¡×b¹«Àû »óÅÂ¡×f°¡ µÇ°í ¡×bÀÌµ¿ ¼Óµµ, °ø°İ ¼Óµµ°¡ ´ëÆø Áõ°¡¡×fÇÕ´Ï´Ù.",
-		" ³» ³²Àº Ã¼·Â¿¡ ¹İºñ·ÊÇÏ¿© Ãß°¡ ÇÇÇØ·®ÀÌ ÃÖ´ë $[MAX_DAMAGE]±îÁö Áõ°¡ÇÕ´Ï´Ù.",
-		" ±ÙÁ¢ °ø°İ¸¸ °¡´ÉÇÕ´Ï´Ù.",
-		"¡×7Àû Ã³Ä¡ ¡×4- ¡×c¹ö¼­Å©¡×f: ÃÖ´ë Ã¼·ÂÀÇ 1/3¸¸Å­ Ã¼·ÂÀ» Æ¯¼ö ¡×dÈ¸º¹¡×fÇÕ´Ï´Ù.",
-		" ¶ÇÇÑ Æ¯¼ö È¸º¹ÇÑ È¸º¹·®ÀÇ Àı¹İ¸¸Å­ ¡×eÈí¼ö Ã¼·Â¡×fÀ» È¹µæÇÕ´Ï´Ù.",
-		"¡×7¸ğµå Á¾·á ¡×8- ¡×bºÎÀÛ¿ë¡×f: ±¤Àü»ç ¸ğµå µ¹ÀÔ Àü Ã¼·ÂÀ¸·Î º¹±¸ÇÏ±â Àü±îÁö",
-		" ¡×dÈ¸º¹·Â¡×fÀÌ Áõ°¡ÇÏ³ª ÀÌµ¿·Â°ú °ø°İ ¼Óµµ, °ø°İ·ÂÀÌ ±Ş°¨ÇÕ´Ï´Ù."
+		name = "ë² ë¥´ì„¸ë¥´í¬", rank = Rank.S, species = Species.DEMIGOD, explain = {
+		"Â§7ì² ê´´ ìš°í´ë¦­ Â§8- Â§6ì „ì‚¬ì˜ í˜Â§f: ê´‘ì „ì‚¬ ëª¨ë“œì— ëŒì…í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ë§ˆì§€ë§‰ìœ¼ë¡œ ì‚¬ìš©í–ˆì„ ë•Œ ë‹¹ì‹œì˜ ì²´ë ¥ê¹Œì§€ ë³µêµ¬í•´ì•¼ ì‚¬ìš© ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§7ëª¨ë“œ Â§8- Â§cê´‘ì „ì‚¬Â§f: ì²´ë ¥ì´ ë°˜ì¹¸ì´ ë˜ê¸° ì „ê¹Œì§€ ê³„ì†í•˜ì—¬ ìœ ì§€ë©ë‹ˆë‹¤.",
+		" ë§¤ ì´ˆ ë‚´ ìµœëŒ€ ì²´ë ¥ì˜ 10%ë¥¼ Â§3ì†Œëª¨Â§fí•˜ê³ , íšŒë³µ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.",
+		" Â§bë¬´ì  ìƒíƒœÂ§fê°€ ë˜ê³  Â§bì´ë™ ì†ë„, ê³µê²© ì†ë„ê°€ ëŒ€í­ ì¦ê°€Â§fí•©ë‹ˆë‹¤.",
+		" ë‚´ ë‚¨ì€ ì²´ë ¥ì— ë°˜ë¹„ë¡€í•˜ì—¬ ì¶”ê°€ í”¼í•´ëŸ‰ì´ ìµœëŒ€ $[MAX_DAMAGE]ê¹Œì§€ ì¦ê°€í•©ë‹ˆë‹¤.",
+		" ê·¼ì ‘ ê³µê²©ë§Œ ê°€ëŠ¥í•©ë‹ˆë‹¤.",
+		"Â§7ì  ì²˜ì¹˜ Â§4- Â§cë²„ì„œí¬Â§f: ìµœëŒ€ ì²´ë ¥ì˜ 1/3ë§Œí¼ ì²´ë ¥ì„ íŠ¹ìˆ˜ Â§díšŒë³µÂ§fí•©ë‹ˆë‹¤.",
+		" ë˜í•œ íŠ¹ìˆ˜ íšŒë³µí•œ íšŒë³µëŸ‰ì˜ ì ˆë°˜ë§Œí¼ Â§eí¡ìˆ˜ ì²´ë ¥Â§fì„ íšë“í•©ë‹ˆë‹¤.",
+		"Â§7ëª¨ë“œ ì¢…ë£Œ Â§8- Â§bë¶€ì‘ìš©Â§f: ê´‘ì „ì‚¬ ëª¨ë“œ ëŒì… ì „ ì²´ë ¥ìœ¼ë¡œ ë³µêµ¬í•˜ê¸° ì „ê¹Œì§€",
+		" Â§díšŒë³µë ¥Â§fì´ ì¦ê°€í•˜ë‚˜ ì´ë™ë ¥ê³¼ ê³µê²© ì†ë„, ê³µê²©ë ¥ì´ ê¸‰ê°í•©ë‹ˆë‹¤."
 		})
 
 @SuppressWarnings("deprecation")
@@ -73,7 +73,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"cooldown", 60, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 60, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -88,7 +88,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> MAX_DAMAGE = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"add-max-damage", 9, "# ½ºÅ³ Áö¼Ó Áß", "# ÃÖ´ë Ã¼·Â ¹İºñ·Ê Ãß°¡ ÇÇÇØ·® ÃÖ´ëÄ¡", "# 7ÀÏ °æ¿ì ÃÖ´ë 7±îÁö ´ë¹ÌÁö°¡ Áõ°¡ÇÕ´Ï´Ù.") {
+			"add-max-damage", 9, "# ìŠ¤í‚¬ ì§€ì† ì¤‘", "# ìµœëŒ€ ì²´ë ¥ ë°˜ë¹„ë¡€ ì¶”ê°€ í”¼í•´ëŸ‰ ìµœëŒ€ì¹˜", "# 7ì¼ ê²½ìš° ìµœëŒ€ 7ê¹Œì§€ ëŒ€ë¯¸ì§€ê°€ ì¦ê°€í•©ë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -98,7 +98,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> MIN_DAMAGE = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"remove-min-damage", 5, "# ¸®½ºÅ© Áö¼Ó Áß", "# ÃÖ´ë Ã¼·Â ºñ·Ê °¨¼Ò ÇÇÇØ·® ÃÖ´ëÄ¡", "# 5ÀÏ °æ¿ì ÃÖ´ë 5±îÁö ´ë¹ÌÁö°¡ °¨¼ÒÇÕ´Ï´Ù.") {
+			"remove-min-damage", 5, "# ë¦¬ìŠ¤í¬ ì§€ì† ì¤‘", "# ìµœëŒ€ ì²´ë ¥ ë¹„ë¡€ ê°ì†Œ í”¼í•´ëŸ‰ ìµœëŒ€ì¹˜", "# 5ì¼ ê²½ìš° ìµœëŒ€ 5ê¹Œì§€ ëŒ€ë¯¸ì§€ê°€ ê°ì†Œí•©ë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -151,10 +151,10 @@ public class Berserk extends Synergy implements ActiveHandler {
 					if (!risk.isRunning()) {
 						skill.start();		
 					} else {
-						getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f¾ÆÁ÷ Ã¼·ÂÀÌ º¹±¸µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+						getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fì•„ì§ ì²´ë ¥ì´ ë³µêµ¬ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 					}
 				} else {
-					getPlayer().sendMessage("¡×4[¡×c!¡×4] ¡×f´É·ÂÀÌ Áö¼Ó ÁßÀÔ´Ï´Ù.");
+					getPlayer().sendMessage("Â§4[Â§c!Â§4] Â§fëŠ¥ë ¥ì´ ì§€ì† ì¤‘ì…ë‹ˆë‹¤.");
 				}
 			}
 		}

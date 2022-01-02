@@ -45,23 +45,23 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "¹Ì¶ó", rank = Rank.S, species = Species.HUMAN, explain = {
-		"¡×7È­»ì ÀûÁß ¡×8- ¡×bµµ¾à Ç¥½Ä¡×f: ¿õÅ©¸° Ã¤·Î È° ¹ß»ç ½Ã ÀûÁßÇÑ À§Ä¡¿¡ µµ¾à Ç¥½ÄÀ» ¸¸µé¾î",
-		" $[FIELD_RANGE]Ä­ÀÇ ¹üÀ§ ³»¿¡ ¼Ó¹ÚÀÇ ¿¬¸· È¿°ú¸¦ ¹Ş´Â ÇÊµå¸¦ ¸¸µì´Ï´Ù. $[ARROW_COOL]", 
-		" µµ¾à Ç¥½ÄÀº »õ·Î ¸¸µé¾îÁú ¶§¸¶´Ù °»½ÅµÇ°í °ø°£ µµ¾àÀ» 3ÃÊ°£ »ç¿ëÇÏÁö ¸øÇÕ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×3°ø°£ µµ¾à¡×f: µµ¾à Ç¥½ÄÀÌ ÀÖ´Â °÷À¸·Î ¼ø°£ÀÌµ¿ÇÕ´Ï´Ù. $[COOLDOWN]",
-		" ÀÌ¶§ ±âÁ¸¿¡ ÀÚ½ÅÀÌ ÀÖ´ø À§Ä¡·ÎºÎÅÍ $[TELEPORT_RANGE]Ä­ ÀÌ³»ÀÇ ¸ğµç ÇÃ·¹ÀÌ¾î¸¦ ÇÔ²²",
-		" ÀÌµ¿½ÃÅ² µÚ ¼ø°£ÀÌµ¿ÇÑ À§Ä¡¿¡¼­ Æø¹ßÀ» ÀÏÀ¸Å°°í 0.2ÃÊ ±âÀı½ÃÅµ´Ï´Ù.",
-		" ¸¸¾à ´ë»óÀÌ ¼Ó¹ÚÀÇ ¿¬¸·ÀÇ È¿°ú¸¦ ¹Ş°í ÀÖ¾úÀ» °æ¿ì 1.5ÃÊ°£ ±âÀı½ÃÅµ´Ï´Ù.",
-		" ¡×7´ÜÀÏ ´ë»ó ÅÚ·¹Æ÷Æ® ¿©ºÎ¡×f: $[TELEPORT_COUNT]",
-		"¡×7»óÅÂÀÌ»ó ¡×8- ¡×9¼Ó¹ÚÀÇ ¿¬¸·¡×f: ÀÌµ¿ ¼Óµµ ¹× Á¡ÇÁ°¡ ´À·ÁÁı´Ï´Ù.",
-		" ¶ÇÇÑ ¿£Æ¼Æ¼¿¡ ´ëÇÑ ÇÇÇØ ÀÌ¿ÜÀÇ ¸ğµç ÇÇÇØ¸¦ 1.5¹è·Î ¹Ş°Ô µË´Ï´Ù.",
+		name = "ë¯¸ë¼", rank = Rank.S, species = Species.HUMAN, explain = {
+		"Â§7í™”ì‚´ ì ì¤‘ Â§8- Â§bë„ì•½ í‘œì‹Â§f: ì›…í¬ë¦° ì±„ë¡œ í™œ ë°œì‚¬ ì‹œ ì ì¤‘í•œ ìœ„ì¹˜ì— ë„ì•½ í‘œì‹ì„ ë§Œë“¤ì–´",
+		" $[FIELD_RANGE]ì¹¸ì˜ ë²”ìœ„ ë‚´ì— ì†ë°•ì˜ ì—°ë§‰ íš¨ê³¼ë¥¼ ë°›ëŠ” í•„ë“œë¥¼ ë§Œë“­ë‹ˆë‹¤. $[ARROW_COOL]", 
+		" ë„ì•½ í‘œì‹ì€ ìƒˆë¡œ ë§Œë“¤ì–´ì§ˆ ë•Œë§ˆë‹¤ ê°±ì‹ ë˜ê³  ê³µê°„ ë„ì•½ì„ 3ì´ˆê°„ ì‚¬ìš©í•˜ì§€ ëª»í•©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§3ê³µê°„ ë„ì•½Â§f: ë„ì•½ í‘œì‹ì´ ìˆëŠ” ê³³ìœ¼ë¡œ ìˆœê°„ì´ë™í•©ë‹ˆë‹¤. $[COOLDOWN]",
+		" ì´ë•Œ ê¸°ì¡´ì— ìì‹ ì´ ìˆë˜ ìœ„ì¹˜ë¡œë¶€í„° $[TELEPORT_RANGE]ì¹¸ ì´ë‚´ì˜ ëª¨ë“  í”Œë ˆì´ì–´ë¥¼ í•¨ê»˜",
+		" ì´ë™ì‹œí‚¨ ë’¤ ìˆœê°„ì´ë™í•œ ìœ„ì¹˜ì—ì„œ í­ë°œì„ ì¼ìœ¼í‚¤ê³  0.2ì´ˆ ê¸°ì ˆì‹œí‚µë‹ˆë‹¤.",
+		" ë§Œì•½ ëŒ€ìƒì´ ì†ë°•ì˜ ì—°ë§‰ì˜ íš¨ê³¼ë¥¼ ë°›ê³  ìˆì—ˆì„ ê²½ìš° 1.5ì´ˆê°„ ê¸°ì ˆì‹œí‚µë‹ˆë‹¤.",
+		" Â§7ë‹¨ì¼ ëŒ€ìƒ í…”ë ˆí¬íŠ¸ ì—¬ë¶€Â§f: $[TELEPORT_COUNT]",
+		"Â§7ìƒíƒœì´ìƒ Â§8- Â§9ì†ë°•ì˜ ì—°ë§‰Â§f: ì´ë™ ì†ë„ ë° ì í”„ê°€ ëŠë ¤ì§‘ë‹ˆë‹¤.",
+		" ë˜í•œ ì—”í‹°í‹°ì— ëŒ€í•œ í”¼í•´ ì´ì™¸ì˜ ëª¨ë“  í”¼í•´ë¥¼ 1.5ë°°ë¡œ ë°›ê²Œ ë©ë‹ˆë‹¤.",
 		},
 		summarize = {
-		"¡×7¿õÅ©¸° Ã¤·Î È°À» ¹ß»çÇØ¡×f ÀûÁß À§Ä¡¿¡ ¡×3µµ¾à Ç¥½Ä¡×fÀ» ¸¸µì´Ï´Ù. $[ARROW_COOL]",
-		"¡×3Ç¥½Ä¡×f ÁÖº¯¿¡´Â ÀÌµ¿ ¼Óµµ°¡ ´À·ÁÁö´Â ¡×9¼Ó¹ÚÀÇ ¿¬¸·¡×f È¿°ú¸¦ ¹Ş´Â ÇÊµå°¡ »ı¼ºµË´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ½Ã¡×f µµ¾à Ç¥½ÄÀÌ ÀÖ´Â °÷À¸·Î ÁÖº¯ ÇÃ·¹ÀÌ¾î¿Í ÇÔ²² ¡×5¼ø°£ÀÌµ¿¡×fÇØ",
-		"¡×3µµ¾à Ç¥½Ä¡×fÀÌ ÀÖ´ø ÁöÁ¡¿¡ Æø¹ßÀ» ÀÏÀ¸Å°°í °°ÀÌ ¡×5¼ø°£ÀÌµ¿¡×fÇÑ ´ë»óµéÀ» ±âÀı½ÃÅµ´Ï´Ù.",
+		"Â§7ì›…í¬ë¦° ì±„ë¡œ í™œì„ ë°œì‚¬í•´Â§f ì ì¤‘ ìœ„ì¹˜ì— Â§3ë„ì•½ í‘œì‹Â§fì„ ë§Œë“­ë‹ˆë‹¤. $[ARROW_COOL]",
+		"Â§3í‘œì‹Â§f ì£¼ë³€ì—ëŠ” ì´ë™ ì†ë„ê°€ ëŠë ¤ì§€ëŠ” Â§9ì†ë°•ì˜ ì—°ë§‰Â§f íš¨ê³¼ë¥¼ ë°›ëŠ” í•„ë“œê°€ ìƒì„±ë©ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ ì‹œÂ§f ë„ì•½ í‘œì‹ì´ ìˆëŠ” ê³³ìœ¼ë¡œ ì£¼ë³€ í”Œë ˆì´ì–´ì™€ í•¨ê»˜ Â§5ìˆœê°„ì´ë™Â§fí•´",
+		"Â§3ë„ì•½ í‘œì‹Â§fì´ ìˆë˜ ì§€ì ì— í­ë°œì„ ì¼ìœ¼í‚¤ê³  ê°™ì´ Â§5ìˆœê°„ì´ë™Â§fí•œ ëŒ€ìƒë“¤ì„ ê¸°ì ˆì‹œí‚µë‹ˆë‹¤.",
 		" $[COOLDOWN]"
 		})
 
@@ -72,7 +72,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> ARROW_COOL = abilitySettings.new SettingObject<Integer>(Mira.class,
-			"arrow-cooldown", 30, "# Ç¥½Ä »ı¼º ÄğÅ¸ÀÓ") {
+			"arrow-cooldown", 30, "# í‘œì‹ ìƒì„± ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -85,7 +85,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};	
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Mira.class,
-			"cooldown", 70, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 70, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -98,7 +98,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> FIELD_RANGE = abilitySettings.new SettingObject<Integer>(Mira.class,
-			"field-range", 7, "# Ç¥½Ä ÇÊµå ¹üÀ§", "¡×2[¡×c!¡×2] ¡×7ÁÖÀÇ! ÆÄÆ¼Å¬ÀÌ º¯°æµÇÁö ¾Ê½À´Ï´Ù.") {
+			"field-range", 7, "# í‘œì‹ í•„ë“œ ë²”ìœ„", "Â§2[Â§c!Â§2] Â§7ì£¼ì˜! íŒŒí‹°í´ì´ ë³€ê²½ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -108,7 +108,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> TELEPORT_RANGE = abilitySettings.new SettingObject<Integer>(Mira.class,
-			"teleport-range", 5, "# ÅÚ·¹Æ÷Æ® ¹üÀ§") {
+			"teleport-range", 5, "# í…”ë ˆí¬íŠ¸ ë²”ìœ„") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -118,11 +118,11 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Boolean> TELEPORT_COUNT = abilitySettings.new SettingObject<Boolean>(Mira.class,
-			"teleport-count", false, "# ´ÜÀÏ ´ë»ó ÅÚ·¹Æ÷Æ® ¿©ºÎ", "# true·Î º¯°æÇÏ½Ã¸é ÁÖº¯ ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ¾Æ´Ñ", "  °¡Àå °¡±î¿î ÇÑ ÇÃ·¹ÀÌ¾î¸¸ °°ÀÌ ÅÚ·¹Æ÷Æ®µË´Ï´Ù.") {
+			"teleport-count", false, "# ë‹¨ì¼ ëŒ€ìƒ í…”ë ˆí¬íŠ¸ ì—¬ë¶€", "# trueë¡œ ë³€ê²½í•˜ì‹œë©´ ì£¼ë³€ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì•„ë‹Œ", "  ê°€ì¥ ê°€ê¹Œìš´ í•œ í”Œë ˆì´ì–´ë§Œ ê°™ì´ í…”ë ˆí¬íŠ¸ë©ë‹ˆë‹¤.") {
 		
 		@Override
 		public String toString() {
-                return getValue() ? "¡×bÄÑÁü" : "¡×c²¨Áü";
+                return getValue() ? "Â§bì¼œì§" : "Â§cêº¼ì§";
         }
 		
 	};
@@ -179,8 +179,8 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	};
 	
 	private final Circle circle = Circle.of(7, 100);
-	private final Cooldown teleCool = new Cooldown(COOLDOWN.getValue(), "°ø°£ µµ¾à");
-	private final Cooldown arrowCool = new Cooldown(ARROW_COOL.getValue(), "Ç¥½Ä");
+	private final Cooldown teleCool = new Cooldown(COOLDOWN.getValue(), "ê³µê°„ ë„ì•½");
+	private final Cooldown arrowCool = new Cooldown(ARROW_COOL.getValue(), "í‘œì‹");
 	private final int range = FIELD_RANGE.getValue();
 	private final int teleport = TELEPORT_RANGE.getValue();
 	private boolean teleportcount = TELEPORT_COUNT.getValue();
@@ -226,9 +226,9 @@ public class Mira extends AbilityBase implements ActiveHandler {
 							getGame().getParticipant(p).getPrimaryEffect(BindingSmoke.registration).setCount(30);
 						}
 					}
-					ac.update("¡×3Ç¥½Ä À§Ä¡¡×f: ¡×5" + arrow.getLocation().getBlockX() + "¡×f, ¡×5" + arrow.getLocation().getBlockY() + "¡×f, ¡×5" + arrow.getLocation().getBlockZ());
+					ac.update("Â§3í‘œì‹ ìœ„ì¹˜Â§f: Â§5" + arrow.getLocation().getBlockX() + "Â§f, Â§5" + arrow.getLocation().getBlockY() + "Â§f, Â§5" + arrow.getLocation().getBlockZ());
 				} else {
-					getPlayer().sendMessage("[¡×c!¡×f] ¡×3Ç¥½Ä¡×fÀÌ ¼¼°è °æ°è¼± ¹ÛÀ» Áö³ª »ç¶óÁ³½À´Ï´Ù.");
+					getPlayer().sendMessage("[Â§c!Â§f] Â§3í‘œì‹Â§fì´ ì„¸ê³„ ê²½ê³„ì„  ë°–ì„ ì§€ë‚˜ ì‚¬ë¼ì¡ŒìŠµë‹ˆë‹¤.");
 					arrowCool.setCount(0);
 					activecool.stop(false);
 					getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
@@ -238,7 +238,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 				}
 				if (arrow != null) {
 					if (arrow.isDead() && !check && !teleCool.isRunning()) {
-						getPlayer().sendMessage("[¡×c!¡×f] ¡×bÈ­»ì¡×fÀÌ »ç¶óÁ® ¡×3Ç¥½Ä¡×fÀÌ »ç¶óÁ³½À´Ï´Ù.");
+						getPlayer().sendMessage("[Â§c!Â§f] Â§bí™”ì‚´Â§fì´ ì‚¬ë¼ì ¸ Â§3í‘œì‹Â§fì´ ì‚¬ë¼ì¡ŒìŠµë‹ˆë‹¤.");
 						arrowCool.setCount(0);
 						activecool.stop(false);
 						getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
@@ -293,7 +293,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && inv.isRunning()) e.setCancelled(true);
 		if (fallcancel.contains(e.getEntity()) && e.getCause() == DamageCause.FALL) {
-			e.getEntity().sendMessage("¡×a³«ÇÏ ´ë¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù.");
+			e.getEntity().sendMessage("Â§aë‚™í•˜ ëŒ€ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound((Player) e.getEntity());
 			fallcancel.remove(e.getEntity());
 			e.setCancelled(true);
@@ -314,8 +314,8 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !teleCool.isCooldown()) {
 			if (arrow != null) {
 				if (activecool.isRunning()) {
-					getPlayer().sendMessage("[¡×c!¡×f] Ç¥½ÄÀÌ ¼³Ä¡µÈ ½Ã°£ÀÌ ³Ê¹« »¡¶ó ¡×3°ø°£ µµ¾à¡×fÀ» ÇÒ ¼ö ¾ø½À´Ï´Ù.");
-					getPlayer().sendMessage("[¡×c!¡×f] ³²Àº ½Ã°£: ¡×e" + ((activecool.getCount() / 20) + 1) + "¡×fÃÊ");
+					getPlayer().sendMessage("[Â§c!Â§f] í‘œì‹ì´ ì„¤ì¹˜ëœ ì‹œê°„ì´ ë„ˆë¬´ ë¹¨ë¼ Â§3ê³µê°„ ë„ì•½Â§fì„ í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+					getPlayer().sendMessage("[Â§c!Â§f] ë‚¨ì€ ì‹œê°„: Â§e" + ((activecool.getCount() / 20) + 1) + "Â§fì´ˆ");
 				} else {
 					if (teleportcount) {
 						Player p = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
@@ -372,7 +372,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 					return true;
 				}
 			} else {
-				getPlayer().sendMessage("[¡×c!¡×f] Ç¥½ÄÀÌ Á¸ÀçÇÏÁö ¾Ê¾Æ ¡×3°ø°£ µµ¾à¡×fÀ» ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+				getPlayer().sendMessage("[Â§c!Â§f] í‘œì‹ì´ ì¡´ì¬í•˜ì§€ ì•Šì•„ Â§3ê³µê°„ ë„ì•½Â§fì„ í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 			}
 		}
 		return false;

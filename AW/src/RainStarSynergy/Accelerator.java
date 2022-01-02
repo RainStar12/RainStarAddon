@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -35,6 +34,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -51,18 +51,17 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "액셀러레이터", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §b스태미나§f: 스태미나를 회복하여 총 5초에 1 게이지가 찹니다.",
 		" 스태미나는 전투 도중에는 더 적게 차오르고, 더 많이 소모합니다.",
-		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. §c소모 §7: §b3",
+		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. $[DASH_STAMINA_CONSUME]",
 		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
-		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. §d회복 §7: §b0.1",
+		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. $[DASH_STAMINA_HEAL]",
 		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 4초간",
-		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. §d회복 §7: §b0.5"})
+		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]"})
 
 public class Accelerator extends Synergy {
 
@@ -73,6 +72,12 @@ public class Accelerator extends Synergy {
 	private static final Set<Material> swords;
 	private double stamina = 20;
 	private BossBar bossBar = null;
+	
+	private final double consume = DASH_STAMINA_CONSUME.getValue();
+	private final double normalheal = DASH_STAMINA_HEAL.getValue();
+	private final double skillheal = ATTACKDASH_STAMINA_HEAL.getValue();
+	private final double damage = DASH_DAMAGE.getValue();
+	private final double skilldamage = ATTACKDASH_DAMAGE.getValue();
 	
 	private Location startLocation;
 	private Participant target;
@@ -86,6 +91,76 @@ public class Accelerator extends Synergy {
 	    	staminaupdater.start();
 	      } 
 	}
+	
+	public static final SettingObject<Double> DASH_STAMINA_CONSUME = 
+			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-consume", 3.0,
+			"# 대시 스태미나 소모량") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+		@Override
+		public String toString() {
+			return "§c소모 §7: §b" + getValue();
+        }
+
+	};
+	
+	public static final SettingObject<Double> DASH_STAMINA_HEAL = 
+			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-heal", 0.2,
+			"# 대시 잔상의 스태미나 회복량") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+		@Override
+		public String toString() {
+			return "§d회복 §7: §b" + getValue();
+        }
+
+	};
+	
+	public static final SettingObject<Double> ATTACKDASH_STAMINA_HEAL = 
+			synergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-stamina-heal", 0.5,
+			"# 공격 후 대시 잔상의 스태미나 회복량") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return "§d회복 §7: §b" + getValue();
+        }
+		
+	};
+	
+	public static final SettingObject<Double> DASH_DAMAGE = 
+			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-damage", 1.2,
+			"# 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Double> ATTACKDASH_DAMAGE = 
+			synergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-damage", 1.7,
+			"# 공격 후 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+	};
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -173,7 +248,7 @@ public class Accelerator extends Synergy {
 	    	if (attacked.isRunning()) {
 		   		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
 		    	Confusion.apply(target, TimeUnit.SECONDS, 2, 10);
-		    	staminaGain(0.5);
+		    	staminaGain(skillheal);
 			}
 	   	}
 	 
@@ -191,14 +266,13 @@ public class Accelerator extends Synergy {
 	    public void onSilentEnd() {
 			getPlayer().setVelocity(zerov);
 			getPlayer().getInventory().setArmorContents(armors);
-			ItemStack sword = getPlayer().getInventory().getItemInMainHand();
 	   		SoundLib.ENTITY_FIREWORK_ROCKET_BLAST.playSound(getPlayer().getLocation());
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			new BukkitRunnable() {
 				
 				@Override
 				public void run() {
-					new AfterImage(sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL)).start();
+					new AfterImage().start();
 				}
 				
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
@@ -218,10 +292,10 @@ public class Accelerator extends Synergy {
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (!dashing.isRunning()) {
-    			if (stamina >= 3) {
+    			if (stamina >= consume) {
         	    	startLocation = getPlayer().getLocation();
         	    	armors = getPlayer().getInventory().getArmorContents();
-            		staminaUse(3);
+            		staminaUse(consume);
                 	dashing.start();
         		} else {
         			getPlayer().sendMessage("§f[§c!§f] §c스태미나가 부족합니다.");
@@ -277,12 +351,10 @@ public class Accelerator extends Synergy {
     	Set<Damageable> damagedcheck = new HashSet<>();
     	Location saveloc1;
     	Location saveloc2;
-    	private final int sharpness;
     	
-    	private AfterImage(int sharpness) {
+    	private AfterImage() {
     		super(TaskType.REVERSE, 60);
     		setPeriod(TimeUnit.TICKS, 1);
-    		this.sharpness = sharpness;
     	}
     	
     	@Override
@@ -302,8 +374,8 @@ public class Accelerator extends Synergy {
         				if (p instanceof Player) {
         					if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
                 				if (count < 55) {
-                				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(5f, sharpness) * 0.75));
-                				staminaGain(0.1);
+                				Damages.damageFixed(p, getPlayer(), (float) skilldamage);
+                				staminaGain(normalheal);
     	        			    	new AbilityTimer(10) {
     	        			    			
     	        			    		@Override
@@ -324,8 +396,8 @@ public class Accelerator extends Synergy {
     	        			    	}.setPeriod(TimeUnit.TICKS, 1);
                 				}
                 			} else {
-                				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
-                				staminaGain(0.1);
+                				Damages.damageFixed(p, getPlayer(), (float) damage);
+                				staminaGain(normalheal);
             			    	new AbilityTimer(10) {
         			    			
             			    		@Override
@@ -346,8 +418,8 @@ public class Accelerator extends Synergy {
             			    	}.setPeriod(TimeUnit.TICKS, 1);
                 			}
         				} else {
-            				Damages.damageMagic(p, getPlayer(), true, (float) (EnchantLib.getDamageWithSharpnessEnchantment(3f, sharpness) * 0.75));
-            				staminaGain(0.1);
+        					Damages.damageFixed(p, getPlayer(), (float) damage);
+        					staminaGain(normalheal);
         			    	new AbilityTimer(10) {
     			    			
         			    		@Override

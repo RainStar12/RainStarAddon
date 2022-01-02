@@ -42,14 +42,14 @@ import daybreak.google.common.base.Predicate;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(
-		name = "¹é¹ß¹éÁß",
+		name = "ë°±ë°œë°±ì¤‘",
 		rank = Rank.S, 
 		species = Species.HUMAN, 
 		explain = {
-		"´Ù¸¥ »ı¸íÃ¼¸¦ ¹Ù¶óº¸¸é »ı¸íÃ¼°¡ ¡×e¹ß±¤¡×fÇÕ´Ï´Ù.",
-		"ÀÌ¶§ ³» Åõ»çÃ¼´Â ÇØ´ç »ı¸íÃ¼¿¡°Ô ¡×5À¯µµ¡×fµË´Ï´Ù.",
-		"ºø¸ÂÈ÷Áö ¾Ê°í ¾Æ¹« »ı¸íÃ¼³ª 6È¸ ¿¬¼Ó ÀûÁß ½Ã,",
-		"$[DURATION]ÃÊ°£ ³» ¸ğµç Åõ»çÃ¼°¡ ¸¶Áö¸· Å¸°İ ´ë»ó¿¡°Ô ¡×5À¯µµ¡×fµË´Ï´Ù."
+		"ë‹¤ë¥¸ ìƒëª…ì²´ë¥¼ ë°”ë¼ë³´ë©´ ìƒëª…ì²´ê°€ Â§eë°œê´‘Â§fí•©ë‹ˆë‹¤.",
+		"ì´ë•Œ ë‚´ íˆ¬ì‚¬ì²´ëŠ” í•´ë‹¹ ìƒëª…ì²´ì—ê²Œ Â§5ìœ ë„Â§fë©ë‹ˆë‹¤.",
+		"ë¹—ë§íˆì§€ ì•Šê³  ì•„ë¬´ ìƒëª…ì²´ë‚˜ 6íšŒ ì—°ì† ì ì¤‘ ì‹œ,",
+		"$[DURATION]ì´ˆê°„ ë‚´ ëª¨ë“  íˆ¬ì‚¬ì²´ê°€ ë§ˆì§€ë§‰ íƒ€ê²© ëŒ€ìƒì—ê²Œ Â§5ìœ ë„Â§fë©ë‹ˆë‹¤."
 		})
 
 public class Infallibility extends Synergy {
@@ -67,7 +67,7 @@ public class Infallibility extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Infallibility.class,
-			"duration", 10, "# ÀÚµ¿ À¯µµ Áö¼Ó½Ã°£") {
+			"duration", 15, "# ìë™ ìœ ë„ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -120,7 +120,7 @@ public class Infallibility extends Synergy {
 		
 		@Override
     	public void onStart() {
-    		bossBar1 = Bukkit.createBossBar("¡×b¿¬¼Ó ÀûÁß ½ºÅÃ", BarColor.PINK, BarStyle.SEGMENTED_6);
+    		bossBar1 = Bukkit.createBossBar("Â§bì—°ì† ì ì¤‘ ìŠ¤íƒ", BarColor.PINK, BarStyle.SEGMENTED_6);
     		bossBar1.setProgress(0);
     		bossBar1.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar1.setVisible(true);
@@ -151,7 +151,7 @@ public class Infallibility extends Synergy {
 		@Override
     	public void onStart() {
 			SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer(), 1, 1.3f);
-    		bossBar2 = Bukkit.createBossBar("¡×5ÀÚµ¿ Á¶ÁØ¡×f: ¡×d" + df.format(duration) + "¡×fÃÊ", BarColor.PURPLE, BarStyle.SOLID);
+    		bossBar2 = Bukkit.createBossBar("Â§5ìë™ ì¡°ì¤€Â§f: Â§d" + df.format(duration) + "Â§fì´ˆ", BarColor.PURPLE, BarStyle.SOLID);
     		bossBar2.setProgress(1);
     		bossBar2.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar2.setVisible(true);
@@ -160,7 +160,7 @@ public class Infallibility extends Synergy {
     	@Override
 		public void run(int count) {
     		target = lastTarget;
-    		bossBar2.setTitle("¡×5ÀÚµ¿ Á¶ÁØ¡×f: ¡×d" + df.format((double) count / 20) + "¡×fÃÊ");
+    		bossBar2.setTitle("Â§5ìë™ ì¡°ì¤€Â§f: Â§d" + df.format((double) count / 20) + "Â§fì´ˆ");
     		bossBar2.setProgress(RangesKt.coerceIn((double) count / (duration * 20), 0, 1));
     	}
     	
@@ -233,7 +233,7 @@ public class Infallibility extends Synergy {
 					stack = Math.min(6, stack + 1);
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(1, Tone.C));
 				} else if (e.getHitEntity() == null) {
-					stack = 0;
+					stack = Math.max(0, stack - 1);
 					new AbilityTimer(3) {
 						@Override
 						public void run(int count) {

@@ -56,17 +56,17 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(
-		name = "ºÒ»çÁ¶", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×b¾Ş¹«»õÀÇ Á¶¾ğ¡×f: ÇÏ¾á »õ°¡ ³ª¸¦ °è¼ÓÇØ¼­ µû¶ó´Ù´Ï¸ç",
-		" »õ°¡ Á×±â Àü±îÁö ³»°Ô °è¼ÓÇØ Á¶¾ğÇØÁÖ¸ç ¡×a¹öÇÁ¡×f¸¦ Áİ´Ï´Ù.",
-		"¡×7Ã¶±« ÁÂÅ¬¸¯ ¡×8- ¡×cºÒ»çÀÇ Èû¡×f: $[DURATION]ÃÊ°£ ¡×cºÒ»çÀÇ Èû¡×fÀÌ ¸ö¿¡ ±êµì´Ï´Ù.",
-		" ¡×cºÒ»çÀÇ Èû¡×fÀÌ ±êµé°í ÀÖ´Â µ¿¾ÈÀº »ç¸Á À§±â¿¡ ºüÁ®µµ ÁÖº¯ ÀûÀ» ¡×b7.9ÃÊ¡×f¸¸Å­",
-		" Ãß°¡·Î ºÒÅÂ¿ì¸ç °è¼ÓÇØ ´Ù½Ã µÇ»ì¾Æ³¯ ¼ö ÀÖÀ¸¸ç, ÃµÃµÈ÷ ¡×bºñÇà¡×fÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		" ÀÌ ´É·ÂÀº ´Ü ÇÑ ¹ø »ç¿ë °¡´ÉÇÏ¸ç, ¡×3ÃÖ´ë Ã¼·ÂÀÇ 1/3À» ¼Ò¸ğ¡×fÇÕ´Ï´Ù.",
-		" ÀÌÈÄ ±ÙÁ¢ °ø°İ ¡×cÃß°¡ ´ë¹ÌÁö¡×8(¡×7$[MAX_DAMAGE] - ºÎÈ°ÇÑ È½¼ö * $[DECREASE_DAMAGE]¡×8)¡×f¸¦ ¿µ±¸ÀûÀ¸·Î ¾ò½À´Ï´Ù.",
-		"¡×7ÆĞ½Ãºê ¡×8- ¡×cÃÖÈÄ¡×f: °ÔÀÓ ³» Âü°¡ÀÚ°¡ ÀÚ½ÅÀ» Æ÷ÇÔÇØ ´Ü µÑÀÌ ³²¾ÒÀ» ¶§",
-		" ¡×cºÒ»çÀÇ Èû¡×fÀ» ´ë°¡ ¾øÀÌ Àı¹İÀÇ ½Ã°£À¸·Î ´Ù½Ã ÇÑ ¹ø »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-		"¡×b[¡×7¾ÆÀÌµğ¾î Á¦°øÀÚ¡×b] ¡×fLotear"
+		name = "ë¶ˆì‚¬ì¡°", rank = Rank.S, species = Species.ANIMAL, explain = {
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§bì•µë¬´ìƒˆì˜ ì¡°ì–¸Â§f: í•˜ì–€ ìƒˆê°€ ë‚˜ë¥¼ ê³„ì†í•´ì„œ ë”°ë¼ë‹¤ë‹ˆë©°",
+		" ìƒˆê°€ ì£½ê¸° ì „ê¹Œì§€ ë‚´ê²Œ ê³„ì†í•´ ì¡°ì–¸í•´ì£¼ë©° Â§aë²„í”„Â§fë¥¼ ì¤ë‹ˆë‹¤.",
+		"Â§7ì² ê´´ ì¢Œí´ë¦­ Â§8- Â§cë¶ˆì‚¬ì˜ í˜Â§f: $[DURATION]ì´ˆê°„ Â§cë¶ˆì‚¬ì˜ í˜Â§fì´ ëª¸ì— ê¹ƒë“­ë‹ˆë‹¤.",
+		" Â§cë¶ˆì‚¬ì˜ í˜Â§fì´ ê¹ƒë“¤ê³  ìˆëŠ” ë™ì•ˆì€ ì‚¬ë§ ìœ„ê¸°ì— ë¹ ì ¸ë„ ì£¼ë³€ ì ì„ Â§b7.9ì´ˆÂ§fë§Œí¼",
+		" ì¶”ê°€ë¡œ ë¶ˆíƒœìš°ë©° ê³„ì†í•´ ë‹¤ì‹œ ë˜ì‚´ì•„ë‚  ìˆ˜ ìˆìœ¼ë©°, ì²œì²œíˆ Â§bë¹„í–‰Â§fí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		" ì´ ëŠ¥ë ¥ì€ ë‹¨ í•œ ë²ˆ ì‚¬ìš© ê°€ëŠ¥í•˜ë©°, Â§3ìµœëŒ€ ì²´ë ¥ì˜ 1/3ì„ ì†Œëª¨Â§fí•©ë‹ˆë‹¤.",
+		" ì´í›„ ê·¼ì ‘ ê³µê²© Â§cì¶”ê°€ ëŒ€ë¯¸ì§€Â§8(Â§7$[MAX_DAMAGE] - ë¶€í™œí•œ íšŸìˆ˜ * $[DECREASE_DAMAGE]Â§8)Â§fë¥¼ ì˜êµ¬ì ìœ¼ë¡œ ì–»ìŠµë‹ˆë‹¤.",
+		"Â§7íŒ¨ì‹œë¸Œ Â§8- Â§cìµœí›„Â§f: ê²Œì„ ë‚´ ì°¸ê°€ìê°€ ìì‹ ì„ í¬í•¨í•´ ë‹¨ ë‘˜ì´ ë‚¨ì•˜ì„ ë•Œ",
+		" Â§cë¶ˆì‚¬ì˜ í˜Â§fì„ ëŒ€ê°€ ì—†ì´ ì ˆë°˜ì˜ ì‹œê°„ìœ¼ë¡œ ë‹¤ì‹œ í•œ ë²ˆ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.",
+		"Â§b[Â§7ì•„ì´ë””ì–´ ì œê³µìÂ§b] Â§fLotear"
 		})
 
 public class Phoenix extends AbilityBase implements ActiveHandler {
@@ -76,7 +76,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	}
 	
 	private static final SettingObject<Double> MAX_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
-			"max-damage", 4.0, "# ÃÖ´ë Ãß°¡ °ø°İ·Â") {
+			"max-damage", 4.0, "# ìµœëŒ€ ì¶”ê°€ ê³µê²©ë ¥") {
 
 		@Override
 		public boolean condition(Double arg0) {
@@ -86,7 +86,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Double> DECREASE_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
-			"decrease-damage", 0.8, "# ºÎÈ° ½Ã¸¶´Ù °ø°İ·Â °¨¼Ò") {
+			"decrease-damage", 0.8, "# ë¶€í™œ ì‹œë§ˆë‹¤ ê³µê²©ë ¥ ê°ì†Œ") {
 
 		@Override
 		public boolean condition(Double arg0) {
@@ -96,7 +96,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"health", 50, "# ÇÏ¾á »õÀÇ ±âº» Ã¼·Â") {
+			"health", 50, "# í•˜ì–€ ìƒˆì˜ ê¸°ë³¸ ì²´ë ¥") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -106,7 +106,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"heal-amount", 5, "# ÀÀ¿øÀÇ Ã¼·Â È¸º¹·®") {
+			"heal-amount", 5, "# ì‘ì›ì˜ ì²´ë ¥ íšŒë³µëŸ‰") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -116,7 +116,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Phoenix.class, 
-			"duration", 15, "# ´É·ÂÀÇ Áö¼Ó ½Ã°£") {
+			"duration", 15, "# ëŠ¥ë ¥ì˜ ì§€ì† ì‹œê°„") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -126,7 +126,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"chance", 20, "# Àû °ø°İ ½Ã Á¶¾ğ È®·ü", "# ±âÁØ: n/100", "# 10À¸·Î ÀÔ·Â ½Ã 10/100, 10%ÀÔ´Ï´Ù.") {
+			"chance", 20, "# ì  ê³µê²© ì‹œ ì¡°ì–¸ í™•ë¥ ", "# ê¸°ì¤€: n/100", "# 10ìœ¼ë¡œ ì…ë ¥ ì‹œ 10/100, 10%ì…ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -135,7 +135,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ADD_CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
-			"add-chance", 15, "# Á¶¾ğ ½ÇÆĞ½Ã Áõ°¡ È®·üÄ¡", "# ±âÁØ: n/100", "# 10À¸·Î ÀÔ·Â ½Ã 10/100, 10%ÀÔ´Ï´Ù.") {
+			"add-chance", 15, "# ì¡°ì–¸ ì‹¤íŒ¨ì‹œ ì¦ê°€ í™•ë¥ ì¹˜", "# ê¸°ì¤€: n/100", "# 10ìœ¼ë¡œ ì…ë ¥ ì‹œ 10/100, 10%ì…ë‹ˆë‹¤.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -289,7 +289,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 				parrot.setVariant(Variant.GRAY);
 				parrot.setAdult();
 				parrot.setTamed(true);
-				parrot.setCustomName("¡×e" + getPlayer().getName() + "¡×fÀÇ »õ");
+				parrot.setCustomName("Â§e" + getPlayer().getName() + "Â§fì˜ ìƒˆ");
 				parrot.setCustomNameVisible(true);
 				parrot.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Math.max(1, birdHealth));
 				parrot.setHealth(Math.max(1, birdHealth));
@@ -483,7 +483,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 		protected void onDurationSilentEnd() {
 			revive = false;
 			addDamage = Math.max(0, addDamage + (maxDamage - (decDamage * revivecount)));
-			ac.update("¡×cÃß°¡ °ø°İ·Â¡×7: ¡×e" + df.format(addDamage));
+			ac.update("Â§cì¶”ê°€ ê³µê²©ë ¥Â§7: Â§e" + df.format(addDamage));
 			revivecount = 0;
 			getPlayer().setAllowFlight(getPlayer().getGameMode() != GameMode.SURVIVAL && getPlayer().getGameMode() != GameMode.ADVENTURE);
 			getPlayer().setFlying(getPlayer().getGameMode() != GameMode.SURVIVAL && getPlayer().getGameMode() != GameMode.ADVENTURE);
@@ -522,7 +522,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 					participants.remove(getGame().getParticipant(e.getEntity().getUniqueId()));
 					if (participants.size() == 2) {
 						onemorechance = true;
-						getPlayer().sendMessage("¡×c[¡×6!¡×c] ¡×f»ıÁ¸ÀÚ°¡ ¡×cµÑ¡×f¸¸ ³²¾Æ ¡×a´É·ÂÀ» ´Ù½Ã »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+						getPlayer().sendMessage("Â§c[Â§6!Â§c] Â§fìƒì¡´ìê°€ Â§cë‘˜Â§fë§Œ ë‚¨ì•„ Â§aëŠ¥ë ¥ì„ ë‹¤ì‹œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 0.75f, 1.75f);
 					}
 				}
@@ -535,7 +535,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(DamageCause.FALL)) {
 				e.setCancelled(true);
-				e.getEntity().sendMessage("¡×a³«ÇÏ ´ë¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù.");
+				e.getEntity().sendMessage("Â§aë‚™í•˜ ëŒ€ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound((Player) e.getEntity());
 			}
 			if (skill.isRunning()) {
@@ -563,7 +563,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 					SoundLib.ENTITY_PARROT_AMBIENT.playSound(getPlayer().getLocation());
 					switch(random.nextInt(5)) {
 					case 0:
-						getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀº ¡×c¢¾ " + df.format(p.getHealth() - e.getFinalDamage()) + "¡×fÀÇ Ã¼·ÂÀÌ ³²Àº °Í °°¾Æ.");
+						getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì€ Â§câ™¥ " + df.format(p.getHealth() - e.getFinalDamage()) + "Â§fì˜ ì²´ë ¥ì´ ë‚¨ì€ ê²ƒ ê°™ì•„.");
 						break;
 					case 1:
 						if (getGame().getParticipant(p).hasAbility()) {
@@ -572,10 +572,10 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 								Mix mix = (Mix) ab;
 								AbilityBase first = mix.getFirst();
 								AbilityBase second = mix.getSecond();
-								getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀÇ ¡×e´É·Â¡×fÀº " + first.getRank().getRankName() + " " + first.getSpecies().getSpeciesName() + "¡×f + " +
-								second.getRank().getRankName() + " " + second.getSpecies().getSpeciesName() + "¡×fÀÌ¾ß.");
-							} else getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀÇ ¡×e´É·Â¡×fÀº " + ab.getRank().getRankName() + " " + ab.getSpecies().getSpeciesName() + "¡×fÀÌ¾ß.");	
-						} else getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀº ¡×e´É·Â¡×fÀÌ ¾ø¾î.");
+								getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì˜ Â§eëŠ¥ë ¥Â§fì€ " + first.getRank().getRankName() + " " + first.getSpecies().getSpeciesName() + "Â§f + " +
+								second.getRank().getRankName() + " " + second.getSpecies().getSpeciesName() + "Â§fì´ì•¼.");
+							} else getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì˜ Â§eëŠ¥ë ¥Â§fì€ " + ab.getRank().getRankName() + " " + ab.getSpecies().getSpeciesName() + "Â§fì´ì•¼.");	
+						} else getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì€ Â§eëŠ¥ë ¥Â§fì´ ì—†ì–´.");
 						break;
 					case 2:
 						Inventory inventory = p.getPlayer().getInventory();
@@ -607,17 +607,17 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 								}
 							}
 						}
-						if (potioncount == 0 && applecount == 0 && pearlcount == 0 && totemcount == 0) getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀº ¾Æ¹«·± ¡×3¼Ò¸ğ¼º ¾ÆÀÌÅÛ¡×fÀ» °¡Áö°í ÀÖÁö ¾Ê¾Æ.");
-						else getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÀûÀº ¡×d" + potioncount + "¡×f°³ÀÇ ¡×dÆ÷¼Ç¡×f, ¡×e" + applecount + "¡×f°³ÀÇ ¡×eÈ²±İ »ç°ú¡×f, ¡×3"
-								+ pearlcount + "¡×f°³ÀÇ ¡×3¿£´õ ÁøÁÖ¡×f, ¡×a" + totemcount + "¡×f°³ÀÇ ¡×aºÒ»çÀÇ ÅäÅÛ¡×fÀ» °¡Áö°í ÀÖ¾î.");
+						if (potioncount == 0 && applecount == 0 && pearlcount == 0 && totemcount == 0) getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì€ ì•„ë¬´ëŸ° Â§3ì†Œëª¨ì„± ì•„ì´í…œÂ§fì„ ê°€ì§€ê³  ìˆì§€ ì•Šì•„.");
+						else getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fì ì€ Â§d" + potioncount + "Â§fê°œì˜ Â§dí¬ì…˜Â§f, Â§e" + applecount + "Â§fê°œì˜ Â§eí™©ê¸ˆ ì‚¬ê³¼Â§f, Â§3"
+								+ pearlcount + "Â§fê°œì˜ Â§3ì—”ë” ì§„ì£¼Â§f, Â§a" + totemcount + "Â§fê°œì˜ Â§aë¶ˆì‚¬ì˜ í† í…œÂ§fì„ ê°€ì§€ê³  ìˆì–´.");
 						break;
 					case 3:
 					case 4:
-						getPlayer().sendMessage("¡×bÇÏ¾á »õ¡×7 > ¡×fÈû³»!");
+						getPlayer().sendMessage("Â§bí•˜ì–€ ìƒˆÂ§7 > Â§fí˜ë‚´!");
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 0.75f, 1.45f);
 						switch(random.nextInt(4)) {
 						case 0:
-							getPlayer().sendMessage("¡×b[¡×e!¡×b] ¡×aÃ¼·ÂÀÌ ÀÏºÎ È¸º¹µË´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§aì²´ë ¥ì´ ì¼ë¶€ íšŒë³µë©ë‹ˆë‹¤.");
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healAmount, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
@@ -625,15 +625,15 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 							}
 							break;
 						case 1:
-							getPlayer().sendMessage("¡×b[¡×e!¡×b] ¡×bÀá½Ã°£ ½Å¼Ó ¹öÇÁ¸¦ ¹Ş½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§bì ì‹œê°„ ì‹ ì† ë²„í”„ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
 							PotionEffects.SPEED.addPotionEffect(getPlayer(), 350, 1, true);
 							break;
 						case 2:
-							getPlayer().sendMessage("¡×b[¡×e!¡×b] ¡×8Àá½Ã°£ ÀúÇ× ¹öÇÁ¸¦ ¹Ş½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§8ì ì‹œê°„ ì €í•­ ë²„í”„ë¥¼ ë°›ìŠµë‹ˆë‹¤.");
 							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 200, 1, true);
 							break;
 						case 3:
-							getPlayer().sendMessage("¡×b[¡×e!¡×b] ¡×cÇØ´ç ÇÇÇØ·®À» 2¹è·Î ÀÔÇû½À´Ï´Ù.");
+							getPlayer().sendMessage("Â§b[Â§e!Â§b] Â§cí•´ë‹¹ í”¼í•´ëŸ‰ì„ 2ë°°ë¡œ ì…í˜”ìŠµë‹ˆë‹¤.");
 							e.setDamage(e.getDamage() * 2);
 							break;
 						}

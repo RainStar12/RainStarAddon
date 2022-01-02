@@ -56,13 +56,13 @@ import daybreak.google.common.base.Predicate;
 
 @SuppressWarnings("deprecation")
 @AbilityManifest(
-		name = "¸®Äİ", rank = Rank.B, species = Species.HUMAN, explain = {
-		"ÀÏ¹İ Åõ»çÃ¼¸¦ ¹Ù¶óº¸¸é Åõ»çÃ¼¸¦ ½ğ ÁÖÀÎ¿¡°Ô µÇµ¹¾Æ°©´Ï´Ù.",
-		"µÇµ¹¾Æ°¡´Â Åõ»çÃ¼´Â ÁÖÀÎ¿¡°Ô ¡×c2.5¹èÀÇ ÇÇÇØ¡×f¸¦ ÀÔÈü´Ï´Ù.",
-		"¿ø°Å¸® Åõ»çÃ¼µéÀ» ¹æ¾îÇØÁÖ´Â ¡×b50HP¡×fÀÇ ½Çµå¸¦ °¡Áö°í ÀÖ½À´Ï´Ù.",
-		"½Çµå´Â ÀÏ¹İ Åõ»çÃ¼¿¡ ¡×c-$[LOSS_NORMAL]HP¡×f, Æ¯¼ö Åõ»çÃ¼¿¡ ¡×c-$[LOSS_SPECIAL]HP¡×f¸¦ ÀÒ½À´Ï´Ù.",
-		"½Èµå¿¡ ´ê´Â ÀÏ¹İ Åõ»çÃ¼´Â 2ÃÊ°£ Á¤Áö, Æ¯¼ö Åõ»çÃ¼´Â µÇµ¹·Áº¸³À´Ï´Ù.",
-		"¡×bHP¡×f°¡ ¡×c0¡×f ÀÌÇÏ°¡ µÇ¸é ÄğÅ¸ÀÓÀ» °¡Áı´Ï´Ù. $[COOLDOWN]"
+		name = "ë¦¬ì½œ", rank = Rank.B, species = Species.HUMAN, explain = {
+		"ì¼ë°˜ íˆ¬ì‚¬ì²´ë¥¼ ë°”ë¼ë³´ë©´ íˆ¬ì‚¬ì²´ë¥¼ ìœ ì£¼ì¸ì—ê²Œ ë˜ëŒì•„ê°‘ë‹ˆë‹¤.",
+		"ë˜ëŒì•„ê°€ëŠ” íˆ¬ì‚¬ì²´ëŠ” ì£¼ì¸ì—ê²Œ Â§c2.5ë°°ì˜ í”¼í•´Â§fë¥¼ ì…í™ë‹ˆë‹¤.",
+		"ì›ê±°ë¦¬ íˆ¬ì‚¬ì²´ë“¤ì„ ë°©ì–´í•´ì£¼ëŠ” Â§b50HPÂ§fì˜ ì‹¤ë“œë¥¼ ê°€ì§€ê³  ìˆìŠµë‹ˆë‹¤.",
+		"ì‹¤ë“œëŠ” ì¼ë°˜ íˆ¬ì‚¬ì²´ì— Â§c-$[LOSS_NORMAL]HPÂ§f, íŠ¹ìˆ˜ íˆ¬ì‚¬ì²´ì— Â§c-$[LOSS_SPECIAL]HPÂ§fë¥¼ ìƒìŠµë‹ˆë‹¤.",
+		"ì‹«ë“œì— ë‹¿ëŠ” ì¼ë°˜ íˆ¬ì‚¬ì²´ëŠ” 2ì´ˆê°„ ì •ì§€, íŠ¹ìˆ˜ íˆ¬ì‚¬ì²´ëŠ” ë˜ëŒë ¤ë³´ëƒ…ë‹ˆë‹¤.",
+		"Â§bHPÂ§fê°€ Â§c0Â§f ì´í•˜ê°€ ë˜ë©´ ì¿¨íƒ€ì„ì„ ê°€ì§‘ë‹ˆë‹¤. $[COOLDOWN]"
 		})
 
 public class Recall extends Synergy {
@@ -73,7 +73,7 @@ public class Recall extends Synergy {
 	
 	public static final SettingObject<Integer> COOLDOWN
 	= synergySettings.new SettingObject<Integer>(Recall.class,
-			"cooldown", 75, "# ÄğÅ¸ÀÓ") {
+			"cooldown", 75, "# ì¿¨íƒ€ì„") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -87,7 +87,7 @@ public class Recall extends Synergy {
 	
 	public static final SettingObject<Integer> LOSS_NORMAL
 	= synergySettings.new SettingObject<Integer>(Recall.class,
-			"loss-normal", 2, "# ÀÏ¹İ Åõ»çÃ¼ Ã¼·Â °¨¼Ò") {
+			"loss-normal", 2, "# ì¼ë°˜ íˆ¬ì‚¬ì²´ ì²´ë ¥ ê°ì†Œ") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -96,7 +96,7 @@ public class Recall extends Synergy {
 	
 	public static final SettingObject<Integer> LOSS_SPECIAL
 	= synergySettings.new SettingObject<Integer>(Recall.class,
-			"loss-special", 5, "# Æ¯¼ö Åõ»çÃ¼ Ã¼·Â °¨¼Ò") {
+			"loss-special", 5, "# íŠ¹ìˆ˜ íˆ¬ì‚¬ì²´ ì²´ë ¥ ê°ì†Œ") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -168,7 +168,7 @@ public class Recall extends Synergy {
 		
     	@Override
     	public void onStart() {
-    		bossBar = Bukkit.createBossBar("¡×b½Çµå Ã¼·Â¡×7: ¡×d" + shieldHP, BarColor.BLUE, BarStyle.SEGMENTED_10);
+    		bossBar = Bukkit.createBossBar("Â§bì‹¤ë“œ ì²´ë ¥Â§7: Â§d" + shieldHP, BarColor.BLUE, BarStyle.SEGMENTED_10);
     		bossBar.setProgress(shieldHP * 0.02);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
@@ -183,7 +183,7 @@ public class Recall extends Synergy {
     			bossBar.setVisible(false);
     		} else {
     			bossBar.setVisible(true);
-    			bossBar.setTitle("¡×b½Çµå Ã¼·Â¡×7: ¡×d" + shieldHP);
+    			bossBar.setTitle("Â§bì‹¤ë“œ ì²´ë ¥Â§7: Â§d" + shieldHP);
     			bossBar.setColor(BarColor.BLUE);
         		bossBar.setProgress(shieldHP * 0.02);
         		

@@ -57,10 +57,10 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "유도 관통화살", rank = Rank.L, species = Species.OTHERS, explain = {
 		"활을 쏘면 벽과 생명체를 통과하며 특수한 능력이 있는 발사체를 쏩니다.",
 		"발사체는 가장 가까운 대상에게 유도되며, 대상이 피격 시 제외하고 다음으로",
-		"가장 가까운 대상에게 다시 유도됩니다. 화살은 1.15초간 지속됩니다.",
+		"가장 가까운 대상에게 다시 유도됩니다. 화살은 1.25초간 지속됩니다.",
 		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 1.5초간 재장전하며,",
 		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
-		"탄약을 쏠 때마다 0.5초의 §3대기시간§f을 가지며, 이 §3대기시간§f은 매번 0.25초씩 3초까지",
+		"탄창을 비울 때마다 0.5초의 §3대기시간§f을 가지며, 이 §3대기시간§f은 매번 0.5초씩 4초까지",
 		"늘어납니다. 15초간 발사를 중단하면, §3대기시간§f이 다시 0.5초로 초기화됩니다.",
 		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
 		"§5중력§f: 대상을 $[GRAVITY_STUN]초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
@@ -78,7 +78,7 @@ public class HomingPenetrationArrow extends Synergy {
 
 	};
 	
-	public static final SettingObject<Integer> CUT_DAMAGE = synergySettings.new SettingObject<Integer>(HomingPenetrationArrow.class, "ammo-size", 7,
+	public static final SettingObject<Integer> CUT_DAMAGE = synergySettings.new SettingObject<Integer>(HomingPenetrationArrow.class, "cut-damage", 7,
 			"# 절단 추가 피해량") {
 
 		@Override
@@ -208,7 +208,6 @@ public class HomingPenetrationArrow extends Synergy {
 					}
 					ammo.poll().launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
 					shotdelay.start();
-					delay = Math.min(3, delay + 0.25);
 					if (resetcount.isRunning()) {
 						resetcount.setCount(300);
 					} else {
@@ -259,6 +258,7 @@ public class HomingPenetrationArrow extends Synergy {
 
 			@Override
 			protected void onEnd() {
+				delay = Math.min(4, delay + 0.5);
 				ammo.reload();
 				HomingPenetrationArrow.this.reload = null;
 				actionbarChannel.update(ammo.toString());
@@ -355,7 +355,7 @@ public class HomingPenetrationArrow extends Synergy {
 		private final Set<Damageable> attacked = new HashSet<>();
 		private Location lastLocation;
 		private Parabola(LivingEntity shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, RGB color) {
-			super(23);
+			super(25);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.onHitBehavior = onHitBehavior;

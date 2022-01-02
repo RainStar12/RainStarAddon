@@ -15,9 +15,9 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "¿Í´Ù´Ù´Ù´Ù´Ù", rank = Rank.A, species = Species.HUMAN, explain = {
-		"±ÙÁ¢ °ø°İ ÇÇÇØ¸¦ ÀÔÈú ¶§ 30%ÀÇ ÇÇÇØ·Î 5¹ø °ø°İÇÕ´Ï´Ù.",
-		"¶ÇÇÑ ÇÇÇØ¸¦ ÀÔÀ» ¶§¸¶´Ù $[InvConfig]Æ½°£ ¹«Àû »óÅÂ°¡ µË´Ï´Ù."
+@AbilityManifest(name = "ì™€ë‹¤ë‹¤ë‹¤ë‹¤ë‹¤", rank = Rank.A, species = Species.HUMAN, explain = {
+		"ê·¼ì ‘ ê³µê²© í”¼í•´ë¥¼ ì…í ë•Œ $[DAMAGE_CONFIG]%ì˜ í”¼í•´ë¡œ $[COUNT_CONFIG]ë²ˆ ê³µê²©í•©ë‹ˆë‹¤.",
+		"ë˜í•œ í”¼í•´ë¥¼ ì…ì„ ë•Œë§ˆë‹¤ $[INV_CONFIG]ì´ˆê°„ ë¬´ì  ìƒíƒœê°€ ë©ë‹ˆë‹¤."
 		})
 
 public class Wadadadadada extends Synergy {
@@ -29,10 +29,21 @@ public class Wadadadadada extends Synergy {
 	private LivingEntity target;
 	private double dmg = 0;
 	
-	private final int invincibility = InvConfig.getValue();
+	private final int multiply = DAMAGE_CONFIG.getValue();
+	private final int invincibility = (int) (INV_CONFIG.getValue() * 20);
 	
-	public static final SettingObject<Integer> InvConfig = synergySettings.new SettingObject<Integer>(Wadadadadada.class,
-			"Inv Time", 14, "# ¹«Àû ½Ã°£", "# ´ÜÀ§´Â Æ½ÀÔ´Ï´Ù. 20Æ½ = 1ÃÊ") {
+	public static final SettingObject<Double> INV_CONFIG = abilitySettings.new SettingObject<Double>(Wadadadadada.class,
+			"invulnerable-time", 0.5, "# ë¬´ì  ì‹œê°„", "# ë‹¨ìœ„ëŠ” ì´ˆì…ë‹ˆë‹¤.") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(Wadadadadada.class,
+			"damage-count", 6, "# íƒ€ê²© íšŸìˆ˜") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -41,7 +52,17 @@ public class Wadadadadada extends Synergy {
 
 	};
 	
-	private final AbilityTimer attacking = new AbilityTimer(4) {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Wadadadadada.class,
+			"damage", 30, "# ëŒ€ë¯¸ì§€", "# ë‹¨ìœ„: % (50 = 50%)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	private final AbilityTimer attacking = new AbilityTimer(COUNT_CONFIG.getValue()) {
 
 		@Override
 		protected void run(int arg0) {
@@ -75,7 +96,7 @@ public class Wadadadadada extends Synergy {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
 		if (e.getDamager().equals(getPlayer()) && !attacking.isRunning()) {
-			dmg = (3 * (e.getDamage() / 10));
+			dmg = e.getDamage() * (multiply / (double) 100);
 			e.setDamage(dmg);
 			target = (LivingEntity) e.getEntity();
 			attacking.start();

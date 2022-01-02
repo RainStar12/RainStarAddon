@@ -47,14 +47,14 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(name = "¸ÅÀÇ ´«", rank = Rank.S, species = Species.HUMAN, explain = {
-		"È°À» ½ò ¶§ ¸Å¿ì ºü¸¥ ¼Óµµ·Î ³ª¾Æ°¡´Â Æ¯¼öÇÑ Åõ»çÃ¼¸¦ ½õ´Ï´Ù.",
-		"Åõ»çÃ¼´Â ÇÏ³ªÀÇ ´ë»ó¸¸ °ø°İÇÒ ¼ö ÀÖ°í, ºí·Ï¿¡ ´êÀ¸¸é ¼Ò¸êÇÕ´Ï´Ù.",
-		"´Ü, À¯¸®³ª À¯¸® ÆÇ°ú °°Àº ºí·ÏÀº ¶Õ°í Áö³ª°©´Ï´Ù.",
-		"Åõ»çÃ¼¸¦ ½î°í ³­ ÈÄ ÀÏÁ¤ ½Ã°£µ¿¾È ÀçÀåÀüÀ» ÇÏ¸ç, ÀçÀåÀü Áß¿¡´Â",
-		"È°À» ½ò ¼ö ¾ø½À´Ï´Ù. È°À» µé°í ÀÖÀ» °æ¿ì ºü¸£°Ô ÀÌµ¿ÇÒ ¼ö ¾øÀ¸¸ç,",
-		"ÀÌµ¿ÀÌ Á¦ÇÑµÇ°í, °¡Àå °¡±î¿î ÇÃ·¹ÀÌ¾î¸¦ ÀÚµ¿ Á¶ÁØÇÕ´Ï´Ù.",
-		"ÇÇÇØ¸¦ ¹ŞÀº ´ë»ó¿¡°Ô ¡×7½Ç¸í¡×f°ú ¡×e¹ß±¤¡×f È¿°ú¸¦ ºÎ¿©ÇÕ´Ï´Ù."
+@AbilityManifest(name = "ë§¤ì˜ ëˆˆ", rank = Rank.S, species = Species.HUMAN, explain = {
+		"í™œì„ ì  ë•Œ ë§¤ìš° ë¹ ë¥¸ ì†ë„ë¡œ ë‚˜ì•„ê°€ëŠ” íŠ¹ìˆ˜í•œ íˆ¬ì‚¬ì²´ë¥¼ ì©ë‹ˆë‹¤.",
+		"íˆ¬ì‚¬ì²´ëŠ” í•˜ë‚˜ì˜ ëŒ€ìƒë§Œ ê³µê²©í•  ìˆ˜ ìˆê³ , ë¸”ë¡ì— ë‹¿ìœ¼ë©´ ì†Œë©¸í•©ë‹ˆë‹¤.",
+		"ë‹¨, ìœ ë¦¬ë‚˜ ìœ ë¦¬ íŒê³¼ ê°™ì€ ë¸”ë¡ì€ ëš«ê³  ì§€ë‚˜ê°‘ë‹ˆë‹¤.",
+		"íˆ¬ì‚¬ì²´ë¥¼ ì˜ê³  ë‚œ í›„ ì¼ì • ì‹œê°„ë™ì•ˆ ì¬ì¥ì „ì„ í•˜ë©°, ì¬ì¥ì „ ì¤‘ì—ëŠ”",
+		"í™œì„ ì  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. í™œì„ ë“¤ê³  ìˆì„ ê²½ìš° ë¹ ë¥´ê²Œ ì´ë™í•  ìˆ˜ ì—†ìœ¼ë©°,",
+		"ì´ë™ì´ ì œí•œë˜ê³ , ê°€ì¥ ê°€ê¹Œìš´ í”Œë ˆì´ì–´ë¥¼ ìë™ ì¡°ì¤€í•©ë‹ˆë‹¤.",
+		"í”¼í•´ë¥¼ ë°›ì€ ëŒ€ìƒì—ê²Œ Â§7ì‹¤ëª…Â§fê³¼ Â§eë°œê´‘Â§f íš¨ê³¼ë¥¼ ë¶€ì—¬í•©ë‹ˆë‹¤."
 })
 
 public class HawkEye extends Synergy {
@@ -136,7 +136,7 @@ public class HawkEye extends Synergy {
 					@Override
 					protected void run(int count) {
 						progressBar.step();
-						actionbarChannel.update("ÀçÀåÀü: " + progressBar.toString());
+						actionbarChannel.update("ì¬ì¥ì „: " + progressBar.toString());
 					}
 
 					@Override
@@ -148,7 +148,7 @@ public class HawkEye extends Synergy {
 				}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 2);
 				reload.start();
 			} else {
-				getPlayer().sendMessage("¡×bÀçÀåÀü ¡×fÁßÀÔ´Ï´Ù.");
+				getPlayer().sendMessage("Â§bì¬ì¥ì „ Â§fì¤‘ì…ë‹ˆë‹¤.");
 			}
 		}
 	}
