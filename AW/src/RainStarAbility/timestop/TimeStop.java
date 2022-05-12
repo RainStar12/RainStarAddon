@@ -1,4 +1,4 @@
-package RainStarAbility;
+package RainStarAbility.timestop;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

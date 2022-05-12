@@ -95,7 +95,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7검 공격 §8- §a별소나기§f: 다른 플레이어를 근접 공격할 때마다 15%의 확률로",
 		" 내 주변을 맴도는 별소나기를 총 7개까지 소환합니다.",
 		"§7철괴 우클릭 §8- §3은하수의 밤§f: 7칸의 필드를 $[FIELD_DURATION]초간 전개합니다. 필드 위에서 별소나기가",
-		" 항상 발동하며, 근접 공격 피해량이 1.4배로 증가합니다. $[RIGHT_COOLDOWN]",
+		" 항상 발동하며, 근접 공격 피해량이 1.2배로 증가합니다. $[RIGHT_COOLDOWN]",
 		" 은하수 내의 생명체들은 은하수의 중심으로 매우 강력하게 끌어당겨집니다.",
 		"§7철괴 좌클릭 §8- §b별의 일주§f: 별자리 효과를 다음 별자리로 넘깁니다. $[LEFT_COOLDOWN]"
 		},
@@ -557,7 +557,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
     				}
 					if (constellation == 2) bullets.add(new Bullet(getPlayer(), getPlayer().getLocation(), e.getDamage()));
 				}
-				e.setDamage(e.getDamage() * 1.4);
+				e.setDamage(e.getDamage() * 1.2);
 			} else {
 				final RouletteWheel.Slice select = rouletteWheel.select();
 				if (select == positive) {
@@ -607,7 +607,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (getPlayer().equals(damager)) {
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double health = getPlayer().getHealth();
-			if (constellation == 4) e.setDamage(e.getDamage() * (((1 - (health / maxHealth)) * 0.75) + 1));
+			if (constellation == 4) e.setDamage(e.getDamage() * (((1 - (health / maxHealth)) * 0.5) + 1));
 			if (constellation == 6) {
 				if (health > (maxHealth / 2)) e.setDamage(e.getDamage() * 1.2);
 				else if (health < (maxHealth / 2)) e.setDamage(e.getDamage() * 0.7);
@@ -764,7 +764,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					livingEntity.setVelocity(VectorUtil.validateVector(mylocation.toVector().subtract(livingEntity.getLocation().toVector()).normalize().setY(0).multiply(0.2)));
 				}
 			}
-			if (count % 4 == 0) {
+			if (count % 5 == 0) {
 				if (lemonlimeturns)
 					lemonlimestacks++;
 				else

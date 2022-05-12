@@ -369,7 +369,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if (skill.isRunning()) {
+		if (skill.isRunning() && predicate.test(e.getPlayer())) {
 			if (LocationUtil.isInCircle(center, e.getFrom(), 15) && !LocationUtil.isInCircle(center, e.getTo(), 15)) {
 				e.setTo(e.getFrom());
 			}

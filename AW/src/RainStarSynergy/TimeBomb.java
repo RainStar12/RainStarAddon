@@ -32,7 +32,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import RainStarAbility.TimeStop;
+import RainStarAbility.timestop.TimeStop;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;

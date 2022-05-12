@@ -41,7 +41,7 @@ public class Butcher extends AbilityBase {
 	private static final RGB MinorityHealth = RGB.of(183, 0, 0);
 	
 	@SubscribeEvent
-	public void onEntityDamageByEntity (EntityDamageByEntityEvent e) {	
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {	
 		if (e.getDamager() instanceof Projectile) {
 		    Projectile arrow = (Projectile) e.getDamager();
 		    if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity) {
