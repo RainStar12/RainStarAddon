@@ -53,7 +53,7 @@ import daybreak.google.common.base.Strings;
 		"§7공격 §8- §e반짝반짝 작은별♪§f: 다른 플레이어를 근접 공격할 때마다",
 		" 대상에게 별무리 표식을 부여합니다. 표식은 공명 효과로도 부여 가능합니다.",
 		" 대상이 가진 표식이 5개가 되면 대상이 발광 중이 아니라면 표식을 제거하고",
-		" 발광을 부여합니다. 발광 중이라면 해제하고 2.5초간 기절시킵니다.",
+		" 발광을 부여합니다. 발광 중이라면 해제하고 $[STUN]초간 기절시킵니다.",
 		"§7철괴 우클릭 §8- §e별의 소녀§f: 주변 10칸의 플레이어들을 발광시키고 3칸 내",
 		" 플레이어들을 $[DURATION]초간 지속해 발광시키며 또한 게임에 존재하는",
 		" 별무리 표식의 수에 비례해 공명 피해를 강화합니다. $[COOLDOWN]",
@@ -93,7 +93,8 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
 	private static final Note Do = Note.natural(0, Tone.C), Re = Note.natural(0, Tone.D), Mi = Note.natural(0, Tone.E), 
 			Fa = Note.natural(0, Tone.F), Sol = Note.natural(1, Tone.G), La = Note.natural(1, Tone.A);
-		
+	private final int stun = (int) (STUN.getValue() * 20);
+	
 	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Stella.class,
 			"cooldown", 40, "# 쿨타임") {
@@ -127,6 +128,15 @@ public class Stella extends AbilityBase implements ActiveHandler {
 			"duration", 7, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Double> STUN 
+	= abilitySettings.new SettingObject<Double>(Stella.class,
+			"stun-duration", 2.0, "# 기절 지속 시간") {
+		@Override
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 	};
@@ -348,7 +358,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 									if (glowMap.contains(participant)) {
 										player.removePotionEffect(PotionEffectType.GLOWING);
 										player.setGlowing(false);
-										Stun.apply(participant, TimeUnit.TICKS, 50);
+										Stun.apply(participant, TimeUnit.TICKS, stun);
 									} else {
 										player.addPotionEffect(glowing);
 									}

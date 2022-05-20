@@ -520,19 +520,29 @@ public class Dash extends AbilityBase {
                 			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
                 				if (count < 50) {
                 					getPlayer().addPotionEffect(normalspeed);
-                					Damages.damageFixed(p, getPlayer(), (float) skilldamage);
-                    				damagedcheck.add(p);
-                    				staminaGain(normalheal);
+                                    if (Damages.canDamage(p, getPlayer(), DamageCause.MAGIC, skilldamage)) {
+                                        Damages.damageMagic(p, getPlayer(), false, 1);
+                                        Healths.setHealth(p, Math.max(1, p.getHealth() - skilldamage));
+                    				    damagedcheck.add(p);
+                    				    staminaGain(normalheal);   
+                                    }
                 				}
                 			} else {
-                				Damages.damageFixed(p, getPlayer(), (float) damage);
-                				damagedcheck.add(p);
-                				staminaGain(normalheal);
+                                if (Damages.canDamage(p, getPlayer(), DamageCause.MAGIC, damage)) {   
+                                    Damages.damageMagic(p, getPlayer(), false, 1);
+                                    Healths.setHealth(p, Math.max(1, p.getHealth() - skilldamage));
+                				    damagedcheck.add(p);
+                				    staminaGain(normalheal);
+                                }
+
                 			}
         				} else {
-        					Damages.damageFixed(p, getPlayer(), (float) damage);
-            				damagedcheck.add(p);
-            				staminaGain(normalheal);
+                            if (Damages.canDamage(p, getPlayer(), DamageCause.MAGIC, damage)) {   
+                                Damages.damageMagic(p, getPlayer(), false, 1);
+                                Healths.setHealth(p, Math.max(1, p.getHealth() - skilldamage));
+                                damagedcheck.add(p);
+                                staminaGain(normalheal);
+                            }
         				}
         			}
         		}	
