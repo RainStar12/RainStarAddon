@@ -168,7 +168,6 @@ public class Damocles extends AbilityBase {
             if (getPlayer().isDead()) {
                 Bukkit.broadcastMessage("§c운이 없는 자, 힘의 대가를 치르다.");
                 Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
-                Bukkit.broadcastMessage("§c운이 없는 자, 힘의 대가를 치르다.");
             }
 			fallen = true;
 		}
