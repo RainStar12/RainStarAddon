@@ -53,7 +53,7 @@ public class King extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(King.class, "duration", 5.0,
+			abilitySettings.new SettingObject<Double>(King.class, "range", 5.0,
             "# 위압감 범위", "# 단위: 칸") {
         @Override
         public boolean condition(Double value) {
@@ -152,10 +152,7 @@ public class King extends AbilityBase {
 			dx = to.getX() - from.getX();
 			dy = to.getY() - from.getY();
 			dz = to.getZ() - from.getZ();
-			if (e.getPlayer().equals(getPlayer())) {
-				e.getPlayer().setVelocity(new Vector((dx * 0.85), dy, (dz * 0.85)));
-				ParticleLib.VILLAGER_ANGRY.spawnParticle(getPlayer().getLocation(), 0.1, 0, 0.1, 1, 1);
-			} else if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
+			if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
 				e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
 		} else if (e.getPlayer().isOnGround()) {
 			if (e.getPlayer().equals(getPlayer())) {

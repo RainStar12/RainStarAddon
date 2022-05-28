@@ -205,7 +205,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			encroachtarget = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
 			getPlayer().setSpectatorTarget(encroachtarget);
-			ParticleLib.SMOKE_LARGE.spawnParticle(encroachtarget.getLocation(), 0.25, 0, 0.25, 50, 1);
+			ParticleLib.SMOKE_LARGE.spawnParticle(encroachtarget.getLocation(), 0.25, 0, 0.25, 50, 0.4);
 			SoundLib.ENTITY_VEX_CHARGE.playSound(encroachtarget.getLocation(), 1, 0.65f);
 			encroached.add(encroachtarget);
 			armorstand = getPlayer().getLocation().getWorld().spawn(getPlayer().getLocation().clone(), ArmorStand.class);

@@ -24,6 +24,7 @@ import RainStarAbility.Echo;
 import RainStarAbility.Empty;
 import RainStarAbility.Executioner;
 import RainStarAbility.Fingun;
+import RainStarAbility.FirstAid;
 import RainStarAbility.Flex;
 import RainStarAbility.Fool;
 import RainStarAbility.ForbiddenFruit;
@@ -84,6 +85,7 @@ import RainStarSynergy.Berserk;
 import RainStarSynergy.Cliche;
 import RainStarSynergy.CowardlyMatch;
 import RainStarSynergy.Crow;
+import RainStarSynergy.Crown;
 import RainStarSynergy.CurseOfGod;
 import RainStarSynergy.Demisoda;
 import RainStarSynergy.DemonLord;
@@ -124,6 +126,7 @@ import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.Demigod;
 import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.DiceGod;
+import daybreak.abilitywar.ability.list.Emperor;
 import daybreak.abilitywar.ability.list.EnergyBlocker;
 import daybreak.abilitywar.ability.list.Ferda;
 import daybreak.abilitywar.ability.list.Flector;
@@ -285,6 +288,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Daydream.class);
 		AbilityFactory.registerAbility(ForbiddenFruit.class);
 		AbilityList.registerAbility(ForbiddenFruit.class);
+		AbilityFactory.registerAbility(FirstAid.class);
+		AbilityList.registerAbility(FirstAid.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -327,6 +332,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Empty.class, Empty.class, Abyss.class);
 		
 		SynergyFactory.registerSynergy(Vampire.class, Executioner.class, VampireCount.class);
+		SynergyFactory.registerSynergy(King.class, Emperor.class, Crown.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -351,7 +357,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f64개 §7/ §d시너지 §f41개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f65개 §7/ §d시너지 §f42개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -375,9 +381,9 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f64개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f65개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f41개 적용 완료.");
+			e.addCredit("§d시너지 §f42개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

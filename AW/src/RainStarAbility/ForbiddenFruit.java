@@ -1,5 +1,7 @@
 package RainStarAbility;
 
+import java.text.DecimalFormat;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -24,6 +27,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -38,7 +42,7 @@ import daybreak.google.common.base.Predicate;
 		"철괴를 이용해 §b선§c악§f 스킬을 사용할 수 있습니다.",
 		"두 스킬은 §c쿨타임§f을 공유합니다. $[COOLDOWN]",
 		"§7우클릭 §8- §b선§f: 바라보는 대상§8(§7없으면 자신§8)§f의 체력을 최대 체력까지 회복시킵니다.",
-		" 이 스킬로 §6회복§f한 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
+		" 이 스킬로 §d회복§f한 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
 		"§7좌클릭 §8- §c악§f: 자신이 포함된 무작위 대상의 체력을 반 칸으로 만듭니다.",
 		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가합니다.",
 		" 이 스킬로 §3없앤§f 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다."
@@ -129,7 +133,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 	            decreasestack = (int) (participant.getPlayer().getHealth() - 1);
 	            Healths.setHealth(participant.getPlayer(), 1);
 	            new InvTimer(participant.getPlayer(), invduration).start();
-	            ParticleLib.SMOKE_LARGE.spawnParticle(participant.getPlayer().getLocation(), 0.25, 0, 0.25, 50, 1);
+	            ParticleLib.SMOKE_LARGE.spawnParticle(participant.getPlayer().getLocation(), 0.25, 0, 0.25, 50, 0.4);
 				SoundLib.ENTITY_VEX_CHARGE.playSound(participant.getPlayer().getLocation(), 1, 0.65f);
 			} else if (clicktype.equals(ClickType.RIGHT_CLICK)) {
 				Player p;
@@ -142,7 +146,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 				if (!event.isCancelled()) {
 					decreasestack = (int) (maxHP - p.getHealth());
 					Healths.setHealth(p, maxHP);
-		            ParticleLib.CLOUD.spawnParticle(p.getLocation(), 0.25, 0, 0.25, 50, 1);
+		            ParticleLib.CLOUD.spawnParticle(p.getLocation(), 0.25, 0, 0.25, 50, 0.4);
 		            ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p.getLocation(), 1, 1);
 				}
@@ -157,15 +161,34 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 	public class InvTimer extends AbilityTimer implements Listener {
 		
 		private final Player player;
+		private final DecimalFormat df = new DecimalFormat("0.0");
+		private final ActionbarChannel ac;
 		
 		public InvTimer(Player player, int duration) {
 			super(TaskType.REVERSE, duration);
 			this.player = player;
+			ac = getGame().getParticipant(player).actionbar().newChannel();
 		}
 		
 		@Override
 		public void onStart() {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		}
+		
+		@Override
+		public void run(int count) {
+			ac.update("§3무적§f: " + df.format(count / 20.0));
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			HandlerList.unregisterAll(this);
+			ac.unregister();
 		}
 		
 		@EventHandler()
