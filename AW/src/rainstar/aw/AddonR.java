@@ -14,6 +14,7 @@ import RainStarAbility.Citrus;
 import RainStarAbility.Crystal;
 import RainStarAbility.Damocles;
 import RainStarAbility.Dash;
+import RainStarAbility.Daydream;
 import RainStarAbility.Delusion;
 import RainStarAbility.Detection;
 import RainStarAbility.Devil;
@@ -25,6 +26,7 @@ import RainStarAbility.Executioner;
 import RainStarAbility.Fingun;
 import RainStarAbility.Flex;
 import RainStarAbility.Fool;
+import RainStarAbility.ForbiddenFruit;
 import RainStarAbility.FoxCrystalBall;
 import RainStarAbility.GlassCannon;
 import RainStarAbility.GuardianAngel;
@@ -35,6 +37,7 @@ import RainStarAbility.Indecision;
 import RainStarAbility.Inferno;
 import RainStarAbility.IslandRabbit;
 import RainStarAbility.Kairos;
+import RainStarAbility.King;
 import RainStarAbility.Kuro;
 import RainStarAbility.KuroEye;
 import RainStarAbility.LightningCounter;
@@ -276,6 +279,13 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(LuckSurvive.class);
 		AbilityList.registerAbility(LuckSurvive.class);
 		
+		AbilityFactory.registerAbility(King.class);
+		AbilityList.registerAbility(King.class);
+		AbilityFactory.registerAbility(Daydream.class);
+		AbilityList.registerAbility(Daydream.class);
+		AbilityFactory.registerAbility(ForbiddenFruit.class);
+		AbilityList.registerAbility(ForbiddenFruit.class);
+		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
 		
@@ -341,7 +351,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f61개 §7/ §d시너지 §f41개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f64개 §7/ §d시너지 §f41개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -365,7 +375,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f61개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f64개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f41개 적용 완료.");
 		}

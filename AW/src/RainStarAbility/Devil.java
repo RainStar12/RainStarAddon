@@ -68,7 +68,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> CONTRACT_DURATION = 
-			abilitySettings.new SettingObject<Double>(Devil.class, "contract-duration", 10.0,
+			abilitySettings.new SettingObject<Double>(Devil.class, "contract-duration", 15.0,
             "# 계약 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {

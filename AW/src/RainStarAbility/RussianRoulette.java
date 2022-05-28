@@ -14,6 +14,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
@@ -37,6 +38,7 @@ import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -234,9 +236,12 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 					if (!shooter.equals(livingEntity)) {
 						checkhit = true;
 						double maxHP = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                        if (Damages.canDamage(p, getPlayer(), DamageCause.PROJECTILE, (maxHP * (damage / (double) 100)))) {
+                        if (Damages.canDamage(livingEntity, getPlayer(), DamageCause.PROJECTILE, (maxHP * (damage / (double) 100)))) {
                             Damages.damageArrow(livingEntity, shooter, 1);
-                            Healths.setHealth(p, Math.max(1, p.getHealth() - (maxHP * (damage / (double) 100))));
+                            if (livingEntity instanceof Player) {
+                            	Player p = (Player) livingEntity;
+                            	Healths.setHealth(p, Math.max(1, p.getHealth() - (maxHP * (damage / (double) 100))));
+                            } else livingEntity.setHealth(Math.max(1, livingEntity.getHealth() - (maxHP * (damage / (double) 100))));
 						    SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer(), 1f, 1.2f);
                         }
                         if (livingEntity instanceof Player) {

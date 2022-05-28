@@ -64,7 +64,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import rainstar.aw.Arc;
 
 @AbilityManifest(name = "뱀파이어 백작", rank = Rank.L, species = Species.UNDEAD, explain = {
-		"§7패시브 §8- §3밤의 귀족§f: 밤에는 흡혈로 얻는 회복량이 1.25배 증가합니다.",
+		"§7패시브 §8- §3밤의 귀족§f: 밤에는 흡혈로 얻는 회복량이 1.5배 증가합니다.",
 		" 또한 §a발검§7/§e납검§f 쿨타임이 2배로 줄어듭니다.",
 		"§7철괴 우클릭 §8- §a발검§7/§e납검§f: §4혈검§f을 빼내거나 집어넣습니다. $[COOLDOWN]",
 		" §4혈검§f을 빼낼 때§8(§7발검할 때§8)§f에는 전방에 범위 피해를 입히고 흡혈합니다.",
@@ -81,7 +81,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> DRAIN = synergySettings.new SettingObject<Integer>(
-			VampireCount.class, "drain-period", 4, "# 흡혈 주기", "# (단위: 초)") {
+			VampireCount.class, "drain-period", 5, "# 흡혈 주기", "# (단위: 초)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -283,7 +283,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 						double distance = Math.sqrt(myLoc.distanceSquared(targetLoc));
 						if (livingEntity instanceof Player) Healths.setHealth((Player) livingEntity, Math.max(0, livingEntity.getHealth() - ((Math.max(0, (8 - distance) / 8)) + 1)));
 						else livingEntity.setHealth(Math.max(0, livingEntity.getHealth() - ((Math.max(0, (range - distance) / range) * entity_max_drain))));
-						double heal = (isNight(getPlayer().getWorld().getTime()) ? 1.25 : 1) * (((Math.max(0, (range - distance) / range)) + 1));
+						double heal = (isNight(getPlayer().getWorld().getTime()) ? 1.4 : 1) * (((Math.max(0, (range - distance) / range)) + 1));
 						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), heal, RegainReason.CUSTOM);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) {

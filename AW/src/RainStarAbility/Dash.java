@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -53,6 +54,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -514,9 +516,10 @@ public class Dash extends AbilityBase {
     	@Override
     	protected void run(int count) {
     		if (!saveloc1.equals(saveloc2)) {
-    			for (Damageable p : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
-        			if (!p.equals(getPlayer()) && !damagedcheck.contains(p)) {
-        				if (p instanceof Player) {
+    			for (Damageable damageable : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
+        			if (!damageable.equals(getPlayer()) && !damagedcheck.contains(damageable)) {
+        				if (damageable instanceof Player) {
+        					Player p = (Player) damageable;
                 			if (getGame().getParticipant((Player) p).hasEffect(Confusion.registration)) {
                 				if (count < 50) {
                 					getPlayer().addPotionEffect(normalspeed);
@@ -537,10 +540,10 @@ public class Dash extends AbilityBase {
 
                 			}
         				} else {
-                            if (Damages.canDamage(p, getPlayer(), DamageCause.MAGIC, damage)) {   
-                                Damages.damageMagic(p, getPlayer(), false, 1);
-                                Healths.setHealth(p, Math.max(1, p.getHealth() - skilldamage));
-                                damagedcheck.add(p);
+                            if (Damages.canDamage(damageable, getPlayer(), DamageCause.MAGIC, damage)) {   
+                                Damages.damageMagic(damageable, getPlayer(), false, 1);
+                                damageable.setHealth(Math.max(1, damageable.getHealth() - skilldamage));
+                                damagedcheck.add(damageable);
                                 staminaGain(normalheal);
                             }
         				}

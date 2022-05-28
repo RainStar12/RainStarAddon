@@ -25,7 +25,8 @@ public enum RainStarEffectFactory {
     STIFFEN(Stiffen.class),
     SUPERREGEN(SuperRegen.class),
     TIME_DISTORTION(TimeDistortion.class),
-    TIME_INTERRUPT(TimeInterrupt.class);
+    TIME_INTERRUPT(TimeInterrupt.class),
+    VAIN_DREAM(VainDream.class);
 
     Class<? extends AbstractGame.Effect> clazz;
 
