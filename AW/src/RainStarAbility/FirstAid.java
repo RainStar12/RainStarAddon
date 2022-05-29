@@ -64,6 +64,12 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	private final int healcount = HEAL_COUNT.getValue();
 	private final int duration = (int) (INBATTLE_CHECK_DURATION.getValue() * 20);
 	
+	protected void onUpdate(AbilityBase.Update update) {
+	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
+	    	ac.update("§a비전투 중");
+	    }
+	}
+	
 	private final AbilityTimer inbattle = new AbilityTimer(duration) {
 		
 		@Override

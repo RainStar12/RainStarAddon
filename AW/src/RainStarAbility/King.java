@@ -79,7 +79,7 @@ public class King extends AbilityBase {
         }
 		@Override
 		public String toString() {
-			return "" + 1 + getValue();
+			return "" + (1 + getValue());
         }
     };
     
@@ -153,13 +153,13 @@ public class King extends AbilityBase {
 			dy = to.getY() - from.getY();
 			dz = to.getZ() - from.getZ();
 			if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-				e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
+				e.getPlayer().setVelocity(new Vector((dx * 0.7), (dy * 0.1), (dz * 0.7)));	
 		} else if (e.getPlayer().isOnGround()) {
 			if (e.getPlayer().equals(getPlayer())) {
-				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.85));
-				ParticleLib.VILLAGER_ANGRY.spawnParticle(getPlayer().getLocation(), 0.1, 0, 0.1, 1, 1);
+				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.925));
+				ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.15, 0, 0.15, 1, 1);
 			} else if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.6));	
+				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.7));	
 		}
 	}
 	

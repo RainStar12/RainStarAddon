@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +24,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -30,6 +33,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -132,6 +136,7 @@ public class Crown extends Synergy implements ActiveHandler {
 		
 		public Shieldbearer(int value) {
 			super(TaskType.REVERSE, 100);
+			setPeriod(TimeUnit.TICKS, 1);
 		}
 		
 		@Override
@@ -205,6 +210,16 @@ public class Crown extends Synergy implements ActiveHandler {
 			}
 		}
 		
+		@EventHandler()
+		private void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+			if (e.getRightClicked().equals(shieldbearer)) e.setCancelled(true);
+		}
+		
+		@EventHandler()
+		private void onEntityDamage(EntityDamageEvent e) {
+			if (e.getEntity().equals(shieldbearer)) e.setCancelled(true);
+		}
+		
 	}
 	
 	private class Charge extends AbilityTimer {
@@ -237,6 +252,7 @@ public class Crown extends Synergy implements ActiveHandler {
 		protected void onEnd() {
 			this.charges = maxCharge;
 			actionbarChannel.update(toString());
+			SoundLib.ITEM_ARMOR_EQUIP_CHAIN.playSound(getPlayer().getLocation());
 		}
 
 		@Override
