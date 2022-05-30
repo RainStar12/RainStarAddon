@@ -12,6 +12,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
@@ -38,7 +39,7 @@ import daybreak.google.common.collect.ImmutableMap;
 @AbilityManifest(name = "수녀", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §b십자가§f: §c언데드§f 종족에게 가하는 피해가 $[UNDEAD_DAMAGE]% 증가합니다.",
 		" §b신§f 종족에게 받는 피해가 $[GOD_DAMAGE_DECREASE]% 감소합니다.",
-		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANEELING]초간 간절히 기도합니다. $[COOLDOWN]",
+		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING]초간 간절히 기도합니다. $[COOLDOWN]",
 		" 기도가 끝나면 무작위 §b신§f이 $[DURATION]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
 		" 강신 도중엔 사망하지 않으며, §b신§f의 등급당 $[RANK_DAMAGE]%의 §c추가 피해§f를 입힙니다.",
 		"§e---------------------------------",
@@ -229,7 +230,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				SoundLib.ENTITY_EVOKER_PREPARE_SUMMON.playSound(getPlayer().getLocation(), 1, 2);
 				NMS.sendTitle(getPlayer(), rankcolor.get(godability.getRank()) + "§l" + godability.getDisplayName(), "", 0, 100, 1);
 				getPlayer().sendMessage("§3[§b!§3] " + rankcolor.get(godability.getRank()) + godability.getDisplayName() + "§f 신이 당신에게 §c강림§f하였습니다.");
-				getPlayer().sendMessage("§7§o모든 것은 신의 뜻대로...");
+				getPlayer().sendMessage("§c§o모든 것은 신의 뜻대로...");
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 			}
@@ -262,7 +263,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (godability != null) {
 			return godability instanceof ActiveHandler && ((ActiveHandler) godability).ActiveSkill(material, clickType);	
-		} else if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && cooldown.isCooldown() && !channeling.isRunning()) {
+		} else if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown() && !channeling.isRunning()) {
 			return channeling.start();
 		}
 		return false;
@@ -293,6 +294,11 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			getPlayer().setHealth(1);
 			NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
 		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if (channeling.isRunning() && e.getPlayer().equals(getPlayer())) e.setTo(e.getFrom());
 	}
 	
 	@SubscribeEvent

@@ -34,16 +34,18 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "선악과", rank = Rank.S, species = Species.OTHERS, explain = {
+@AbilityManifest(name = "선악과", rank = Rank.L, species = Species.OTHERS, explain = {
 		"철괴를 이용해 §b선§c악§f 스킬을 사용할 수 있습니다.",
 		"두 스킬은 §c쿨타임§f을 공유합니다. $[COOLDOWN]",
 		"§7우클릭 §8- §b선§f: 바라보는 대상§8(§7없으면 자신§8)§f의 체력을 최대 체력까지 회복시킵니다.",
 		" 이 스킬로 §d회복§f한 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
+		" 내가 아닌 대상에게 능력 사용 시 §d회복§f시킨 체력의 절반만큼 §e흡수 체력§f을 획득합니다.",
 		"§7좌클릭 §8- §c악§f: 자신이 포함된 무작위 대상의 체력을 반 칸으로 만듭니다.",
 		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가합니다.",
 		" 이 스킬로 §3없앤§f 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다."
@@ -150,6 +152,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 		            ParticleLib.CLOUD.spawnParticle(p.getLocation(), 0.25, 0, 0.25, 50, 0.4);
 		            ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p.getLocation(), 1, 1);
+					if (!p.equals(getPlayer())) NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + (decreasestack * 0.5)));
 				}
 			}
 			cooldown.start();
