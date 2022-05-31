@@ -25,7 +25,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"철괴 좌클릭 시, 자신의 체력을 최대 체력으로 만듭니다. $[COOLDOWN]",
 		"이후 이 효과로 채운 체력 반 칸당 1초의 §d덧없는 꿈§f 상태이상을 받습니다.",
 		"§5[§d덧없는 꿈§5]§f: 누군가에게 피해입기 전까지 이동할 수 없으며,",
-		"지속적으로 체력을 잃습니다. 깨어나면 공격이 절반의 확률로 빗나갑니다.",
+		" 깨어나면 공격이 절반의 확률로 빗나갑니다. 지속적으로 체력을 잃습니다.",
+		" 생존 시, 덧없는 꿈 효과로 잃어버린 체력은 복구됩니다.",
 		"§b[§7아이디어 제공자§b] §eYeow_ool"
 		})
 public class Daydream extends AbilityBase implements ActiveHandler {

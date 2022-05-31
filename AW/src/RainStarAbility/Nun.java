@@ -238,7 +238,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		public void run(int count) {
-			if (count == 30) NMS.clearTitle(getPlayer());
+			if (count == duration - 30) NMS.clearTitle(getPlayer());
 			getPlayer().setGlowing(true);
 		}
 		

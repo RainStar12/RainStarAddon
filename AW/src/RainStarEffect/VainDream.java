@@ -26,14 +26,15 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@EffectManifest(name = "덧없는 꿈", displayName = "§d덧없는 꿈", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "덧없는 꿈", displayName = "§d덧없는 꿈", method = ApplicationMethod.UNIQUE_IGNORE, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
 }, description = {
 		"§f지속적으로 체력을 잃습니다.",
 		"§f흐르고 있는 모든 시간이 멈추게 되며",
 		"§f누군가가 공격해 깨우기 전까진 이동할 수 없습니다.",
 		"§f강제로 깨어날 경우 남은 시간만큼 정신이 몽롱해져",
-		"§f모든 공격이 50% 확률로 빗나갑니다."
+		"§f모든 공격이 50% 확률로 빗나갑니다.",
+		"§f살아남을 시 체력을 잃는 효과로 잃은 체력은 보상됩니다."
 })
 public class VainDream extends AbstractGame.Effect implements Listener {
 
@@ -47,6 +48,7 @@ public class VainDream extends AbstractGame.Effect implements Listener {
 	private boolean wakeup = false;
 	private Random random = new Random();
 	private final ArmorStand hologram;
+	private int stack;
 	
 	public VainDream(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 2));
@@ -107,7 +109,10 @@ public class VainDream extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void run(int count) {
-		if (count % 10 == 0 && !wakeup) Healths.setHealth(participant.getPlayer(), Math.max(1, participant.getPlayer().getHealth() - 1));
+		if (count % 10 == 0) {
+			Healths.setHealth(participant.getPlayer(), Math.max(1, participant.getPlayer().getHealth() - 1));
+			stack++;
+		}
 		hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2, 0));
 		if (!wakeup) {
 			if (participant.hasAbility() && !participant.getAbility().isRestricted()) {
@@ -137,6 +142,9 @@ public class VainDream extends AbstractGame.Effect implements Listener {
 					if (t.isPaused()) t.resume();
 				}
 			}
+		}
+		if (!participant.getPlayer().isDead()) {
+			Healths.setHealth(participant.getPlayer(), participant.getPlayer().getHealth() + stack);
 		}
 		hologram.remove();
 		HandlerList.unregisterAll(this);

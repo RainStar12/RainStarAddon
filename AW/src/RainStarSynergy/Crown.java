@@ -140,6 +140,13 @@ public class Crown extends Synergy implements ActiveHandler {
 		return false;
 	}
 	
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			charge.actionbarChannel.update(charge.toString());
+		}
+	}
+	
 	private List<Integer> shieldbearers = new ArrayList<>();
     
 	private Random random = new Random();
@@ -191,6 +198,7 @@ public class Crown extends Synergy implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
+			shieldbearers.remove(0);
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 			final Location playerLocation = getPlayer().getLocation();
 			direction = playerLocation.getDirection();
@@ -401,7 +409,6 @@ public class Crown extends Synergy implements ActiveHandler {
 		private boolean subtractCharge(int amount) {
 			if (!isRunning() && charges > 0) {
 				charges = Math.max(0, charges - amount);
-				shieldbearers.remove(0);
 				actionbarChannel.update(toString());
 				if (charges == 0) {
 					start();
