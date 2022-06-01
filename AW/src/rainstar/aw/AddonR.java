@@ -45,6 +45,7 @@ import RainStarAbility.LightningCounter;
 import RainStarAbility.LingeringArrow;
 import RainStarAbility.LittleDevil;
 import RainStarAbility.LuckSurvive;
+import RainStarAbility.MadScientist;
 import RainStarAbility.Medusa;
 import RainStarAbility.Megalodon;
 import RainStarAbility.Minotauros;
@@ -299,6 +300,10 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Tolerance.class);
 		AbilityFactory.registerAbility(Medusa.class);
 		AbilityList.registerAbility(Medusa.class);
+		AbilityFactory.registerAbility(MadScientist.class);
+		AbilityList.registerAbility(MadScientist.class);
+		
+		AbilityFactory.registerAbility("RainStarAbility.theonering." + ServerVersion.getName() + ".TheOneRing");
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -371,7 +376,7 @@ public class AddonR extends Addon implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
         RainStarEffectFactory.load();
-
+        
     	if (ServerVersion.getVersion() == 12) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_12_R1.Clown.class, Alice.class, Joker.class);
     	} else if (ServerVersion.getVersion() == 13) {

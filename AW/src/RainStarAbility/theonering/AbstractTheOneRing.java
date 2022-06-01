@@ -24,6 +24,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
@@ -46,10 +47,11 @@ import daybreak.google.common.base.Predicate;
 		"§7은신§f 간 공격력이 $[INCREASE]%, 신속 $[AMPLIFIER]를 받습니다.",
 		"또한 지속적으로 §5광분 수치§f가 쌓입니다. $[RANGE]칸 내 플레이어가 있다면 4배로 쌓입니다.",
 		"§5광분 수치§f가 최대치에 달하면 무작위로 화면이 전환되고, 피해를 입습니다.",
-		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§7WRECK 적용§8)"
+		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§oR§eE§aC§bK §7적용§8)",
+		"§3[§b종족야생 콜라보 능력§3]"
 		})
 
-public abstract class AbstractTheOneRing extends AbilityBase {
+public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHandler {
 
 	public AbstractTheOneRing(Participant participant) {
 		super(participant);
