@@ -20,6 +20,7 @@ public enum RainStarEffectFactory {
     IRREPARABLE(Irreparable.class),
     MADNESS(Madness.class),
     PARALYSIS(Paralysis.class),
+    PETRIFICATION(Petrification.class),
     POISON(Poison.class),
     SNOWFLAKE_MARK(SnowflakeMark.class),
     STIFFEN(Stiffen.class),

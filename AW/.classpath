@@ -10,5 +10,12 @@
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/CokesAddon.jar"/>
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.16.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/spigot-1.12.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.13.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.15-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.16.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.16.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.17.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -45,6 +45,7 @@ import RainStarAbility.LightningCounter;
 import RainStarAbility.LingeringArrow;
 import RainStarAbility.LittleDevil;
 import RainStarAbility.LuckSurvive;
+import RainStarAbility.Medusa;
 import RainStarAbility.Megalodon;
 import RainStarAbility.Minotauros;
 import RainStarAbility.Mira;
@@ -296,6 +297,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Nun.class);
 		AbilityFactory.registerAbility(Tolerance.class);
 		AbilityList.registerAbility(Tolerance.class);
+		AbilityFactory.registerAbility(Medusa.class);
+		AbilityList.registerAbility(Medusa.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);

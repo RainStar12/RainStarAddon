@@ -220,7 +220,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 											Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
 											if (clazz != Empty.class) {
 												if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
-												if (clazz == KuroEye.class) clazz = Kuro.class;
+												if (clazz == Kuro.class) clazz = KuroEye.class;
 												this.ability = AbilityBase.create(clazz, getParticipant());
 												this.ability.setRestricted(false);
 												getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
@@ -239,7 +239,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 									Class<? extends AbilityBase> clazz = targetAbility.getClass();
 									if (clazz != Empty.class) {
 										if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
-										if (clazz == KuroEye.class) clazz = Kuro.class;
+										if (clazz == Kuro.class) clazz = KuroEye.class;
 										this.ability = AbilityBase.create(clazz, getParticipant());
 										this.ability.setRestricted(false);
 										getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
