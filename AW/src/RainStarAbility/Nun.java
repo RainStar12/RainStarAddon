@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -33,6 +34,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
@@ -42,6 +44,7 @@ import daybreak.google.common.collect.ImmutableMap;
 		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING]초간 간절히 기도합니다. $[COOLDOWN]",
 		" 기도가 끝나면 무작위 §b신§f이 $[DURATION]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
 		" 강신 도중엔 사망하지 않으며, §b신§f의 등급당 $[RANK_DAMAGE]%의 §c추가 피해§f를 입힙니다.",
+		"§8[§7HIDDEN§8] §b11:25§f: 예수께서 이르시되 나는 부활이요 생명이니",
 		"§e---------------------------------",
 		"$(EXPLAIN)",
 		"§e---------------------------------",
@@ -69,7 +72,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	public static final SettingObject<Double> CHANNELING = abilitySettings.new SettingObject<Double>(
-			Nun.class, "channeling", 3.0, "# 기도하는 시간", "# 단위: 초") {
+			Nun.class, "channeling", 5.0, "# 기도하는 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -126,6 +129,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			.put(Rank.SPECIAL, "§c")
 			.build();
 	
+	private boolean risky = false;
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
 	private final int chance = CHANCE.getValue();
 	private final int channelingDur = (int) (CHANNELING.getValue() * 20);
@@ -203,10 +207,13 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		@Override
 		public void onStart() {
 			getPlayer().sendMessage("§7§o기도합시다.");
+			double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+			if (getPlayer().getHealth() <= maxHP * 0.15) risky = true;
 		}
 		
 		@Override
 		public void onEnd() {
+			risky = false;
 			beingGod.start();
 		}
 		
@@ -289,10 +296,22 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	@SubscribeEvent(priority = 1000)
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (beingGod.isRunning() && getPlayer().equals(e.getEntity()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
-			e.setCancelled(true);
-			getPlayer().setHealth(1);
-			NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+		if (getPlayer().equals(e.getEntity()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+			if (beingGod.isRunning()) {
+				e.setCancelled(true);
+				getPlayer().setHealth(1);
+				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+			}
+			if (channeling.isRunning() && risky) {
+				e.setCancelled(true);
+				getPlayer().setHealth(1);
+				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 60, 1, false);
+				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+				getPlayer().sendMessage("§8[§7HIDDEN§8] §7§o예수께서 이르시되 나는 부활이요 생명이니 나를 믿는 자는 죽어도 살렷고");
+				getPlayer().sendMessage("§8[§7HIDDEN§8] §f위험한 상황에서도 기도하였고, 믿음을 보답받았습니다.");
+				getPlayer().sendMessage("§8[§7HIDDEN§8] §b믿음의 보답§f을 달성하였습니다.");
+				SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
+			}
 		}
 	}
 	

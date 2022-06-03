@@ -160,7 +160,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 			if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 				Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 10, predicate);
 				if (player != null) {
-					if (random.nextDouble(1) <= healthy) {
+					if (random.nextDouble() <= healthy) {
 						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, healamount, RegainReason.CUSTOM);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) {

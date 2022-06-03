@@ -94,6 +94,7 @@ import RainStarSynergy.CurseOfGod;
 import RainStarSynergy.Demisoda;
 import RainStarSynergy.DemonLord;
 import RainStarSynergy.DeusExMachina;
+import RainStarSynergy.Eden;
 import RainStarSynergy.Fairy;
 import RainStarSynergy.FingerExersize;
 import RainStarSynergy.GhostRider;
@@ -135,6 +136,7 @@ import daybreak.abilitywar.ability.list.EnergyBlocker;
 import daybreak.abilitywar.ability.list.Ferda;
 import daybreak.abilitywar.ability.list.Flector;
 import daybreak.abilitywar.ability.list.Loki;
+import daybreak.abilitywar.ability.list.Muse;
 import daybreak.abilitywar.ability.list.PenetrationArrow;
 import daybreak.abilitywar.ability.list.Reverse;
 import daybreak.abilitywar.ability.list.Ruber;
@@ -304,6 +306,7 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(MadScientist.class);
 		
 		AbilityFactory.registerAbility("RainStarAbility.theonering." + ServerVersion.getName() + ".TheOneRing");
+		AbilityList.registerAbility("RainStarAbility.theonering." + ServerVersion.getName() + ".TheOneRing");
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -347,6 +350,7 @@ public class AddonR extends Addon implements Listener {
 		
 		SynergyFactory.registerSynergy(Vampire.class, Executioner.class, VampireCount.class);
 		SynergyFactory.registerSynergy(King.class, Emperor.class, Crown.class);
+		SynergyFactory.registerSynergy(ForbiddenFruit.class, Muse.class, Eden.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
