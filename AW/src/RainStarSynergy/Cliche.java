@@ -127,7 +127,7 @@ public class Cliche extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> INV_DURATION = synergySettings.new SettingObject<Integer>(Cliche.class,
-			"inv-duration", 30, "# 금의환향 무적 지속시간") {
+			"inv-duration", 100, "# 금의환향 무적 지속시간") {
 		
 		@Override
 		public boolean condition(Integer value) {

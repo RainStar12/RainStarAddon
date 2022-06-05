@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import RainStarEffect.Petrification;
+import RainStarSynergy.Mirror;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -18,11 +19,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "메두사", rank = Rank.S, species = Species.DEMIGOD, explain = {
@@ -30,6 +33,7 @@ import daybreak.google.common.base.Predicate;
 		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
 		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다.",
+		"§8[§7HIDDEN§8] §c괴물을 잡는 법§f: §3누가 방패에 그걸 달 생각을 했겠어.",
 		"§b[§7아이디어 제공자§b] §eYeow_ool §7/ §b_Daybreak_"
 		})
 public class Medusa extends AbilityBase {
@@ -115,6 +119,7 @@ public class Medusa extends AbilityBase {
 		}
 	};
 	
+	private boolean onetime = true;
 	private final int duration = (int) (PETRIFICATION_DURATION.getValue() * 20);
 	private final int lookcount = (int) (LOOK_COUNT.getValue() * 20);
 	private Map<Player, LookTimer> looktimers = new HashMap<>();
@@ -132,6 +137,26 @@ public class Medusa extends AbilityBase {
 					final long current = System.currentTimeMillis();
 					if (current - lastPetri.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown && !looktimers.containsKey(player)) {
 						new LookTimer(player).start();
+					}
+				}
+			}
+			
+			if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), range, predicate) != null) {
+				Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), range, predicate);
+				AbilityBase ab = getGame().getParticipant(player).getAbility();
+				if (ab.getClass().equals(Mix.class)) {
+					Mix mix = (Mix) ab;
+					if (mix.hasAbility() && mix.hasSynergy()) {
+						if (mix.getSynergy().getClass().equals(Mirror.class)) {
+							if (onetime) {
+								getPlayer().sendMessage("§8[§7HIDDEN§8] §b저런, 메두사가 바라본 것은 §3§l거울§b이었나 봅니다.");
+								getPlayer().sendMessage("§8[§7HIDDEN§8] §b거울을 바라보면 석화 타이머가 당신에게도 적용됩니다.");
+								getPlayer().sendMessage("§8[§7HIDDEN§8] §c괴물을 잡는 법§f을 달성하였습니다.");
+								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
+								onetime = false;
+							}
+							new LookTimer(getPlayer()).start();
+						}
 					}
 				}
 			}

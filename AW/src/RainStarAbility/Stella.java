@@ -81,6 +81,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	    }
 	}
 	
+	private final double stackcool = STACK_COOL.getValue();
 	private final Map<Player, Stack> stackMap = new HashMap<>();
 	private final Set<Participant> glowMap = new HashSet<>();
 	private Participant target;
@@ -134,12 +135,23 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Double> STUN 
 	= abilitySettings.new SettingObject<Double>(Stella.class,
-			"stun-duration", 2.0, "# 기절 지속 시간") {
+			"stun-duration", 2.5, "# 기절 지속 시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
 		}
 	};
+	
+	public static final SettingObject<Double> STACK_COOL = 
+			abilitySettings.new SettingObject<Double>(Stella.class, "stack-cooldown", 1.0,
+            "# 스택을 쌓을 때 내부 쿨타임") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -276,47 +288,49 @@ public class Stella extends AbilityBase implements ActiveHandler {
 			target = getGame().getParticipant((Player) e.getEntity());
 			Player p = (Player) e.getEntity();
 			if (stackMap.containsKey(e.getEntity())) {
-				if (stackMap.get(e.getEntity()).addStack()) {
-					if (!glowMap.contains(target)) {
-						p.addPotionEffect(glowing);
-						final Firework firework = getPlayer().getWorld().spawn(p.getEyeLocation(), Firework.class);
-						final FireworkMeta meta = firework.getFireworkMeta();
-						meta.addEffect(
-								FireworkEffect.builder()
-										.withColor(Color.WHITE)
-										.with(Type.STAR)
-										.build()
-						);
-						meta.setPower(0);
-						firework.setFireworkMeta(meta);
-						firework.setMetadata("StarFirework", NULL_VALUE);
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								firework.detonate();
-							}
-						}.runTaskLater(AbilityWar.getPlugin(), 1L);
-					} else {
-						p.removePotionEffect(PotionEffectType.GLOWING);
-						p.setGlowing(false);
-						Stun.apply(target, TimeUnit.TICKS, 50);
-						final Firework firework = getPlayer().getWorld().spawn(p.getEyeLocation(), Firework.class);
-						final FireworkMeta meta = firework.getFireworkMeta();
-						meta.addEffect(
-								FireworkEffect.builder()
-										.withColor(Color.fromRGB(254, 254, 108), Color.fromRGB(72, 254, 254))
-										.with(Type.STAR)
-										.build()
-						);
-						meta.setPower(0);
-						firework.setFireworkMeta(meta);
-						firework.setMetadata("StarFirework", NULL_VALUE);
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								firework.detonate();
-							}
-						}.runTaskLater(AbilityWar.getPlugin(), 1L);
+				if (stackMap.get(e.getEntity()).getCount() < (300 - (stackcool * 20))) {
+					if (stackMap.get(e.getEntity()).addStack()) {
+						if (!glowMap.contains(target)) {
+							p.addPotionEffect(glowing);
+							final Firework firework = getPlayer().getWorld().spawn(p.getEyeLocation(), Firework.class);
+							final FireworkMeta meta = firework.getFireworkMeta();
+							meta.addEffect(
+									FireworkEffect.builder()
+											.withColor(Color.WHITE)
+											.with(Type.STAR)
+											.build()
+							);
+							meta.setPower(0);
+							firework.setFireworkMeta(meta);
+							firework.setMetadata("StarFirework", NULL_VALUE);
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									firework.detonate();
+								}
+							}.runTaskLater(AbilityWar.getPlugin(), 1L);
+						} else {
+							p.removePotionEffect(PotionEffectType.GLOWING);
+							p.setGlowing(false);
+							Stun.apply(target, TimeUnit.TICKS, 50);
+							final Firework firework = getPlayer().getWorld().spawn(p.getEyeLocation(), Firework.class);
+							final FireworkMeta meta = firework.getFireworkMeta();
+							meta.addEffect(
+									FireworkEffect.builder()
+											.withColor(Color.fromRGB(254, 254, 108), Color.fromRGB(72, 254, 254))
+											.with(Type.STAR)
+											.build()
+							);
+							meta.setPower(0);
+							firework.setFireworkMeta(meta);
+							firework.setMetadata("StarFirework", NULL_VALUE);
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									firework.detonate();
+								}
+							}.runTaskLater(AbilityWar.getPlugin(), 1L);
+						}
 					}
 				}
 			} else new Stack((Player) e.getEntity()).start();
