@@ -64,8 +64,16 @@ import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(
-		name = "", rank = Rank.A, species = Species.OTHERS, explain = {
-		""
+		name = "별이 빛나는 밤", rank = Rank.L, species = Species.OTHERS, explain = {
+		"§7표식 §8- §e빛§f: 원거리 공격 시 §e달빛 표식§f을, 근거리 공격 시",
+		" §e별빛 표식§f을 적에게 남깁니다. §e달빛 표식§f은 적을 끌어당기고,",
+		" §e별빛 표식§f은 적을 중심으로 4칸 내 생명체를 끌어옵니다.",
+		" 아무 표식이나 4개를 쌓으면 표식을 터뜨려 시간을 점점 밤으로 바꾸고,",
+		" §8(§7달 표식 × $[STUN_DURATION]§8)§f초간 기절시키며 §8(§7별 표식 × $[DAMAGE_INCREASE]§8)%의",
+		" 추가 피해를 입힙니다. 같은 표식으로만 4개일 경우엔 6개로 취급합니다.",
+		"§7패시브 §8- §3밤하늘§f: 밤에는 스택 쿨타임이 빠르게 감소하고",
+		" 유성우 스킬을 사용할 수 있습니다.",
+		"§7검 우클릭 §8- §b유성우§f:"
 		})
 
 public class StarryNight extends Synergy {
@@ -76,7 +84,7 @@ public class StarryNight extends Synergy {
 	
 	public static final SettingObject<Double> STACK_COOL = 
 			synergySettings.new SettingObject<Double>(StarryNight.class, "stack-cooldown", 1.0,
-            "# 스택을 쌓을 때 내부 쿨타임") {
+            "# 표식을 쌓을 때 내부 쿨타임") {
 
         @Override
         public boolean condition(Double value) {
@@ -416,11 +424,49 @@ public class StarryNight extends Synergy {
 		private final int sharpnessEnchant;
 		private final double damage;
 		private final Predicate<Entity> predicate;
+		private int stacks = 0;
+		private boolean turns = true;
+		private RGB gradation;
 
-		private final RGB color;
 		private Location lastLocation;
 
-		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int sharpnessEnchant, double damage, RGB color) {
+		private final RGB gradation1 = RGB.of(3, 212, 168), gradation2 = RGB.of(8, 212, 178),
+				gradation3 = RGB.of(15, 213, 190), gradation4 = RGB.of(18, 211, 198), gradation5 = RGB.of(27, 214, 213),
+				gradation6 = RGB.of(29, 210, 220), gradation7 = RGB.of(30, 207, 225), gradation8 = RGB.of(24, 196, 223),
+				gradation9 = RGB.of(23, 191, 226), gradation10 = RGB.of(19, 182, 226),
+				gradation11 = RGB.of(16, 174, 227), gradation12 = RGB.of(13, 166, 228),
+				gradation13 = RGB.of(10, 159, 228), gradation14 = RGB.of(7, 151, 229),
+				gradation15 = RGB.of(3, 143, 229), gradation16 = RGB.of(1, 135, 230), gradation17 = RGB.of(1, 126, 222),
+				gradation18 = RGB.of(1, 118, 214), gradation19 = RGB.of(1, 109, 207), gradation20 = RGB.of(1, 101, 199),
+				gradation21 = RGB.of(1, 92, 191);
+		
+		private List<RGB> gradations = new ArrayList<RGB>() {
+			{
+				add(gradation1);
+				add(gradation2);
+				add(gradation3);
+				add(gradation4);
+				add(gradation5);
+				add(gradation6);
+				add(gradation7);
+				add(gradation8);
+				add(gradation9);
+				add(gradation10);
+				add(gradation11);
+				add(gradation12);
+				add(gradation13);
+				add(gradation14);
+				add(gradation15);
+				add(gradation16);
+				add(gradation17);
+				add(gradation18);
+				add(gradation19);
+				add(gradation20);
+				add(gradation21);
+			}
+		};
+		
+		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int sharpnessEnchant, double damage) {
 			super(4);
 			StarryNight.this.bullet = this;
 			setPeriod(TimeUnit.TICKS, 1);
@@ -429,7 +475,6 @@ public class StarryNight extends Synergy {
 			this.forward = arrowVelocity.multiply(10);
 			this.sharpnessEnchant = sharpnessEnchant;
 			this.damage = damage;
-			this.color = color;
 			this.lastLocation = startLocation;
 			this.predicate = new Predicate<Entity>() {
 				@Override
@@ -451,6 +496,12 @@ public class StarryNight extends Synergy {
 						}
 					}
 					return true;
+				}
+
+				@Override
+				public boolean apply(@Nullable Entity arg0) {
+					// TODO Auto-generated method stub
+					return false;
 				}
 			};
 		}
@@ -475,6 +526,14 @@ public class StarryNight extends Synergy {
 					return lastLocation.clone().add(unit.clone().multiply(cursor));
 				}
 			}; iterator.hasNext(); ) {
+				if (turns)
+					stacks++;
+				else
+					stacks--;
+				if (stacks % (gradations.size() - 1) == 0) {
+					turns = !turns;
+				}
+				gradation = gradations.get(stacks);
 				final Location location = iterator.next();
 				entity.setLocation(location);
 				if (!isRunning()) {
@@ -483,7 +542,6 @@ public class StarryNight extends Synergy {
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				if (type.isSolid()) {
-					startCooldown();
 					stop(true);
 					return;
 				}
@@ -495,20 +553,21 @@ public class StarryNight extends Synergy {
 						return;
 					}
 				}
-				ParticleLib.REDSTONE.spawnParticle(location, color);
+				ParticleLib.REDSTONE.spawnParticle(location, gradation);
 			}
 			lastLocation = newLocation;
 		}
 
 		@Override
 		protected void onEnd() {
-			startCooldown();
+			cooldown.start();
 			entity.remove();
 			StarryNight.this.bullet = null;
 		}
 
 		@Override
 		protected void onSilentEnd() {
+			cooldown.start();
 			entity.remove();
 			StarryNight.this.bullet = null;
 		}

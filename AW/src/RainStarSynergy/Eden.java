@@ -66,7 +66,7 @@ public class Eden extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
-			synergySettings.new SettingObject<Integer>(Eden.class, "cooldown", 80, "# 쿨타임") {
+			synergySettings.new SettingObject<Integer>(Eden.class, "cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -194,7 +194,7 @@ public class Eden extends Synergy implements ActiveHandler {
 					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
 					ParticleLib.REDSTONE.spawnParticle(loc, color);
 				}
-				if (count % 2 == 0) {
+				if (count % 4 == 0) {
 					for (Location loc : LocationUtil.getRandomLocations(LocationUtil.floorY(center), currentRadius, 1)) {
 						loc.add(0, 1, 0);
 						boolean special = false;
