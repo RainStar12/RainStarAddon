@@ -24,6 +24,7 @@ import daybreak.abilitywar.ability.list.EnergyBlocker;
 import daybreak.abilitywar.ability.list.Ferda;
 import daybreak.abilitywar.ability.list.Flector;
 import daybreak.abilitywar.ability.list.Loki;
+import daybreak.abilitywar.ability.list.Lunar;
 import daybreak.abilitywar.ability.list.Muse;
 import daybreak.abilitywar.ability.list.PenetrationArrow;
 import daybreak.abilitywar.ability.list.Reverse;
@@ -238,6 +239,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Vampire.class, Executioner.class, VampireCount.class);
 		SynergyFactory.registerSynergy(King.class, Emperor.class, Crown.class);
 		SynergyFactory.registerSynergy(ForbiddenFruit.class, Muse.class, Eden.class);
+		SynergyFactory.registerSynergy(Lunar.class, Stella.class, StarryNight.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -262,7 +264,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f68개 §7/ §d시너지 §f42개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f71개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -286,9 +288,9 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f68개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f71개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f42개 적용 완료.");
+			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

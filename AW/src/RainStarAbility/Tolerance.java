@@ -20,12 +20,12 @@ public class Tolerance extends AbilityBase {
 		super(participant);
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (!e.getCause().equals(DamageCause.PROJECTILE) && !e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_EXPLOSION) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK)) e.setCancelled(true);
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}

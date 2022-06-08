@@ -2,10 +2,12 @@ package RainStarSynergy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -16,8 +18,11 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Note.Tone;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -25,16 +30,17 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
@@ -45,6 +51,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -52,16 +59,18 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
-import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableMap;
+import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "별이 빛나는 밤", rank = Rank.L, species = Species.OTHERS, explain = {
@@ -71,9 +80,12 @@ import daybreak.google.common.collect.ImmutableMap;
 		" 아무 표식이나 4개를 쌓으면 표식을 터뜨려 시간을 점점 밤으로 바꾸고,",
 		" §8(§7달 표식 × $[STUN_DURATION]§8)§f초간 기절시키며 §8(§7별 표식 × $[DAMAGE_INCREASE]§8)%의",
 		" 추가 피해를 입힙니다. 같은 표식으로만 4개일 경우엔 6개로 취급합니다.",
-		"§7패시브 §8- §3밤하늘§f: 밤에는 스택 쿨타임이 빠르게 감소하고",
+		"§7패시브 §8- §3밤하늘§f: 밤에는 무작위 표식을 하나 더 추가해줍니다.",
 		" 유성우 스킬을 사용할 수 있습니다.",
-		"§7검 우클릭 §8- §b유성우§f:"
+		"§7검 들고 F §8- §b유성우§f: 바라보는 방향으로 별빛 검기를 날립니다.",
+		" 검기는 1초간 나아가며 §a근거리 피해§f를 입힙니다. $[COOLDOWN]",
+		" §7스킬 재사용§f시, 검기의 방향을 가장 가까운 대상에게로 변경하고",
+		" §a근거리 피해§f 대신 §b원거리 피해§f를 입힙니다. 지속 시간이 2초 연장됩니다."
 		})
 
 public class StarryNight extends Synergy {
@@ -81,6 +93,20 @@ public class StarryNight extends Synergy {
 	public StarryNight(Participant participant) {
 		super(participant);
 	}
+	
+	public static final SettingObject<Integer> COOLDOWN =
+			synergySettings.new SettingObject<Integer>(StarryNight.class, "cooldown", 12, 
+					"# 쿨타임", "# 주의! 쿨타임 감소를 33%까지만 받습니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
 	
 	public static final SettingObject<Double> STACK_COOL = 
 			synergySettings.new SettingObject<Double>(StarryNight.class, "stack-cooldown", 1.0,
@@ -161,11 +187,14 @@ public class StarryNight extends Synergy {
 		}
 	}
 	
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 33);
+	private static final Set<Material> swords;
+	private Bullet bullet = null;
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
+	private Random random = new Random();
 	private final int stun = (int) (STUN.getValue() * 20);
 	private final double increase = DAMAGE_INCREASE.getValue() * 0.01;
 	private final Map<Player, Stack> stackMap = new HashMap<>();
-	private final Random random = new Random();
 	private final double stackcool = STACK_COOL.getValue();
 	private static final RGB COLOR = RGB.of(235, 200, 21);
 	private static final Crescent crescent = Crescent.of(1, 20);
@@ -176,6 +205,39 @@ public class StarryNight extends Synergy {
 			Note.natural(1, Tone.A),
 			Note.sharp(1, Tone.C)
 	};
+	
+	static {
+		if (MaterialX.NETHERITE_SWORD.isSupported()) {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
+		} else {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
+		}
+	}
+	
+    @SubscribeEvent(onlyRelevant = true)
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
+    	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
+    		if (!cooldown.isCooldown()) {
+    			if (bullet != null) {
+    				if (!bullet.changed) {
+        				bullet.setCount(bullet.getCount() + 20);
+        				bullet.changed = true;
+        	    		if (ServerVersion.getVersion() >= 13) {
+        	    			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
+        	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, diamond);
+        	    		} else {
+        	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
+        	    		}
+        				SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(bullet.lastLocation, 1.5f, 0.75f);
+    				}
+        		} else {
+        			final ItemStack mainHand = getPlayer().getInventory().getItemInMainHand();
+					new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection().multiply(.4), mainHand.getEnchantmentLevel(Enchantment.DAMAGE_ALL), getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue()).start();
+        		}	
+    		}
+    		e.setCancelled(true);
+    	}
+    }
 	
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -197,6 +259,15 @@ public class StarryNight extends Synergy {
 						}
 						if (starstack == 4) starstack = 6;
 						if (moonstack == 4) moonstack = 6;
+						if (isNight(getPlayer().getWorld().getTime())) {
+							if (random.nextBoolean()) {
+								getPlayer().sendMessage("§6[§e!§6] §b별 §f스택 추가!");
+								starstack++;
+							} else {
+								getPlayer().sendMessage("§3[§b!§3] §e달 §f스택 추가!");
+								moonstack++;
+							}
+						}
 						e.setDamage(e.getDamage() * (starstack * increase));
 						Stun.apply(target, TimeUnit.TICKS, (moonstack * stun));
 						final Firework firework = getPlayer().getWorld().spawn(((Player) e.getEntity()).getEyeLocation(), Firework.class);
@@ -273,6 +344,15 @@ public class StarryNight extends Synergy {
 							}
 							if (starstack == 4) starstack = 6;
 							if (moonstack == 4) moonstack = 6;
+							if (isNight(getPlayer().getWorld().getTime())) {
+								if (random.nextBoolean()) {
+									getPlayer().sendMessage("§6[§e!§6] §b별 §f스택 추가!");
+									starstack++;
+								} else {
+									getPlayer().sendMessage("§3[§b!§3] §e달 §f스택 추가!");
+									moonstack++;
+								}
+							}
 							e.setDamage(e.getDamage() * (starstack * increase));
 							Stun.apply(target, TimeUnit.TICKS, (moonstack * stun));
 							final Firework firework = getPlayer().getWorld().spawn(((Player) e.getEntity()).getEyeLocation(), Firework.class);
@@ -424,11 +504,14 @@ public class StarryNight extends Synergy {
 		private final int sharpnessEnchant;
 		private final double damage;
 		private final Predicate<Entity> predicate;
+		private Set<LivingEntity> hitEntity = new HashSet<>();
+		private boolean changed = false;
+		
+		private Location lastLocation;
+		
 		private int stacks = 0;
 		private boolean turns = true;
 		private RGB gradation;
-
-		private Location lastLocation;
 
 		private final RGB gradation1 = RGB.of(3, 212, 168), gradation2 = RGB.of(8, 212, 178),
 				gradation3 = RGB.of(15, 213, 190), gradation4 = RGB.of(18, 211, 198), gradation5 = RGB.of(27, 214, 213),
@@ -465,14 +548,14 @@ public class StarryNight extends Synergy {
 				add(gradation21);
 			}
 		};
-		
+
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int sharpnessEnchant, double damage) {
-			super(4);
-			StarryNight.this.bullet = this;
+			super(20);
 			setPeriod(TimeUnit.TICKS, 1);
+			StarryNight.this.bullet = this;
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
-			this.forward = arrowVelocity.multiply(10);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-1.2, -1.2, -1.2, 1.2, 1.2, 1.2);
+			this.forward = arrowVelocity.multiply(2.5);
 			this.sharpnessEnchant = sharpnessEnchant;
 			this.damage = damage;
 			this.lastLocation = startLocation;
@@ -481,6 +564,7 @@ public class StarryNight extends Synergy {
 				public boolean test(Entity entity) {
 					if (entity instanceof ArmorStand) return false;
 					if (entity.equals(shooter)) return false;
+					if (hitEntity.contains(entity)) return false;
 					if (entity instanceof Player) {
 						if (!getGame().isParticipating(entity.getUniqueId())
 								|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -500,10 +584,14 @@ public class StarryNight extends Synergy {
 
 				@Override
 				public boolean apply(@Nullable Entity arg0) {
-					// TODO Auto-generated method stub
 					return false;
 				}
 			};
+		}
+		
+		@Override
+		protected void onStart() {
+			SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(shooter.getLocation(), 1.5f, 0.65f);
 		}
 
 		@Override
@@ -539,18 +627,11 @@ public class StarryNight extends Synergy {
 				if (!isRunning()) {
 					return;
 				}
-				final Block block = location.getBlock();
-				final Material type = block.getType();
-				if (type.isSolid()) {
-					stop(true);
-					return;
-				}
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
-						Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * 0.6));
-						getPlayer().setVelocity(VectorUtil.validateVector(new Vector(dx, 0, dz).normalize().multiply(0.6)));
-						stop(true);
-						return;
+						if (changed) Damages.damageArrow(livingEntity, getPlayer(), (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * 1.3));
+						else livingEntity.damage((float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant)) * 1.3, getPlayer());
+						hitEntity.add(livingEntity);
 					}
 				}
 				ParticleLib.REDSTONE.spawnParticle(location, gradation);
@@ -560,39 +641,20 @@ public class StarryNight extends Synergy {
 
 		@Override
 		protected void onEnd() {
-			cooldown.start();
-			entity.remove();
 			StarryNight.this.bullet = null;
+			entity.remove();
 		}
 
 		@Override
 		protected void onSilentEnd() {
-			cooldown.start();
-			entity.remove();
 			StarryNight.this.bullet = null;
+			entity.remove();
 		}
 
-		public class ArrowEntity extends CustomEntity implements Deflectable {
+		public class ArrowEntity extends CustomEntity {
 
 			public ArrowEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
-			}
-
-			@Override
-			public Vector getDirection() {
-				return forward.clone();
-			}
-
-			@Override
-			public void onDeflect(Participant deflector, Vector newDirection) {
-				stop(false);
-				final Player deflectedPlayer = deflector.getPlayer();
-				new Bullet(deflectedPlayer, lastLocation, newDirection, sharpnessEnchant, damage, color).start();
-			}
-
-			@Override
-			public ProjectileSource getShooter() {
-				return shooter;
 			}
 
 			@Override
