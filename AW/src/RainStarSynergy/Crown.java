@@ -43,6 +43,7 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -327,11 +328,13 @@ public class Crown extends Synergy implements ActiveHandler {
 			if (value == 3) realRange += 3;
 			for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, shieldbearer.getLocation(), realRange, realRange, predicate)) {
 				Damages.damageExplosion(damageable, getPlayer(), (float) (value == 4 ? damage * 1.3 : damage));
+				damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(shieldbearer.getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
 			}
 			if (value == 2) {
 				for (ArmorStand armorstands : armorStands) {
 					for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, armorstands.getLocation(), range, range, predicate)) {
 						Damages.damageExplosion(damageable, getPlayer(), (float) damage);
+						damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(shieldbearer.getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
 					}
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(armorstands.getLocation());
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(armorstands.getLocation());

@@ -74,18 +74,18 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "별이 빛나는 밤", rank = Rank.L, species = Species.OTHERS, explain = {
-		"§7표식 §8- §e빛§f: 원거리 공격 시 §e달빛 표식§f을, 근거리 공격 시",
-		" §e별빛 표식§f을 적에게 남깁니다. §e달빛 표식§f은 적을 끌어당기고,",
+		"§7표식 §8- §e빛§f: 적에게 원거리 공격 시 §e달빛 표식§f을, 근거리 공격 시",
+		" §e별빛 표식§f을 부여합니다. §e달빛 표식§f은 적을 끌어당기고,",
 		" §e별빛 표식§f은 적을 중심으로 4칸 내 생명체를 끌어옵니다.",
-		" 아무 표식이나 4개를 쌓으면 표식을 터뜨려 시간을 점점 밤으로 바꾸고,",
-		" §8(§7달 표식 × $[STUN_DURATION]§8)§f초간 기절시키며 §8(§7별 표식 × $[DAMAGE_INCREASE]§8)%의",
+		" 아무 표식 4개를 쌓으면 표식을 터뜨려 밤이 빠르게 다가오고,",
+		" §8(§7달 표식 × $[STUN]§8)§f초간 기절시키며 §8(§7별 표식 × $[DAMAGE_INCREASE]§8)§f%의",
 		" 추가 피해를 입힙니다. 같은 표식으로만 4개일 경우엔 6개로 취급합니다.",
 		"§7패시브 §8- §3밤하늘§f: 밤에는 무작위 표식을 하나 더 추가해줍니다.",
 		" 유성우 스킬을 사용할 수 있습니다.",
 		"§7검 들고 F §8- §b유성우§f: 바라보는 방향으로 별빛 검기를 날립니다.",
 		" 검기는 1초간 나아가며 §a근거리 피해§f를 입힙니다. $[COOLDOWN]",
-		" §7스킬 재사용§f시, 검기의 방향을 가장 가까운 대상에게로 변경하고",
-		" §a근거리 피해§f 대신 §b원거리 피해§f를 입힙니다. 지속 시간이 2초 연장됩니다."
+		" §7스킬 재사용§f시, 검기가 가장 가까운 대상에게 선회하고 ",
+		" 2초간 더 날아가며 §b원거리 피해§f를 입힙니다."
 		})
 
 public class StarryNight extends Synergy {
@@ -228,6 +228,7 @@ public class StarryNight extends Synergy {
         	    		} else {
         	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
         	    		}
+        	    		bullet.forward = VectorUtil.validateVector(LocationUtil.getNearestEntity(Player.class, bullet.lastLocation, predicate).getLocation().toVector().subtract((bullet.lastLocation.toVector()))).normalize().multiply(2.5);
         				SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(bullet.lastLocation, 1.5f, 0.75f);
     				}
         		} else {
@@ -415,7 +416,7 @@ public class StarryNight extends Synergy {
 		private List<Boolean> stacks = new ArrayList<>();
 		
 		private Stack(Player player, boolean stacktype) {
-			super(300);
+			super(20);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
@@ -500,7 +501,7 @@ public class StarryNight extends Synergy {
 
 		private final LivingEntity shooter;
 		private final CustomEntity entity;
-		private final Vector forward;
+		private Vector forward;
 		private final int sharpnessEnchant;
 		private final double damage;
 		private final Predicate<Entity> predicate;
