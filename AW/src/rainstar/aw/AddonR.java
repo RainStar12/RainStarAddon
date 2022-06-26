@@ -1,12 +1,17 @@
 package rainstar.aw;
 
+import java.util.Locale;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.cokes86.cokesaddon.ability.AddonAbilityFactory.SupportNMS;
+
 import RainStarAbility.*;
 import RainStarAbility.chronos.Chronos;
+import RainStarAbility.theonering.v1_12_R1.TheOneRing;
 import RainStarAbility.timestop.TimeStop;
 import RainStarSynergy.*;
 import RainStarSynergy.chance.Chance;
@@ -193,10 +198,11 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Medusa.class);
 		AbilityFactory.registerAbility(MadScientist.class);
 		AbilityList.registerAbility(MadScientist.class);
-		AbilityFactory.registerAbility("AW.src.RainStarAbility.theonering." + ServerVersion.getName() + ".TheOneRing");
-		AbilityList.registerAbility("AW.src.RainStarAbility.theonering." + ServerVersion.getName() + ".TheOneRing");
+		registerAbilities(TheOneRing.class);
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
+		AbilityFactory.registerAbility(Luciferium.class);
+		AbilityList.registerAbility(Luciferium.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -266,7 +272,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f72개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f73개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -288,9 +294,28 @@ public class AddonR extends Addon implements Listener {
 		
 	}
 	
+	public static void registerAbilities(Class<? extends AbilityBase> clazz) {
+		SupportNMS support = clazz.getAnnotation(SupportNMS.class);
+		if (support != null) {
+			try {
+				Class<? extends AbilityBase> clazz2 = Class.forName(clazz.getName().toLowerCase(Locale.ROOT)+"."+ServerVersion.getName()+clazz.getName()).asSubclass(clazz);
+				AbilityFactory.registerAbility(clazz2);
+				AbilityList.registerAbility(clazz2);
+				return;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("해당 버전에 호환되지 않습니다. : " + clazz.getName());
+				return;
+			}
+		}
+		System.out.println("해당 버전에 호환되지 않습니다. : " + clazz.getName());
+		
+		//Cokes님 코드 돚거
+	}
+	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f72개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f73개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}

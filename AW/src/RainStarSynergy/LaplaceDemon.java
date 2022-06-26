@@ -29,7 +29,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "라플라스의 악마", rank = Rank.S, species = Species.UNDEAD, explain = {
+@AbilityManifest(name = "라플라스의 악마", rank = Rank.S, species = Species.GOD, explain = {
 		"§7철괴 우클릭 §8- §c결정론§f: 주사위를 굴려 현재 상황에서 가장 필요한 값을",
 		" 도출해냅니다. 상단의 조건일수록 우선순위가 높습니다. $[COOLDOWN]",
 		" 내 피가 33% 이하일 경우 §7- §d재생",
@@ -37,7 +37,7 @@ import daybreak.google.common.base.Predicate;
 		" 최근 5초 내 내가 피해입었을 경우 §7- §8저항",
 		" 최근 5초 내 내가 화염 피해를 입었을 경우 §7- §c화염 저항",
 		" 주변 9칸 내 다른 플레이어가 있을 경우 §7- §b신속",
-		" 해당사항이 없을 경우 §7- §e성급함",
+		" 해당사항이 없을 경우 §7- §e성급함"
 		})
 
 public class LaplaceDemon extends Synergy implements ActiveHandler {

@@ -37,18 +37,18 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "선악과", rank = Rank.L, species = Species.OTHERS, explain = {
-		"철괴를 이용해 §b선§c악§f 스킬을 사용할 수 있습니다.",
-		"두 스킬은 §c쿨타임§f을 공유합니다. $[COOLDOWN]",
+		"철괴를 이용해 §b선§c악§f 스킬을 사용할 수 있습니다. 두 스킬은 §c쿨타임§f을 공유합니다.",
+		"스킬로 §d회복한§7 / §3없앤§f 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
+		"감소 효과는 $[MAX_STACK]스택까지 적용됩니다. $[COOLDOWN]",
 		"§7우클릭 §8- §b선§f: 바라보는 대상§8(§7없으면 자신§8)§f의 체력을 최대 체력까지 회복시킵니다.",
-		" 이 스킬로 §d회복§f한 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
 		" 추가로, 적에게 능력 사용 시 §d회복량§f의 절반만큼 §e흡수 체력§f을 획득합니다.",
 		"§7좌클릭 §8- §c악§f: 자신이 포함된 무작위 대상의 체력을 반 칸으로 만듭니다.",
-		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가합니다.",
-		" 이 스킬로 §3없앤§f 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다."
+		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가하고 나서 15초간 재생합니다."
 		})
 
 public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
@@ -67,6 +67,15 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
         @Override
         public String toString() {
             return Formatter.formatCooldown(getValue());
+        }
+    };
+    
+	public static final SettingObject<Integer> MAX_STACK = 
+			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "max-stack", 20,
+            "# 감소 효과 최대치") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
         }
     };
     
@@ -125,6 +134,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     private final double decreasevalue = DECREASE_COOLDOWN.getValue();
     private final int invduration = (int) (INV_DURATION.getValue() * 20);
     private final int incdamage = DAMAGE_UP.getValue();
+    private final int maxstack = MAX_STACK.getValue();
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 33);
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
@@ -155,6 +165,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 					if (!p.equals(getPlayer())) NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) + (decreasestack * 0.5)));
 				}
 			}
+			if (decreasestack > maxstack) decreasestack = maxstack;
 			cooldown.start();
 			cooldown.setCount((int) Math.max(1, cooldown.getCount() - (decreasestack * decreasevalue)));
 			return true;
@@ -192,6 +203,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
+			PotionEffects.REGENERATION.addPotionEffect(player, 300, 0, true);
 			HandlerList.unregisterAll(this);
 			ac.unregister();
 		}

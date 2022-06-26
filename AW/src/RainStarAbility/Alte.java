@@ -70,7 +70,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> SKILL_GET_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increase", 3.0,
+			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increase", 2.3,
 			"# 절박한 시도 간 받는 피해량 증가 배율") {
 
 		@Override
@@ -231,6 +231,7 @@ public class Alte extends AbilityBase {
     		if (random.nextInt(100) < evade) {
     			e.setCancelled(true);
     			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
+    			if (skill.isRunning()) skill.stop(false);
     		} else {
         		if (skill.isRunning()) {
         			e.setDamage(e.getDamage() * skillgetIncrease);

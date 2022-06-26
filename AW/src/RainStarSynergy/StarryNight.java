@@ -217,25 +217,23 @@ public class StarryNight extends Synergy {
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
-    		if (!cooldown.isCooldown()) {
-    			if (bullet != null) {
-    				if (!bullet.changed) {
-        				bullet.setCount(bullet.getCount() + 20);
-        				bullet.changed = true;
-        	    		if (ServerVersion.getVersion() >= 13) {
-        	    			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
-        	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, diamond);
-        	    		} else {
-        	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
-        	    		}
-        	    		bullet.forward = VectorUtil.validateVector(LocationUtil.getNearestEntity(Player.class, bullet.lastLocation, predicate).getLocation().toVector().subtract((bullet.lastLocation.toVector()))).normalize().multiply(2.5);
-        				SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(bullet.lastLocation, 1.5f, 0.75f);
-    				}
-        		} else {
-        			final ItemStack mainHand = getPlayer().getInventory().getItemInMainHand();
-					new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection().multiply(.4), mainHand.getEnchantmentLevel(Enchantment.DAMAGE_ALL), getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue()).start();
-        		}	
-    		}
+    		if (bullet != null) {
+    			if (!bullet.changed) {
+    				bullet.setCount(bullet.getCount() + 20);
+    				bullet.changed = true;
+    	    		if (ServerVersion.getVersion() >= 13) {
+    	    			BlockData diamond = MaterialX.DIAMOND_BLOCK.getMaterial().createBlockData();
+    	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, diamond);
+    	    		} else {
+    	    			ParticleLib.FALLING_DUST.spawnParticle(bullet.lastLocation.clone(), 0.1, 0.1, 0.1, 15, 0, new MaterialData(Material.DIAMOND_BLOCK));
+    	    		}
+    	    		bullet.forward = VectorUtil.validateVector(LocationUtil.getNearestEntity(Player.class, bullet.lastLocation, predicate).getLocation().toVector().subtract((bullet.lastLocation.toVector()))).normalize().multiply(2.5);
+    				SoundLib.BLOCK_END_PORTAL_FRAME_FILL.playSound(bullet.lastLocation, 1.5f, 1.35f);
+    			}
+        	} else if (!cooldown.isCooldown()) {
+        		final ItemStack mainHand = getPlayer().getInventory().getItemInMainHand();
+				new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection().multiply(.4), mainHand.getEnchantmentLevel(Enchantment.DAMAGE_ALL), getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue()).start();
+        	}	
     		e.setCancelled(true);
     	}
     }
@@ -290,6 +288,7 @@ public class StarryNight extends Synergy {
 							}
 						}.runTaskLater(AbilityWar.getPlugin(), 1L);
 						updateTime(getPlayer().getWorld());
+						stackMap.get(e.getEntity()).stop(false);
 					} else {
 						Location loc = target.getPlayer().getLocation();
 						for (int iteration = 0; iteration < 5; iteration++) {
@@ -375,6 +374,7 @@ public class StarryNight extends Synergy {
 								}
 							}.runTaskLater(AbilityWar.getPlugin(), 1L);
 							updateTime(getPlayer().getWorld());
+							stackMap.get(e.getEntity()).stop(false);
 						} else {
 							new CutParticle(particleSide).start();
 							particleSide *= -1;
@@ -447,9 +447,8 @@ public class StarryNight extends Synergy {
 			for (Boolean booleans : stacks) {
 				string = string + type.get(booleans);
 			}
-			hologram.setText(string.concat(Strings.repeat("§7?", 4 - stack)));
+			hologram.setText(string + Strings.repeat("§7?", 4 - stack));
 			if (stack >= 4) {
-				stop(false);
 				return true;
 			} else {
 				return false;
@@ -644,12 +643,14 @@ public class StarryNight extends Synergy {
 		protected void onEnd() {
 			StarryNight.this.bullet = null;
 			entity.remove();
+			cooldown.start();
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			StarryNight.this.bullet = null;
 			entity.remove();
+			cooldown.start();
 		}
 
 		public class ArrowEntity extends CustomEntity {
