@@ -129,6 +129,8 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().getKiller().equals(getPlayer()) && nextpill.isRunning()) {
 			SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.75f);
 			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), 0.25, 0, 0.25, 50, 1);
+			takecount.stop(false);
+			nextpill.stop(true);
 		}
 		if (e.getEntity().equals(getPlayer()) && deathbypill) {
 			e.setDeathMessage(e.getEntity().getName() + "님이 악마의 유혹에 잠식되고 말았습니다.");

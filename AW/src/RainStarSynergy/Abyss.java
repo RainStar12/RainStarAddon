@@ -28,7 +28,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -251,7 +250,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 						final Participant target = getGame().getParticipant(player);
 						if (target.hasAbility() && !target.getAbility().isRestricted()) {
 							final AbilityBase targetAbility = target.getAbility();
-							if (getGame() instanceof AbstractMix) {
+							if (targetAbility.getClass().equals(Mix.class)) {
 								final Mix targetMix = (Mix) targetAbility;
 								if (targetMix.hasAbility()) {
 									if (targetMix.hasSynergy()) {

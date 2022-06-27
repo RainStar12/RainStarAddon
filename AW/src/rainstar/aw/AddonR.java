@@ -198,11 +198,33 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Medusa.class);
 		AbilityFactory.registerAbility(MadScientist.class);
 		AbilityList.registerAbility(MadScientist.class);
-		registerAbilities(TheOneRing.class);
+		
+		AbilityFactory.registerAbility(TheOneRing.class);
+		AbilityList.registerAbility(TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
+		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
+		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
+		
+		
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
 		AbilityFactory.registerAbility(Luciferium.class);
 		AbilityList.registerAbility(Luciferium.class);
+		AbilityFactory.registerAbility(Suguri.class);
+		AbilityList.registerAbility(Suguri.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
