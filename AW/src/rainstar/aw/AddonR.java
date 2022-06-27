@@ -218,7 +218,7 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
 		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
 		
-		
+		//으악
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
 		AbilityFactory.registerAbility(Luciferium.class);
