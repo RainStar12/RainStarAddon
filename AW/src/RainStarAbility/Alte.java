@@ -29,6 +29,7 @@ import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
@@ -195,7 +196,7 @@ public class Alte extends AbilityBase {
 			bossBar.removeAll();
 		}
 		
-	};
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
     @SubscribeEvent(priority = 998)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

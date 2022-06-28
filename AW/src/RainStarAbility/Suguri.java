@@ -22,14 +22,15 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "스구리", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c히트§f: 히트가 차 있으면 대시할 수 없습니다. 5초간 대시하지 않으면",
-		" 천천히 줄어듭니다. 히트 수치만큼 최대 50%의 추가 피해를 입습니다.",
+		"§7패시브 §8- §c히트§f: §c히트§f 수치만큼 피해를 추가로 입습니다.",
+		" 100% 히트 이상에서 대시할 경우 체력을 (§c히트§f / 100)만큼 소모합니다.",
 		"§7공중에서 웅크리기 §8- §3대시§f: 바라보는 방향으로 날아갑니다. 히트 $[DASH_HEAT]% 증가.",
 		" 이후 다음 공격을 1회 회피할 수 있습니다. §8(§7중첩 불가§8)",
 		"§7철괴 우클릭 §8- §b액셀러레이터§f: 히트 수치를 0으로 만들고 $[ACCELERATOR_DURATION]초간 대시 거리가 증가합니다.",
@@ -152,13 +153,17 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
-		if (!getPlayer().isOnGround() && getPlayer().isSneaking() && heat <= 100 - dashheat) {
+		if (!getPlayer().isOnGround() && getPlayer().isSneaking() && System.currentTimeMillis() - lastdash >= 1000) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(accelerator.isRunning() ? 1.2 : 1.1).setY(0.15));
 			lastdash = System.currentTimeMillis();
 			if (!accelerator.isRunning()) heat = Math.min(100, heat + dashheat);
 			SoundLib.ENTITY_FIREWORK_ROCKET_LARGE_BLAST.playSound(getPlayer(), 1, 2);
 			ParticleLib.FLAME.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 50, 0.35);
 			evade = true;
+			
+			if (heat >= 100) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() - (heat * 0.01));
+			}
 		}
 	}
 	
@@ -188,7 +193,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		}
 		
 		if (e.getEntity().equals(getPlayer())) {
-			e.setDamage(e.getDamage() * (1 + (heat * 0.005)));
+			e.setDamage(e.getDamage() * (1 + (heat * 0.01)));
 		}
 	}
 	

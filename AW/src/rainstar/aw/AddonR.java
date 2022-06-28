@@ -199,32 +199,34 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(MadScientist.class);
 		AbilityList.registerAbility(MadScientist.class);
 		
-		AbilityFactory.registerAbility(TheOneRing.class);
-		AbilityList.registerAbility(TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
-		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
-		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
+    	if (ServerVersion.getVersion() == 12) {
+    		AbilityFactory.registerAbility(TheOneRing.class);
+    		AbilityList.registerAbility(TheOneRing.class);
+    	} else if (ServerVersion.getVersion() == 13) {
+    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+    		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+    	} else if (ServerVersion.getVersion() == 14) {
+    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
+    		AbilityList.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
+    	} else if (ServerVersion.getVersion() == 15) {
+    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
+    		AbilityList.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
+    	} else if (ServerVersion.getVersion() == 16) {
+    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+    		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+    	} else if (ServerVersion.getVersion() == 17) {
+    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
+    		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
+    	}
 		
-		//으악
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
 		AbilityFactory.registerAbility(Luciferium.class);
 		AbilityList.registerAbility(Luciferium.class);
 		AbilityFactory.registerAbility(Suguri.class);
 		AbilityList.registerAbility(Suguri.class);
+		AbilityFactory.registerAbility(Mazochist.class);
+		AbilityList.registerAbility(Mazochist.class);
 		
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
@@ -294,7 +296,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f73개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f75개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -337,7 +339,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f73개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f75개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}

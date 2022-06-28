@@ -119,10 +119,10 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
     	}
     	
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	public AbilityTimer takecount = new AbilityTimer() {
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
