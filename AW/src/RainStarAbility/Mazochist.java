@@ -47,6 +47,15 @@ public class Mazochist extends AbilityBase {
         }
     };
 	
+	public static final SettingObject<Integer> HEAL_AMOUNT = 
+			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 10,
+            "# 스택당 매 틱 회복량", "# 단위: 값 / 10000", "# 10 = 0.001", "# 초당 0.02 회복") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Integer> PERCENTAGE = 
 			abilitySettings.new SettingObject<Integer>(Mazochist.class, "more-damage-percentage", 70,
             "# 스킬 발동 시 추가 피해량", "# 단위: %") {
@@ -73,6 +82,7 @@ public class Mazochist extends AbilityBase {
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final double percentage = PERCENTAGE.getValue() * 0.01;
     private final int duration = DURATION.getValue() * 20;
+    private final double heal = HEAL_AMOUNT.getValue() / 10000.0;
 	private ActionbarChannel ac = newActionbarChannel();
 	private int stack = 0;
 	
@@ -107,10 +117,10 @@ public class Mazochist extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), stack * 0.001, RegainReason.CUSTOM);
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), stack * heal, RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + stack);
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + (stack * heal));
 			}
 			
 			if (getPlayer().getHealth() == getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) stack = 0;

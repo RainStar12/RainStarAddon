@@ -101,7 +101,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
     	@Override
     	public void onStart() {
     		bossBar = Bukkit.createBossBar("§c히트 §e" + df.format(heat) + "§c%", BarColor.RED, BarStyle.SOLID);
-    		bossBar.setProgress(heat * 0.01);
+    		bossBar.setProgress(Math.min(1, heat * 0.01));
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
     	}
@@ -120,6 +120,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			} else {
 				bossBar.setColor(BarColor.RED);
 				bossBar.setTitle("§c히트 §e" + df.format(heat) + "§c%");
+				bossBar.setProgress(Math.min(1, heat * 0.01));
 			}
     	}
     	
@@ -156,7 +157,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		if (!getPlayer().isOnGround() && getPlayer().isSneaking() && System.currentTimeMillis() - lastdash >= 1000) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(accelerator.isRunning() ? 1.2 : 1.1).setY(0.15));
 			lastdash = System.currentTimeMillis();
-			if (!accelerator.isRunning()) heat = Math.min(100, heat + dashheat);
+			if (!accelerator.isRunning()) heat += dashheat;
 			SoundLib.ENTITY_FIREWORK_ROCKET_LARGE_BLAST.playSound(getPlayer(), 1, 2);
 			ParticleLib.FLAME.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 50, 0.35);
 			evade = true;

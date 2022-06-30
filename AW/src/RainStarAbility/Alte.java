@@ -165,6 +165,13 @@ public class Alte extends AbilityBase {
 		}
 	}
 	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			ac.update("§c영구 공격력§f: §e" + (damageincrease * stack) + "§f%");
+		}
+	}
+	
 	private AbilityTimer skill = new AbilityTimer(60) {
 		
 		@Override
@@ -193,6 +200,7 @@ public class Alte extends AbilityBase {
 				ParticleLib.DAMAGE_INDICATOR.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
 				Healths.setHealth(getPlayer(), 1);
 			}
+			cooldown.start();
 			bossBar.removeAll();
 		}
 		
@@ -206,7 +214,7 @@ public class Alte extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-    	if (!descriptionChecked.contains(damager)) {
+    	if (!descriptionChecked.contains(damager) && e.getEntity().equals(getPlayer())) {
     		descriptionChecked.add(damager);
     		Participant p = getGame().getParticipant(damager);
     		AbilityBase ab = p.getAbility();
@@ -248,7 +256,6 @@ public class Alte extends AbilityBase {
         				stack++;
         				ac.update("§c영구 공격력§f: §e" + (damageincrease * stack) + "§f%");
         				success = true;
-        				cooldown.start();
         			}
         			skill.stop(false);
         		} else {
@@ -265,7 +272,7 @@ public class Alte extends AbilityBase {
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
-    		if (!cooldown.isCooldown() && !skill.isRunning()) {
+    		if (!cooldown.isRunning() && !skill.isRunning()) {
     			skill.start();
     		}
     		e.setCancelled(true);

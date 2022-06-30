@@ -175,6 +175,9 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
 			show();
+		}
+		
+		if (update == Update.RESTRICTION_CLEAR) {
 			crazyupdater.start();
 		}
 	}
