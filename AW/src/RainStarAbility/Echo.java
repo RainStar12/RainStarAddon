@@ -33,11 +33,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "메아리", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §c카운터§f: 다른 플레이어에게 근접 피해를 받을 때",
-		" 대상에게 0.5초 내로 근접 피해를 입힐 시 피해량만큼 회복하고",
+		" 대상에게 0.75초 내로 근접 피해를 입힐 시 피해량만큼 회복하고",
 		" 대상이 준 피해량을 되돌려줍니다. $[COOLDOWN]",
 		" 이때 반격까지 걸린 시간에 반비례해 반격 피해가 1.5배에서 0.1배까지 변동됩니다.",
 		"§7쿨타임 패시브 §8- §c리플렉스§f: 쿨타임 도중 카운터 조건을 충족할 시,",
-		" 카운터 효과가 발동되지 않고 쿨타임이 5초씩 줄어듭니다."})
+		" 카운터 효과가 발동되지 않고 쿨타임이 $[DECREASE]초씩 줄어듭니다."})
 
 @Tips(tip = {
         "들이닥치는 근접 피해를 되돌려주는 반격 근접 능력입니다.",
@@ -81,11 +81,6 @@ public class Echo extends AbilityBase {
 		super(participant);
 	}
 	
-	private final ActionbarChannel ac = newActionbarChannel();
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
-	private int stack = 0;
-	private static final RGB color = RGB.of(189, 189, 189);
-	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Echo.class,
 			"cooldown", 30, "# 반격 쿨타임") {
 		@Override
@@ -99,11 +94,29 @@ public class Echo extends AbilityBase {
 		}
 	};
 	
+	public static final SettingObject<Integer> DECREASE = abilitySettings.new SettingObject<Integer>(Echo.class,
+			"cooldown-decrease", 5, "# 쿨타임 감소치") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	private final ActionbarChannel ac = newActionbarChannel();
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
+	private int stack = 0;
+	private static final RGB color = RGB.of(189, 189, 189);
+	private final int decrease = DECREASE.getValue();
 	private Player target;
 	private double dmg;
 	private double finaldmg;
 	
-	private final AbilityTimer counter = new AbilityTimer(10) {
+	private final AbilityTimer counter = new AbilityTimer(15) {
 		
 		@Override
 		public void run(int count) {
@@ -155,7 +168,7 @@ public class Echo extends AbilityBase {
 		if (target != null) {
 			if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
 				if (cool.isRunning()) {
-					cool.setCount(Math.max(cool.getCount() - 5, 0));
+					cool.setCount(Math.max(cool.getCount() - decrease, 0));
 				} else {
 					particle.start();
 					getPlayer().setHealth(Math.min(getPlayer().getHealth() + finaldmg, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
@@ -174,16 +187,16 @@ public class Echo extends AbilityBase {
 					} else if (counter.getCount() <= 5) {
 						e.setDamage(e.getDamage() + (dmg * 0.75));
 						getPlayer().sendMessage("§b>>> §c0.75배 대미지 반격!");
-					} else if (counter.getCount() <= 6) {
+					} else if (counter.getCount() <= 7) {
 						e.setDamage(e.getDamage() + (dmg * 1));
 						getPlayer().sendMessage("§b>>> §c1배 대미지 반격!");
-					} else if (counter.getCount() <= 7) {
+					} else if (counter.getCount() <= 8) {
 						e.setDamage(e.getDamage() + (dmg * 1.2));
 						getPlayer().sendMessage("§b>>> §c1.2배 대미지 반격!");
-					} else if (counter.getCount() <= 8) {
+					} else if (counter.getCount() <= 10) {
 						e.setDamage(e.getDamage() + (dmg * 1.3));
 						getPlayer().sendMessage("§b>>> §c1.3배 대미지 반격!");
-					} else if (counter.getCount() <= 9) {
+					} else if (counter.getCount() <= 12) {
 						e.setDamage(e.getDamage() + (dmg * 1.4));
 						getPlayer().sendMessage("§b>>> §c1.4배 대미지 반격!");
 					} else {

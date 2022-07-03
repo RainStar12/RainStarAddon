@@ -241,6 +241,7 @@ public class Alte extends AbilityBase {
     			e.setCancelled(true);
     			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
     			if (skill.isRunning()) skill.stop(false);
+    			getPlayer().setNoDamageTicks(20);
     		} else {
         		if (skill.isRunning()) {
         			e.setDamage(e.getDamage() * skillgetIncrease);

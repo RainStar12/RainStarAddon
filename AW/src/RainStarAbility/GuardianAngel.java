@@ -169,6 +169,15 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
+	public static final SettingObject<Double> RELOAD_DURATION 
+	= abilitySettings.new SettingObject<Double>(GuardianAngel.class,
+			"reload-duration", 1.5, "# 재장전 시간") {
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+	};
+	
 	private final double moremove = MORE_MOVE.getValue();
 	private boolean holyshield = false;
 	private final Set<Participant> gods = new HashSet<>();
@@ -185,6 +194,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	private Location center = null;
 	private double currentRadius;
 	private int sound = 0;
+	private final int reloaddur = (int) (RELOAD_DURATION.getValue() * 20);
 	private static final Note F = Note.natural(0, Tone.F), FS = Note.sharp(0, Tone.F), HF = Note.natural(1, Tone.F), HGS = Note.sharp(1, Tone.G), HAS = Note.sharp(1, Tone.A), HC = Note.natural(1, Tone.C), HCS = Note.sharp(1, Tone.C),
 			HDS = Note.sharp(1, Tone.D), HFS = Note.sharp(2, Tone.F);
 	private static final RGB color = RGB.of(150, 254, 254);
@@ -789,7 +799,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onEnd() {
-			final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 20) : 20;
+			final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * reloaddur) : reloaddur;
 			reload = new AbilityTimer(reloadCount) {
 				private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 

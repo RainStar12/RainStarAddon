@@ -203,8 +203,13 @@ public class AddonR extends Addon implements Listener {
     		AbilityFactory.registerAbility(TheOneRing.class);
     		AbilityList.registerAbility(TheOneRing.class);
     	} else if (ServerVersion.getVersion() == 13) {
-    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
-    		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+    		if (ServerVersion.getRelease() == 1) {
+        		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);
+        		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R1.TheOneRing.class);	
+    		} else {
+        		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
+        		AbilityList.registerAbility(RainStarAbility.theonering.v1_13_R2.TheOneRing.class);
+    		}
     	} else if (ServerVersion.getVersion() == 14) {
     		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
     		AbilityList.registerAbility(RainStarAbility.theonering.v1_14_R1.TheOneRing.class);
@@ -212,8 +217,16 @@ public class AddonR extends Addon implements Listener {
     		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
     		AbilityList.registerAbility(RainStarAbility.theonering.v1_15_R1.TheOneRing.class);
     	} else if (ServerVersion.getVersion() == 16) {
-    		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
-    		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+    		if (ServerVersion.getRelease() == 1) {
+        		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+        		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R1.TheOneRing.class);
+    		} else if (ServerVersion.getRelease() == 2) {
+        		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
+        		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R2.TheOneRing.class);
+    		} else {
+        		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
+        		AbilityList.registerAbility(RainStarAbility.theonering.v1_16_R3.TheOneRing.class);
+    		}
     	} else if (ServerVersion.getVersion() == 17) {
     		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
     		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
@@ -305,13 +318,23 @@ public class AddonR extends Addon implements Listener {
     	if (ServerVersion.getVersion() == 12) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_12_R1.Clown.class, Alice.class, Joker.class);
     	} else if (ServerVersion.getVersion() == 13) {
-    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_13_R1.Clown.class, Alice.class, Joker.class);
+    		if (ServerVersion.getRelease() == 1) {
+    			SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_13_R1.Clown.class, Alice.class, Joker.class);	
+    		} else {
+    			SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_13_R2.Clown.class, Alice.class, Joker.class);
+    		}
     	} else if (ServerVersion.getVersion() == 14) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_14_R1.Clown.class, Alice.class, Joker.class);
     	} else if (ServerVersion.getVersion() == 15) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_15_R1.Clown.class, Alice.class, Joker.class);
     	} else if (ServerVersion.getVersion() == 16) {
-    		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_16_R1.Clown.class, Alice.class, Joker.class);
+    		if (ServerVersion.getRelease() == 1) {
+    			SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_16_R1.Clown.class, Alice.class, Joker.class);
+    		} else if (ServerVersion.getRelease() == 2) {
+    			SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_16_R2.Clown.class, Alice.class, Joker.class);
+    		} else {
+    			SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_16_R3.Clown.class, Alice.class, Joker.class);
+    		}
     	} else if (ServerVersion.getVersion() == 17) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_17_R1.Clown.class, Alice.class, Joker.class);
     	}

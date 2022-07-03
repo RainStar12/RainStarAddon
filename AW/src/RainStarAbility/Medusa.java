@@ -131,11 +131,14 @@ public class Medusa extends AbilityBase {
 		public void run(int count) {
 			for (Participant p : getGame().getParticipants()) {
 				Player player = p.getPlayer();
-				if (LocationUtil.getEntityLookingAt(Player.class, player, range, predicate).equals(getPlayer())) {
-					final long current = System.currentTimeMillis();
-					if (current - lastPetri.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown && !looktimers.containsKey(player)) {
-						new LookTimer(player).start();
-					}
+				if (LocationUtil.getEntityLookingAt(Player.class, player, range, predicate) != null) {
+					Player lookplayer = LocationUtil.getEntityLookingAt(Player.class, player, range, predicate);
+					if (lookplayer.equals(getPlayer())) {
+						final long current = System.currentTimeMillis();
+						if (current - lastPetri.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown && !looktimers.containsKey(player)) {
+							new LookTimer(player).start();
+						}
+					}	
 				}
 			}
 			

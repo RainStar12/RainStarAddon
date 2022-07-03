@@ -57,11 +57,11 @@ public class RandomNumberControl extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
-			"duration", 3, "# 능력 지속시간") {
+	public static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(RandomNumberControl.class,
+			"duration", 3.5, "# 능력 지속시간") {
 		
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 		
@@ -84,7 +84,7 @@ public class RandomNumberControl extends AbilityBase {
 	private double topDefence = 99999;
 	private double lastTopDamage = 0;
 	private double lastTopDefence = 99999;
-	private final int duration = DURATION.getValue();
+	private final double duration = DURATION.getValue();
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(60) * PERIOD.getValue() : PERIOD.getValue());
 	
 	private final AbilityTimer attackActionbarUpdater = new AbilityTimer(5) {
@@ -148,7 +148,7 @@ public class RandomNumberControl extends AbilityBase {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer skill = new AbilityTimer(duration * 20) {
+	private final AbilityTimer skill = new AbilityTimer((int) (duration * 20)) {
 		
 		@Override
     	public void onStart() {
@@ -182,7 +182,7 @@ public class RandomNumberControl extends AbilityBase {
 		if (!e.isCancelled()) {
 			if (e.getDamager().equals(getPlayer())) {
 				if (available) {
-					if (skill.isRunning()) skill.setCount(duration * 20);
+					if (skill.isRunning()) skill.setCount((int) (duration * 20));
 					else skill.start();
 					available = false;
 					periodtimer.start();
@@ -208,7 +208,7 @@ public class RandomNumberControl extends AbilityBase {
 				Projectile projectile = (Projectile) e.getDamager();
 				if (getPlayer().equals(projectile.getShooter())) {
 					if (available) {
-						if (skill.isRunning()) skill.setCount(duration * 20);
+						if (skill.isRunning()) skill.setCount((int) (duration * 20));
 						else skill.start();
 						available = false;
 						periodtimer.start();
