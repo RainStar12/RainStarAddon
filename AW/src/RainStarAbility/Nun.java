@@ -228,9 +228,9 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (random.nextInt(100) < chance) clazz = getRandomGodSynergy();
 			else clazz = getRandomGodAbility();
 			try {
-				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextDouble(1.5), 0, random.nextDouble(1.5)));
-				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextDouble(1.5), 0, random.nextDouble(1.5)));
-				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextDouble(1.5), 0, random.nextDouble(1.5)));
+				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextInt(16) * 0.1, 0, random.nextInt(16) * 0.1));
+				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextInt(16) * 0.1, 0, random.nextInt(16) * 0.1));
+				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation().add(random.nextInt(16) * 0.1, 0, random.nextInt(16) * 0.1));
 				getPlayer().getWorld().strikeLightningEffect(getPlayer().getLocation());
 				godability = AbilityBase.create(clazz, getParticipant());
 				godability.setRestricted(false);
