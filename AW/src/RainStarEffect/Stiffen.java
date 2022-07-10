@@ -3,11 +3,9 @@ package RainStarEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -28,8 +26,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_BAN, EffectType.ABILITY_RESTRICTION,
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"이동, 공격, 능력 사용, 체력 회복이 불가합니다.",
-		"모든 피해를 80% 경감하여 받습니다."
+		"이동, 공격, 체력 회복이 불가능합니다."
 })
 public class Stiffen extends AbstractGame.Effect implements Listener {
 
@@ -66,13 +63,6 @@ public class Stiffen extends AbstractGame.Effect implements Listener {
 	public void onRegainHealth(EntityRegainHealthEvent e) {
 		if (participant.getPlayer().equals(e.getEntity())) {
 			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onEntityDamage(EntityDamageEvent e) {
-		if (participant.getPlayer().equals(e.getEntity())) {
-			e.setDamage(e.getDamage() * 0.2);
 		}
 	}
 	

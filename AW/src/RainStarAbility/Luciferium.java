@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "루시페륨", rank = Rank.S, species = Species.OTHERS, explain = {
 		"웅크린 채 철괴 좌클릭으로 약을 복용할 수 있습니다.",
-		"처음 복용 시 영구적인 §6힘 $[STRENGTH]§f, §b신속 $[SPEED]§f, §8저항 $[RESISTANCE]§f 버프를 획득합니다.",
+		"복용 시 영구적인 §6힘 $[STRENGTH]§f, §b신속 $[SPEED]§f, §8저항 $[RESISTANCE]§f 버프를 획득합니다.",
 		"그러나 복용 이후에는 $[MAX_NOT_TAKE]초 내로 약을 다시 복용해야만 합니다. §8(§7실패 시 §c사망§8)",
 		"복용까지 걸린 시간으로 다음 복용 시간이 줄어듭니다.",
 		"적 처치 시, 약의 효과가 완전히 풀립니다."

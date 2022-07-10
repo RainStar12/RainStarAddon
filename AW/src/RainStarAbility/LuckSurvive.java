@@ -24,7 +24,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "이걸 사네", rank = Rank.A, species = Species.HUMAN, explain = {
 		"피해받고 나서 체력이 §a5%§f 이하일 경우 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
-		"체력이 10% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
+		"체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
 		"§b[§7아이디어 제공자§b] §5railohd"
 		})
 public class LuckSurvive extends AbilityBase {
@@ -80,7 +80,7 @@ public class LuckSurvive extends AbilityBase {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-			if (getPlayer().getHealth() <= maxHP * 0.1) {
+			if (getPlayer().getHealth() <= maxHP * 0.2) {
 				e.setDamage(e.getDamage() * decrease);
 			}
 			

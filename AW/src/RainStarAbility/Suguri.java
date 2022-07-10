@@ -33,9 +33,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		" 100% 히트 이상에서 대시할 경우 체력을 (§c히트§f / 100)만큼 소모합니다.",
 		"§7공중에서 웅크리기 §8- §3대시§f: 바라보는 방향으로 날아갑니다. 히트 $[DASH_HEAT]% 증가.",
 		" 이후 다음 공격을 1회 회피할 수 있습니다. §8(§7중첩 불가§8)",
-		"§7철괴 우클릭 §8- §b액셀러레이터§f: 히트 수치를 0으로 만들고 $[ACCELERATOR_DURATION]초간 대시 거리가 증가합니다.",
-		" 또한 히트 수치가 오르지 않으며, 공격 시 1~6의 추가 피해를 입힙니다. $[COOLDOWN]",
-		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"
+		"§7철괴 우클릭 §8- §b액셀러레이터§f: $[ACCELERATOR_DURATION]초간 히트 수치가 0이 됩니다.",
+		" 대시 거리가 증가하며, 공격에 1~6의 추가 피해를 줍니다. $[COOLDOWN]"
 		})
 
 public class Suguri extends AbilityBase implements ActiveHandler {

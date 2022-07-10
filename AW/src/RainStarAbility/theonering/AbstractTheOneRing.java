@@ -44,7 +44,7 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "절대반지", rank = Rank.S, species = Species.HUMAN, explain = {
 		"철괴 우클릭 시 §7은신§f하여 능력의 지정 대상이 되지 않습니다.",
-		"§7은신§f 간 공격력이 $[INCREASE]%, 신속 $[AMPLIFIER]를 받습니다.",
+		"§7은신§f 간 공격력이 $[INCREASE]% 증가하고, 신속 $[AMPLIFIER] 효과를 얻습니다.",
 		"또한 지속적으로 §5광분 수치§f가 쌓입니다. $[RANGE]칸 내 플레이어가 있다면 4배로 쌓입니다.",
 		"§5광분 수치§f가 최대치에 달하면 무작위로 화면이 전환되고, 피해를 입습니다.",
 		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§oR§eE§aC§bK §7적용§8)",
@@ -151,14 +151,12 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 	protected abstract void show0();
 
 	private void hide() {
-		if (hiding) return;
 		this.hiding = true;
 		getParticipant().attributes().TARGETABLE.setValue(false);
 		hide0();
 	}
 
 	private void show() {
-		if (!hiding) return;
 		this.hiding = false;
 		getPlayer().removePotionEffect(PotionEffectType.SPEED);
 		getParticipant().attributes().TARGETABLE.setValue(true);
