@@ -48,7 +48,7 @@ public class Mazochist extends AbilityBase {
     };
 	
 	public static final SettingObject<Integer> HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 10,
+			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 50,
             "# 스택당 매 틱 회복량", "# 단위: 값 / 10000", "# 10 = 0.001", "# 초당 0.02 회복") {
         @Override
         public boolean condition(Integer value) {

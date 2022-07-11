@@ -1,5 +1,6 @@
 package RainStarSynergy;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,9 @@ import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -45,12 +49,14 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -59,16 +65,16 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "거울", rank = Rank.S, species = Species.OTHERS, explain = {
+		"§7패시브 §8- §b내구도§f: §2리턴§f 효과를 발동할 때마다 §b내구도§f가 $[DURABILITY] 감소합니다.",
+		" 반격 대상이 없는 피해의 경우 §b내구도§f를 2배로 감소시킵니다.",
+		" §b내구도§f 전부 사용 시 모든 스킬에 쿨타임을 가집니다. $[COOLDOWN]",
 		"§7패시브 §8- §2리턴§f: 어떠한 피해를 입던 방어된 만큼의 피해량의 $[RETURN]%를",
 		" 피해를 입힌 대상에게 1초 후 다시 되돌려줍니다.",
 		" 이후 §c반격§f으로 입힌 피해의 $[REGEN]%만큼 §d체력을 회복§f합니다.",
-		" 반격 대상이 존재하지 않는 자연적 피해는 내게 다시 §c반격§f됩니다.",
 		"§7검 휘두르기 §8- §3에코§f: 발사체를 바라보고 튕겨낼 수 있습니다.",
 		" $[ARROW_COUNT]번 튕겨낼 때마다 방어 계열 버프 중 하나를 무작위로 얻습니다.",
 		" 혹은 근접 피해를 빠르게 $[DAMAGE_COUNT]번 되받아칠 때에도 이 효과를 얻습니다.",
-		" §7저항 1 15초§f, §3방어력 3칸 10초 상승§f, §e흡수 체력 2.5칸 영구 증가§f,",
-		" §c화염 저항 1분§f, §b다음 피해 1회 무시§f, §a30초 내 불사의 토템 1회 발동,§f",
-		" §6상태이상 즉시 해제 및 다음 상태이상 1회 무시"
+		" 효과 발동 시마다, §b내구도§f가 $[FIX]만큼 수리됩니다."
 })
 
 public class Mirror extends Synergy {
@@ -76,6 +82,49 @@ public class Mirror extends Synergy {
 	public Mirror(Participant participant) {
 		super(participant);
 	}
+	
+	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"cooldown", 40, "# 쿨타임") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+	
+	public static final SettingObject<Integer> DURABILITY = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"durability-decrease", 1, "# 내구도 감소") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> FIX = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"fix", 5, "# 내구도 수리") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> MAX_DURABILITY = synergySettings.new SettingObject<Integer>(Mirror.class,
+			"max-durability", 30, "# 총 내구도") {
+		
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
 	
 	public static final SettingObject<Integer> ARROW_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
 			"arrow-count", 2, "# 화살을 튕겨내는 횟수") {
@@ -88,7 +137,7 @@ public class Mirror extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
-			"damage-count", 3, "# 근접 공격을 반격하는 횟수") {
+			"damage-count", 4, "# 근접 공격을 반격하는 횟수") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -120,6 +169,7 @@ public class Mirror extends Synergy {
 	protected void onUpdate(AbilityBase.Update update) {
 		if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 			actionbar.start();
+			durabilityupdater.start();
 		}
 	}
 	
@@ -135,6 +185,12 @@ public class Mirror extends Synergy {
 	private final int returns = RETURN.getValue();
 	private final int regen = REGEN.getValue();
 	private ActionbarChannel ac = newActionbarChannel();
+	private final int maxDurability = MAX_DURABILITY.getValue();
+	private final int decDurability = DURABILITY.getValue();
+	private final int fixDurability = FIX.getValue();
+	private double durability = maxDurability;
+	private final DecimalFormat df = new DecimalFormat("0");
+	private BossBar bossBar = null;
 	
 	private Player target;
 	
@@ -159,6 +215,49 @@ public class Mirror extends Synergy {
 			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 		}
 	}
+	
+	private final AbilityTimer cooldown = new AbilityTimer(COOLDOWN.getValue() * 20) {
+		
+		@Override
+		public void onEnd() {
+			durability = maxDurability;
+			durabilityupdater.start();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer durabilityupdater = new AbilityTimer() {
+		
+    	@Override
+    	public void onStart() {
+    		bossBar = Bukkit.createBossBar("§b내구도 §f: §7" + df.format(durability), BarColor.WHITE, BarStyle.SOLID);
+    		bossBar.setProgress(durability / maxDurability);
+    		bossBar.addPlayer(getPlayer());
+    		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
+    	}
+    	
+    	@Override 
+		public void run(int count) {
+    		if (cooldown.isRunning()) {
+    			bossBar.setColor(BarColor.RED);
+    			bossBar.setProgress(cooldown.getCount() / (double) (COOLDOWN.getValue() * 20));
+    		} else {
+        		bossBar.setTitle("§b내구도 §f: §7" + df.format(durability));
+        		bossBar.setProgress(durability / maxDurability);
+    		}
+    	}
+    	
+		@Override
+		public void onEnd() {
+			bossBar.removeAll();
+		}
+
+		@Override
+		public void onSilentEnd() {
+			bossBar.removeAll();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private final AbilityTimer actionbar = new AbilityTimer() {
 		
@@ -224,15 +323,97 @@ public class Mirror extends Synergy {
 	}
 	
 	@SubscribeEvent
-	public void onEntityEvent(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer())) {
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer()) && !e.isCancelled()) {
 			if (block) {
 				SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer().getLocation());
 				e.setCancelled(true);
 				block = false;	
 			} else {
-				if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK) &&
-						!e.getCause().equals(DamageCause.MAGIC) && !e.getCause().equals(DamageCause.PROJECTILE)) {
+				if (!cooldown.isRunning()) {
+					if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK) &&
+							!e.getCause().equals(DamageCause.MAGIC) && !e.getCause().equals(DamageCause.PROJECTILE)) {
+						durability = Math.max(0, durability - (decDurability * 2));
+						if (durability <= 0) {
+							SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, 1);
+							SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, 0.5f);
+							SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, 0.75f);
+							ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 50, 0.5, MaterialX.GLASS);
+							cooldown.start();
+						}
+					}	
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+		if (!cooldown.isRunning()) {
+			if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
+				target = (Player) e.getDamager();
+				counter.start();	
+			}
+			if (target != null) {
+				if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
+					damagecount++;
+					if (damagecount >= needDamageCount) {
+						roulette.start();
+						damagecount = 0;
+					}
+					SoundLib.BLOCK_ANVIL_LAND.playSound(target.getLocation(), 1, 2f);
+				}
+			}
+			
+			if (e.getEntity().equals(getPlayer()) && e.getDamager() != null && !getPlayer().equals(e.getDamager())) {
+				if (e.getDamager() instanceof Projectile) {
+					Projectile p = (Projectile) e.getDamager();
+					if (p.getShooter() != null) {
+						if (p.getShooter() instanceof Damageable && !getPlayer().equals(p.getShooter())) {
+							Damageable d = (Damageable) p.getShooter();
+							double returnDamage = (e.getDamage() - e.getFinalDamage());
+							new AbilityTimer(20) {
+								
+								@Override
+								public void onEnd() {
+									onSilentEnd();
+								}
+								
+								@Override
+								public void onSilentEnd() {
+									if (d != null) {
+										if (e.getCause().equals(DamageCause.MAGIC)) Damages.damageMagic(d, getPlayer(), true, (float) returnDamage);
+										else Damages.damageArrow(d, getPlayer(), (float) returnDamage);
+										final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
+										Bukkit.getPluginManager().callEvent(event);
+										if (!event.isCancelled() && !getPlayer().isDead()) {
+											Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+										}
+										ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
+										SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
+										durability = Math.max(0, durability - decDurability);
+										if (durability <= 0) {
+											SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 1);
+											SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 0.5f);
+											SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 0.75f);
+											ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 50, 0.5, MaterialX.GLASS);
+											cooldown.start();
+										}
+									}
+								}
+								
+							}.setPeriod(TimeUnit.TICKS, 1).start();	
+						}
+					}
+				} else if (e.getDamager() instanceof Damageable) {
+					Damageable d = (Damageable) e.getDamager();
+					double returnDamage = (e.getDamage() - e.getFinalDamage());
 					new AbilityTimer(20) {
 						
 						@Override
@@ -242,23 +423,42 @@ public class Mirror extends Synergy {
 						
 						@Override
 						public void onSilentEnd() {
-							getPlayer().setNoDamageTicks(0);
-							getPlayer().damage(e.getDamage(), getPlayer());
-							ParticleLib.SWEEP_ATTACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0));
-							SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation());
+							if (d != null) {
+								d.damage((returnDamage * ((double) returns / 100)), getPlayer());
+								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
+								Bukkit.getPluginManager().callEvent(event);
+								if (!event.isCancelled() && !getPlayer().isDead()) {
+									Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+								}
+								ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
+								SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
+								durability = Math.max(0, durability - decDurability);
+								if (durability <= 0) {
+									SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 1);
+									SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 0.5f);
+									SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer().getLocation(), 1, 0.75f);
+									ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 50, 0.5, MaterialX.GLASS);
+									cooldown.start();
+								}
+							}
 						}
 						
 					}.setPeriod(TimeUnit.TICKS, 1).start();	
 				}
-			}
+			}	
 		}
 	}
 	
-	@SubscribeEvent
-	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-		onEntityEvent(e);
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerInteract(PlayerInteractEvent e) {
+		if (!cooldown.isRunning()) {
+			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getItem() != null && swords.contains(e.getItem().getType())) {
+				if (!deflect(LocationUtil.getEntityLookingAt(Entity.class, getPlayer(), 5, .75, null), true)) {
+					deflect(LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), getPlayer(), 5, .75,  null), true);
+				}
+			}	
+		}
 	}
-	
 	
 	private final AbilityTimer roulette = new AbilityTimer(7) {
 		
@@ -267,6 +467,7 @@ public class Mirror extends Synergy {
 		
 		@Override
 		protected void onStart() {
+			durability = Math.min(maxDurability, durability + fixDurability);
 			number = random.nextInt(7);
 		}
 		
@@ -387,96 +588,6 @@ public class Mirror extends Synergy {
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 3).register();
-	
-	
-	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		onEntityEvent(e);
-		if (!getPlayer().equals(e.getDamager())) {
-			if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
-				target = (Player) e.getDamager();
-				counter.start();	
-			}
-			if (target != null) {
-				if (e.getEntity().equals(target.getPlayer()) && e.getDamager().equals(getPlayer()) && counter.isRunning()) {
-					damagecount++;
-					if (damagecount >= needDamageCount) {
-						roulette.start();
-						damagecount = 0;
-					}
-					SoundLib.BLOCK_ANVIL_LAND.playSound(target.getLocation(), 1, 2f);
-				}
-			}
-			if (e.getEntity().equals(getPlayer()) && e.getDamager() != null) {
-				if (e.getDamager() instanceof Projectile) {
-					Projectile p = (Projectile) e.getDamager();
-					if (p.getShooter() != null) {
-						if (p.getShooter() instanceof Damageable && !getPlayer().equals(p.getShooter())) {
-							Damageable d = (Damageable) p.getShooter();
-							double returnDamage = (e.getDamage() - e.getFinalDamage());
-							new AbilityTimer(20) {
-								
-								@Override
-								public void onEnd() {
-									onSilentEnd();
-								}
-								
-								@Override
-								public void onSilentEnd() {
-									if (d != null) {
-										if (e.getCause().equals(DamageCause.MAGIC)) Damages.damageMagic(d, getPlayer(), true, (float) returnDamage);
-										else Damages.damageArrow(d, getPlayer(), (float) returnDamage);
-										final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
-										Bukkit.getPluginManager().callEvent(event);
-										if (!event.isCancelled() && !getPlayer().isDead()) {
-											Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
-										}
-										ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
-										SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
-									}
-								}
-								
-							}.setPeriod(TimeUnit.TICKS, 1).start();	
-						}
-					}
-				} else if (e.getDamager() instanceof Damageable) {
-					Damageable d = (Damageable) e.getDamager();
-					double returnDamage = (e.getDamage() - e.getFinalDamage());
-					new AbilityTimer(20) {
-						
-						@Override
-						public void onEnd() {
-							onSilentEnd();
-						}
-						
-						@Override
-						public void onSilentEnd() {
-							if (d != null) {
-								d.damage((returnDamage * ((double) returns / 100)), getPlayer());
-								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
-								Bukkit.getPluginManager().callEvent(event);
-								if (!event.isCancelled() && !getPlayer().isDead()) {
-									Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
-								}
-								ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
-								SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
-							}
-						}
-						
-					}.setPeriod(TimeUnit.TICKS, 1).start();	
-				}
-			}	
-		}
-	}
-	
-	@SubscribeEvent(onlyRelevant = true)
-	private void onPlayerInteract(PlayerInteractEvent e) {
-		if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getItem() != null && swords.contains(e.getItem().getType())) {
-			if (!deflect(LocationUtil.getEntityLookingAt(Entity.class, getPlayer(), 5, .75, null), true)) {
-				deflect(LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), getPlayer(), 5, .75,  null), true);
-			}
-		}
-	}
 	
 	private boolean deflect(Entity entity, boolean playerDirection) {
 		if (entity == null) return false;

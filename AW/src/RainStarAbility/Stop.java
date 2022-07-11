@@ -39,7 +39,7 @@ public class Stop extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"cooldown", 70, "# 멈춰! 쿨타임") {
+			"cooldown", 30, "# 멈춰! 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -52,7 +52,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> STIFFEN_DURATION = abilitySettings.new SettingObject<Double>(Stop.class,
-			"stiffen-duration", 3.5, "# 지속시간") {
+			"stiffen-duration", 1.5, "# 지속시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -119,8 +119,31 @@ public class Stop extends AbilityBase {
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (e.getEntity().equals(getPlayer()) && !getPlayer().equals(damager) && damager != null) {
-			attackers.add(damager);
+			new AttackTimer(damager).start();
 		}
+	}
+	
+	public class AttackTimer extends AbilityTimer {
+		
+		private final Player player;
+		
+		public AttackTimer(Player player) {
+			super(TaskType.REVERSE, 10);
+			setPeriod(TimeUnit.SECONDS, 1);
+			attackers.add(player);
+			this.player = player;
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			attackers.remove(player);
+		}
+		
 	}
 	
 }

@@ -51,6 +51,13 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 이 피해로 사망할 경우 피해량의 2배의 체력으로 부활하고, 폭발을 일으킵니다.",
 		" 또한 영구 공격력 §c$[DAMAGE_INCREASE]%§f를 획득합니다. $[COOLDOWN]",
 		" 다만 자폭에 실패할 경우 체력이 §c§l1§f이 됩니다."
+		},
+		summarize = {
+		"대상 당 한 번 피해를 받으면 대상의 §a능력 설명 한 줄§f을 읽습니다.",
+		"모든 피해를 더 많이 받지만 피해를 §b회피§f할 가능성이 있습니다.",
+		"§7검 들고 F키§f로 다음 피해를 §c매우 강력하게§f 받지만 이 피해로 사망할 경우",
+		"폭발과 함께 부활하며 §c영구 공격력§f을 얻습니다.",
+		"사망에 실패한다면 체력이 §c§l1§f이 됩니다."
 		})
 
 public class Alte extends AbilityBase {

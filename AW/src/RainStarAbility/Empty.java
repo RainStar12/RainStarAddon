@@ -21,9 +21,13 @@ import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
+import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -34,16 +38,22 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-@AbilityManifest(name = "[ ]", rank = Rank.S, species = Species.OTHERS, explain = {
+import RainStarSynergy.Abyss;
+
+@AbilityManifest(name = "[ ]", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§a---------------------------------",
 		"$(EXPLAIN)",
 		"§a---------------------------------",
 		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 복제합니다.",
 		"웅크린 채 철괴 좌클릭으로 복제를 해제할 수 있습니다. $[MIN_COOLDOWN]",
 		"이때 복제 중이던 능력이 쿨타임일 경우 절반의 쿨타임을 더합니다.",
-		"복제한 능력의 주인을 죽일 때마다 총 §c쿨타임§f이 25%씩 감소합니다."
+		"능력을 복제한 후 $[MAX_WAIT]초 이내에 복제 해제를 시도하면 해제하지 않고 대신",
+		"능력을 분해하여 영구적인 공격력 $[INCREASE]%를 획득 가능합니다.",
+		"대신 능력의 원 주인으로부터 다시는 능력을 복제하지 못합니다."
 })
 
 @Tips(tip = {
@@ -84,7 +94,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
-	public static final SettingObject<Integer> MIN_COOLDOWN = abilitySettings.new SettingObject<Integer>(Empty.class, "cooldown", 30, "# 최소 쿨타임") {
+	public Empty(Participant participant) {
+		super(participant);
+	}
+	
+	public static final SettingObject<Integer> MIN_COOLDOWN = abilitySettings.new SettingObject<Integer>(Empty.class, 
+			"cooldown", 30, "# 최소 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -96,6 +111,26 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 			return Formatter.formatCooldown(getValue()) + " + n";
 		}
 
+	};
+	
+	public static final SettingObject<Integer> MAX_WAIT = abilitySettings.new SettingObject<Integer>(Empty.class,
+			"dismantle-available", 10, "# 능력 분해가 가능한 최대 시간") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> INCREASE = abilitySettings.new SettingObject<Integer>(Empty.class, 
+			"damage-increase", 10, "# 영구 공격력 증가 (단위: %)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
 	};
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
@@ -118,37 +153,38 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
+	private double increase = 1;
+	private final DecimalFormat df = new DecimalFormat("0.0");
 	private AbilityBase ability;
-	private int killcount = 0;
-	private Player killtarget;
 	private ActionbarChannel ac = newActionbarChannel();
+	private final int maxwait = MAX_WAIT.getValue() * 20;
+	private final int minCooldown = MIN_COOLDOWN.getValue();
+	private final Cooldown cooldown = new Cooldown(MIN_COOLDOWN.getValue(), "공백");
+	private Set<Player> dismantled = new HashSet<>();
+	private Player abilityowner;
 	
-	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (getPlayer().equals(e.getEntity().getKiller())) {
-			if (killtarget != null) {
-				if (killtarget.equals(e.getEntity())) {
-					killcount++;
-					ac.update("§c킬 카운트§7: §f" + killcount);
-				}
-			}
-		}
-	}
-
 	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
 		@Override
 		public String toString() {
+			final StringJoiner joiner = new StringJoiner("\n");
 			if (ability == null) {
-				return "능력을 복제할 수 있습니다.".toString();
+				if (increase > 1) {
+					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
+					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
+				}
+				joiner.add("능력을 복제할 수 있습니다.");
 			} else {
-				final StringJoiner joiner = new StringJoiner("\n");
+				if (increase > 1) {
+					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
+					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
+				}
 				joiner.add("§a복제한 능력 §f| §7[§b" + ability.getName() + "§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getExplanation(); iterator.hasNext();) {
 					joiner.add("§f" + iterator.next());
 				}
-				return joiner.toString();
 			}
+			return joiner.toString();
 		}
 	};
 	
@@ -157,37 +193,53 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		return "[" + (ability != null ? (ability.getName() + "]") : " ]");
 	}
 
-	private final int minCooldown = MIN_COOLDOWN.getValue();
-	private final Cooldown cooldown = new Cooldown(MIN_COOLDOWN.getValue(), "공백");
-
-	public Empty(Participant participant) {
-		super(participant);
-	}
-
+	private AbilityTimer dismantle = new AbilityTimer(maxwait) {
+		
+		@Override
+		public void run(int count) {
+			ac.update("§b분해 가능§7: §e" + df.format(count / (double) 20) + "§f초");
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			ac.update(null);
+		}
+		
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK) {
-			if (getPlayer().isSneaking()) {
-				if (ability != null) {
-					try {
-						int cooltimeSum = 0;
-						if (Empty.this.ability != null) {
-							for (GameTimer timer : Empty.this.ability.getRunningTimers()) {
-								if (timer instanceof Cooldown.CooldownTimer) {
-									cooltimeSum += timer.getCount();
-								}
-							}
-							Empty.this.ability.destroy();
+		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && getPlayer().isSneaking() && ability != null) {
+			try {
+				int cooltimeSum = 0;
+				if (Empty.this.ability != null) {
+					for (GameTimer timer : Empty.this.ability.getRunningTimers()) {
+						if (timer instanceof Cooldown.CooldownTimer) {
+							cooltimeSum += timer.getCount();
 						}
-						Empty.this.ability = null;
-						killtarget = null;
-						getParticipant().getPlayer().sendMessage("§b당신의 능력이 §f[  ]§b으로 되돌아왔습니다.");
-						cooldown.setCooldown((int) ((minCooldown + (cooltimeSum / 2)) * (Math.pow(0.75, killcount))));
-						cooldown.start();
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
+					Empty.this.ability.destroy();
 				}
+				Empty.this.ability = null;
+				getParticipant().getPlayer().sendMessage("§3[§b!§3] §b당신의 능력이 §f[  ]§b으로 되돌아왔습니다.");
+				cooldown.setCooldown((int) (minCooldown + (cooltimeSum / 2)));
+				if (dismantle.isRunning()) {
+					increase += (INCREASE.getValue() * 0.01);
+					dismantle.stop(false);
+					getParticipant().getPlayer().sendMessage("§4[§c!§4] §c능력을 분해하여 공격력이 상시 상승합니다.");
+					SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 0.8f, 0.5f);
+					SoundLib.BLOCK_LAVA_EXTINGUISH.playSound(getPlayer().getLocation(), 1, 0.5f);
+					SoundLib.BLOCK_ANVIL_DESTROY.playSound(getPlayer().getLocation(), 1, 0.75f);
+					dismantled.add(abilityowner);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		if (ability != null) {
@@ -197,58 +249,63 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (!cooldown.isCooldown()) {
 					Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate);
 					if (player != null) {
-						final Participant target = getGame().getParticipant(player);
-						if (target.hasAbility() && !target.getAbility().isRestricted()) {
-							final AbilityBase targetAbility = target.getAbility();
-							if (getGame() instanceof AbstractMix) {
-								final Mix targetMix = (Mix) targetAbility;
-								if (targetMix.hasAbility()) {
-									if (targetMix.hasSynergy()) {
-										try {
-											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
-											this.ability.setRestricted(false);
-											getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-											killtarget = player;
-										} catch (ReflectiveOperationException e) {
-											e.printStackTrace();
-										}
-									} else {
-										final Mix myMix = (Mix) getParticipant().getAbility();
-										final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
-										
-										try {
-											Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
-											if (clazz != Empty.class) {
-												if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
-												if (clazz == Kuro.class) clazz = KuroEye.class;
-												this.ability = AbilityBase.create(clazz, getParticipant());
+						if (dismantled.contains(player)) {
+							getPlayer().sendMessage("§4[§c!§4] §c대상의 능력을 분해한 적이 있습니다.");
+						} else {
+							final Participant target = getGame().getParticipant(player);
+							if (target.hasAbility() && !target.getAbility().isRestricted()) {
+								final AbilityBase targetAbility = target.getAbility();
+								if (getGame() instanceof AbstractMix) {
+									final Mix targetMix = (Mix) targetAbility;
+									if (targetMix.hasAbility()) {
+										if (targetMix.hasSynergy()) {
+											try {
+												this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
 												this.ability.setRestricted(false);
-												getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-											} else {
-												getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
+												getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+												abilityowner = player;
+											} catch (ReflectiveOperationException e) {
+												e.printStackTrace();
 											}
-										} catch (ReflectiveOperationException e) {
-											e.printStackTrace();
+										} else {
+											final Mix myMix = (Mix) getParticipant().getAbility();
+											final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
+											
+											try {
+												Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
+												if (clazz != Empty.class) {
+													if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
+													if (clazz == Kuro.class) clazz = KuroEye.class;
+													this.ability = AbilityBase.create(clazz, getParticipant());
+													this.ability.setRestricted(false);
+													getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+													abilityowner = player;
+												} else {
+													getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
+												}
+											} catch (ReflectiveOperationException e) {
+												e.printStackTrace();
+											}
 										}
+
 									}
 
-								}
-
-							} else {
-								try {
-									Class<? extends AbilityBase> clazz = targetAbility.getClass();
-									if (clazz != Empty.class) {
-										if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
-										if (clazz == Kuro.class) clazz = KuroEye.class;
-										this.ability = AbilityBase.create(clazz, getParticipant());
-										this.ability.setRestricted(false);
-										getPlayer().sendMessage("§b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
-										killtarget = player;
-									} else {
-										getPlayer().sendMessage("§b공백은 복제할 수 없습니다.");
+								} else {
+									try {
+										Class<? extends AbilityBase> clazz = targetAbility.getClass();
+										if (clazz != Empty.class) {
+											if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
+											if (clazz == Kuro.class) clazz = KuroEye.class;
+											this.ability = AbilityBase.create(clazz, getParticipant());
+											this.ability.setRestricted(false);
+											getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
+											abilityowner = player;
+										} else {
+											getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
+										}
+									} catch (ReflectiveOperationException e) {
+										e.printStackTrace();
 									}
-								} catch (ReflectiveOperationException e) {
-									e.printStackTrace();
 								}
 							}
 						}
@@ -265,6 +322,21 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (ability instanceof TargetHandler) {
 			((TargetHandler) ability).TargetSkill(material, entity);
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() != null) {
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();	
+			}
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) {
+			e.setDamage(e.getDamage() * increase);
 		}
 	}
 
@@ -289,7 +361,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("§c킬 카운트§7: §f" + killcount);
 			if (ability != null) {
 				ability.setRestricted(false);
 			}

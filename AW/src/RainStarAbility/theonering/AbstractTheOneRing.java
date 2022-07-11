@@ -49,6 +49,11 @@ import daybreak.google.common.base.Predicate;
 		"§5광분 수치§f가 최대치에 달하면 무작위로 화면이 전환되고, 피해를 입습니다.",
 		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§oR§eE§aC§bK §7적용§8)",
 		"§3[§b종족야생 콜라보 능력§3]"
+		},
+		summarize = {
+		"철괴 우클릭으로 §7은신§f 상태를 ON / OFF 가능합니다.",
+		"§7은신§f 중에는 §c공격력 증가§f 및 §b신속§f 버프를 획득합니다.",
+		"다만 §7은신§f 상태를 오래 지속할 경우 피해를 입습니다."
 		})
 
 public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHandler {

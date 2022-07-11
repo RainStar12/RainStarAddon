@@ -90,7 +90,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE = synergySettings.new SettingObject<Integer>(Abyss.class, "harm-increase", 10, "# 분해 시 쿨타임 증가율 (단위: %)") {
+	public static final SettingObject<Integer> DAMAGE_INCREASE = synergySettings.new SettingObject<Integer>(Abyss.class, "harm-increase", 10, "# 받는 피해량 증가") {
 
 		@Override
 		public boolean condition(Integer value) {
