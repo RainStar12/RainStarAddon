@@ -63,6 +63,12 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴를 든 채 F키§f를 눌러 §a가루§f의 상세 효과를 보며 조정 가능합니다.",
 		"§e낮§f에는 쿨타임이 더 빠르게 끝납니다.",
 		"§b[§7아이디어 제공자§b] §3lLeeShin"
+		},
+		summarize = {
+		"§7철괴 들고 F키§f로 적들에게 줄 §3상태이상§f의 종류를 정할 수 있습니다.",
+		"§7철괴 우클릭§f으로 저공 비행하며 일정 시간 주위에 §3상태이상§f을 뿌립니다.",
+		"교체하지 않아도 §3상태이상§f은 자동으로 다음 효과로 넘어갑니다.",
+		"§e낮§f에는 쿨타임이 더 빠르게 끝납니다. $[COOLDOWN]"
 		})
 
 public class Butterfly extends AbilityBase implements ActiveHandler {

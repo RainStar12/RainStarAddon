@@ -22,6 +22,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "다단히트", rank = Rank.A, species = Species.HUMAN, explain = {
 		"근접 공격 피해를 입힐 때 $[DAMAGE_CONFIG]%의 피해로 $[COUNT_CONFIG]번 공격합니다.",
+		"다단히트 효과 발동 중에는 효과를 중복 발동할 수 없습니다.",
 		"또한 피해를 입을 때마다 $[INV_CONFIG]초간 무적 상태가 됩니다."
 		})
 
@@ -66,7 +67,7 @@ public class MultiHit extends AbilityBase {
 	private final int invincibility = (int) (INV_CONFIG.getValue() * 20);
 	
 	public static final SettingObject<Double> INV_CONFIG = abilitySettings.new SettingObject<Double>(MultiHit.class,
-			"invulnerable-time", 0.5, "# 무적 시간", "# 단위는 초입니다.") {
+			"invulnerable-time", 0.4, "# 무적 시간", "# 단위는 초입니다.") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -76,7 +77,7 @@ public class MultiHit extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(MultiHit.class,
-			"damage-count", 2, "# 타격 횟수") {
+			"damage-count", 3, "# 타격 횟수") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -95,7 +96,7 @@ public class MultiHit extends AbilityBase {
 
 	};
 	
-	private final AbilityTimer attacking = new AbilityTimer(COUNT_CONFIG.getValue()) {
+	private final AbilityTimer attacking = new AbilityTimer(Math.max(COUNT_CONFIG.getValue() - 1, 1)) {
 
 		@Override
 		protected void run(int arg0) {
@@ -132,7 +133,7 @@ public class MultiHit extends AbilityBase {
 			dmg = e.getDamage() * (multiply / (double) 100);
 			e.setDamage(dmg);
 			target = (LivingEntity) e.getEntity();
-			attacking.start();
+			if (COUNT_CONFIG.getValue() >= 2) attacking.start();
 		}	
 	}
 	

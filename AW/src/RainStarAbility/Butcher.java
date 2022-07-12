@@ -29,6 +29,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		" 적을수록 §4강하게§8(§7최대 1.6배§8)§f 공격합니다.",
 		"§7킬 §8- §c카니발리즘§f: 대상을 죽였을 경우, 현재 남은 체력만큼 체력을 회복합니다.",
 		" 이때 최대 체력을 넘는 회복량은 §e흡수 체력§f으로 얻습니다."
+		},
+		summarize = {
+		"적 체력에 반비례하여 대상에게 피해를 §c더§f 혹은 §a덜§f 입힙니다.",
+		"적을 죽일 때마다 현재 체력만큼 체력을 §d회복§f합니다.",
+		"최대 체력을 넘는 회복량은 §e흡수 체력§f이 됩니다."
 		})
 
 public class Butcher extends AbilityBase {

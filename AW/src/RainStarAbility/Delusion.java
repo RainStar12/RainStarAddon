@@ -32,6 +32,9 @@ import daybreak.google.common.collect.ImmutableSet;
 @AbilityManifest(name = "나 방금 강해지는 상상함", rank = Rank.C, species = Species.OTHERS, explain = {
 		"검 우클릭 시 공격력이 $[DAMAGE_UP]% 증가합니다.",
 		"0.5초에 거쳐 공격력은 빠르게 줄어듭니다. $[COOLDOWN]"
+		},
+		summarize = {
+		"§7검 우클릭 시§f 매우 짧은 시간동안 공격력이 폭증합니다."
 		})
 
 public class Delusion extends AbilityBase {

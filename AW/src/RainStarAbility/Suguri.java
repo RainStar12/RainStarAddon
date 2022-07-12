@@ -34,7 +34,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "스구리", rank = Rank.S, species = Species.HUMAN, explain = {
 		"낙하 피해를 받지 않습니다.",
-		"§7패시브 §8- §c히트§f: §c히트§f 수치만큼 피해를 추가로 입습니다.",
+		"§7패시브 §8- §c히트§f: §c히트§f가 §e100§c%§f 이상이면 받는 피해량이 비례하여 증가합니다.",
 		"§7공중에서 웅크리기 §8- §3대시§f: 바라보는 방향을 향해 지속 대시합니다.",
 		" 대시하는 동안 §c히트§f 수치가 기하급수적으로 상승하며, 액셀 쿨타임이 멈춥니다.",
 		" 대시를 끝낼 때 현재 §c히트§f 수치에 비례해 잠시 §e기절§f합니다.",
@@ -61,7 +61,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Suguri.class, "cooldown", 100,
+			abilitySettings.new SettingObject<Integer>(Suguri.class, "cooldown", 120,
             "# 액셀 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -95,7 +95,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			if (getPlayer().isFlying()) {
 				if (cooldown.isRunning()) cooldown.setCount(cooldown.getCount());
 				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(accelerator.isRunning() ? 1.4 : 1.25));
-				heat += (count * 0.01);
+				heat += (count * 0.015);
 			} else stop(false);
 		}
 		
@@ -219,7 +219,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		}
 		
 		if (e.getEntity().equals(getPlayer())) {
-			e.setDamage(e.getDamage() * (1 + (heat * 0.01)));
+			if (heat > 100) e.setDamage(e.getDamage() * (1 + ((heat - 100) * 0.01)));
 		}
 	}
 	
