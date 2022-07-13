@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -229,13 +230,6 @@ public class PrecisionAiming extends AbilityBase {
 		}
 		
 		@EventHandler
-		public void onProjectileHit(ProjectileHitEvent e) {
-			if (e.getEntity().equals(arrow)) {
-				stop(false);
-			}
-		}
-		
-		@EventHandler
 		public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 			if (e.getDamager().equals(arrow) && getPlayer().getHealth() <= 4 && e.getEntity() instanceof Player) {
 				if (stack == 0) {
@@ -265,6 +259,24 @@ public class PrecisionAiming extends AbilityBase {
 							}.runTaskLater(AbilityWar.getPlugin(), 1L);
 						}
 					}	
+				}
+			}
+		}
+		
+		@EventHandler
+		public void onProjectileHit(ProjectileHitEvent e) {
+			if (e.getEntity().equals(arrow)) {
+				if (e.getHitBlock() != null) stop(false);
+				else {
+					this.pause();
+					arrow.setGravity(true);
+					arrow.setGlowing(false);
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							stop(false);
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 1L);
 				}
 			}
 		}

@@ -307,7 +307,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				getPlayer().setHealth(1);
 				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 60, 1, false);
 				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
-				getPlayer().sendMessage("§8[§7HIDDEN§8] §7§o예수께서 이르시되 나는 부활이요 생명이니 나를 믿는 자는 죽어도 살렷고");
+				getPlayer().sendMessage("§8[§7HIDDEN§8] §7§o예수께서 이르시되 나는 부활이요 생명이니 나를 믿는 자는 죽어도 살겠고");
 				getPlayer().sendMessage("§8[§7HIDDEN§8] §f위험한 상황에서도 기도하였고, 믿음을 보답받았습니다.");
 				getPlayer().sendMessage("§8[§7HIDDEN§8] §b믿음의 보답§f을 달성하였습니다.");
 				SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
