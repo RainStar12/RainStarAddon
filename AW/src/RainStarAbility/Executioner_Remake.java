@@ -14,11 +14,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
+@AbilityManifest(name = "집행관 R", rank = Rank.L, species = Species.HUMAN, explain = {
+		"검 들고 F키를 누르면 §a고문 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
+		"",
+		"§2[§a고문§2]§f "
+		})
 public class Executioner_Remake extends AbilityBase {
 	
 	public Executioner_Remake(Participant participant) {
@@ -26,6 +34,8 @@ public class Executioner_Remake extends AbilityBase {
 	}
 	
 	private Map<Player, AttackStack> damageMap = new HashMap<>();
+	
+	
 	
 	private class AttackStack extends AbilityTimer implements Listener {
 		
@@ -72,7 +82,7 @@ public class Executioner_Remake extends AbilityBase {
 				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
-			if (getPlayer().equals(damager)) {
+			if (getPlayer().equals(damager) && !e.getEntity().equals(damager)) {
 				damage += e.getFinalDamage();
 				hologram.setText("§4" + df.format(damage));
 			}
