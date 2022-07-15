@@ -240,11 +240,8 @@ public class Detection extends AbilityBase {
 						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
 						cool.start();
 					} else {
-						if (stacker.containsKey(p)) {
-							stacker.put(p, stacker.get(p) + 1);	
-						} else {
-							stacker.put(p, 1);
-						}
+						if (stacker.containsKey(p)) stacker.put(p, stacker.get(p) + 1);	
+						else stacker.put(p, 1);
 						Participant target = getGame().getParticipant(p);
 						new AbilityTimer((duration * 20) + ((stacker.get(p) - 1) * 20)) {
 
@@ -278,7 +275,8 @@ public class Detection extends AbilityBase {
 						}.setPeriod(TimeUnit.TICKS, 1).start();		
 						SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
 						SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
-						getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §2간파§f하였습니다.");
+						int nowduration = duration + stacker.get(p) - 1;
+						getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §a" + nowduration + "§f초 §2간파§f하였습니다.");
 						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
 						
 						cool.start();

@@ -195,7 +195,7 @@ public class Eden extends Synergy implements ActiveHandler {
 					ParticleLib.REDSTONE.spawnParticle(loc, color);
 				}
 				if (count % 4 == 0) {
-					for (Location loc : LocationUtil.getRandomLocations(LocationUtil.floorY(center), currentRadius, 1)) {
+					for (Location loc : LocationUtil.getRandomLocations(center, currentRadius, 1)) {
 						loc.add(0, 1, 0);
 						boolean special = false;
 						if (random.nextInt(10) == 0) special = true;

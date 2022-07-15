@@ -82,7 +82,7 @@ import daybreak.google.common.base.Strings;
 		name = "펭귄", rank = Rank.S, species = Species.ANIMAL, explain = {
 		"§7철괴 좌클릭 §8- §b얼음 슬라이딩§f: 바라보는 방향 10칸으로 §b얼음 슬라이딩§f을 합니다.",
 		" §b슬라이딩§f 도중엔 §3무적, 타게팅 불능§f이 됩니다. $[COOLDOWN]",
-		" 이 상태로 적에게 부딪히면 적에게 피해를 입힐 수 있습니다.",
+		" 적에게 부딪히면 피해를 줍니다. 피해는 대상이 §b빙결된 횟수§f에 비례합니다.",
 		"§7눈 던지기 §8- §b얼음땡§f: 매 §d1.9초§f마다 §9눈덩이§f를 2개씩 획득하고,",
 		" §9눈§f을 던져 맞은 대상은 점점 추위에 걸리다 §d스택§f을 다 쌓으면 §3얼립니다§f.",
 		" 한 번 언 대상은 $[STACK_COOL]초간 §d스택§f이 쌓이지 않습니다.",
@@ -120,7 +120,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE = abilitySettings.new SettingObject<Integer>(Penguin.class,
-			"damage", 9, "# 충돌 피해량") {
+			"damage", 10, "# 충돌 피해량") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -181,6 +181,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 	private static final double radians = Math.toRadians(90);
 	private static final Vector zeroV = new Vector(0, 0, 0);
 	
+	private Map<Player, Integer> froststack = new HashMap<>();
 	private Set<LivingEntity> onetimeEntity = new HashSet<>();
 	private final Map<Block, IBlockSnapshot> ices = new HashMap<>();
 	
@@ -268,7 +269,8 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 			}
 			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 2, 2, predicate)) {
 				if (!onetimeEntity.contains(livingEntity)) onetimeEntity.add(livingEntity);
-				livingEntity.damage(damage, getPlayer());
+				if (!froststack.containsKey(livingEntity)) livingEntity.damage(damage, getPlayer());
+				else livingEntity.damage(damage * (1 + (froststack.get(livingEntity) * 0.1)), getPlayer());
 				if (livingEntity instanceof Player) {
 					Player p = (Player) livingEntity;
 					if (!stackcoolSet.contains(p) && !penguinspin.contains(p)) {
@@ -399,17 +401,24 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	@SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent
 	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
-		if (e.getEffectType().equals(Frost.registration) || e.getEffectType().equals(Chill.registration) || 
-				e.getEffectType().equals(FrozenHeart.registration) || e.getEffectType().equals(SnowflakeMark.registration)) {
-			e.setDuration(TimeUnit.TICKS, (int) (e.getDuration() * 0.5));
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
-			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+		if (e.getPlayer().equals(getPlayer())) {
+			if (e.getEffectType().equals(Frost.registration) || e.getEffectType().equals(Chill.registration) || 
+					e.getEffectType().equals(FrozenHeart.registration) || e.getEffectType().equals(SnowflakeMark.registration)) {
+				e.setDuration(TimeUnit.TICKS, (int) (e.getDuration() * 0.5));
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+				}
+				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 2);
+			}	
+		} else {
+			if (e.getEffectType().equals(Frost.registration)) {
+				if (froststack.containsKey(e.getPlayer())) froststack.put(e.getPlayer(), froststack.get(e.getPlayer()) + 1);
+				else froststack.put(e.getPlayer(), 1);
 			}
-			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 2);
 		}
 	}
 	

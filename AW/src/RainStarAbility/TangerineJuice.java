@@ -1,11 +1,25 @@
 package RainStarAbility;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.util.Vector;
 
+import RainStarAbility.RainStar.Grab;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
@@ -16,8 +30,16 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.Wreck;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.BlockX;
+import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "귤즙", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -97,13 +119,15 @@ public class TangerineJuice extends AbilityBase {
 
 	};
 	
+	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
+	private final int returngauge = GAUGE_RETURN.getValue();
 	private final int consume = ARROW_CONSUME.getValue();
 	private ActionbarChannel ac = newActionbarChannel();
 	private int juicegauge = 0;
 	
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(60) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
 	
-	private Set<Projectile> arrows = new HashSet<>();
+	private Map<Projectile, ArrowParticle> arrowParticles = new HashMap<>();
 	
 	private AbilityTimer juice = new AbilityTimer() {
 		
@@ -121,9 +145,90 @@ public class TangerineJuice extends AbilityBase {
     	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		if (juicegauge >= consume) {
     			juicegauge -= consume;
-    			arrows.add(e.getEntity());
+    			new ArrowParticle(e.getEntity()).start();
     		}
     	}
+    }
+    
+    @SubscribeEvent
+    public void onProjectileHit(ProjectileHitEvent e) {
+    	if (arrowParticles.containsKey(e.getEntity())) {
+    		if (e.getHitEntity() != null) juicegauge = Math.min(10, juicegauge + returngauge);
+    		ParticleLib.EXPLOSION_LARGE.spawnParticle(e.getEntity().getLocation());
+    		e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(), 1.2f, false, false);
+    		
+			for (int count = 0; count < 20; count++) {
+				for (Block block : LocationUtil.getBlocks2D(e.getEntity().getLocation(), count, true, true, true)) {
+					Block belowBlock = block.getRelative(BlockFace.DOWN);
+					if (MaterialX.ORANGE_CONCRETE.compare(belowBlock)) {
+						block = belowBlock;
+						belowBlock = belowBlock.getRelative(BlockFace.DOWN);
+					}
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
+					BlockX.setType(belowBlock, MaterialX.ORANGE_CONCRETE);
+					ParticleLib.FALLING_DUST.spawnParticle(block.getLocation().clone().add(0, 1.5, 0), 1, 1, 1, 2, 0);
+				}
+			}
+    	}
+    }
+    
+	@SubscribeEvent
+	public void onBlockBreak(BlockBreakEvent e) {
+		if (blockData.containsKey(e.getBlock())) {
+			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public void onExplode(BlockExplodeEvent e) {
+		e.blockList().removeIf(blockData::containsKey);
+	}
+
+	@SubscribeEvent
+	public void onExplode(EntityExplodeEvent e) {
+		e.blockList().removeIf(blockData::containsKey);
+	}
+    
+    public class ArrowParticle extends AbilityTimer {
+    	
+		private Location lastloc;
+		private Vector forward;
+    	
+    	public ArrowParticle(Projectile projectile) {
+			super();
+    		setPeriod(TimeUnit.TICKS, 1);
+			this.forward = projectile.getLocation().clone().subtract(lastloc.clone()).toVector().normalize();
+			this.lastloc = projectile.getLocation();
+			arrowParticles.put(projectile, this);
+    	}
+    	
+    	@Override
+    	public void run(int i) {
+    		Location newLocation = lastloc.clone().add(forward);
+    		for (Iterator<Location> iterator = new Iterator<Location>() {
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastloc.toVector()),
+						unit = vectorBetween.clone().normalize().multiply(.1);
+				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private int cursor = 0;
+
+				@Override
+				public boolean hasNext() {
+					return cursor < amount;
+				}
+
+				@Override
+				public Location next() {
+					if (cursor >= amount)
+						throw new NoSuchElementException();
+					cursor++;
+					return lastloc.clone().add(unit.clone().multiply(cursor));
+				}
+			};iterator.hasNext();) {
+				final Location location = iterator.next();
+				ParticleLib.REDSTONE.spawnParticle(location, RGB.ORANGE);
+			}
+    	}
+    	
     }
 	
 

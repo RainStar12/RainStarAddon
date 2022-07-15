@@ -269,7 +269,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 				if (cool.isRunning()) {
 					if (count % 24 == 0) {
 						Location location = getPlayer().getLocation();
-						for (Location loc : LocationUtil.getRandomLocations(LocationUtil.floorY(location), 6, 1)) {
+						for (Location loc : LocationUtil.getRandomLocations(location, 6, 1)) {
 							loc.add(0, 1, 0);
 							location = loc;
 						}
@@ -278,7 +278,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 				} else {
 					if (count % 14 == 0) {
 						Location location = getPlayer().getLocation();
-						for (Location loc : LocationUtil.getRandomLocations(LocationUtil.floorY(location), 6, 1)) {
+						for (Location loc : LocationUtil.getRandomLocations(location, 6, 1)) {
 							loc.add(0, 1, 0);
 							location = loc;
 						}
