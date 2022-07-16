@@ -1,19 +1,24 @@
 package RainStarAbility;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -37,6 +42,7 @@ import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -50,7 +56,8 @@ import daybreak.google.common.base.Strings;
 		" 장판 위 적에게 주는 §b원거리 피해§f가 $[PROJECTILE_DAMAGE_INCREASE]% 증가합니다.",
 		"§7철괴 우클릭 §8- §c과즙 폭발§f: 모든 과즙 게이지를 전부 소모하여 제자리에 터뜨려",
 		" $[RANGE]칸 내의 적을 강하게 밀쳐내고 §7실명§f시킵니다. 이때 잠시 빨라집니다.",
-		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다."
+		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다.",
+		"§b[§7아이디어 제공자§b] §6Tangerine_Ring"
 		})
 
 public class TangerineJuice extends AbilityBase {
@@ -119,9 +126,22 @@ public class TangerineJuice extends AbilityBase {
 
 	};
 	
+	public static final SettingObject<Integer> FIELD_RANGE = 
+			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "field-range", 5,
+			"# 과즙 장판 범위") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
 	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
+	private final Set<Block> notchangedblocks = new HashSet<>();
 	private final int returngauge = GAUGE_RETURN.getValue();
 	private final int consume = ARROW_CONSUME.getValue();
+	private final int fieldrange = FIELD_RANGE.getValue();
 	private ActionbarChannel ac = newActionbarChannel();
 	private int juicegauge = 0;
 	
@@ -136,6 +156,8 @@ public class TangerineJuice extends AbilityBase {
 			if (period == 0) juicegauge = 10;
 			else if (count % period == 0) juicegauge = Math.min(10, juicegauge + 1);
 			ac.update(Strings.repeat("§7/", 10 - juicegauge) + Strings.repeat("§6/", juicegauge));
+			
+			
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -145,7 +167,7 @@ public class TangerineJuice extends AbilityBase {
     	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		if (juicegauge >= consume) {
     			juicegauge -= consume;
-    			new ArrowParticle(e.getEntity()).start();
+    			new ArrowParticle(e.getEntity(), e.getEntity().getVelocity().length()).start();
     		}
     	}
     }
@@ -153,28 +175,48 @@ public class TangerineJuice extends AbilityBase {
     @SubscribeEvent
     public void onProjectileHit(ProjectileHitEvent e) {
     	if (arrowParticles.containsKey(e.getEntity())) {
+    		arrowParticles.get(e.getEntity()).stop(false);
     		if (e.getHitEntity() != null) juicegauge = Math.min(10, juicegauge + returngauge);
     		ParticleLib.EXPLOSION_LARGE.spawnParticle(e.getEntity().getLocation());
     		e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(), 1.2f, false, false);
     		
-			for (int count = 0; count < 20; count++) {
-				for (Block block : LocationUtil.getBlocks2D(e.getEntity().getLocation(), count, true, true, true)) {
+			for (int ranges = 0; ranges < fieldrange; ranges++) {
+				for (Block block : LocationUtil.getBlocks2D(e.getEntity().getLocation(), ranges, true, true, true)) {
 					Block belowBlock = block.getRelative(BlockFace.DOWN);
 					if (MaterialX.ORANGE_CONCRETE.compare(belowBlock)) {
 						block = belowBlock;
 						belowBlock = belowBlock.getRelative(BlockFace.DOWN);
-					}
-					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
+						notchangedblocks.add(belowBlock);
+					} else blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					BlockX.setType(belowBlock, MaterialX.ORANGE_CONCRETE);
-					ParticleLib.FALLING_DUST.spawnParticle(block.getLocation().clone().add(0, 1.5, 0), 1, 1, 1, 2, 0);
 				}
 			}
     	}
     }
     
+    @SubscribeEvent
+    public void onEntityDamageByEvent(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager) && !getPlayer().equals(e.getEntity())) {
+			Block b = LocationUtil.floorY(e.getEntity().getLocation()).getBlock();
+			Block bb = LocationUtil.floorY(e.getEntity().getLocation()).clone().subtract(0, 1, 0).getBlock();
+			if (blockData.containsKey(b) || blockData.containsKey(bb) || notchangedblocks.contains(b) || notchangedblocks.contains(bb)) {
+				final double distance = Math.min(10, getPlayer().getLocation().distance(e.getEntity().getLocation()));
+				if (distance >= 5) {
+					
+				}
+			}
+		}
+    }
+    
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {
-		if (blockData.containsKey(e.getBlock())) {
+		if (blockData.containsKey(e.getBlock()) || notchangedblocks.contains(e.getBlock())) {
 			e.setCancelled(true);
 		}
 	}
@@ -182,28 +224,56 @@ public class TangerineJuice extends AbilityBase {
 	@SubscribeEvent
 	public void onExplode(BlockExplodeEvent e) {
 		e.blockList().removeIf(blockData::containsKey);
+		e.blockList().removeIf(notchangedblocks::contains);
 	}
 
 	@SubscribeEvent
 	public void onExplode(EntityExplodeEvent e) {
 		e.blockList().removeIf(blockData::containsKey);
+		e.blockList().removeIf(notchangedblocks::contains);
 	}
     
     public class ArrowParticle extends AbilityTimer {
     	
 		private Location lastloc;
 		private Vector forward;
+		private final Random random = new Random();
+		private RGB orangecolor;
+		private final double length;
+		private final Projectile projectile;
+		
+		private final RGB orange1 = RGB.of(241, 129, 4), orange2 = RGB.of(230, 46, 1), orange3 = RGB.of(250, 72, 5),
+				orange4 = RGB.of(255, 128, 1), orange5 = RGB.of(251, 173, 68), orange6 = RGB.of(252, 95, 10),
+				orange7 = RGB.of(240, 72, 14), orange8 = RGB.of(254, 108, 20), orange9 = RGB.of(230, 74, 15);
+		
+		private List<RGB> orangecolors = new ArrayList<RGB>() {
+			{
+				add(orange1);
+				add(orange2);
+				add(orange3);
+				add(orange4);
+				add(orange5);
+				add(orange6);
+				add(orange7);
+				add(orange8);
+				add(orange9);
+				add(RGB.ORANGE);
+			}
+		};
     	
-    	public ArrowParticle(Projectile projectile) {
+    	public ArrowParticle(Projectile projectile, double length) {
 			super();
     		setPeriod(TimeUnit.TICKS, 1);
-			this.forward = projectile.getLocation().clone().subtract(lastloc.clone()).toVector().normalize();
+    		this.projectile = projectile;
+    		this.length = length;
+			this.forward = projectile.getLocation().clone().subtract(lastloc.clone()).toVector().normalize().multiply(length);
 			this.lastloc = projectile.getLocation();
 			arrowParticles.put(projectile, this);
     	}
     	
     	@Override
     	public void run(int i) {
+    		this.forward = projectile.getLocation().clone().subtract(lastloc.clone()).toVector().normalize().multiply(length);
     		Location newLocation = lastloc.clone().add(forward);
     		for (Iterator<Location> iterator = new Iterator<Location>() {
 				private final Vector vectorBetween = newLocation.toVector().subtract(lastloc.toVector()),
@@ -225,8 +295,19 @@ public class TangerineJuice extends AbilityBase {
 				}
 			};iterator.hasNext();) {
 				final Location location = iterator.next();
-				ParticleLib.REDSTONE.spawnParticle(location, RGB.ORANGE);
+				orangecolor = orangecolors.get(random.nextInt(10));
+				ParticleLib.REDSTONE.spawnParticle(location, orangecolor);
 			}
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	public void onSilentEnd() {
+    		arrowParticles.remove(projectile);
     	}
     	
     }

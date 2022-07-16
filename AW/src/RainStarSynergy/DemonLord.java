@@ -114,7 +114,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §c- §8암전§f: 자신의 위치가 어두울수록 스킬 피해량이 강화됩니다.",
 		" 실명을 가지고 있는 적을 공격할 때 대상에게 §c1.2배의 피해§f를 입힙니다.",
 		"§7패시브 §8- §3차원 지배§f: 차원의 저편이나 너머에서 자유롭게 이동 가능합니다.",
-		"§b[§7아이디어 제공자§b] keuleijeo"
+		"§b[§7아이디어 제공자§b] §5keuleijeo"
 		})
 
 @SuppressWarnings("deprecation")
@@ -377,9 +377,6 @@ public class DemonLord extends Synergy {
 			SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer().getLocation(), 1, 0.7f);
 			dimensionBeyond.start();
 			descend = true;
-		}
-		if (update == Update.RESTRICTION_CLEAR) {
-			
 		}
 	}
 	
