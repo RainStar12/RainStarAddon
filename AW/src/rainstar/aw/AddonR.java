@@ -72,7 +72,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(AntiGravity.class);
 		AbilityList.registerAbility(AntiGravity.class);
 		AbilityFactory.registerAbility(LightningCounter.class);
-		AbilityList.registerAbility(LightningCounter.class);
+		AbilityList.registerAbility(LightningCounter.class); //10
+		
 		AbilityFactory.registerAbility(Chronos.class);
 		AbilityList.registerAbility(Chronos.class);
 		AbilityFactory.registerAbility(Crystal.class);
@@ -85,8 +86,6 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(NineTailFoxCP.class);
 		AbilityFactory.registerAbility(Echo.class);
 		AbilityList.registerAbility(Echo.class);
-		AbilityFactory.registerAbility(Flex.class);
-		AbilityList.registerAbility(Flex.class);
 		AbilityFactory.registerAbility(Dash.class);
 		AbilityList.registerAbility(Dash.class);
 		AbilityFactory.registerAbility(Revenger.class);
@@ -96,7 +95,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(LittleDevil.class);
 		AbilityList.registerAbility(LittleDevil.class);
 		AbilityFactory.registerAbility(Mira.class);
-		AbilityList.registerAbility(Mira.class);
+		AbilityList.registerAbility(Mira.class); //20
+		
 		AbilityFactory.registerAbility(GuardianAngel.class);
 		AbilityList.registerAbility(GuardianAngel.class);
 		AbilityFactory.registerAbility(Stella.class);
@@ -116,7 +116,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(Alice.class);
 		AbilityList.registerAbility(Alice.class);
 		AbilityFactory.registerAbility(Teabagging.class);
-		AbilityList.registerAbility(Teabagging.class);
+		AbilityList.registerAbility(Teabagging.class); //30
+		
 		AbilityFactory.registerAbility(OneShotOneKill.class);
 		AbilityList.registerAbility(OneShotOneKill.class);
 		AbilityFactory.registerAbility(Kuro.class);
@@ -137,7 +138,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(Citrus.class);
 		AbilityList.registerAbility(Citrus.class);
 		AbilityFactory.registerAbility(HeadtoHead.class);
-		AbilityList.registerAbility(HeadtoHead.class);
+		AbilityList.registerAbility(HeadtoHead.class); //40
+		
 		AbilityFactory.registerAbility(HuntingDog.class);
 		AbilityList.registerAbility(HuntingDog.class);
 		AbilityFactory.registerAbility(Phoenix.class);
@@ -157,14 +159,14 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(Squirrel.class);
 		AbilityList.registerAbility(Squirrel.class);
 		AbilityFactory.registerAbility(FoxCrystalBall.class);
-		AbilityList.registerAbility(FoxCrystalBall.class);
+		AbilityList.registerAbility(FoxCrystalBall.class); //50
+		
 		AbilityFactory.registerAbility(SkyWhale.class);
 		AbilityList.registerAbility(SkyWhale.class);
 		AbilityFactory.registerAbility(Fool.class);
 		AbilityList.registerAbility(Fool.class);
 		AbilityFactory.registerAbility(Minotauros.class);
 		AbilityList.registerAbility(Minotauros.class);
-		
 		AbilityFactory.registerAbility(Air.class);
 		AbilityList.registerAbility(Air.class);
 		AbilityFactory.registerAbility(Tekkai.class);
@@ -178,10 +180,10 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(Fingun.class);
 		AbilityList.registerAbility(Fingun.class);
 		AbilityFactory.registerAbility(RussianRoulette.class);
-		AbilityList.registerAbility(RussianRoulette.class);
+		AbilityList.registerAbility(RussianRoulette.class); //60
+		
 		AbilityFactory.registerAbility(LuckSurvive.class);
 		AbilityList.registerAbility(LuckSurvive.class);
-		
 		AbilityFactory.registerAbility(King.class);
 		AbilityList.registerAbility(King.class);
 		AbilityFactory.registerAbility(Daydream.class);
@@ -199,7 +201,7 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(MadScientist.class);
 		AbilityList.registerAbility(MadScientist.class);
 		
-    	if (ServerVersion.getVersion() == 12) {
+		if (ServerVersion.getVersion() == 12) {
     		AbilityFactory.registerAbility(TheOneRing.class);
     		AbilityList.registerAbility(TheOneRing.class);
     	} else if (ServerVersion.getVersion() == 13) {
@@ -231,6 +233,7 @@ public class AddonR extends Addon implements Listener {
     		AbilityFactory.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
     		AbilityList.registerAbility(RainStarAbility.theonering.v1_17_R1.TheOneRing.class);
     	}
+		//70
 		
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
@@ -240,9 +243,9 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Suguri.class);
 		AbilityFactory.registerAbility(Mazochist.class);
 		AbilityList.registerAbility(Mazochist.class);
+		AbilityFactory.registerAbility(TangerineJuice.class);
+		AbilityList.registerAbility(TangerineJuice.class);
 		
-		AbilityFactory.registerAbility(KnockbackPatch.class);
-		AbilityList.registerAbility(KnockbackPatch.class);
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
 		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, Gravity.class);
@@ -309,7 +312,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f75개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f74개 §7/ §d시너지 §f43개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -338,33 +341,20 @@ public class AddonR extends Addon implements Listener {
     	} else if (ServerVersion.getVersion() == 17) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_17_R1.Clown.class, Alice.class, Joker.class);
     	}
+    	
+    	//beta
+		AbilityFactory.registerAbility(Flex.class);
+		AbilityList.registerAbility(Flex.class);
+		AbilityFactory.registerAbility(KnockbackPatch.class);
+		AbilityList.registerAbility(KnockbackPatch.class);
 		
-	}
-	
-	public static void registerAbilities(Class<? extends AbilityBase> clazz) {
-		SupportNMS support = clazz.getAnnotation(SupportNMS.class);
-		if (support != null) {
-			try {
-				Class<? extends AbilityBase> clazz2 = Class.forName(clazz.getName().toLowerCase(Locale.ROOT)+"."+ServerVersion.getName()+clazz.getName()).asSubclass(clazz);
-				AbilityFactory.registerAbility(clazz2);
-				AbilityList.registerAbility(clazz2);
-				return;
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				System.out.println("해당 버전에 호환되지 않습니다. : " + clazz.getName());
-				return;
-			}
-		}
-		System.out.println("해당 버전에 호환되지 않습니다. : " + clazz.getName());
-		
-		//Cokes님 코드 돚거
 	}
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f75개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f74개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f44개 적용 완료.");
+			e.addCredit("§d시너지 §f43개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

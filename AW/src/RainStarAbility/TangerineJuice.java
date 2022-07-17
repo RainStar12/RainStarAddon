@@ -14,9 +14,11 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -37,6 +39,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -55,24 +58,26 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
-@AbilityManifest(name = "귤즙", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7게이지 §8- §e과즙§f: $[PERIOD]초마다 한 칸씩 최대 10칸을 보유 가능합니다.", 
+@AbilityManifest(name = "귤즙", rank = Rank.L, species = Species.OTHERS, explain = {
+		"§7게이지 §8- §e과즙§f: $[PERIOD]초마다 한 칸씩 최대 10칸을 보유 가능합니다.",
+		" 게이지 소모 이후엔 다음 게이지 차징까진 $[NEED_WAIT]초를 기다려야 합니다.",
 		"§7화살 발사 §8- §6귤 화살§f: 적중 위치에 §a과즙 장판§f이 터집니다. $[ARROW_CONSUME]",
 		" 만일 생명체를 적중시킨다면 $[GAUGE_RETURN]칸만큼 §e과즙 게이지§f를 돌려받습니다.",
 		" §a장판§f 위의 적은 중심으로 끌려가며 이외 §3끌리거나 밀리는§8(§7벡터§8)§f 효과가 감소합니다.",
 		" §a장판§f 위 적에게 주는 §b원거리 피해§f가 $[LONG_DISTANCE_DAMAGE_INCREASE]% 증가합니다.",
 		" §a장판§f의 범위는 $[FIELD_RANGE]칸, 지속은 $[FIELD_DURATION]초 유지됩니다.",
-		"§7철괴 우클릭 §8- §c과즙 폭발§f: 모든 과즙 게이지를 전부 소모하여 제자리에 터뜨려",
-		" $[RANGE]칸 내의 적을 강하게 밀쳐내고 §7실명§f시킵니다. 이때 잠시 빨라집니다.",
+		"§7철괴 우클릭 §8- §c과즙 폭발§f: 과즙 게이지를 전부 소모하여 잠시 빨라지고,",
+		" $[RANGE]칸 내의 적을 강하게 밀쳐내고 §7실명§f시킵니다.",
 		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다.",
 		"§b[§7아이디어 제공자§b] §6Tangerine_Ring"
 		})
 
-public class TangerineJuice extends AbilityBase {
+public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	
 	public TangerineJuice(Participant participant) {
 		super(participant);
@@ -81,6 +86,17 @@ public class TangerineJuice extends AbilityBase {
 	public static final SettingObject<Double> PERIOD = 
 			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "period", 5.0,
 			"# 과즙이 차오르는 주기", "# WRECK 효과 50%까지 적용") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Double> NEED_WAIT = 
+			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-wait", 10.0,
+			"# 과즙 사용 후 대기시간", "# WRECK 효과 50%까지 적용") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -187,10 +203,12 @@ public class TangerineJuice extends AbilityBase {
 		}
 	};
 	
-	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(60) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
+	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
+	private final int wait = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (NEED_WAIT.getValue() * 20) : (NEED_WAIT.getValue() * 20));
 	private final int consume = ARROW_CONSUME.getValue();
 	private final int returngauge = GAUGE_RETURN.getValue();
 	private final double dmgIncrease = 1 + (LONG_DISTANCE_DAMAGE_INCREASE.getValue() * 0.01);
+	private final double range = RANGE.getValue();
 	private final int fieldrange = FIELD_RANGE.getValue();
 	private final int fieldduration = FIELD_DURATION.getValue() * 5;
 	private final Set<Vector> vectors = new HashSet<>();
@@ -205,20 +223,31 @@ public class TangerineJuice extends AbilityBase {
 		if (update == Update.RESTRICTION_CLEAR) juice.start();
 	}
 	
+	private AbilityTimer needwait = new AbilityTimer(wait) {
+		
+		@Override
+		public void run(int count) {
+			ac.update(Strings.repeat("§3/", 10 - juicegauge) + Strings.repeat("§6/", juicegauge));
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	private AbilityTimer juice = new AbilityTimer() {
 		
 		@Override
 		public void run(int count) {
-			if (period == 0 && juicegauge < 10) {
-				SoundLib.ITEM_BUCKET_FILL.playSound(getPlayer().getLocation(), 1, 2);
-				ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 7, 1);
-				juicegauge = 10;
-			} else if (count % period == 0) {
-				SoundLib.ITEM_BUCKET_FILL.playSound(getPlayer().getLocation(), 1, 2);
-				ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 7, 1);
-				juicegauge = Math.min(10, juicegauge + 1);
+			if (!needwait.isRunning()) {
+				if (period == 0 && juicegauge < 10) {
+					SoundLib.ITEM_BUCKET_FILL.playSound(getPlayer().getLocation(), 1, 2);
+					ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 7, 1);
+					juicegauge = 10;
+				} else if (count % period == 0) {
+					SoundLib.ITEM_BUCKET_FILL.playSound(getPlayer().getLocation(), 1, 2);
+					ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 7, 1);
+					juicegauge = Math.min(10, juicegauge + 1);
+				}
+				ac.update(Strings.repeat("§7/", 10 - juicegauge) + Strings.repeat("§6/", juicegauge));	
 			}
-			ac.update(Strings.repeat("§7/", 10 - juicegauge) + Strings.repeat("§6/", juicegauge));
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -228,6 +257,8 @@ public class TangerineJuice extends AbilityBase {
     	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		if (juicegauge >= consume) {
     			juicegauge -= consume;
+    			if (needwait.isRunning()) needwait.setCount(wait);
+    			else needwait.start();
     			new ArrowParticle(e.getEntity(), e.getEntity().getVelocity().length()).start();
     		}
     	}
@@ -243,6 +274,25 @@ public class TangerineJuice extends AbilityBase {
     		new Field(fieldduration, e.getEntity().getLocation()).start();
     	}
     }
+    
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+			if (juicegauge > 1) {
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
+					entity.setVelocity(entity.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1 + (juicegauge * 0.2)).setY(0));
+					PotionEffects.BLINDNESS.addPotionEffect(entity, (juicegauge * 20), 0, true);
+				}
+				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
+				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1.5f);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), (juicegauge * 10), (int) (juicegauge * 0.2), isDestroyed());
+    			if (needwait.isRunning()) needwait.setCount(wait);
+    			else needwait.start();
+				juicegauge = 0;
+				return true;
+			} else getPlayer().sendMessage("§6[§e!§6] §f최소 §c한 칸 이상§f의 §e과즙 게이지§f가 필요합니다.");
+		}
+		return false;
+	}
     
 	public class Field extends AbilityTimer implements Listener {
 		
@@ -368,6 +418,7 @@ public class TangerineJuice extends AbilityBase {
 				orange4 = RGB.of(255, 128, 1), orange5 = RGB.of(251, 173, 68), orange6 = RGB.of(252, 95, 10),
 				orange7 = RGB.of(240, 72, 14), orange8 = RGB.of(254, 108, 20), orange9 = RGB.of(230, 74, 15);
 		
+		@SuppressWarnings("serial")
 		private List<RGB> orangecolors = new ArrayList<RGB>() {
 			{
 				add(orange1);
@@ -434,5 +485,4 @@ public class TangerineJuice extends AbilityBase {
     	
     }
 	
-
 }
