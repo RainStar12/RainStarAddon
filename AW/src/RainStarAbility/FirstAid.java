@@ -22,6 +22,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
@@ -32,7 +33,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "응급처치", rank = Rank.B, species = Species.HUMAN, explain = {
 		"$[INBATTLE_CHECK_DURATION]초간 피해를 주거나 받지 않으면 §a비전투 상태§f로 간주합니다.",
-		"§a비전투 상태§f에서 철괴 우클릭 시 가장 마지막으로 입은 $[HEAL_COUNT]번의 피해를 §d회복§f합니다."
+		"§a비전투 상태§f에서 철괴 우클릭 시 가장 마지막으로 입은 $[HEAL_COUNT]번의 피해를 §d회복§f합니다.",
+		"§c전투 상태§f에서 사용하면 $[DECREASED_HEAL_COUNT]번 회복하고 $[COOLDOWN]를 가집니다."
 		})
 
 public class FirstAid extends AbilityBase implements ActiveHandler {
@@ -42,7 +44,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> INBATTLE_CHECK_DURATION = 
-			abilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration", 10.0,
+			abilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration", 7.5,
             "# 전투 중인지 판단하는 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -51,18 +53,42 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEAL_COUNT = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count", 5,
-            "# 회복하는 횟수") {
+			abilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count", 6,
+            "# 비전투 중에 회복하는 횟수") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Integer> DECREASED_HEAL_COUNT = 
+			abilitySettings.new SettingObject<Integer>(FirstAid.class, "decreased-heal-count", 3,
+            "# 전투 중에 회복하는 횟수") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(FirstAid.class, "cooldown", 65,
+            "# 전투 중 사용시 쿨타임", "# 단위: 초") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        @Override
+        public String toString() {
+            return Formatter.formatCooldown(getValue());
         }
     };
 	
 	private ActionbarChannel ac = newActionbarChannel();
 	private List<Double> damages = new ArrayList<>();
 	private final int healcount = HEAL_COUNT.getValue();
+	private final int dechealcount = DECREASED_HEAL_COUNT.getValue();
 	private final int duration = (int) (INBATTLE_CHECK_DURATION.getValue() * 20);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
@@ -124,15 +150,17 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.SECONDS, 1).register();
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK) {
+		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
 			if (inbattle.isRunning()) {
-				getPlayer().sendMessage("§4[§c!§4] §f아직 전투중입니다.");
-				return false;
-			}
-			if (damages.size() <= 0) {
-				getPlayer().sendMessage("§4[§c!§4] §f마지막 전투에서 입은 피해 기록이 없습니다.");
+				if (damages.size() <= 0) getPlayer().sendMessage("§4[§c!§4] §f마지막 전투에서 입은 피해 기록이 없습니다.");
+				else {
+					healing.start();
+					healing.setCount(dechealcount);
+					cooldown.start();
+				}
 			} else {
-				return healing.start();
+				if (damages.size() <= 0) getPlayer().sendMessage("§4[§c!§4] §f마지막 전투에서 입은 피해 기록이 없습니다.");
+				else return healing.start();	
 			}
 		}
 		return false;

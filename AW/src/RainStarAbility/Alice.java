@@ -71,8 +71,8 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴를 우클릭§f하면 바라보는 방향으로 카드를 발사해 적중한 적에게",
 		"상태이상 및 피해를 입히거나, 적과 자신이 회복됩니다.",
 		"문양에 따라 효과가 다르며 숫자가 높을수록 카드 효과가 강력해집니다.",
-		"§7철괴를 좌클릭§f하면 다섯 번 연속 발사가 가능합니다.",
-		" $[COOLDOWN_CONFIG]"
+		"§7철괴를 좌클릭§f하면 5연속 발사하지만 다음 쿨타임이 2배가 됩니다.",
+		"$[COOLDOWN_CONFIG]"
 		})
 
 public class Alice extends AbilityBase implements ActiveHandler {
