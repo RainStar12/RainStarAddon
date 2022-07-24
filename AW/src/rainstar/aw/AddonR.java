@@ -245,6 +245,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Mazochist.class);
 		AbilityFactory.registerAbility(TangerineJuice.class);
 		AbilityList.registerAbility(TangerineJuice.class);
+		AbilityFactory.registerAbility(Horus.class);
+		AbilityList.registerAbility(Horus.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

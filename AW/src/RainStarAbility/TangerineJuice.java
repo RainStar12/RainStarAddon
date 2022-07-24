@@ -69,10 +69,9 @@ import daybreak.google.common.base.Strings;
 		"§7화살 발사 §8- §6귤 화살§f: 적중 위치에 §a과즙 장판§f이 터집니다. $[ARROW_CONSUME]",
 		" 만일 생명체를 적중시킨다면 $[GAUGE_RETURN]칸만큼 §e과즙 게이지§f를 돌려받습니다.",
 		" §a장판§f 위의 적은 중심으로 끌려가며 이외 §3끌리거나 밀리는§8(§7벡터§8)§f 효과가 감소합니다.",
-		" §a장판§f 위 적에게 주는 §b원거리 피해§f가 $[LONG_DISTANCE_DAMAGE_INCREASE]% 증가합니다.",
-		" §a장판§f의 범위는 $[FIELD_RANGE]칸, 지속은 $[FIELD_DURATION]초 유지됩니다.",
-		"§7철괴 우클릭 §8- §c과즙 폭발§f: 과즙 게이지를 전부 소모하여 잠시 빨라지고,",
-		" $[RANGE]칸 내의 적을 강하게 밀쳐내고 §7실명§f시킵니다.",
+		" §a장판§f은 $[FIELD_RANGE]칸, $[FIELD_DURATION]초 유지되며 장판 위 적에게 주는 §b원거리 피해§f가 $[LONG_DISTANCE_DAMAGE_INCREASE]% 증가합니다.",
+		"§7철괴 우클릭 §8- §c과즙 폭발§f: 과즙 게이지를 전부 소모하여 잠시간 §b신속 버프§f를 얻고,",
+		" $[RANGE]칸 내의 생명체들을 강하게 밀쳐내고 §7실명§f시킵니다.",
 		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다.",
 		"§b[§7아이디어 제공자§b] §6Tangerine_Ring"
 		})
@@ -179,6 +178,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame())
@@ -439,7 +439,6 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
     		setPeriod(TimeUnit.TICKS, 1);
     		this.projectile = projectile;
     		this.length = length;
-			this.forward = projectile.getLocation().clone().subtract(lastloc.clone()).toVector().normalize().multiply(length);
 			this.lastloc = projectile.getLocation();
 			arrowParticles.put(projectile, this);
     	}
