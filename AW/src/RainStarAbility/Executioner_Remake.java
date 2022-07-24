@@ -24,8 +24,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "집행관 R", rank = Rank.L, species = Species.HUMAN, explain = {
 		"검 들고 F키를 누르면 §a고문 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
-		"",
-		"§2[§a고문§2]§f "
+		"§2[§a고문§2]§f ",
 		})
 public class Executioner_Remake extends AbilityBase {
 	

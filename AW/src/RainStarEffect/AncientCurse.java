@@ -40,20 +40,20 @@ public class AncientCurse extends AbstractGame.Effect implements Listener {
 
 	private final Participant participant;
 	private final ArmorStand hologram;
-	private int level;
+	private int level = 1;
 
 	public AncientCurse(Participant participant, TimeUnit timeUnit, int duration) {
-		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 2));
+		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
-		setPeriod(TimeUnit.TICKS, 2);
+		setPeriod(TimeUnit.TICKS, 1);
 		final Location location = participant.getPlayer().getLocation();
 		this.hologram = location.getWorld().spawn(location.clone().add(0, 2.2, 0), ArmorStand.class);
 		hologram.setVisible(false);
 		hologram.setGravity(false);
 		hologram.setInvulnerable(true);
 		NMS.removeBoundingBox(hologram);
+		hologram.setCustomName(Strings.repeat("§5↓", level));
 		hologram.setCustomNameVisible(true);
-		hologram.setCustomName(Strings.repeat("§5§", level));
 	}
 	
 	@EventHandler
@@ -62,7 +62,7 @@ public class AncientCurse extends AbstractGame.Effect implements Listener {
 			if (e.getEffectType().equals(AncientCurse.registration)) {
 				this.setCount(e.getDuration());
 				level++;
-				hologram.setCustomName(Strings.repeat("§5§", level));
+				hologram.setCustomName(Strings.repeat("§5↓", level));
 			}	
 		}
 	}

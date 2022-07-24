@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import com.google.common.collect.ImmutableSet;
+
 import RainStarEffect.AncientCurse;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -82,7 +84,7 @@ public class Horus extends AbilityBase {
     		Entry<Double, Set<Player>> highestKey = damageCollector.entrySet().stream()
     			    .collect(groupingBy(Entry::getValue, TreeMap::new, mapping(Entry::getKey, toSet())))
     			    .lastEntry();
-    		Set<Player> result = highestKey != null ? highestKey.getValue() : Set.of();
+    		Set<Player> result = highestKey != null ? highestKey.getValue() : ImmutableSet.of();
     		
     		if (!result.isEmpty()) {
         		for (Player player : result) {
@@ -142,7 +144,7 @@ public class Horus extends AbilityBase {
 				
 			y = yUp ? Math.min(1.6, y + 0.01) : Math.max(0.4, y - 0.01);
 				
-			location = getPlayer().getLocation().clone().add(x, y, z);   	
+			location = player.getLocation().clone().add(x, y, z);   	
 			ParticleLib.SPELL_WITCH.spawnParticle(location, 0, 0, 0, 1, 0);
 			ParticleLib.ENCHANTMENT_TABLE.spawnParticle(location, 0, 0, 0, 1, 0.1);
 			ParticleLib.ENCHANTMENT_TABLE.spawnParticle(location, 0, 0, 0, 1, 0);
