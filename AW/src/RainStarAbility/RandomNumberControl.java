@@ -48,7 +48,7 @@ public class RandomNumberControl extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
-			"period", 30, "# 능력 지속 주기") {
+			"period", 20, "# 능력 지속 주기") {
 		
 		@Override
 		public boolean condition(Integer value) {

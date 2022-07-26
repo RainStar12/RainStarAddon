@@ -292,6 +292,7 @@ public class AddonR extends Addon implements Listener {
 		SynergyFactory.registerSynergy(King.class, Emperor.class, Crown.class);
 		SynergyFactory.registerSynergy(ForbiddenFruit.class, Muse.class, Eden.class);
 		SynergyFactory.registerSynergy(Lunar.class, Stella.class, StarryNight.class);
+		SynergyFactory.registerSynergy(Reverse.class, Mazochist.class, Sadism.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")

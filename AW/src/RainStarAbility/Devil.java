@@ -54,7 +54,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "데빌", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §3비열한 수§f: 적에게 근접 피해를 입힐 때, 대상을 $[LOOK]초간 바라봅니다.",
 		"§7패시브 §8- §c계약 체결§f: 적이 나를 공격할 때, $[CONTRACT_DURATION]초간 계약합니다.§8(§7재타격 시 갱신§8)§f",
-		" §4(§c계약자 수 §e× §c$[INCREASE]§4)§f%만큼 공격력이 증가합니다.",
+		" §4(§c계약자 수 §e× §c$[INCREASE]§4)§f%만큼 공격력이 증가하고, 대상의 §d자연 회복 효과§f를 가져옵니다.",
 		"§7철괴 좌클릭 §8- §4착취§f: 가장 가까운 계약자에게 최대 $[ENCROACH_DURATION]초간 잠식합니다.",
 		" 잠식 간 능력의 지정 대상이 되지 않고 대상에게서 체력을 흡수해갑니다.",
 		" 이때 웅크릴 시 대상을 변경하고 지속시간을 갱신시킬 수 있습니다.",
@@ -68,7 +68,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> CONTRACT_DURATION = 
-			abilitySettings.new SettingObject<Double>(Devil.class, "contract-duration", 15.0,
+			abilitySettings.new SettingObject<Double>(Devil.class, "contract-duration", 20.0,
             "# 계약 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -282,6 +282,18 @@ public class Devil extends AbilityBase implements ActiveHandler {
 			ParticleLib.SMOKE_LARGE.spawnParticle(encroachtarget.getLocation(), 0.25, 0, 0.25, 50, 1);
 			SoundLib.ENTITY_VEX_CHARGE.playSound(encroachtarget.getLocation(), 1, 0.65f);
 			encroaching.setCount(encroach_duration);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onRegainHealth(EntityRegainHealthEvent e) {
+		if (contract.containsKey(e.getEntity()) && e.getRegainReason().equals(RegainReason.REGEN)) {
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getAmount(), RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + e.getAmount());
+			}
+			e.setCancelled(true);
 		}
 	}
 	

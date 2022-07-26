@@ -19,6 +19,8 @@ import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.color.Gradient;
@@ -32,10 +34,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "왕", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§e왕§f의 §c위압감§f으로 $[RANGE]칸 내의 플레이어를 매우 느리게 만듭니다.",
-		"영역 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
+		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만듭니다.",
+		"범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
 		"또한 대상은 $[DURATION]초간 나약함 $[AMPLIFIER]을 받습니다.",
-		"위풍당당한 걸음 탓에 기본 이동 속도가 느립니다."
+		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
+		" 그 대신 이동계 상태이상에 면역을 가지고, 원거리 공격자를 내게 끌어옵니다."
 		})
 public class King extends AbilityBase {
 
@@ -142,6 +145,13 @@ public class King extends AbilityBase {
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
+    
+    @SubscribeEvent
+    public void onEffectApply(ParticipantEffectApplyEvent e) {
+    	if (e.getPlayer().equals(getPlayer())) {
+    		//여기 해야함
+    	}
+    }
     
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
