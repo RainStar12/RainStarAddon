@@ -3,6 +3,9 @@ package RainStarAbility;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Nullable;
+
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -11,6 +14,7 @@ import static java.util.stream.Collectors.*;
 import java.text.DecimalFormat;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -26,9 +30,12 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "호루스", rank = Rank.S, species = Species.HUMAN, explain = {
 		"$[PERIOD]초마다 지난 $[PERIOD]초간 남들에게 §c최종 피해를 가장 많이 준 적§f에게",
@@ -61,6 +68,31 @@ public class Horus extends AbilityBase {
             return value >= 0;
         }
     };
+    
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
     
     private final int period = PERIOD.getValue();
     private final double percentage = PERCENTAGE.getValue() * 0.01;
@@ -110,8 +142,9 @@ public class Horus extends AbilityBase {
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (damager != null) {
-			if (!getPlayer().equals(damager)) damageCollector.put(damager, damageCollector.getOrDefault(damager, 0.0) + e.getFinalDamage());
-			else e.setDamage(e.getDamage() + bestDamage);
+			if (!getPlayer().equals(damager)) {
+				if (predicate.test(damager)) damageCollector.put(damager, damageCollector.getOrDefault(damager, 0.0) + e.getFinalDamage());
+			} else e.setDamage(e.getDamage() + bestDamage);
 		}
     }
     

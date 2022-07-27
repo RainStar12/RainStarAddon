@@ -23,8 +23,16 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "집행관 R", rank = Rank.L, species = Species.HUMAN, explain = {
-		"검 들고 F키를 누르면 §a고문 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
-		"§2[§a고문§2]§f ",
+		"§7철괴 우클릭 §8- §3심판§f: $[RANGE]칸 내 적들에게 §3심판 표식§f을 $[DURATION]초간 부여합니다.",
+		" §3심판 표식§f은 대상이 다른 생명체에게 준 피해량 $[PERCENTAGE]%를 누적시킵니다. $[COOLDOWN]",
+		"§7검 들고 F §8- §b조율§f: §a고문 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
+		" 변경 후 다음 근접 공격은 심판 표식을 터뜨려 효과를 발동시킬 수 있습니다.",
+		"§2[§a고문§2]§f", 
+		"§8<§7패시브§8>§f 받는 모든 피해가 $[DECREASE]% 감소합니다.",
+		"§8<§7표식 폭발§8>§f 대상은 표식 수치만큼 공격력을 채울 때까지 공격력이 §a0§f이 됩니다.",
+		"§4[§c집행§4]§f", 
+		"§8<§7패시브§8>§f 적에게 가하는 피해가 $[INCREASE]% 증가합니다.",
+		"§8<§7표식 폭발§8>§f 표식 수치만큼 §c추가 피해§f를 입히고 처형 가능하다면 §4처형§f합니다."
 		})
 public class Executioner_Remake extends AbilityBase {
 	

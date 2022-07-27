@@ -1,6 +1,8 @@
 package RainStarAbility;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -25,11 +27,9 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -47,8 +47,8 @@ import daybreak.google.common.base.Predicate;
 		"감소 효과는 $[MAX_STACK]스택까지 적용됩니다. $[COOLDOWN]",
 		"§7우클릭 §8- §b선§f: 바라보는 대상§8(§7없으면 자신§8)§f의 체력을 최대 체력까지 회복시킵니다.",
 		" 추가로, 적에게 능력 사용 시 §d회복량§f의 절반만큼 §e흡수 체력§f을 획득합니다.",
-		"§7좌클릭 §8- §c악§f: 자신이 포함된 무작위 대상의 체력을 반 칸으로 만듭니다.",
-		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가하고 나서 15초간 재생합니다."
+		"§7좌클릭 §8- §c악§f: 자신 §c$[CHANCE]§f%, 타인 §b$(CHANCE_CALCULATE)§f%로 체력을 반 칸으로 만듭니다.",
+		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가하고 나서 10초간 재생합니다."
 		})
 
 public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
@@ -97,6 +97,15 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
         }
     };
     
+	public static final SettingObject<Integer> CHANCE = 
+			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "chance", 33,
+            "# 악 효과가 자신이 걸릴 확률", "# 단위: %") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Double> INV_DURATION = 
 			abilitySettings.new SettingObject<Double>(ForbiddenFruit.class, "inv-duration", 10.0,
             "# 악 효과 무적 시간", "# 단위: 초") {
@@ -115,11 +124,6 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
 					return false;
 				}
-				if (getGame() instanceof Teamable) {
-					final Teamable teamGame = (Teamable) getGame();
-					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-				}
 				if (getPlayer().equals(entity)) return false;
 			}
 			return true;
@@ -135,14 +139,32 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     private final int invduration = (int) (INV_DURATION.getValue() * 20);
     private final int incdamage = DAMAGE_UP.getValue();
     private final int maxstack = MAX_STACK.getValue();
+    private final int chance = CHANCE.getValue();
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 33);
+	
+	@SuppressWarnings("unused")
+	private final static Object CHANCE_CALCULATE = new Object() {
+		@Override
+		public String toString() {
+			return "" + (100 - CHANCE.getValue());
+		}
+	};
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT && !cooldown.isCooldown()) {
 			int decreasestack = 0;
 			if (clicktype.equals(ClickType.LEFT_CLICK)) {
 				final Random random = new Random();
-	            AbstractGame.Participant participant = random.pick(getGame().getParticipants().toArray(new AbstractGame.Participant[0]));
+				Participant participant;
+				if (random.nextInt(100) < chance) {
+					participant = getParticipant();
+				} else {
+					List<Participant> participants = new ArrayList<>();
+					for (Participant participantlist : getGame().getParticipants()) {
+						if (predicate.test(participantlist.getPlayer())) participants.add(participantlist);
+					}
+					participant = random.pick(participants);
+				}
 	            decreasestack = (int) (participant.getPlayer().getHealth() - 1);
 	            Healths.setHealth(participant.getPlayer(), 1);
 	            new InvTimer(participant.getPlayer(), invduration).start();
@@ -203,7 +225,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
-			PotionEffects.REGENERATION.addPotionEffect(player, 300, 0, true);
+			PotionEffects.REGENERATION.addPotionEffect(player, 200, 0, true);
 			HandlerList.unregisterAll(this);
 			ac.unregister();
 		}

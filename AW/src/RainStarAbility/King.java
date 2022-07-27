@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
@@ -27,16 +29,17 @@ import daybreak.abilitywar.utils.base.color.Gradient;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
+import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "왕", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만듭니다.",
-		"범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
-		"또한 대상은 $[DURATION]초간 나약함 $[AMPLIFIER]을 받습니다.",
+		" 범위 내 대상은 왕에게 주는 피해량이 $[DECREASE]% 감소합니다.",
+		" 범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
 		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
 		" 그 대신 이동계 상태이상에 면역을 가지고, 원거리 공격자를 내게 끌어옵니다."
 		})
@@ -63,26 +66,13 @@ public class King extends AbilityBase {
             return value >= 0;
         }
     };
-	
-	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(King.class, "duration", 3.0,
-            "# 나약함 지속 시간", "# 단위: 초") {
-        @Override
-        public boolean condition(Double value) {
-            return value >= 0;
-        }
-    };
     
-	public static final SettingObject<Integer> AMPLIFIER = 
-			abilitySettings.new SettingObject<Integer>(King.class, "amplifier", 0,
-            "# 나약함 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+	public static final SettingObject<Integer> DECREASE = 
+			abilitySettings.new SettingObject<Integer>(King.class, "damage-decrease", 15,
+            "# 공격력 감소율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
-        }
-		@Override
-		public String toString() {
-			return "" + (1 + getValue());
         }
     };
     
@@ -111,10 +101,9 @@ public class King extends AbilityBase {
 		}
 	};
     
+	private final double damageDecrease = 1 - (DECREASE.getValue() * 0.01);
 	private final double decrease = 1 - (TIMER_DECREASE.getValue() * 0.01);
     private final double range = RANGE.getValue();
-    private final int amplifier = AMPLIFIER.getValue();
-    private final int duration = (int) (DURATION.getValue() * 20);
     private final Circle circle = Circle.of(range, (int) (range * 12));
     private final List<RGB> gradations = Gradient.createGradient(10, RGB.of(227, 1, 1), RGB.BLACK);
 	private int stack = 0;
@@ -148,9 +137,26 @@ public class King extends AbilityBase {
     
     @SubscribeEvent
     public void onEffectApply(ParticipantEffectApplyEvent e) {
-    	if (e.getPlayer().equals(getPlayer())) {
-    		//여기 해야함
+    	if (e.getParticipant().equals(getParticipant())) {
+    		final ImmutableSet<EffectType> effectType = e.getEffectType().getEffectType();
+			if (effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT)) {
+				e.setCancelled(true);
+			}
     	}
+    }
+    
+    @SubscribeEvent
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (damager != null && !getPlayer().equals(damager) && getPlayer().equals(e.getEntity()) && predicate.test(damager)) {
+			if (LocationUtil.isInCircle(getPlayer().getLocation(), damager.getLocation(), range)) e.setDamage(e.getDamage() * damageDecrease);
+			else damager.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(0).multiply(2)));
+		}
     }
     
 	@SubscribeEvent
@@ -181,7 +187,6 @@ public class King extends AbilityBase {
 			}
 			SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(e.getPlayer().getLocation(), 1, 1);
 			ParticleLib.EXPLOSION_NORMAL.spawnParticle(e.getPlayer().getLocation(), 0.7, 0.7, 0.7, 40, 0);
-			PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), duration, amplifier, true);
 		}
 	}
 	
