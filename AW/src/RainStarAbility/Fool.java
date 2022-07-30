@@ -31,6 +31,11 @@ import daybreak.abilitywar.utils.base.random.Random;
 		"철괴 우클릭 시 $[DURATION]초간 더 멍청해져 §b잊어버리는 속도§f가 $[MULTIPLY]배로 빨라지지만",
 		"§c쿨타임§f 동안은 §e똑똑해져§f 잊어버리질 않습니다. $[COOLDOWN]",
 		"§b잊어버릴 때마다§f $[CHANCE]%의 확률로 시야가 흔들립니다."
+		},
+		summarize = {
+		"피해를 받고 일정 시간이 지나면 피해량을 §d회복§f하고 시야가 흔들릴 수 있습니다.",
+		"§7철괴 우클릭으로§f 잊어버리는 속도를 §b가속§f시킵니다. $[COOLDOWN]",
+		"§c쿨타임§f 간에는 패시브 스킬도 같이 비활성화됩니다."
 		})
 
 public class Fool extends AbilityBase implements ActiveHandler {

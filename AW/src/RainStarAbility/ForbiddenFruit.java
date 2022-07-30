@@ -49,6 +49,14 @@ import daybreak.google.common.base.Predicate;
 		" 추가로, 적에게 능력 사용 시 §d회복량§f의 절반만큼 §e흡수 체력§f을 획득합니다.",
 		"§7좌클릭 §8- §c악§f: 자신 §c$[CHANCE]§f%, 타인 §b$(CHANCE_CALCULATE)§f%로 체력을 반 칸으로 만듭니다.",
 		" 이후 대상은 $[INV_DURATION]초간 무적 및 공격력이 $[DAMAGE_UP]% 증가하고 나서 10초간 재생합니다."
+		},
+		summarize = {
+		"§7철괴 우클릭으로§f §b선§f, §7좌클릭으로§f §c악§f 효과를 사용합니다.",
+		"스킬로 영향을 미친 체력만큼 다음 §c쿨타임§f이 줄어듭니다. $[COOLDOWN]",
+		"§3[§b선§3]§f 바라보는 대상 / 자신의 체력을 최대 체력까지 회복시킵니다.",
+		" 대상이 자신이 아니라면 회복량의 절반만큼 §e흡수 체력§f을 획득합니다.",
+		"§4[§c악§4]§f 모든 플레이어 중 한 명의 체력을 반 칸으로 만듭니다.",
+		" 이후 대상은 일정 시간 §c무적 및 공격력 증가§f를 얻고 나서 잠시간 §d재생§f합니다."
 		})
 
 public class ForbiddenFruit extends AbilityBase implements ActiveHandler {

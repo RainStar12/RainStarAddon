@@ -60,6 +60,12 @@ import daybreak.google.common.base.Predicate;
 		" 이때 웅크릴 시 대상을 변경하고 지속시간을 갱신시킬 수 있습니다.",
 		" 사용 중 모든 계약 시간은 흐르지 않습니다. $[ENCROACH_COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §chorn1111"
+		},
+		summarize = {
+		"근접 공격 시 잠시간 §3에임§f이 대상에게 §5유도§f됩니다. 나를 공격한 적과 계약하여",
+		"계약자 수만큼 §c공격력 증가§f 및 대상의 §a자연 회복 효과§f를 강탈합니다.",
+		"§7철괴 좌클릭으로§f 가장 가까운 계약자에게 잠식하여 대상의 체력을 빼앗습니다.",
+		"웅크린다면 잠식 대상을 다른 계약자로 변경하고 지속시간을 리셋시킵니다."
 		})
 public class Devil extends AbilityBase implements ActiveHandler {
 

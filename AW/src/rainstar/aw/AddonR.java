@@ -249,6 +249,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Horus.class);
 		AbilityFactory.registerAbility(Encore.class);
 		AbilityList.registerAbility(Encore.class);
+		AbilityFactory.registerAbility(Zero.class);
+		AbilityList.registerAbility(Zero.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

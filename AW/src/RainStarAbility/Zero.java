@@ -7,20 +7,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 
-public class Developer extends AbilityBase {
 
-	public Developer(Participant participant) {
+@AbilityManifest(name = "제로", rank = Rank.B, species = Species.HUMAN, explain = {
+		"피해를 받으면 첫 번째 자릿수 이외에 전부 §b§l0§f으로 변경합니다.",
+		"§7ex) 19.543 §e→§7 1§b0§f.§b000§f §8/§7 205 §e→§7 2§b00§f §8/§7 0.111 §e→§7 0.1§b00§f"
+		},
+		summarize = {
+		"받는 피해량이 첫 번째 자릿수를 제외하고 전부 §b§l0§f이 됩니다.",
+		})
+public class Zero extends AbilityBase {
+	
+	public Zero(Participant participant) {
 		super(participant);
 	}
-	
-	
 	
 	@SubscribeEvent(onlyRelevant = true, priority = 998)
 	public void onEntityDamage(EntityDamageEvent e) {
@@ -89,5 +98,5 @@ public class Developer extends AbilityBase {
 		}
 		
 	}
-	
+
 }

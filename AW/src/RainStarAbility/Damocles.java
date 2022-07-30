@@ -37,8 +37,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 		"§3검§f은 치명적 피해를 입히고 이 능력을 잃게 만듭니다."
 		},
 		summarize = {
-		"공격력이 §c$[DAMAGE_INCREASE]§f배가 되지만 한 대라도 맞으면",
-		"매 틱마다 §b$[CHANCE_NUMERATOR]§7/§b$[CHANCE_DENOMINATOR]§f의 확률로 즉사합니다."
+		"기본 공격력이 §c$[DAMAGE_INCREASE]§f배가 되지만 피격 이후 매 순간 매우 낮은 확률로 즉사합니다."
 		})
 
 public class Damocles extends AbilityBase {

@@ -35,8 +35,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"$[INBATTLE_CHECK_DURATION]초간 피해를 주거나 받지 않으면 §a비전투 상태§f로 간주합니다.",
 		"§a비전투 상태§f에서 철괴 우클릭 시 가장 마지막으로 입은 $[HEAL_COUNT]번의 피해를 §d회복§f합니다.",
 		"§c전투 상태§f에서 사용하면 $[DECREASED_HEAL_COUNT]번 회복하고 $[COOLDOWN]를 가집니다."
+		},
+		summarize = {
+		"일정 시간 피해를 주고받지 않으면 비전투 상태로 간주합니다. 비전투 상태간",
+		"§7철괴 우클릭§f으로 최근에 입었던 $[HEAL_COUNT]번의 피해를 §d회복§f합니다.",
+		"§c전투 상태§f에서 사용하면 $[DECREASED_HEAL_COUNT]번 회복하고 $[COOLDOWN]를 가집니다."
 		})
-
 public class FirstAid extends AbilityBase implements ActiveHandler {
 	
 	public FirstAid(Participant participant) {

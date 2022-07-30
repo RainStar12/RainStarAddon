@@ -26,6 +26,10 @@ import daybreak.google.common.base.Strings;
 		"3초간 맨 손으로 차징 후 적을 타격하면 $[DURATION]초간 §c출혈§f시킵니다. $[COOLDOWN]",
 		"§c출혈§f 중인 적에게 입히는 피해량이 $[INCREASE]% 증가합니다.",
 		"§b[§7아이디어 제공자§b] §chorn1111"
+		},
+		summarize = {
+		"맨 손 상태를 일정 시간 유지하면 지건이 충전됩니다. 이때 근접 공격 시",
+		"대상에게 §c출혈 피해§f를 입힙니다. §c출혈§f 중인 적에게 가하는 피해가 증가합니다."
 		})
 public class Fingun extends AbilityBase {
 

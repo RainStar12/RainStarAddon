@@ -72,6 +72,11 @@ import daybreak.google.common.base.Predicate;
 		" 투사체는 적을 기절시키고 지형지물과 생명체, 방어력을 §e관통§f합니다. $[MANA_PIERCE]",
 		"§8은신 §7-§f 신속 및 타게팅 불능 상태가 됩니다. §3소모 §7: §f0",
 		"§b[§7아이디어 제공자§b] §5Phillip_MS"
+		},
+		summarize = {
+		"주변 생명체의 회복을 먹고 사는 구슬이 지원사격을 보내줍니다.",
+		"일정 주기마다 구슬의 효과가 현재 상황에 적합하게 변경됩니다.",
+		"§2[§a회복§2] §3[§b속사§3] §5[§d유도§5] §6[§e관통§6] §8[§7은신§8]"
 		})
 
 public class FoxCrystalBall extends AbilityBase {

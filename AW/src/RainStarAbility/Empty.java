@@ -40,9 +40,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-
-import RainStarSynergy.Abyss;
 
 @AbilityManifest(name = "[ ]", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§a---------------------------------",
@@ -54,7 +51,16 @@ import RainStarSynergy.Abyss;
 		"능력을 복제한 후 $[MAX_WAIT]초 이내에 복제 해제를 시도하면 해제하지 않고 대신",
 		"능력을 분해하여 영구적인 공격력 $[INCREASE]%를 획득 가능합니다.",
 		"대신 능력의 원 주인으로부터 다시는 능력을 복제하지 못합니다."
-})
+		},
+		summarize = {
+		"§a---------------------------------",
+		"$(SUM_EXPLAIN)",
+		"§a---------------------------------",
+		"§7철괴로 대상을 30칸 내에서 우클릭하여§F 능력을 복제합니다.",
+		"복제된 능력은 웅크린 채 §7철괴 좌클릭§f으로 §7해제§f가 가능하며,",
+		"복제 후 빠르게 해제했다면 분해하여 영구 공격력으로 바꿉니다.",
+		"분해 시, 능력의 원 주인으로부터 다시는 능력을 복제하지 못합니다."
+		})
 
 @Tips(tip = {
         "다른 대상의 능력을 복제할 수 있어서 무한한 가능성을 가진 능력입니다.",
@@ -181,6 +187,31 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				}
 				joiner.add("§a복제한 능력 §f| §7[§b" + ability.getName() + "§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getExplanation(); iterator.hasNext();) {
+					joiner.add("§f" + iterator.next());
+				}
+			}
+			return joiner.toString();
+		}
+	};
+	
+	@SuppressWarnings("unused")
+	private final Object SUM_EXPLAIN = new Object() {
+		@Override
+		public String toString() {
+			final StringJoiner joiner = new StringJoiner("\n");
+			if (ability == null) {
+				if (increase > 1) {
+					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
+					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
+				}
+				joiner.add("능력을 복제할 수 있습니다.");
+			} else {
+				if (increase > 1) {
+					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
+					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
+				}
+				joiner.add("§a복제한 능력 §f| §7[§b" + ability.getName() + "§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+				for (final Iterator<String> iterator = ability.getSummarize(); iterator.hasNext();) {
 					joiner.add("§f" + iterator.next());
 				}
 			}
