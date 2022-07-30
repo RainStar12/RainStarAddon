@@ -47,8 +47,16 @@ import daybreak.google.common.collect.ImmutableMap;
 		"§8[§7HIDDEN§8] §b11:25§f: 예수께서 이르시되 나는 부활이요 생명이니",
 		"§e---------------------------------",
 		"$(EXPLAIN)",
+		"§e---------------------------------"
+		},
+		summarize = {
+		"§c언데드§f에게 주는 피해가 증가하고, §b신§f에게 받는 피해가 감소합니다.",
+		"§7철괴 우클릭 시§f 기도한 후 무작위 §b신§f이 강림해 §b신§f의 능력을 사용합니다.",
+		"강신 도중엔 사망하지 않으며, 신의 등급에 비례해 추가 피해를 입힙니다.",
 		"§e---------------------------------",
-})
+		"$(SUM_EXPLAIN)",
+		"§e---------------------------------"
+		})
 
 public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	
@@ -149,6 +157,23 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				final StringJoiner joiner = new StringJoiner("\n");
 				joiner.add("§3[§b" + godability.getDisplayName() + "§3] " + godability.getRank().getRankName() + " " + godability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = godability.getExplanation(); iterator.hasNext();) {
+					joiner.add("§f" + iterator.next());
+				}
+				return joiner.toString();
+			}
+		}
+	};
+	
+	@SuppressWarnings("unused")
+	private final Object SUM_EXPLAIN = new Object() {
+		@Override
+		public String toString() {
+			if (godability == null) {
+				return "아직 신께서 오지 않으셨습니다.".toString();
+			} else {
+				final StringJoiner joiner = new StringJoiner("\n");
+				joiner.add("§3[§b" + godability.getDisplayName() + "§3] " + godability.getRank().getRankName() + " " + godability.getSpecies().getSpeciesName());
+				for (final Iterator<String> iterator = godability.getSummarize(); iterator.hasNext();) {
 					joiner.add("§f" + iterator.next());
 				}
 				return joiner.toString();

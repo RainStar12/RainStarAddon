@@ -26,6 +26,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"피해받고 나서 체력이 §a5%§f 이하일 경우 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
 		"체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
 		"§b[§7아이디어 제공자§b] §5railohd"
+		},
+		summarize = {
+		"피해받은 이후 체력이 매우 적으면 일정 시간 §c무적 및 공격력이 증가§f합니다.",
+		"체력이 20% 이하일 때 피해를 줄여 받습니다."
 		})
 public class LuckSurvive extends AbilityBase {
 

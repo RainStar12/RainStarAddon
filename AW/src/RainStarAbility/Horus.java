@@ -42,7 +42,13 @@ import daybreak.google.common.base.Predicate;
 		"§5고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
 		"그 적이 $[PERIOD]초간 입힌 피해의 $[PERCENTAGE]%만큼 자신의 §c공격력§f이 증가합니다.",
 		"§0[§5고대 저주§0]§f 중복 부여 시마다 단계가 상승합니다. 저주 단계 1당",
-		" 공격력이 10%, 받는 피해가 15% 증가합니다."
+		" 공격력 및 받는 피해량이 각각 10%씩 증가합니다."
+		},
+		summarize = {
+		"일정 주기마다 가장 피해를 많이 준 적을 산출해냅니다.",
+		"대상에게 §5고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
+		"산출된 피해량의 일부만큼 공격력이 증가합니다.",
+		"§0[§5고대 저주§0]§f 부여할 때마다 단계 및 공격력 / 받는 피해가 증가합니다."
 		})
 
 public class Horus extends AbilityBase {
@@ -61,7 +67,7 @@ public class Horus extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Horus.class, "percentage", 20,
+			abilitySettings.new SettingObject<Integer>(Horus.class, "percentage", 25,
             "# 산출된 피해량만큼 공격 증가량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {

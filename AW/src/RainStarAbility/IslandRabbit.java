@@ -64,7 +64,14 @@ import daybreak.google.common.base.Strings;
 		" 또한 치명타 공격 시 무기의 §3강타 인챈트§f의 $[PERCENTAGE]%를 대상에게 적용 가능합니다.",
 		" 강타 인챈트 효과는 치명타 $[SMITE_COUNT]번에 1번 발동합니다.",
 		"§b[§7아이디어 제공자§b] §5SUHYEN"
+		},
+		summarize = {
+		"적이 내 주변으로 들어왔음을 감지하고, 철괴 우클릭 시 적 반대편으로 도망칩니다.",
+		"웅크렸다가 해제하여 높이 점프할 수 있습니다.",
+		"치명타 공격을 가할 때마다 피해량의 일부를 트루 대미지로 입힙니다.",
+		"치명타 공격 시 강타 인챈트 효과를 대상에게 적용할 수 있습니다."
 		})
+
 
 @SuppressWarnings("deprecation")
 public class IslandRabbit extends AbilityBase implements ActiveHandler {

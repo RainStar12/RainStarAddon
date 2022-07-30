@@ -27,7 +27,7 @@ import daybreak.google.common.base.Strings;
 @EffectManifest(name = "고대 저주", displayName = "§5고대 저주", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"레벨당 공격력이 10%, 받는 피해가 15% 증가합니다."
+		"레벨당 공격력 및 받는 피해가 10% 증가합니다."
 })
 
 public class AncientCurse extends AbstractGame.Effect implements Listener {
@@ -69,7 +69,7 @@ public class AncientCurse extends AbstractGame.Effect implements Listener {
 	
 	@EventHandler
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(participant.getPlayer())) e.setDamage(e.getDamage() * (1 + (level * 0.15)));
+		if (e.getEntity().equals(participant.getPlayer())) e.setDamage(e.getDamage() * (1 + (level * 0.1)));
 	}
 	
 	@EventHandler

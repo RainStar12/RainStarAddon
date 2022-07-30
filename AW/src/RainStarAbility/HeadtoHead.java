@@ -18,11 +18,13 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "정면승부", rank = Rank.A, species = Species.HUMAN, explain = {
-		"다른 생명체가 내 측면이나 후방을 공격하면 피해량이 §c50% 감소§f합니다.",
-		"다른 생명체의 측면이나 후방을 타격할 때 피해량이 §c35% 감소§f하고,",
-		"정면을 타격할 때 피해량이 §c15% 증가§f합니다."
+		"다른 생명체가 내 측면이나 후방을 공격하면 피해량이 §c$[GET_DECREASE]% 감소§f합니다.",
+		"다른 생명체의 측면이나 후방을 타격할 때 피해량이 §c$[ATTACK_DECREASE]% 감소§f하고,",
+		"정면을 타격할 때 피해량이 §c$[ATTACK_INCREASE]% 증가§f합니다."
 		},
 		summarize = {
+		"생명체에게 §a정면§f이 아닌 곳으로 받는 피해가 §b감소§f합니다.",
+		"생명체에게 §a정면§f으로 피해입히면 피해량이 §c증가§f, 아니라면 §b감소§f합니다."
 		})
 
 public class HeadtoHead extends AbilityBase {

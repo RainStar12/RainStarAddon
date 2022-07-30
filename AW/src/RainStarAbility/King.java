@@ -38,7 +38,7 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "왕", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만듭니다.",
-		" 범위 내 대상은 왕에게 주는 피해량이 $[DECREASE]% 감소합니다.",
+		" 범위 내 대상은 공격력이 $[DECREASE]% 감소합니다.",
 		" 범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
 		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
 		" 그 대신 이동계 상태이상에 면역을 가지고, 원거리 공격자를 내게 끌어옵니다."
@@ -153,9 +153,9 @@ public class King extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (damager != null && !getPlayer().equals(damager) && getPlayer().equals(e.getEntity()) && predicate.test(damager)) {
+		if (damager != null && !getPlayer().equals(damager) && predicate.test(damager)) {
 			if (LocationUtil.isInCircle(getPlayer().getLocation(), damager.getLocation(), range)) e.setDamage(e.getDamage() * damageDecrease);
-			else damager.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(0).multiply(2)));
+			else if (getPlayer().equals(e.getEntity())) damager.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(0).multiply(2)));
 		}
     }
     

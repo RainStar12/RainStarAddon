@@ -27,6 +27,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"그러나 복용 이후에는 $[MAX_NOT_TAKE]초 내로 약을 다시 복용해야만 합니다. §8(§7실패 시 §c사망§8)",
 		"복용까지 걸린 시간으로 다음 복용 시간이 줄어듭니다.",
 		"적 처치 시, 약의 효과가 완전히 풀립니다."
+		},
+		summarize = {
+		"§7웅크린 채 철괴 좌클릭§f시 약을 먹어 §6힘§7 / §b신속§7 / §8저항§f 버프를 얻습니다.",
+		"약 복용 후 일정 시간 재복용하지 않으면 §4즉사§f합니다.",
+		"복용까지 걸린 시간으로 다음 복용 시간이 줄어들고, §c적 처치§f로 약효를 §b해제§f합니다."
 		})
 
 public class Luciferium extends AbilityBase implements ActiveHandler {

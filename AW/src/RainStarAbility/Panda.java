@@ -44,6 +44,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§3방어 상태§f간 모든 대미지 감소 효과(방어력, 저항 등)를 2배로 받습니다.",
 		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 $[COUNTER_DAMAGE_MULTIPLY]배를 반격합니다.",
 		"§b[§7아이디어 제공자§b] §7Woojaekkun"
+		},
+		summarize = {
+		"웅크린 채 철괴를 우클릭하면 §3방어 상태§f가 됩니다. $[COOLDOWN]",
+		"웅크리기를 풀거나 §79.15초§f를 넘으면 §3방어 상태§f는 자동 해제됩니다.",
+		"§3방어 상태§f간 모든 대미지 감소 효과(방어력, 저항 등)를 2배로 받습니다.",
+		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 $[COUNTER_DAMAGE_MULTIPLY]배를 반격합니다."
 		})
 
 public class Panda extends AbilityBase implements ActiveHandler {

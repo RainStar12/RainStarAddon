@@ -35,6 +35,12 @@ import daybreak.google.common.base.Predicate;
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다.",
 		"§8[§7HIDDEN§8] §c괴물을 잡는 법§f: §3누가 방패에 그걸 달 생각을 했겠어.",
 		"§b[§7아이디어 제공자§b] §eYeow_ool §7/ §b_Daybreak_"
+		},
+		summarize = {
+		"적이 나를 일정 시간 쳐다보면 대상은 석화됩니다. $[COOLDOWN]",
+		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
+		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
+		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다."
 		})
 public class Medusa extends AbilityBase {
 	

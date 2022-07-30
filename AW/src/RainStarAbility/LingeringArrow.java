@@ -33,10 +33,12 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "잔류 화살", rank = Rank.B, species = Species.HUMAN, explain = {
-		"활로 플레이어를 적중할 때 대상의 위치에 무작위의",
-		"포션 지대를 잔류시킵니다. $[CooldownConfig]",
-		"다음 포션 효과를 미리 알 수 있으며, 철괴 우클릭 시",
-		"해당 효과를 넘길 수 있습니다. $[ActiveConfig]"
+		"활로 적을 맞히면 포션 지대를 잔류시킵니다. $[COOLDOWN]",
+		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE]"
+		},
+		summarize = {
+		"활로 적을 맞히면 포션 지대를 잔류시킵니다. $[COOLDOWN]",
+		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE]"
 		})
 
 @Tips(tip = {
@@ -67,14 +69,14 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 		super (participant);
 	}
 	
-	private final Cooldown arrowC = new Cooldown(CooldownConfig.getValue(), CooldownDecrease._50);
-	private final Cooldown activeC = new Cooldown(ActiveConfig.getValue(), CooldownDecrease._50);
+	private final Cooldown arrowC = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
+	private final Cooldown activeC = new Cooldown(ACTIVE.getValue(), CooldownDecrease._50);
 	private ActionbarChannel actionbar = newActionbarChannel();
 	private Random random = new Random();
 	
-	public static final SettingObject<Integer> CooldownConfig 
+	public static final SettingObject<Integer> COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
-			"Cooldown", 12, "# 쿨타임") {
+			"cooldown", 12, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -84,8 +86,8 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
 		}
-	}, ActiveConfig = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
-			"Active_Cooldown", 30, "# 변경 쿨타임") {
+	}, ACTIVE = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
+			"active-cooldown", 30, "# 변경 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

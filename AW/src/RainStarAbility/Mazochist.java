@@ -30,6 +30,10 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 		"철괴 우클릭 시, $[DURATION]초간 피해를 $[PERCENTAGE]%로 줄입니다. $[COOLDOWN]",
 		"그 대신, 피해량만큼 한 번 더 자해합니다.",
 		"§b[§7아이디어 제공자§b] §0personalmoder"
+		},
+		summarize = {
+		"피해를 입을 때마다 최대 체력이 될 때까지 회복 속도가 증가합니다.",
+		"§7철괴 우클릭 시§f $[DURATION]초간 감소된 피해를 2회 맞습니다."
 		})
 
 public class Mazochist extends AbilityBase {

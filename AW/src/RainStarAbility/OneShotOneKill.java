@@ -22,6 +22,9 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "일격필살", rank = Rank.A, species = Species.HUMAN, explain = {
 		"적에게 입히는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."
+		},
+		summarize = {
+		"적에게 입히는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."		
 		})
 
 public class OneShotOneKill extends AbilityBase {

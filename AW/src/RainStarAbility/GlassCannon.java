@@ -1,13 +1,13 @@
 package RainStarAbility;
 
+import java.util.Set;
+
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -19,27 +19,25 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
 		name = "유리 대포",
 		rank = Rank.B, 
 		species = Species.OTHERS, 
 		explain = {
-		"내가 주는 §c추가 대미지§f만큼 내가 피해입을 때 §c추가 피해§f를 입습니다.",
-		"철괴를 들고 웅크린 상태로 마우스 휠을 이용하여,",
-		"내가 받을 §c추가 피해량§ 및 §c추가 대미지§f를 정할 수 있습니다.",
-		"이 수치는 최대 5까지 설정 가능합니다."
+		"검 우클릭으로 유리 대포 모드를 켜거나 끌 수 있습니다.",
+		"§c[§b유리 대포§c] §f주는 피해, 받는 피해 모두 §c§l$[DAMAGE]§f 증가합니다."
 		},
 		summarize = {
-		"웅크린 채 철괴를 들고 마우스 휠을 이용하여",
-		"§e1§f~§e5§f의 §c공격력 및 받는 피해 증가§f를 설정할 수 있습니다."
+		"검 우클릭으로 유리 대포 모드를 켜거나 끌 수 있습니다.",
+		"§c[§b유리 대포§c] §f주는 피해, 받는 피해 모두 §c§l$[DAMAGE]§f 증가합니다."
 		})
 
 @Tips(tip = {
@@ -68,129 +66,48 @@ public class GlassCannon extends AbilityBase {
 		super (participant);
 	}
 	
-	private int damage = 1;
-	private int amount = 10 + (damage * 20);
-	private double speed = 1 + (damage * 0.1);
-	
-	private final AbilityTimer titleClear = new AbilityTimer(10) {
-		@Override
-		protected void run(int count) {
-		}
-
-		@Override
-		protected void onEnd() {
-			NMS.clearTitle(getPlayer());
-		}
-
-		@Override
-		protected void onSilentEnd() {
-			NMS.clearTitle(getPlayer());
-		}
-	}.setPeriod(TimeUnit.TICKS, 4);
-	
-	@SubscribeEvent(onlyRelevant = true)
-	private void onSlotChange(final PlayerItemHeldEvent e) {
-		if (!getPlayer().isSneaking() || e.getPreviousSlot() == e.getNewSlot()) return;
-		final PlayerInventory inventory = getPlayer().getInventory();
-		final ItemStack previous = inventory.getItem(e.getPreviousSlot());
-		if (previous != null && previous.getType() == Material.IRON_INGOT) {
-			e.setCancelled(true);
-			final State state = getState(e.getPreviousSlot(), e.getNewSlot());
-			if (state == State.UNKNOWN) return;
-			switch (state) {
-				case UP:
-					damage = limit(damage + 1, 5, 1);
-					ac.update("§e대미지 및 피해 증가 §7: §c" + damage);
-					break;
-				case DOWN:
-					damage = limit(damage - 1, 5, 1);
-					ac.update("§e대미지 및 피해 증가 §7: §c" + damage);
-					break;
-				default:
-					break;
-			}
-			NMS.sendTitle(getPlayer(), state == State.UP ? "§c↑" : "§9↓", String.valueOf(damage), 0, 20, 0);
-			if (!titleClear.start()) {
-				titleClear.setCount(10);
-			}
-		}
-	}
-
-	private int limit(final int value, final int max, final int min) {
-		return Math.max(min, Math.min(max, value));
-	}
-
-	private State getState(final int previousSlot, final int newSlot) {
-		if (previousSlot == 0) {
-			return newSlot >= 6 ? State.UP : (newSlot <= 3 ? State.DOWN : State.UNKNOWN);
-		} else if (previousSlot == 8) {
-			return newSlot <= 2 ? State.DOWN : (newSlot >= 5 ? State.UP : State.UNKNOWN);
-		} else {
-			return calculate(previousSlot, -1) == newSlot
-					|| calculate(previousSlot, -2) == newSlot
-					|| calculate(previousSlot, -3) == newSlot ? State.UP :
-					(
-							calculate(previousSlot, 1) == newSlot
-							|| calculate(previousSlot, 2) == newSlot
-							|| calculate(previousSlot, 3) == newSlot ? State.DOWN : State.UNKNOWN
-					);
-		}
-	}
-
-	private int calculate(int slot, int offset) {
-		final int value = slot + offset;
-		if (value < 0) return 9 + value;
-		else if (value > 8) return value - 9;
-		else return value;
-	}
-
-	private enum State {
-		UP, DOWN, UNKNOWN
-	}
-
+	public static final SettingObject<Double> DAMAGE = 
+			abilitySettings.new SettingObject<Double>(GlassCannon.class, "damage", 5.0,
+            "# 유리 대포 대미지") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
+	private static final Set<Material> swords;
+	private final double damage = DAMAGE.getValue();
+	private boolean glasscannon = false;
 	private final ActionbarChannel ac = newActionbarChannel();
 	
-	@Override
-	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("§e대미지 및 피해 증가 §7: §c" + damage);
+	static {
+		if (MaterialX.NETHERITE_SWORD.isSupported()) {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
+		} else {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 		}
 	}
 	
 	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		
-		if (e.getDamager().equals(getPlayer())) {
-			e.setDamage(e.getDamage() + damage);
-			SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, (float) speed);
-			ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 
-						2, 0, amount, 1, MaterialX.GLASS);
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType())) {
+			glasscannon = !glasscannon;
+			ac.update(glasscannon ? "§c[§b유리 대포§c]" : "§8[§7유리 대포§8]");
 		}
-		
-		if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
-			e.setDamage(e.getDamage() + damage);
-			SoundLib.BLOCK_GLASS_BREAK.playSound((Player) e.getDamager(), 1, (float) speed);
-			ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 0, 
-					2, 0, amount, 1, MaterialX.GLASS);
-		}
-		
-		if (e.getDamager() instanceof Projectile) {
-			Projectile arrow = (Projectile) e.getDamager();
-			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof LivingEntity
-					&& !e.getEntity().equals(getPlayer())) {
-				e.setDamage(e.getDamage() + damage);
-				SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, (float) speed);
-				ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 
-						2, 0, amount, 1, MaterialX.GLASS);
-			}
-			if (arrow.getShooter() instanceof Player && e.getEntity().equals(getPlayer()) && !getPlayer().equals(arrow.getShooter())) {
-				e.setDamage(e.getDamage() + damage);
-				SoundLib.BLOCK_GLASS_BREAK.playSound((Player) arrow.getShooter(), 1, (float) speed);
-				ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 
-						2, 0, amount, 1, MaterialX.GLASS);
-			}
-		
-		}
+	}
 	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {		
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (glasscannon && (getPlayer().equals(damager) || e.getEntity().equals(getPlayer()))) {
+			e.setDamage(e.getDamage() + damage);
+			SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, 1.5f);
+			ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 30, 1, MaterialX.GLASS);
+		}
 	}
 }

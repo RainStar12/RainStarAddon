@@ -68,6 +68,10 @@ import daybreak.google.common.base.Predicate;
 		" 이 사냥개가 물어뜯는 적은 $[DAMAGE]의 피해를 입고 $[STUN]틱간 §e기절§f합니다.",
 		"§7철괴 좌클릭 §8- §c힘 재기§f: 각 사냥개의 스탯을 볼 수 있는 GUI를 오픈합니다.",
 		"§b[§7아이디어 제공자§b] §6DUCKGAE"
+		},
+		summarize = {
+		"§7철괴 우클릭으로§f §6사냥개§f를 소환합니다. 사냥개는 §c3§a가§b지§f 타입이 존재합니다.",
+		"타입에 따른 §6사냥개§f의 능력치는 §7철괴 좌클릭§f을 통해서 볼 수 있습니다."
 		})
 
 public class HuntingDog extends AbilityBase implements ActiveHandler {

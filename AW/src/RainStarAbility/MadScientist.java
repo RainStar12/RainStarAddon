@@ -47,6 +47,12 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴 우클릭 §8- §3수술§f: 10칸 이내의 대상을 바라보고 수술을 진행합니다. $[COOLDOWN]",
 		" §2[§a성공§2] §f대상을 $[HEAL_AMOUNT]만큼 §d회복§f시키고, 자신은 1.5배 더 회복합니다.",
 		" §4[§c실패§4] §f대상에게 0.25초마다 피해를 입히는 §c출혈§f을 $[BLEED]초 부여합니다."
+		},
+		summarize = {
+		"§a생명력§f 수치 이상으로 회복하지 못하고, (생명력)%로 수술이 성공합니다.",
+		"§7철괴 좌클릭으로§f §a생명력§f을 감소시키고 잠시간 공격력, 이동 속도가 §a생명력§f에",
+		"반비례하여 증가합니다.",
+		"§710칸 내 대상을 바라보고 철괴 우클릭으로§f 수술하여 성공 시 상호 회복, 실패 시 출혈시킵니다."
 		})
 public class MadScientist extends AbilityBase implements ActiveHandler {
 	

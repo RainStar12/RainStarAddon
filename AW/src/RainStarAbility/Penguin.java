@@ -90,6 +90,13 @@ import daybreak.google.common.base.Strings;
 		"§7패시브 §8- §b추위 면역§f: 얼음계 상태이상 효과를 절반만 받고",
 		" 받을 때마다 체력을 $[HEAL_AMOUNT]만큼 §d회복§f합니다.",
 		"§b[§7아이디어 제공자§b] §dDDony"
+		},
+		summarize = {
+		"§7철괴 좌클릭으로§f 바라보는 방향으로 §b얼음 슬라이딩§f을 합니다.",
+		"§b슬라이딩§f 중에는 타게팅 불가, 무적이며 적에게 부딪혀 피해를 줍니다.",
+		"피해량은 대상이 빙결 상태이상을 받은 횟수에 비례합니다.",
+		"일정 주기로 눈덩이를 획득해 눈을 던져 점점 추워지게 하다 얼립니다.",
+		"얼음계 상태이상 효과를 절반만 받고 체력을 회복합니다."
 		})
 
 public class Penguin extends AbilityBase implements ActiveHandler {
