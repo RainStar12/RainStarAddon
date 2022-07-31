@@ -70,8 +70,8 @@ import daybreak.google.common.base.Strings;
 		" §7적 처치 시 눈사람 소환§f: $[SNOWMAN_SPAWN]",
 		"§7지팡이 좌클릭 §8- §b앱솔루트 제로§f: 주변의 모든 빙결 상태이상을 가진 플레이어를",
 		" 얼음을 깨트려 마법 대미지를 입힙니다. 또한 대상에게 방어력이 2 감소하는",
-		" 눈꽃 표식을 15초간 부여시킵니다. $[BREAK_COOLDOWN]",
-		" 눈꽃 표식은 최대 3번까지 중첩됩니다.",
+		" 눈꽃 표식을 20초간 부여시킵니다. $[BREAK_COOLDOWN]",
+		" 눈꽃 표식은 최대 5번까지 중첩됩니다.",
 		"§7상태이상 §8- §9냉기§f: 이동 속도, 공격 속도가 감속하고 회복력이 줄어듭니다.",
 		" 또한 지속시간과 쿨타임 타이머가 천천히 흐르게 됩니다."
 		},
@@ -304,6 +304,10 @@ public class Yuki extends AbilityBase implements ActiveHandler {
     						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 2);
     					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 2) {
     						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 3);
+    					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 3) {
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 4);
+    					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 4) {
+    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 5);
     					}
     				} else {
     					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 1);
@@ -548,7 +552,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 						Damages.damageMagic(p, (Player) shooter, true, cast / 3);
 						if (getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
 							attacked.add(p);
-							Frost.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 3);
+							Frost.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 4);
 						} else if (!getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
 							Chill.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15);
 							attacked.add(p);

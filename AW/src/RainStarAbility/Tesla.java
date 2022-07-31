@@ -1,7 +1,6 @@
 package RainStarAbility;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -71,10 +70,8 @@ import daybreak.google.common.collect.Iterables;
 		" 좌클릭 시 전자기장을 생성해 범위 내 대상들을 중심으로 계속해서 끌어당기고,",
 		" 7초 후 자기 폭발을 일으킵니다. $[LEFT_COOLDOWN]",
 		" 폭발에 휘말린 대상은 14초의 감전 효과를 얻습니다.",
-		"§7철괴 우클릭 §8- §e레일건§f: 다음 활 발사 시 초고속의 탄환을 발사해 적중 대상에게",
-		" 근접 피해를 줍니다. 탄환은 최대 3명을 적중하기 전까지 체인 라이트닝 식으로",
-		" 유도되며, 마지막 적중 대상에겐 플라즈마 폭발을 일으키고 대상의 위치로",
-		" 순간 이동합니다. $[RIGHT_COOLDOWN]",
+		"§7철괴 우클릭 §8- §e레일건§f: 다음 활 발사 시 초고속의 유도 탄환을 발사해 적중 대상에게",
+		" 근접 피해를 주고, 플라즈마 폭발을 일으키고 대상의 위치로 순간 이동합니다. $[RIGHT_COOLDOWN]",
 		"§7상태이상 §8- §d감전§f: 매 2초마다 0.5초간 기절합니다. 감전 도중에 기절 효과가 새로이",
 		" 들어올 때마다 획득한 기절의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다.",
 		"§8[§7HIDDEN§8] §b초전도§f: 이거 뜨고 있는거야?"
@@ -83,8 +80,8 @@ import daybreak.google.common.collect.Iterables;
 		"자신이 주는 모든 §c근접 피해 외 피해§f는 피해량에 비례한 §e기절 부여§f로 대체됩니다.",
 		"§7철괴 좌클릭 시§f 자기 폭풍을 만들어내 플레이어들을 끌어당기고 폭발을 일으켜",
 		"대상들을 §d감전§f시킵니다. $[LEFT_COOLDOWN]",
-		"§7철괴 우클릭 시§f 레일건을 차징해 발사하여 최대 3명에게까지 유도되고,",
-		"마지막 세 번째 적에게 순간이동하며 폭발시킵니다. $[RIGHT_COOLDOWN]",
+		"§7철괴 우클릭 시§f 레일건을 차징해 발사합니다. $[RIGHT_COOLDOWN]",
+		"탄은 유도되고 적중 시 순간이동하며 폭발시킵니다.",
 		"§d감전된 대상§f은 일정 시간마다 잠깐씩 기절하고, 별개의 기절 효과가 새로 들어오면",
 		"§d감전 효과§f가 끝날 때 기절 시간에 비례해 피해를 입습니다."
 		})
@@ -430,7 +427,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		private final LivingEntity shooter;
 		private final CustomEntity entity;
 		private final Predicate<Entity> predicate;
-		private final Set<Player> hitcheck = new HashSet<>();
 		private final Iterator<Vector> twist;
 		private Vector forward;
 		private int stacks = 0;
@@ -483,7 +479,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 							}
 						}
 					}
-					if (hitcheck.contains(entity)) return false;
 					return true;
 				}
 
@@ -523,34 +518,18 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 				final Location location = iterator.next();
 				entity.setLocation(location);
 				for (Player player : LocationUtil.getConflictingEntities(Player.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
-					if (!shooter.equals(player) && !hitcheck.contains(player)) {
-						hitcheck.add(player);
-						switch(hitcheck.size()) {
-						case 1: SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1, 1);
-								Stun.apply(getGame().getParticipant(player), TimeUnit.SECONDS, 2);
-								player.getWorld().strikeLightningEffect(player.getLocation());
-								player.damage(10, getPlayer());
-								break;
-						case 2: SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1, 1.2f);
-								Stun.apply(getGame().getParticipant(player), TimeUnit.SECONDS, 2);
-								player.getWorld().strikeLightningEffect(player.getLocation());
-								player.damage(10, getPlayer());
-								break;
-						case 3: SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1, 1.4f);
-								ParticleLib.EXPLOSION_HUGE.spawnParticle(player.getLocation());
-								player.getWorld().strikeLightningEffect(player.getLocation());
-								player.damage(10, getPlayer());
-								player.getWorld().createExplosion(player.getLocation(), 1.4f, false, false);
-								new BukkitRunnable() {
-									@Override
-									public void run() {
-										getPlayer().teleport(player.getLocation());
-									}
-								}.runTaskLater(AbilityWar.getPlugin(), 2L);
-								stop(false);
-								break;
+					SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(getPlayer(), 1, 1.4f);
+					ParticleLib.EXPLOSION_HUGE.spawnParticle(player.getLocation());
+					player.getWorld().strikeLightningEffect(player.getLocation());
+					player.damage(15, getPlayer());
+					player.getWorld().createExplosion(player.getLocation(), 1.4f, false, false);
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							getPlayer().teleport(player.getLocation());
 						}
-					}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
+					stop(false);
 				}
 				if (turns) stacks++;
 				else stacks--;
@@ -573,7 +552,6 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onSilentEnd() {
-			hitcheck.clear();
 			entity.remove();
 		}
 
