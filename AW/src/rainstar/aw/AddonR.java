@@ -1,13 +1,9 @@
 package rainstar.aw;
 
-import java.util.Locale;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.cokes86.cokesaddon.ability.AddonAbilityFactory.SupportNMS;
 
 import RainStarAbility.*;
 import RainStarAbility.chronos.Chronos;
@@ -251,6 +247,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Encore.class);
 		AbilityFactory.registerAbility(Zero.class);
 		AbilityList.registerAbility(Zero.class);
+		AbilityFactory.registerAbility(Chatterbox.class);
+		AbilityList.registerAbility(Chatterbox.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

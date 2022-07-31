@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.16.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.16.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/본부.2 포대/Desktop/Downloads/craftbukkit-1.17.1.jar"/>
+	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
