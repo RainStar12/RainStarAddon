@@ -13,6 +13,9 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 
 @AbilityManifest(name = "내성", rank = Rank.B, species = Species.HUMAN, explain = {
 		"생명체와 발사체에 의한 피해가 아닌 피해에 내성을 가져 피해를 입지 않습니다."
+		},
+		summarize = {
+		"생명체와 발사체에 의한 피해 외의 피해를 입지 않습니다."	
 		})
 public class Tolerance extends AbilityBase {
 	

@@ -59,6 +59,12 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴 좌클릭 §8- §b람쥐썬더§f: $[CHANNELING]초간 이동 불가 상태가 되고, 내 현재 위치에서",
 		" 퍼져나가는 번개를 떨어뜨려 적들을 감전시킵니다. $[THUNDER_CONSUME]",
 		"§b[§7아이디어 제공자§b] §eLessso"
+		},
+		summarize = {
+		"§6도토리§f가 주변에 생겨나며 주워 먹어서 22개까지 수집 가능합니다.",
+		"철괴를 이용해 쿨타임 공유의 스킬을 §6도토리§f를 소모하여 사용 가능합니다.",
+		"철괴 우클릭으로 비어있는 체력의 일부를 §d회복§f합니다.",
+		"철괴 좌클릭으로 잠시간 이동 불가가 된 후 주변에 §e번개§f를 내리칩니다."
 		})
 
 public class Squirrel extends AbilityBase implements ActiveHandler {

@@ -29,6 +29,11 @@ import daybreak.google.common.base.Predicate;
 		"채팅으로 §c멈춰!§f를 치면 10초 내로 자신에게 피해를 줬던",
 		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[COOLDOWN]",
 		"§0[§8경직§0]§f 이동, 공격, 체력 회복이 불가능합니다."
+		},
+		summarize = {
+		"채팅으로 §c멈춰!§f를 치면 10초 내로 자신에게 피해를 줬던",
+		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[COOLDOWN]",
+		"§0[§8경직§0]§f 이동, 공격, 체력 회복이 불가능합니다."
 		})
 
 @SuppressWarnings("deprecation")

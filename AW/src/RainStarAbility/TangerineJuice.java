@@ -74,6 +74,13 @@ import daybreak.google.common.base.Strings;
 		" $[RANGE]칸 내의 생명체들을 강하게 밀쳐내고 §7실명§f시킵니다.",
 		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다.",
 		"§b[§7아이디어 제공자§b] §6Tangerine_Ring"
+		},
+		summarize = {
+		"화살 발사 시 §e과즙 게이지§f를 소모하여 적중 위치에 §6장판§f을 터뜨립니다.",
+		"생명체 적중 시 §e과즙 게이지§f를 일부 돌려받습니다. §6장판§f 위의 적은 중심으로 끌려가고",
+		"이외의 §3벡터 효과§f를 무시합니다. 또한 §6장판§f 위 적에게 주는 §b원거리 피해§f가 증가합니다.",
+		"§7철괴 우클릭으로§f 과즙 게이지를 전부 소모해 잠시간 신속 버프를 얻고",
+		"주변 생명체를 강하게 밀쳐내고 §7실명§f시킵니다."
 		})
 
 public class TangerineJuice extends AbilityBase implements ActiveHandler {

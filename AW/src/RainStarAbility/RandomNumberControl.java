@@ -39,6 +39,10 @@ import kotlin.ranges.RangesKt;
 		"§c공격§f은 게임 도중에 세운 §c역대 최고치의 입힌 피해량§f 이하로 §e떨어지지 않으며§f,",
 		"§b방어§f는 게임 도중에 세운 §b역대 최소치의 받은 피해량§f 이상으로 §e올라가지 않습니다§f.",
 		"능력은 $[PERIOD]초마다 충전되어 적에게 피해를 입힐 때 발동합니다."
+		},
+		summarize = {
+		"적에게 피해를 입힐 때 잠시간 §2수치를 조작§f하여 §c공격력§f 및 §b방어력§f이 §a역대 최고값§f",
+		"이하로 떨어지지 않습니다. $[PERIOD]초마다 재충전됩니다."
 		})
 
 public class RandomNumberControl extends AbilityBase {

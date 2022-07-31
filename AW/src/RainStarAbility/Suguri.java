@@ -41,6 +41,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7철괴 우클릭 §8- §b액셀러레이터§f: $[ACCELERATOR_DURATION]초간 히트 수치가 0이 됩니다.",
 		" 지속 중 대시를 끝낼 때 다음 공격을 1회 §b회피§f할 수 있습니다. §8(§7중첩 불가§8)",
 		" 또한 공격에 1~6의 추가 피해를 줍니다. $[COOLDOWN]"
+		},
+		summarize = {
+		"낙하 피해를 받지 않습니다.",
+		"공중에서 웅크리면 지속 대시하지만 §c히트 수치§f가 기하급수적으로 상승합니다.",
+		"§c히트 수치§f에 비례해 받는 피해량이 증가하고 대시 종료 시 §e기절§f합니다.",
+		"§7철괴 우클릭으로§f §c히트 수치§f를 0으로 만들고 대시 종료 후 공격을 회피합니다.",
+		"또한 공격에 1~6의 추가 피해를 입힙니다."
 		})
 
 public class Suguri extends AbilityBase implements ActiveHandler {
@@ -169,6 +176,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent(onlyRelevant = true)
 	private void onToggleSneak(PlayerToggleSneakEvent e) {
 		if (!getPlayer().isOnGround() && e.isSneaking()) {

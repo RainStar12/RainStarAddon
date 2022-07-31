@@ -63,6 +63,10 @@ import daybreak.google.common.collect.ImmutableSet;
 		"체력이 적어 §c위기 상태§f가 될 때 다양한 §a주인공 버프§f를 받습니다.",
 		"또한 적을 처치할 때마다 매번 §d성장§f합니다.",
 		"§8[§7HIDDEN§8] §c이야기 쟁탈§f: 자, 이제 누가 주인공이지?"
+		},
+		summarize = {
+		"체력이 적을수록 §a주인공 버프§f를 얻어 강해집니다.",
+		"적 처치 시 §d성장§f합니다."
 		})
 
 public class Protagonist extends AbilityBase {

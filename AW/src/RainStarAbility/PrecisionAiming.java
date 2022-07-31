@@ -53,6 +53,9 @@ import daybreak.google.common.base.Strings;
 		"$[RELOAD]초마다 다음 $[AMMO_SIZE]발의 화살을 정밀하게 조준합니다.",
 		"화살로부터 $[RANGE]칸 내 가장 가까운 플레이어에게 §5유도§f됩니다.",
 		"§8[§7HIDDEN§8] §c아직 한 발 남았다§f: 최후의 순간에 최고의 한 발을."
+		},
+		summarize = {
+		"일정 주기로 §d유도 화살§f을 §a충전§f합니다. §d유도 화살§f은 적 $[RANGE]칸에서 §5유도§f됩니다."
 		})
 
 @Tips(tip = {

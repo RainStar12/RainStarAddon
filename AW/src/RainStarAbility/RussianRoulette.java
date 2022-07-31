@@ -50,6 +50,12 @@ import daybreak.google.common.base.Strings;
 		"이후 철괴 우클릭으로 한 발씩 발사 가능합니다. 실탄을 발사할 경우,",
 		"맞힌 대상에게 §c회복 불능§f $[HEALBAN]초와 §b트루 대미지§f $[TRUEDMG]%를 입힙니다.",
 		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
+		},
+		summarize = {
+		"실린더가 빈 상태에서 §7철괴 우클릭으로§f 10칸 중 한 곳에 실탄을 장전합니다.",
+		"이후 §7철괴 우클릭으로§f 한 발씩 발사하고, 실탄 발사 시",
+		"맞힌 대상에게 §c회복 불능§f $[HEALBAN]초와 §b트루 대미지§f $[TRUEDMG]%를 입힙니다.",
+		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
 		})
 public class RussianRoulette extends AbilityBase implements ActiveHandler {
 	

@@ -33,6 +33,10 @@ import daybreak.google.common.base.Predicate;
 		"누군가가 나를 보고 있을 때 웅크리기를 연타할 경우 피해를 줍니다.",
 		"만일 상대가 내 뒷모습을 보고 있을 때는 피해량이 더 강해집니다.",
 		"나를 죽인 대상은 §c훈수§f 상태이상을 받습니다."
+		},
+		summarize = {
+		"웅크리기 연타 시 나를 바라보는 적은 피해를 입습니다. §8(§7후방 2배§8)",
+		"나를 죽인 대상은 §c훈수§f 상태이상을 받습니다."
 		})
 
 public class Teabagging extends AbilityBase {
@@ -136,9 +140,9 @@ public class Teabagging extends AbilityBase {
         					}
         					if (teabaggingcount.get(player) >= 3) {
         						if (isBehind(getPlayer(), player)) {
-            						player.damage(4, getPlayer());	
+            						player.damage(6, getPlayer());	
         						} else {
-            						player.damage(2, getPlayer());	
+            						player.damage(3, getPlayer());	
         						}
         						Random random = new Random();
         						if (random.nextInt(10) == 0) {

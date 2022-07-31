@@ -34,6 +34,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§3철괴§f 우클릭 시, $[DAMAGE_DECREASE_DURATION]초간 §b20%§f의 §b피해 경감 효과§f를 얻습니다.",
 		"§c피격 시§f마다 지속시간이 갱신되고 §b경감 수치§f가 §b20%§f씩 증가합니다.",
 		"§b경감 수치§f가 §b100%§f에 도달하면, $[INV_DURATION]초간 §a무적§f이 됩니다. $[COOLDOWN]"
+		},
+		summarize = {
+		"뒤쪽으로 밀려나지 않습니다.",
+		"§3철괴§f 우클릭 시, $[DAMAGE_DECREASE_DURATION]초간 §b20%§f의 §b피해 경감 효과§f를 얻습니다.",
+		"§c피격 시§f마다 지속시간이 갱신되고 §b경감 수치§f가 §b20%§f씩 증가합니다.",
+		"§b경감 수치§f가 §b100%§f에 도달하면, $[INV_DURATION]초간 §a무적§f이 됩니다. $[COOLDOWN]"
 		})
 
 public class Tekkai extends AbilityBase implements ActiveHandler {

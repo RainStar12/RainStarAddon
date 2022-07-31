@@ -90,6 +90,12 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 적을 피해입히며 밀쳐냅니다. 피해는 중심에서 멀어질수록 강력해집니다.",
 		" 피해는 영역에서 자신의 최고 대미지에 비례§8(§7× 0.5~1.5§8)§f합니다.",
 		"§b[§7아이디어 제공자§b] §bSleepground"
+		},
+		summarize = {
+		"§c적 처치 시§f 꿈 레벨이 상승하고 소량의 체력 회복 및 쿨타임 감소 효과를 받습니다.",
+		"꿈 레벨 효과는 §b필드§f 내에서 사용 가능하고, §7철괴 좌클릭§f으로 확인합니다.",
+		"§7철괴 우클릭 시§f §b필드§f를 만들어 지속적으로 §3파도§f가 쳐 적들에게 피해를 입힙니다.",
+		"§b필드§f에서 잃은 체력의 일부는 지속시간이 끝나면 회복합니다."
 		})
 
 public class SkyWhale extends AbilityBase implements ActiveHandler {
