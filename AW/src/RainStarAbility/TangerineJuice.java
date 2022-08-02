@@ -13,11 +13,14 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -31,6 +34,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
@@ -90,7 +96,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> PERIOD = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "period", 5.0,
+			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "period", 7.0,
 			"# 과즙이 차오르는 주기", "# WRECK 효과 50%까지 적용") {
 
 		@Override
@@ -101,7 +107,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> NEED_WAIT = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-wait", 10.0,
+			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-wait", 15.0,
 			"# 과즙 사용 후 대기시간", "# WRECK 효과 50%까지 적용") {
 
 		@Override
@@ -219,6 +225,28 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	private final int fieldrange = FIELD_RANGE.getValue();
 	private final int fieldduration = FIELD_DURATION.getValue() * 5;
 	private final Set<Vector> vectors = new HashSet<>();
+	private final Random random = new Random();
+	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
+	
+	private final RGB orange1 = RGB.of(241, 129, 4), orange2 = RGB.of(230, 46, 1), orange3 = RGB.of(250, 72, 5),
+			orange4 = RGB.of(255, 128, 1), orange5 = RGB.of(251, 173, 68), orange6 = RGB.of(252, 95, 10),
+			orange7 = RGB.of(240, 72, 14), orange8 = RGB.of(254, 108, 20), orange9 = RGB.of(230, 74, 15);
+	
+	@SuppressWarnings("serial")
+	private List<RGB> orangecolors = new ArrayList<RGB>() {
+		{
+			add(orange1);
+			add(orange2);
+			add(orange3);
+			add(orange4);
+			add(orange5);
+			add(orange6);
+			add(orange7);
+			add(orange8);
+			add(orange9);
+			add(RGB.ORANGE);
+		}
+	};
 	
 	private ActionbarChannel ac = newActionbarChannel();
 	private int juicegauge = 0;
@@ -282,6 +310,13 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
     	}
     }
     
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager().hasMetadata("Firework")) {
+			e.setCancelled(true);
+		}
+	}
+    
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 			if (juicegauge > 1) {
@@ -289,6 +324,23 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 					entity.setVelocity(entity.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1 + (juicegauge * 0.2)).setY(0));
 					PotionEffects.BLINDNESS.addPotionEffect(entity, (juicegauge * 20), 0, true);
 				}
+				final Firework firework = getPlayer().getWorld().spawn(getPlayer().getLocation(), Firework.class);
+				final FireworkMeta meta = firework.getFireworkMeta();
+				meta.addEffect(
+						FireworkEffect.builder()
+						.withColor(random.pick(orangecolors).getColor(), random.pick(orangecolors).getColor(), random.pick(orangecolors).getColor())
+						.with(Type.BALL_LARGE)
+						.build()
+				);
+				meta.setPower(0);
+				firework.setFireworkMeta(meta);
+				firework.setMetadata("Firework", NULL_VALUE);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						firework.detonate();
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 1L);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1.5f);
 				PotionEffects.SPEED.addPotionEffect(getPlayer(), (juicegauge * 10), (int) (juicegauge * 0.2), isDestroyed());
@@ -403,7 +455,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 				Block bm = LocationUtil.floorY(e.getEntity().getLocation()).clone().subtract(0, 1, 0).getBlock();
 				if (blockData.containsKey(b) || blockData.containsKey(bm) || notchangedblocks.contains(b) || notchangedblocks.contains(bm)) {
 					final double distance = Math.min(10, getPlayer().getLocation().distance(e.getEntity().getLocation()));
-					if (distance >= 5) {
+					if (distance >= 5 || e.getDamager() instanceof Projectile) {
 						e.setDamage(e.getDamage() * dmgIncrease);
 					}
 				}
@@ -416,33 +468,11 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
     	
 		private Location lastloc;
 		private Vector forward;
-		private final Random random = new Random();
-		private RGB orangecolor;
 		private final double length;
 		private final Projectile projectile;
-		
-		private final RGB orange1 = RGB.of(241, 129, 4), orange2 = RGB.of(230, 46, 1), orange3 = RGB.of(250, 72, 5),
-				orange4 = RGB.of(255, 128, 1), orange5 = RGB.of(251, 173, 68), orange6 = RGB.of(252, 95, 10),
-				orange7 = RGB.of(240, 72, 14), orange8 = RGB.of(254, 108, 20), orange9 = RGB.of(230, 74, 15);
-		
-		@SuppressWarnings("serial")
-		private List<RGB> orangecolors = new ArrayList<RGB>() {
-			{
-				add(orange1);
-				add(orange2);
-				add(orange3);
-				add(orange4);
-				add(orange5);
-				add(orange6);
-				add(orange7);
-				add(orange8);
-				add(orange9);
-				add(RGB.ORANGE);
-			}
-		};
     	
     	public ArrowParticle(Projectile projectile, double length) {
-			super();
+			super(TaskType.INFINITE, -1);
     		setPeriod(TimeUnit.TICKS, 1);
     		this.projectile = projectile;
     		this.length = length;
@@ -474,8 +504,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 				}
 			};iterator.hasNext();) {
 				final Location location = iterator.next();
-				orangecolor = orangecolors.get(random.nextInt(10));
-				ParticleLib.REDSTONE.spawnParticle(location, orangecolor);
+				ParticleLib.REDSTONE.spawnParticle(location, random.pick(orangecolors));
 			}
     	}
     	

@@ -2106,6 +2106,11 @@ public class Chatterbox extends AbilityBase {
 	private String nowProverb = null;
 	private DecimalFormat df = new DecimalFormat("0.0");
 	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) passive.start();
+	}
+	
 	public AbilityTimer passive = new AbilityTimer(period) {
 		
 		@Override

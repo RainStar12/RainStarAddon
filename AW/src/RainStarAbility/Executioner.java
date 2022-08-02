@@ -58,7 +58,7 @@ import kotlin.ranges.RangesKt;
         " 변경 후 다음 근접 공격은 심판 표식을 터뜨려 효과를 발동시킬 수 있습니다.",
         "§2[§a유예§2]§f", 
         "§8<§7패시브§8>§f 매 초당 $[EXTRA_HEAL]의 체력을 §d회복§f합니다.",
-        "§8<§7표식 폭발§8>§f 표식 수치만큼 대상은 공격력이 §b감소§f합니다. 이는 $[DECREASE_DURATION]초에 걸쳐 점점 사라집니다.",
+        "§8<§7표식 폭발§8>§f 표식 수치만큼 대상은 공격력이 §b감소§f합니다. $[DECREASE_DURATION]초에 걸쳐 사라집니다.",
         "§4[§c집행§4]§f", 
         "§8<§7패시브§8>§f 적에게 가하는 피해가 §c$[INCREASE]%§f 증가합니다.",
         "§8<§7표식 폭발§8>§f 표식 수치만큼 §c추가 피해§f를 입히고 체력이 $[EXECUTE_HEALTH]% 이하면 §4처형§f합니다."
@@ -179,7 +179,7 @@ public class Executioner extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	}.setPeriod(TimeUnit.SECONDS, 1).register();
 	
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {

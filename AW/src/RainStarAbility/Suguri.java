@@ -157,9 +157,14 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		
     	@Override
     	public void onStart() {
-    		heat = 0;
     		ParticleLib.END_ROD.spawnParticle(getPlayer().getLocation(), 1, 2, 1, 35, 1);
     		SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(getPlayer().getLocation(), 1, 1.3f);
+    	}
+    	
+    	@Override
+    	public void run(int count) {
+    		heat = 0;
+    		dash.setCount(0);
     	}
     	
     	@Override

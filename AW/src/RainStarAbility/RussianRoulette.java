@@ -242,12 +242,12 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 					if (!shooter.equals(livingEntity)) {
 						checkhit = true;
 						double maxHP = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                        if (Damages.canDamage(livingEntity, getPlayer(), DamageCause.PROJECTILE, (maxHP * (damage / (double) 100)))) {
+                        if (Damages.canDamage(livingEntity, getPlayer(), DamageCause.PROJECTILE, (maxHP * damage * 0.01))) {
                             Damages.damageArrow(livingEntity, shooter, 1);
                             if (livingEntity instanceof Player) {
                             	Player p = (Player) livingEntity;
-                            	Healths.setHealth(p, Math.max(1, p.getHealth() - (maxHP * (damage / (double) 100))));
-                            } else livingEntity.setHealth(Math.max(1, livingEntity.getHealth() - (maxHP * (damage / (double) 100))));
+                            	Healths.setHealth(p, Math.max(1, p.getHealth() - (maxHP * damage * 0.01)));
+                            } else livingEntity.setHealth(Math.max(1, livingEntity.getHealth() - (maxHP * damage * 0.01)));
 						    SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer(), 1f, 1.2f);
                         }
                         if (livingEntity instanceof Player) {
