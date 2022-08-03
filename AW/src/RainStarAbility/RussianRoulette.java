@@ -1,7 +1,9 @@
 package RainStarAbility;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -170,6 +172,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 		private boolean checkhit = false;
 		private final RGB color;
 		private Location lastLocation;
+		private Set<LivingEntity> hits = new HashSet<>();
 		
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, double damage, RGB color) {
 			super(20);
@@ -186,6 +189,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 				public boolean test(Entity entity) {
 					if (entity instanceof ArmorStand) return false;
 					if (entity.equals(shooter)) return false;
+					if (hits.contains(entity)) return false;
 					if (entity instanceof Player) {
 						if (!getGame().isParticipating(entity.getUniqueId())
 								|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -244,6 +248,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 						double maxHP = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
                         if (Damages.canDamage(livingEntity, getPlayer(), DamageCause.PROJECTILE, (maxHP * damage * 0.01))) {
                             Damages.damageArrow(livingEntity, shooter, 1);
+                            hits.add(livingEntity);
                             if (livingEntity instanceof Player) {
                             	Player p = (Player) livingEntity;
                             	Healths.setHealth(p, Math.max(1, p.getHealth() - (maxHP * damage * 0.01)));
@@ -264,6 +269,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			if (!checkhit) Stun.apply(getGame().getParticipant(getPlayer()), TimeUnit.TICKS, stun);
+			hits.clear();
 			bullet = null;
 			entity.remove();
 			RussianRoulette.this.bullet = null;
@@ -272,6 +278,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			if (!checkhit) Stun.apply(getGame().getParticipant(getPlayer()), TimeUnit.TICKS, stun);
+			hits.clear();
 			bullet = null;
 			entity.remove();
 			RussianRoulette.this.bullet = null;

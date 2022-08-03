@@ -271,8 +271,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			if (!needwait.isRunning()) {
-				if (period == 0 && juicegauge < 10) {
+			if (!needwait.isRunning() && juicegauge < 10) {
+				if (period == 0) {
 					SoundLib.ITEM_BUCKET_FILL.playSound(getPlayer().getLocation(), 1, 2);
 					ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 7, 1);
 					juicegauge = 10;

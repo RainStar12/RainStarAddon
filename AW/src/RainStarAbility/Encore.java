@@ -80,6 +80,7 @@ public class Encore extends AbilityBase implements ActiveHandler {
 						SoundLib.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR.playSound(livingEntity.getLocation(), 1, 1.8f);
 						ParticleLib.ITEM_CRACK.spawnParticle(livingEntity.getLocation(), 0.25, 0.5, 0.25, 150, 0.77, MaterialX.REDSTONE_BLOCK);
 					}
+					damageMap.clear();
 					return cooldown.start();
 				}
 			}
