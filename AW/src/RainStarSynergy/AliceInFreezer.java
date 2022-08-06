@@ -56,7 +56,7 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴 우클릭 §8- §bNonsense§f: 바라보는 방향으로 §3냉동 카드§f를 던져",
 		" 적중 대상을 §b빙결§f시키고, §b눈꽃 모양§f으로 다시 퍼져나갑니다.",
 		" 추가 발사체는 빙결시킬 때 퍼져나가지 않고 쿨타임을 일부 감소시킵니다.",
-		" §3냉동 카드§f로 빙결된 적은 §b눈꽃 표식§f을 최대 §a5§f단계까지 §a1§f단계 획득하고,",
+		" §3냉동 카드§f로 빙결된 적은 §b눈꽃 표식§f을 최대 §a7§f단계까지 §a1§f단계 획득하고,",
 		" 추가 발사체로 빙결될 경우 §9냉기§f 효과를 얻게 됩니다. $[COOLDOWN]"
 		})
 
@@ -379,7 +379,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
 							Player p = (Player) damageable;
 		    				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration)) {
 		    					int level = getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel();
-		    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 25, Math.min(level + 1, 5));
+		    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 25, Math.min(level + 1, 7));
 		    				} else {
 		    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 25, 1);
 		    				}

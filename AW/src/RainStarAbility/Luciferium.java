@@ -98,6 +98,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     private int speed = SPEED.getValue();
     private int resistance = RESISTANCE.getValue();
     private boolean deathbypill = false;
+    private int unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
     
     public AbilityTimer nextpill = new AbilityTimer(MAX_NOT_TAKE.getValue() * 20) {
     	
@@ -106,7 +107,8 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 999999, strength, true);
     		PotionEffects.SPEED.addPotionEffect(getPlayer(), 999999, speed, true);
     		PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 999999, resistance, true);
-    		ac.update("§3남은 시간§f: " + (count <= 200 ? "§c" : "§e") + df.format(count / 20.0));
+    		if (count > unknown) ac.update("§3남은 시간§f: " + (count <= 200 ? "§c" : "§e") + df.format(count / 20.0));
+    		else ac.update("§3남은 시간§f: §c§k???");
     	}
     	
     	@Override
@@ -136,6 +138,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), 0.25, 0, 0.25, 50, 1);
 			takecount.stop(false);
 			nextpill.stop(true);
+			unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
 		}
 		if (e.getEntity().equals(getPlayer()) && deathbypill) {
 			e.setDeathMessage(e.getEntity().getName() + "님이 악마의 유혹에 잠식되고 말았습니다.");
@@ -162,6 +165,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 				SoundLib.ENTITY_GENERIC_DRINK.playSound(getPlayer().getLocation(), 1, 2);
 				SoundLib.ENTITY_VEX_CHARGE.playSound(getPlayer(), 1, 0.65f);
 				nextpill.setCount(takecount.getCount());
+				unknown = (int) (takecount.getCount() / 6.0);
 				takecount.setCount(0);
 				return true;
 			}

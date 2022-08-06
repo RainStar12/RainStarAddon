@@ -134,6 +134,8 @@ public class Horus extends AbilityBase {
         		}
     		} else bestDamage = 0;
     		
+    		damageCollector.clear();
+    		
     		ac.update("§c추가 대미지§f: §e" + df.format(bestDamage));
     	}
     	
