@@ -1,6 +1,8 @@
 package RainStarAbility;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -8,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -20,8 +24,8 @@ import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "수다쟁이", rank = Rank.A, species = Species.ANIMAL, explain = {
 		"$[PERIOD]초마다 채팅창에 §a속담 문장 한 줄§f이 나옵니다.",
@@ -71,6 +75,30 @@ public class Chatterbox extends AbilityBase {
 		}
 	};
 
+	private static final ImmutableMap<PotionEffectType, String> POTIONS 
+	= ImmutableMap.<PotionEffectType, String>builder()
+			.put(PotionEffectType.REGENERATION, "§d재생")
+			.put(PotionEffectType.SPEED, "§b신속")
+			.put(PotionEffectType.FIRE_RESISTANCE, "§c화염 저항")
+			.put(PotionEffectType.INCREASE_DAMAGE, "§6힘")
+			.put(PotionEffectType.JUMP, "§a점프 강화")
+			.put(PotionEffectType.ABSORPTION, "§e흡수")
+			.put(PotionEffectType.DAMAGE_RESISTANCE, "§8저항")
+			.build();
+	
+	@SuppressWarnings("serial")
+	private List<PotionEffectType> potiontypes = new ArrayList<PotionEffectType>() {
+		{
+			add(PotionEffectType.REGENERATION);
+			add(PotionEffectType.SPEED);
+			add(PotionEffectType.FIRE_RESISTANCE);
+			add(PotionEffectType.INCREASE_DAMAGE);
+			add(PotionEffectType.JUMP);
+			add(PotionEffectType.ABSORPTION);
+			add(PotionEffectType.DAMAGE_RESISTANCE);
+		}
+	};
+	
 	static final String koreans = "계집 바뀐 건 모르고 젓가락 짝 바뀐 건 안다#"
 			+ "고기는 씹어야 맛이요 말은 해야 맛이라#"
 			+ "나룻이 석 자라도 먹어야 샌님#"
@@ -1082,7 +1110,7 @@ public class Chatterbox extends AbilityBase {
 			+ "하늘로 흩날리는 세상의 저편 어둠을 비추는 첫번째 별#"
 			+ "ㅎ";
 	
-	static final String englishs = "A bad beginning makes a bad ending.#"
+	static final String englishes = "A bad beginning makes a bad ending.#"
 			+ "A bad corn promise is better than a good lawsuit.#"
 			+ "A bad workman quarrels with his tools.#"
 			+ "A bargain is a bargain.#"
@@ -2097,7 +2125,7 @@ public class Chatterbox extends AbilityBase {
 			+ "Ability War";
 			
 	private static final String[] koreanlist = koreans.split("#");
-	private static final String[] englishlist = englishs.split("#");
+	private static final String[] englishlist = englishes.split("#");
 	
 	private final int period = (int) (PERIOD.getValue() * 20 * Wreck.calculateDecreasedAmount(33));
 	private final int duration = (int) (DEADLINE.getValue() * 20);
@@ -2105,6 +2133,10 @@ public class Chatterbox extends AbilityBase {
 	private final Random random = new Random();
 	private String nowProverb = null;
 	private DecimalFormat df = new DecimalFormat("0.0");
+	private PotionEffectType nowType;
+	private int nowDuration = 0;
+	private int nowAmplifier = 0;
+	private String nowEffect = "";
 	
 	@Override
 	public void onUpdate(Update update) {
@@ -2132,8 +2164,15 @@ public class Chatterbox extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			NMS.sendTitle(getPlayer(), count < 100 ? "§c§l" : "§a§l" + df.format(count / 20.0), "", 0, 10, 0);
-			if (count % 20 == 0 && count <= 100) SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
+			if (count % 15 == 0) {
+				nowType = random.pick(potiontypes);
+				nowDuration = random.nextInt(300);
+				nowAmplifier = random.nextInt(3);
+				nowEffect = "" + POTIONS.get(nowType) + " §e" + (nowAmplifier + 1) + " §8(§7" + df.format(nowDuration / 20.0) + "초§8)";
+			}
+			
+			NMS.sendTitle(getPlayer(), count < 60 ? "§c§l" : "§a§l" + df.format(count / 20.0), nowEffect, 0, 10, 0);
+			if (count % 20 == 0 && count <= 60) SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
 		}
 		
 		@Override
@@ -2152,14 +2191,16 @@ public class Chatterbox extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (getPlayer().equals(damager) || e.getEntity().equals(getPlayer())) {
-			e.setDamage(e.getDamage() * decrease);
+		if (skill.isRunning()) {
+			Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (getPlayer().equals(damager) || e.getEntity().equals(getPlayer())) {
+				e.setDamage(e.getDamage() * decrease);
+			}	
 		}
 	}
 	
@@ -2169,25 +2210,10 @@ public class Chatterbox extends AbilityBase {
 			if (skill.isRunning() && e.getMessage().equals(nowProverb)) {
 				e.setCancelled(true);
 				skill.stop(false);
-				getPlayer().sendMessage("§2[§a!§2] §e성공하셨습니다!");
+				getPlayer().sendMessage("§2[§a!§2] " + nowEffect + "§f를 획득합니다!");
 				SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer(), 1, 2);
-				switch (random.nextInt(5)) {
-				case 0:
-					PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 200, 1, true);
-					break;
-				case 1:
-					PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 200, 1, true);
-					break;
-				case 2:
-					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 200, 1, true);
-					break;
-				case 3:
-					PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 200, 1, true);
-					break;
-				case 4:
-					PotionEffects.SPEED.addPotionEffect(getPlayer(), 200, 1, true);
-					break;
-				}
+				PotionEffect pe = new PotionEffect(nowType, nowDuration, nowAmplifier);
+				getPlayer().addPotionEffect(pe);
 			}
 		}
 	}

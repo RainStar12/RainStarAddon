@@ -15,6 +15,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -33,16 +34,20 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "지진", rank = Rank.S, species = Species.OTHERS, explain = {
-		"철괴 우클릭 시 $[WAIT_TIME]초간 정지한 채로 힘을 모읍니다. 힘을 모은 후",
-		"§6지진§f을 일으켜 §c$[RANGE_MIN]§7~§b$[RANGE_MAX]§f칸 내의 지면에 착지 중인",
+		"철괴 우클릭 시 §6지진§f을 일으켜 §c$[RANGE_MIN]§7~§b$[RANGE_MAX]§f칸 내의 지면에 착지 중인",
 		"생명체들을 §b띄워올립니다§f. 이후 대상은 $[STUN]초간 §e기절§f합니다. $[COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §dspace_kdd"
+		},
+		summarize = {
+		"§7철괴 우클릭 시§f 무작위 범위 내 착지 중인 생명체들을 띄워올리고",
+		"대상들이 다시 발에 땅이 닿으면 $[STUN]초 §e기절§f합니다. $[COOLDOWN]"
 		})
 
 public class Earthquake extends AbilityBase implements ActiveHandler {
@@ -100,105 +105,27 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
-			
-		}
-		return false;
-	}
+	private final Random random = new Random();
+	private final double min = RANGE_MIN.getValue();
+	private final double max = RANGE_MAX.getValue();
+	private final int stun = (int) (STUN.getValue() * 20);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private final Set<Player> airborned = new HashSet<>();
+	private final Vector upper = new Vector(0, 2.5, 0);
 	
-	public class Wave extends AbilityTimer {
-		
-		private final Location center;
-		private final double damage;
-		private double waveRadius;
-		private final Predicate<Entity> predicate;
-		private Set<Damageable> hitEntity = new HashSet<>();
-		private ArmorStand damager;
-		
-		public Wave(double damage) {
-			setPeriod(TimeUnit.TICKS, 1);
-			this.damage = damage;
-			this.predicate = new Predicate<Entity>() {
-				@Override
-				public boolean test(Entity entity) {
-					if (entity instanceof ArmorStand) return false;
-					if (entity.equals(getPlayer())) return false;
-					if (hitEntity.contains(entity)) return false;
-					if (entity instanceof Player) {
-						if (!getGame().isParticipating(entity.getUniqueId())
-								|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-								|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-							return false;
-						}
-						if (getGame() instanceof Teamable) {
-							final Teamable teamGame = (Teamable) getGame();
-							final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = teamGame.getParticipant(getPlayer().getUniqueId());
-							if (participant != null) {
-								return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-							}
-						}
-					}
-					return true;
-				}
-
-				@Override
-				public boolean apply(@Nullable Entity arg0) {
-					return false;
-				}
-			};
-		}
-		
-		@Override
-		public void onStart() {
-			waveRadius = 0;
-			damager = center.getWorld().spawn(center.clone().add(99999, 0, 99999), ArmorStand.class);
-			damager.setVisible(false);
-			damager.setInvulnerable(true);
-			damager.setGravity(false);
-			damager.setMetadata("Wave", NULL_VALUE);
-			NMS.removeBoundingBox(damager);
-		}
-		
-		@Override
-		public void run(int count) {
-			if (!skill.isRunning()) this.stop(false);
-			if (waveRadius < 15) waveRadius += 0.35;
-			else this.stop(false);
-			
-			if (count == 1) color = waveColor1;
-			if (count % 4 == 0) color = waveColors.get(count / 4);
-			if (count % 5 == 0) up = !up;
-			
-			addY = addY + (up ? 0.1 : -0.1);
-			
-			double playerY = getPlayer().getLocation().getY();
-			for (Iterator<Location> iterator = Circle.iteratorOf(center, waveRadius, 75); iterator.hasNext(); ) {
-				Location loc = iterator.next();
-				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + addY + 0.2);
-				ParticleLib.REDSTONE.spawnParticle(loc, color);
-				if (addY <= 0.1 || count < 5) ParticleLib.WATER_SPLASH.spawnParticle(loc, 0, 0, 0, 1, 0);
-				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.6, 0.6, predicate)) {
-					double increase = (waveRadius / 15) + 0.5;
-					damageable.damage(increase * damage, damager);
-					hitEntity.add(damageable);
-					damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(center.toVector()).normalize().multiply(1.1).setY(0.5)));
-					if (damageable instanceof LivingEntity) PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 100, 1, false);
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
+			double range = (random.nextDouble() * (max - min)) + min;
+			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, null)) {
+				if (livingEntity.isOnGround()) {
+					livingEntity.setVelocity(upper);
+					if (livingEntity instanceof Player) airborned.add((Player) livingEntity);
 				}
 			}
+			
+			return cooldown.start();
 		}
-		
-		@Override
-		public void onEnd() {
-			onSilentEnd();
-		}
-		
-		@Override
-		public void onSilentEnd() {
-			SoundLib.ENTITY_PLAYER_SWIM.playSound(center, 2f, 1.4f);
-			damager.remove();
-		}
-		
+		return false;
 	}
 	
 }

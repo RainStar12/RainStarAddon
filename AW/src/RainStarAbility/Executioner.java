@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -215,6 +217,8 @@ public class Executioner extends AbilityBase {
 			ac.update(execute ? "§8[§7집행§8]" : "§8[§7유예§8]");
 			if (!execute) {
 				new DamageDecrease(player, damageMap.get(e.getEntity()).damage, decreaseduration).start();
+				SoundLib.GUITAR.playInstrument(getPlayer(), Note.sharp(0, Tone.C));
+				SoundLib.GUITAR.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
 			} else {
 				e.setDamage(e.getDamage() + damageMap.get(e.getEntity()).damage);
 				double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
@@ -222,6 +226,8 @@ public class Executioner extends AbilityBase {
 					player.setHealth(0);
 					executed.add(player);
 				}
+				SoundLib.GUITAR.playInstrument(getPlayer(), Note.natural(0, Tone.F));
+				SoundLib.GUITAR.playInstrument(getPlayer(), Note.natural(1, Tone.A));
 			}
 			damageMap.get(e.getEntity()).stop(false);
 			lastExplode.put(player.getUniqueId(), System.currentTimeMillis());
