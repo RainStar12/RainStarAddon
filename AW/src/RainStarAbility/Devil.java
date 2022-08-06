@@ -224,6 +224,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
+			getPlayer().setSpectatorTarget(encroachtarget);
 			for (Contract contracts : contract.values()) {
 				contracts.pause();
 			}
@@ -285,6 +286,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_ZOMBIE_VILLAGER_CONVERTED.playSound(getPlayer().getLocation(), 1, 1.8f);
 			encroachtarget = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
 			getPlayer().setSpectatorTarget(encroachtarget);
+			encroached.add(encroachtarget);
 			ParticleLib.SMOKE_LARGE.spawnParticle(encroachtarget.getLocation(), 0.25, 0, 0.25, 50, 1);
 			SoundLib.ENTITY_VEX_CHARGE.playSound(encroachtarget.getLocation(), 1, 0.65f);
 			encroaching.setCount(encroach_duration);
@@ -293,7 +295,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onRegainHealth(EntityRegainHealthEvent e) {
-		if (contract.containsKey(e.getEntity()) && e.getRegainReason().equals(RegainReason.REGEN)) {
+		if (contract.containsKey(e.getEntity()) && (e.getRegainReason().equals(RegainReason.SATIATED) || e.getRegainReason().equals(RegainReason.REGEN))) {
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getAmount(), RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
