@@ -1,0 +1,4 @@
+name: RainStarAddon
+version: ${revision}
+main: rainstar.aw.AddonR
+displayName: §a레인스타 애드온

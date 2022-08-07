@@ -1,0 +1,19 @@
+# Maven
+target/
+*.ser
+*.ec
+dependency-reduced-pom.xml
+
+# IntelliJ Idea
+.idea/
+out/
+*.ipr
+*.iws
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+/bin/

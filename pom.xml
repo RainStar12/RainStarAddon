@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>rainstar.addon</groupId>
+    <artifactId>RainStarAddon</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>Addon</module>
+        <module>compatibility/v1_12_R1</module>
+        <module>compatibility/v1_13_R1</module>
+        <module>compatibility/v1_13_R2</module>
+        <module>compatibility/v1_14_R1</module>
+        <module>compatibility/v1_15_R1</module>
+        <module>compatibility/v1_16_R1</module>
+        <module>compatibility/v1_16_R2</module>
+        <module>compatibility/v1_16_R3</module>
+        <module>compatibility/v1_17_R1</module>
+        <module>Jar</module>
+    </modules>
+
+    <properties>
+        <encoding>UTF-8</encoding>
+        <revision>1.5.3</revision>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <addClasspath>false</addClasspath>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
