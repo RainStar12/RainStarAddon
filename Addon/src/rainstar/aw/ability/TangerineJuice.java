@@ -385,7 +385,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			}
 			
 			for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, fieldrange, predicate)) {
-				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.2));
+				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.08));
 				vectors.add(vector);
 				players.setVelocity(vector);
 			}

@@ -36,6 +36,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -182,7 +183,15 @@ public class Devil extends AbilityBase implements ActiveHandler {
 			look.start();
 		}
 	}
-	
+
+	@SubscribeEvent
+	private void onPlayerDeath(PlayerDeathEvent e) {
+		final Contract con = contract.get(e.getEntity());
+		if (con != null) {
+			con.stop(false);
+		}
+	}
+
 	private final AbilityTimer look = new AbilityTimer() {
 		
 		@Override
