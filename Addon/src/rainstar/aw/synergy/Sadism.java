@@ -22,7 +22,7 @@ public class Sadism extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> INCREASE = 
-			synergySettings.new SettingObject<Integer>(Sadism.class, "increase", 25,
+			synergySettings.new SettingObject<Integer>(Sadism.class, "increase", 33,
             "# 타격당 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {

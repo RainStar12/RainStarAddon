@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -35,7 +36,7 @@ import java.util.List;
 		"§7철괴 우클릭 시§f $[DURATION]초간 감소된 피해를 2회 맞습니다."
 		})
 
-public class Mazochist extends AbilityBase {
+public class Mazochist extends AbilityBase implements ActiveHandler {
 	
 	public Mazochist(Participant participant) {
 		super(participant);
@@ -51,7 +52,7 @@ public class Mazochist extends AbilityBase {
     };
 	
 	public static final SettingObject<Integer> HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 50,
+			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 60,
             "# 스택당 매 틱 회복량", "# 단위: 값 / 10000", "# 10 = 0.001", "# 초당 0.02 회복") {
         @Override
         public boolean condition(Integer value) {
