@@ -221,60 +221,62 @@ public class Alte extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-    	if (!descriptionChecked.contains(damager) && e.getEntity().equals(getPlayer())) {
-    		descriptionChecked.add(damager);
-    		Participant p = getGame().getParticipant(damager);
-    		AbilityBase ab = p.getAbility();
-    		if (ab.getClass().equals(Mix.class)) {
-    			Mix mix = (Mix) ab;
-    			if (mix.hasSynergy()) {
-    				String[] description = mix.getSynergy().getManifest().explain();
-        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description[random.nextInt(description.length)]);
-    			} else {
-    				AbilityBase first = mix.getFirst(), second = mix.getSecond();
-    				String[] description1 = first.getManifest().explain();
-    				String[] description2 = second.getManifest().explain();
-        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description1[random.nextInt(description1.length)]);
-        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description2[random.nextInt(description2.length)]);
-    			}
-    		} else {
-    			String[] description = ab.getManifest().explain();
-    			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description[random.nextInt(description.length)]);
-    		}
-    	}
-    	
-    	if (!damager.equals(getPlayer()) && e.getEntity().equals(getPlayer())) {
-    		if (random.nextInt(100) < evade) {
-    			e.setCancelled(true);
-    			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
-    			if (skill.isRunning()) skill.stop(false);
-    			getPlayer().setNoDamageTicks(20);
-    		} else {
-        		if (skill.isRunning()) {
-        			e.setDamage(e.getDamage() * skillgetIncrease);
-        			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
-        				e.setCancelled(true);
-        				Healths.setHealth(getPlayer(), e.getFinalDamage() * 2);
-        				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
-        				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation());
-        				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
-        					Damages.damageExplosion(damageable, getPlayer(), (float) (e.getDamage()));
-        					damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
-        				}
-        				stack++;
-        				ac.update("§c영구 공격력§f: §e" + (damageincrease * stack) + "§f%");
-        				success = true;
-        			}
-        			skill.stop(false);
-        		} else {
-        			e.setDamage(e.getDamage() * getIncrease);
-        		}	
-    		}
-    	}
-    	
-    	if (damager.equals(getPlayer()) && !e.getEntity().equals(getPlayer())) {
-    		e.setDamage(e.getDamage() * (1 + (damageincrease * stack * 0.01)));
-    	}
+		if (damager != null) {
+			if (!descriptionChecked.contains(damager) && e.getEntity().equals(getPlayer())) {
+	    		descriptionChecked.add(damager);
+	    		Participant p = getGame().getParticipant(damager);
+	    		AbilityBase ab = p.getAbility();
+	    		if (ab.getClass().equals(Mix.class)) {
+	    			Mix mix = (Mix) ab;
+	    			if (mix.hasSynergy()) {
+	    				String[] description = mix.getSynergy().getManifest().explain();
+	        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description[random.nextInt(description.length)]);
+	    			} else {
+	    				AbilityBase first = mix.getFirst(), second = mix.getSecond();
+	    				String[] description1 = first.getManifest().explain();
+	    				String[] description2 = second.getManifest().explain();
+	        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description1[random.nextInt(description1.length)]);
+	        			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description2[random.nextInt(description2.length)]);
+	    			}
+	    		} else {
+	    			String[] description = ab.getManifest().explain();
+	    			getPlayer().sendMessage("§4[§c조사§4] §e" + damager.getName() + "§f - " + description[random.nextInt(description.length)]);
+	    		}
+	    	}
+	    	
+	    	if (!damager.equals(getPlayer()) && e.getEntity().equals(getPlayer())) {
+	    		if (random.nextInt(100) < evade) {
+	    			e.setCancelled(true);
+	    			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
+	    			if (skill.isRunning()) skill.stop(false);
+	    			getPlayer().setNoDamageTicks(20);
+	    		} else {
+	        		if (skill.isRunning()) {
+	        			e.setDamage(e.getDamage() * skillgetIncrease);
+	        			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+	        				e.setCancelled(true);
+	        				Healths.setHealth(getPlayer(), e.getFinalDamage() * 2);
+	        				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
+	        				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation());
+	        				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
+	        					Damages.damageExplosion(damageable, getPlayer(), (float) (e.getDamage()));
+	        					damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
+	        				}
+	        				stack++;
+	        				ac.update("§c영구 공격력§f: §e" + (damageincrease * stack) + "§f%");
+	        				success = true;
+	        			}
+	        			skill.stop(false);
+	        		} else {
+	        			e.setDamage(e.getDamage() * getIncrease);
+	        		}	
+	    		}
+	    	}
+	    	
+	    	if (damager.equals(getPlayer()) && !e.getEntity().equals(getPlayer())) {
+	    		e.setDamage(e.getDamage() * (1 + (damageincrease * stack * 0.01)));
+	    	}	
+		}
     }
 	
     @SubscribeEvent(onlyRelevant = true)

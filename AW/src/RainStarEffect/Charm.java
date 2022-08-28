@@ -25,7 +25,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 
-@EffectManifest(name = "유혹", displayName = "§d유혹", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "유혹", displayName = "§d유혹", method = ApplicationMethod.MULTIPLE, type = {
 		EffectType.SIGHT_CONTROL
 }, description = {
 		"유혹한 대상을 지속해서 바라보게 되며,",

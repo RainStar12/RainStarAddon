@@ -321,7 +321,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 			if (juicegauge > 1) {
 				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
-					entity.setVelocity(entity.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1 + (juicegauge * 0.2)).setY(0));
+					entity.setVelocity(entity.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1 + (juicegauge * 0.25)).setY(0));
 					PotionEffects.BLINDNESS.addPotionEffect(entity, (juicegauge * 20), 0, true);
 				}
 				final Firework firework = getPlayer().getWorld().spawn(getPlayer().getLocation(), Firework.class);
@@ -387,7 +387,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			}
 			
 			for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, fieldrange, predicate)) {
-				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.2));
+				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.08));
 				vectors.add(vector);
 				players.setVelocity(vector);
 			}

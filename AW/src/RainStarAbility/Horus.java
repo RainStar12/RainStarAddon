@@ -151,7 +151,7 @@ public class Horus extends AbilityBase {
 		
 		if (damager != null) {
 			if (!getPlayer().equals(damager)) {
-				if (predicate.test(damager)) damageCollector.put(damager, damageCollector.getOrDefault(damager, 0.0) + e.getFinalDamage());
+				if (predicate.test(damager)) damageCollector.put(damager, damageCollector.getOrDefault(damager, 0.0) + (e.getFinalDamage() * (30 / 30 + e.getFinalDamage())));
 			} else e.setDamage(e.getDamage() + bestDamage);
 		}
     }

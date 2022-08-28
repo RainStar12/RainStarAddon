@@ -14,7 +14,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 
 @AbilityManifest(
 		name = "가학증", rank = Rank.L, species = Species.HUMAN, explain = {
-		"적에게 피해를 줄 때마다 §c공격력§f이 §e$[INCREASE]§f% 상승합니다. 피격 시 §b초기화§f됩니다."
+		"적에게 피해를 줄 때마다 §c공격력§f이 §e$[DAMAGE_INCREASE]§f% 상승합니다. 피격 시 §b초기화§f됩니다."
 		})
 public class Sadism extends Synergy {
 	
@@ -22,8 +22,8 @@ public class Sadism extends Synergy {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> INCREASE = 
-			synergySettings.new SettingObject<Integer>(Sadism.class, "increase", 25,
+	public static final SettingObject<Integer> DAMAGE_INCREASE = 
+			synergySettings.new SettingObject<Integer>(Sadism.class, "damage-increase", 33,
             "# 타격당 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -31,7 +31,7 @@ public class Sadism extends Synergy {
         }
     };
 	
-    private double increase = INCREASE.getValue() * 0.01;
+    private double increase = DAMAGE_INCREASE.getValue() * 0.01;
 	private int stack = 0;
 	
 	@SubscribeEvent

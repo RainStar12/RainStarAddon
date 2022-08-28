@@ -40,7 +40,7 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "크로노스", rank = Rank.S, species = Species.GOD, explain = {
 		"시간의 신 크로노스.",
-		"§7패시브 §8- §3시간 가속§f: 게임 내에 크로노스가 한 명이라도 있으면",
+		"§7공유 패시브 §8- §3시간 가속§f: 게임 내에 크로노스가 한 명이라도 있으면",
 		" 세상의 시간이 매우 빠르게 흐릅니다. 시간이 하루를 일주할 때마다,",
 		" 크로노스 소유자의 모든 능력 §c쿨타임§f이 초기화됩니다.",
 		"§7철괴 우클릭 §8- §5시간 지배§f: 주변 $[RANGE]칸 내의 모든 플레이어의 시간을 $[DURATION]초간 조작해",

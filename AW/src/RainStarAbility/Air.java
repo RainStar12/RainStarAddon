@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @AbilityManifest(name = "공기", rank = Rank.A, species = Species.HUMAN, explain = {
 		"능력도 없는 당신은 존재감이 너무 없는 나머지,", 
@@ -19,10 +20,24 @@ public class Air extends AbilityBase {
 		super(participant);
 	}
 	
+	private final AbilityTimer passive = new AbilityTimer() {
+		@Override
+		protected void run(int count) {
+			getParticipant().attributes().TARGETABLE.setValue(false);
+		}
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		@Override
+		protected void onSilentEnd() {
+			getParticipant().attributes().TARGETABLE.setValue(true);
+		}
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) getParticipant().attributes().TARGETABLE.setValue(false);	
-		if (update == Update.ABILITY_DESTROY || update == Update.RESTRICTION_SET) getParticipant().attributes().TARGETABLE.setValue(true);
+		if (update == Update.RESTRICTION_CLEAR) passive.start();
 	}
 	
 }
