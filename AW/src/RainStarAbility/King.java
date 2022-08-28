@@ -42,6 +42,11 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
 		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
 		" 그 대신 §3이동계 상태이상§f에 면역을 가지고, §b원거리 공격자§f를 내게 끌어옵니다."
+		},
+		summarize = {
+		"주변 플레이어를 항시 느리게 만들고 공격력을 감소시킵니다.",
+		"범위 내에서 누군가가 §a액티브 스킬§f을 사용하면 §6지속 시간§f이 감소합니다.",
+		"기본 이동 속도가 느리지만, §3이동계 상태이상§f에 면역이며 §b원거리 공격자§f를 내게 끌어옵니다."
 		})
 public class King extends AbilityBase {
 
@@ -159,6 +164,7 @@ public class King extends AbilityBase {
 		}
     }
     
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		final double fromY = e.getFrom().getY(), toY = e.getTo().getY();

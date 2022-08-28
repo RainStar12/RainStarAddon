@@ -54,6 +54,7 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "데빌", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §3비열한 수§f: 적에게 근접 피해를 입힐 때, 대상을 $[LOOK]초간 바라봅니다.",
+		" 효과 지속 동안 대상에게 근접 피해를 입히면 대상은 넉백 효과가 감소합니다.",
 		"§7패시브 §8- §c계약 체결§f: 적이 나를 공격할 때, $[CONTRACT_DURATION]초간 계약합니다.§8(§7재타격 시 갱신§8)§f",
 		" §4(§c계약자 수 §e× §c$[INCREASE]§4)§f%만큼 공격력이 증가하고, 대상의 §d자연 회복 효과§f를 가져옵니다.",
 		"§7철괴 좌클릭 §8- §4착취§f: 가장 가까운 계약자에게 최대 $[ENCROACH_DURATION]초간 잠식합니다.",
@@ -336,6 +337,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
+			if (target != null && e.getEntity().equals(target)) e.getEntity().setVelocity(getPlayer().getLocation().toVector().subtract(e.getEntity().getLocation().toVector()).multiply(0.2).setY(0));
 			timerstack = looktime;
 			target = (Player) e.getEntity();
 		}

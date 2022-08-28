@@ -43,7 +43,6 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -83,20 +82,20 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7철괴 우클릭 §8- §a기회 부여§f: 다른 플레이어를 15칸 내에서 우클릭 해 대상의 능력이",
 		" §dS 등급§f보다 낮을 경우 최소 한 등급 이상의 능력으로 §b재추첨§f합니다.",
 		" 이때 대상에게 바꿔준 능력을 알 수 있습니다. $[COOLDOWN]",
-		" 또한 바꿔준 대상에게서 §e기회 체력§f을 1.5칸 적립합니다. 대상은 나에게",
+		" 또한 바꿔준 대상에게서 §e기회 체력§f을 2칸 적립합니다. 대상은 나에게",
 		" 다음 공격 피해를 입히지 못하고 강하게 넉백당합니다.",
 		"§7패시브 §8- §a마지막 기회§f: §c치명적인 피해를 입었을 때§f 단 한 번",
-		" 사망하지 않고 대신 체력 반 칸으로 §d부활§f합니다. 이때, 다른 플레이어에게",
+		" 사망하지 않고 대신 체력 한 칸으로 §d부활§f합니다. 이때, 다른 플레이어에게",
 		" 적립한 §e기회 체력§f만큼 각 대상의 체력을 가져와 즉시 §d회복§f합니다.",
-		" 또한 최대 15초간 GUI가 열려 회복한 체력에 비례해 최대 5가지의 능력 중",
+		" 또한 최대 15초간 GUI가 열려 회복한 체력에 비례해 최대 7가지의 능력 중",
 		" 한 가지의 능력을 선택해 이 능력을 변경할 수 있습니다."
 		},
 		summarize = {
 		"§7철괴 우클릭§f으로 다른 플레이어를 15칸 내에서 바라보고 우클릭하면",
 		"대상의 능력이 §dS 등급§f보다 낮을 경우 최소 한 등급 이상의 능력으로 재추첨합니다.",
-		"바꿔준 대상에게 한 번당 §c기회 체력§f 1.5칸씩을 적립하여 사망 위기일 때 대상들에게",
+		"바꿔준 대상에게 한 번당 §c기회 체력§f 2칸씩을 적립하여 사망 위기일 때 대상들에게",
 		"§c기회 체력§f을 가져와 단 한 번 부활합니다. 부활 시 기회 체력 적립에 비례해",
-		"최대 5가지의 선택지 중 하나의 능력을 선택해 부활합니다."
+		"최대 7가지의 선택지 중 하나의 능력을 선택해 부활합니다."
 		})
 
 @Tips(tip = {
@@ -296,7 +295,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 									actionbarChannel.unregister();
 							}
 						}.setPeriod(TimeUnit.TICKS, 1).start();
-						getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+						getHp.put(target, getHp.getOrDefault(target, 0) + 4);
 						knockback.add(target.getPlayer());
 						SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
@@ -356,7 +355,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 											actionbarChannel.unregister();
 									}
 								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+								getHp.put(target, getHp.getOrDefault(target, 0) + 4);
 								knockback.add(target.getPlayer());
 								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
@@ -411,7 +410,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 											actionbarChannel.unregister();
 									}
 								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 3);
+								getHp.put(target, getHp.getOrDefault(target, 0) + 4);
 								knockback.add(target.getPlayer());
 								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
@@ -439,7 +438,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 4)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (inv.contains(e.getDamager().getUniqueId()) || inv.contains(e.getEntity().getUniqueId())) {
 		 	e.setCancelled(true);
@@ -466,14 +465,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 4)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 10)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0 && !rebirth) {
+			e.setCancelled(true);
+			e.setDamage(0);
 			this.rebirth = true;
 			int sum = 0;
 			for (final Entry<Participant, Integer> entry : getHp.entrySet()) {
@@ -483,10 +484,9 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 				sum += health;
 			}
 			Healths.setHealth(getPlayer(), 1 + sum);
-			if (sum >= 3) {
-				new AbilitySelect(sum / 3).start();
+			if (sum >= 4) {
+				new AbilitySelect(sum / 4).start();
 			}
-			e.setCancelled(true);
 		}
 	}
 	
@@ -515,7 +515,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 			super(TaskType.REVERSE, 300);
 			setPeriod(TimeUnit.TICKS, 1);
 			gui = Bukkit.createInventory(null, 9, "§0능력을 선택해주세요.");
-			this.getHps = Math.min(5, getHps);
+			this.getHps = Math.min(7, getHps + 1);
 		}
 		
 		protected void onStart() {
@@ -751,6 +751,66 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 					case 4:
 						gui.setItem(8, item);
 						slots.put(8, values.get(i));
+						break;
+					}
+					break;
+				case 6:
+					switch(i) {
+					case 0:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 1:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 2:
+						gui.setItem(3, item);
+						slots.put(3, values.get(i));
+						break;
+					case 3:
+						gui.setItem(5, item);
+						slots.put(5, values.get(i));
+						break;
+					case 4:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					case 5:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
+						break;
+					}
+					break;
+				case 7:
+					switch(i) {
+					case 0:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 1:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 2:
+						gui.setItem(3, item);
+						slots.put(3, values.get(i));
+						break;
+					case 3:
+						gui.setItem(4, item);
+						slots.put(4, values.get(i));
+						break;
+					case 4:
+						gui.setItem(5, item);
+						slots.put(5, values.get(i));
+						break;
+					case 5:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					case 6:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
 						break;
 					}
 					break;
