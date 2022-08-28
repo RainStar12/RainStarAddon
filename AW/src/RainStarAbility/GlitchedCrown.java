@@ -1,10 +1,18 @@
 package RainStarAbility;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.AbilityList;
 
 @AbilityManifest(name = "글리치드 크라운", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
         "§7철괴 좌클릭 §8- §c?????§f: 최대 10개까지, 무작위 능력을 배열에 집어넣습니다.",
@@ -21,7 +29,6 @@ public class GlitchedCrown extends AbilityBase {
 	public GlitchedCrown(Participant participant) {
 		super(participant);
 	}
-	
-	
+
 
 }

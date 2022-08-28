@@ -203,32 +203,16 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 	};
 	
 	public AbilityRegistration getRandomAbility(Participant target, Rank rank) {
-		final Set<AbilityRegistration> usedAbilities = new HashSet<>();
-		for (Participant participant : getGame().getParticipants()) {
-			if (participant.hasAbility() && participant.attributes().TARGETABLE.getValue()) {
-				usedAbilities.add(participant.getAbility().getRegistration());
-			}
-		}
-		
 		final int criterion = rank.ordinal();
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) &&
-				!usedAbilities.contains(ability) && (getParticipant().equals(target) || ability.getManifest().rank().ordinal() < criterion)
+				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && (getParticipant().equals(target) || ability.getManifest().rank().ordinal() < criterion)
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
 	
 	public AbilityRegistration getRealRandomAbility(Participant target) {
-		final Set<AbilityRegistration> usedAbilities = new HashSet<>();
-		for (Participant participant : getGame().getParticipants()) {
-			if (participant.hasAbility() && participant.attributes().TARGETABLE.getValue()) {
-				usedAbilities.add(participant.getAbility().getRegistration());
-			}
-		}
-		
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) &&
-				!usedAbilities.contains(ability)
+				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name())
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
