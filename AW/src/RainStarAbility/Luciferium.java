@@ -2,6 +2,7 @@ package RainStarAbility;
 
 import java.text.DecimalFormat;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -26,12 +27,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"복용 시 영구적인 §6힘 $[STRENGTH]§f, §b신속 $[SPEED]§f, §8저항 $[RESISTANCE]§f 버프를 획득합니다.",
 		"그러나 복용 이후에는 $[MAX_NOT_TAKE]초 내로 약을 다시 복용해야만 합니다. §8(§7실패 시 §c사망§8)",
 		"복용까지 걸린 시간으로 다음 복용 시간이 줄어듭니다.",
-		"적 처치 시, 약의 효과가 완전히 풀립니다."
+		"적 처치 시 약의 지속시간이 $[MAX_NOT_TAKE]초로 갱신됩니다."
 		},
 		summarize = {
 		"§7웅크린 채 철괴 좌클릭§f시 약을 먹어 §6힘§7 / §b신속§7 / §8저항§f 버프를 얻습니다.",
 		"약 복용 후 일정 시간 재복용하지 않으면 §4즉사§f합니다.",
-		"복용까지 걸린 시간으로 다음 복용 시간이 줄어들고, §c적 처치§f로 약효를 §b해제§f합니다."
+		"복용까지 걸린 시간으로 다음 복용 시간이 줄어들고, §c적 처치§f로 지속시간을 리셋합니다."
 		})
 
 public class Luciferium extends AbilityBase implements ActiveHandler {
@@ -97,7 +98,6 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     private int strength = STRENGTH.getValue();
     private int speed = SPEED.getValue();
     private int resistance = RESISTANCE.getValue();
-    private boolean deathbypill = false;
     private int unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
     
     public AbilityTimer nextpill = new AbilityTimer(MAX_NOT_TAKE.getValue() * 20) {
@@ -113,9 +113,9 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onEnd() {
-    		deathbypill = true;
     		onSilentEnd();
     		getPlayer().setHealth(0);
+    		Bukkit.broadcastMessage("§4[§c!§4] §e" + getPlayer().getName() + "§f님이 §5악마의 유혹§f에 잠식되고 말았습니다.");
     	}
     	
     	@Override
@@ -139,9 +139,6 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 			takecount.stop(false);
 			nextpill.stop(true);
 			unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
-		}
-		if (e.getEntity().equals(getPlayer()) && deathbypill) {
-			e.setDeathMessage(e.getEntity().getName() + "님이 악마의 유혹에 잠식되고 말았습니다.");
 		}
 	}
 	

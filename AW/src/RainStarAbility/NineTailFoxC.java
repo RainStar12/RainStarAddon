@@ -66,7 +66,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" $[COOLDOWN]",
 		"§7상태이상 §8- §d유혹§f: 대상이 강제로 나를 바라보게 되고,",
 		" 대상이 내게 주는 피해량이 $[CHARM_DECREASE]% 감소합니다. 대상을 공격할 때마다",
-		" 준 최종 대미지의 $[CHARM_HEAL]%만큼 체력을 회복합니다."
+		" 준 최종 대미지의 $[CHARM_HEAL]%만큼 체력을 얻습니다."
 		},
 		summarize = {
 		"§d유혹 상태§f인 적을 타격해 회복하는 것 외엔 회복 효과를 받을 수 없습니다.",

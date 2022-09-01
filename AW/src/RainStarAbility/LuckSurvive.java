@@ -17,6 +17,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -24,7 +25,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "이걸 사네", rank = Rank.A, species = Species.HUMAN, explain = {
 		"피해받고 나서 체력이 §a5%§f 이하일 경우 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
-		"체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
+		"$[COOLDOWN] §3/§f 체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
 		"§b[§7아이디어 제공자§b] §5railohd"
 		},
 		summarize = {
@@ -65,11 +66,28 @@ public class LuckSurvive extends AbilityBase {
         }
     };
     
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(LuckSurvive.class, "cooldown", 40,
+            "# 쿨타임") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+
+        @Override
+        public String toString() {
+            return Formatter.formatCooldown(getValue());
+        }
+
+    };
+    
 	private final DecimalFormat df = new DecimalFormat("0.0");
     private ActionbarChannel ac = newActionbarChannel();
     private final int duration = (int) (DURATION.getValue() * 20);
     private final double increase = (1 + (INCREASE.getValue() * 0.01));
     private final double decrease = (1 - (DECREASE.getValue() * 0.01));
+    private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	
     private final AbilityTimer inv = new AbilityTimer(TaskType.REVERSE, duration) {
     	
@@ -88,10 +106,11 @@ public class LuckSurvive extends AbilityBase {
 				e.setDamage(e.getDamage() * decrease);
 			}
 			
-			if (getPlayer().getHealth() - e.getFinalDamage() <= maxHP * 0.05) {
+			if (getPlayer().getHealth() - e.getFinalDamage() <= maxHP * 0.05 && !cooldown.isRunning()) {
 				ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 100, 1);
 				SoundLib.ITEM_TOTEM_USE.playSound(getPlayer().getLocation(), 1, 1.25f);
 				inv.start();
+				cooldown.start();
 			}
             
             if (inv.isRunning()) {
