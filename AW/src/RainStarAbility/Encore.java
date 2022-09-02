@@ -25,11 +25,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "앙코르", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴 우클릭으로 생명체들에게 가한 피해를 한 번 더 입힙니다. $[COOLDOWN]",
-		"피해량은 스킬로 피해입힌 적 수에 비례해 더 증가합니다. §8(§71명당 $[PERCENTAGE]%§8)§f"
+		"피해량은 스킬로 피해입힐 적 수에 비례해 더 증가합니다. §8(§71명당 $[PERCENTAGE]%§8)§f"
 		},
 		summarize = {
 		"철괴 우클릭으로 생명체들에게 가한 피해를 한 번 더 입힙니다. $[COOLDOWN]",
-		"피해량은 스킬로 피해입힌 적 수에 비례해 더 증가합니다."
+		"피해량은 스킬로 피해입힐 적 수에 비례해 더 증가합니다."
 		})
 public class Encore extends AbilityBase implements ActiveHandler {
 	

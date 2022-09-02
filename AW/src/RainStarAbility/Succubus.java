@@ -1,9 +1,13 @@
 package RainStarAbility;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import RainStarAbility.HuntingDog.DogGui;
+import RainStarEffect.Charm;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
@@ -11,8 +15,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "서큐버스", rank = Rank.S, species = Species.UNDEAD, explain = {
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d유혹§f합니다.",
@@ -101,13 +110,60 @@ public class Succubus extends AbilityBase {
 
     };
     
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
+    
+	private ActionbarChannel ac = newActionbarChannel();
+    private final double range = RANGE.getValue();
+    private final int count = COUNT.getValue();
+    private final int duration = (int) (CHARM_DURATION.getValue() * 20);
+    private final int decrease = CHARM_DECREASE.getValue();
+    private final int heal = CHARM_HEAL.getValue();
+    private int stack = 0;
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
-	    	
-	    		return cooldown.start();
+	    		for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+	    			Participant p = getGame().getParticipant(player);
+	    			Charm.apply(p, TimeUnit.TICKS, duration, getPlayer(), heal, decrease);
+	    		}
+	    		if (stack < count) {
+	    			stack++;
+	    			ac.update("§d유혹 가능 §f: §e" + (count - stack));
+	    		} else {
+	    			stack = 0;
+	    			cooldown.start();
+	    		}
+	    		return true;
+	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
+	    		for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+	    			Participant p = getGame().getParticipant(player);
+	    			
+	    		}
 	    	}
 	    	
 	    }
