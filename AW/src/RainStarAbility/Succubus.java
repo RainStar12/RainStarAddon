@@ -4,16 +4,15 @@ import java.lang.reflect.Field;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import RainStarAbility.HuntingDog.DogGui;
 import RainStarEffect.Charm;
 import RainStarEffect.Poison;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -22,6 +21,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Fear;
+import daybreak.abilitywar.game.manager.effect.Hemophilia;
 import daybreak.abilitywar.game.manager.effect.Oppress;
 import daybreak.abilitywar.game.manager.effect.Rooted;
 import daybreak.abilitywar.game.manager.effect.Stun;
@@ -29,9 +29,11 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.Multimap;
@@ -40,7 +42,7 @@ import daybreak.google.common.collect.Multimap;
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d유혹§f합니다.",
         " 이 스킬은 $[COUNT]번 사용 후 쿨타임을 가집니다. $[COOLDOWN]",
         "§7철괴 좌클릭 §8- §c아찔하게§f: $[RANGE]칸 내의 자신 외 모든 적의 §3상태이상§f을",
-        " 전부 §c출혈 효과§f로 변경합니다. 이 스킬은 §c쿨타임§f이 없습니다."
+        " §4혈사병§f을 제외하고 전부 §c출혈 효과§f로 변경합니다. 이 스킬은 §c쿨타임§f이 없습니다."
         },
         summarize = {
         "§7철괴 우클릭으로§f 주변 적들을 §d유혹§f합니다. $[COUNT]번 쓰면 쿨타임이 생깁니다.",
@@ -165,19 +167,40 @@ public class Succubus extends AbilityBase {
     private final int heal = CHARM_HEAL.getValue();
     private int stack = 1;
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+    private final Circle circle = Circle.of(range, (int) Math.min(range * 12.5, 200));
+	private static final RGB color = RGB.of(251, 43, 136);
     
     @Override
     public void onUpdate(Update update) {
-    	if (update == Update.RESTRICTION_CLEAR) ac.update("§d유혹 가능 §f: §e" + count);
+    	if (update == Update.RESTRICTION_CLEAR) {
+    		ac.update("§d유혹 가능 §f: §e" + count);
+    		passive.start();
+    	}
     }
+    
+    private AbilityTimer passive = new AbilityTimer() {
+    	
+    	@Override
+    	public void run(int count) {
+    		if (getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
+    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
+				}
+    		}
+    	}
+    	
+	}.setPeriod(TimeUnit.TICKS, 2).register();
     
 	@SuppressWarnings("unchecked")
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
-	    		for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
 	    			Charm.apply(p, TimeUnit.TICKS, duration, getPlayer(), heal, decrease);
+	    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+						ParticleLib.HEART.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+					}
 	    		}
 	    		if (stack < count) {
 	    			ac.update("§d유혹 가능 §f: §e" + (count - stack));
@@ -189,7 +212,7 @@ public class Succubus extends AbilityBase {
 	    		}
 	    		return true;
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
-	    		for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
 	    			Multimap<EffectRegistration<?>, Effect> effectlist = null;
 	    			try {
@@ -201,12 +224,17 @@ public class Succubus extends AbilityBase {
 					}
 	    			if (effectlist != null) {
 		    			for (Effect effects : effectlist.values()) {
-		    				
+		    				if (effects.getRegistration().equals(Hemophilia.registration)) {
+			    				int duration = (int) (effects.getCount() * effects.getPeriod() * 0.25);
+			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
+			    				Bleed.apply(p, TimeUnit.TICKS, duration);	
+		    				}
 		    			}	
 		    			p.removeEffects(new Predicate<Effect>() {
 		                    @Override
 		                    public boolean test(Effect effect) {
-		                    	return !effect.getRegistration().equals(Bleed.registration);
+		                    	if (effect.getRegistration().equals(Bleed.registration) || effect.getRegistration().equals(Hemophilia.registration)) return false;
+		                    	return true;
 		                    }
 
 							@Override
@@ -214,6 +242,9 @@ public class Succubus extends AbilityBase {
 								return false;
 							}
 		                });
+		    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+		    				ParticleLib.DAMAGE_INDICATOR.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+						}
 	    			}
 	    		}
 	    	}
@@ -221,9 +252,5 @@ public class Succubus extends AbilityBase {
 	    }
 		return false;
 	}
-    
-    
-    
-    
 	
 }
