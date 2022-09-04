@@ -1,5 +1,7 @@
 package RainStarAbility;
 
+import java.lang.reflect.Field;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Material;
@@ -8,20 +10,31 @@ import org.bukkit.entity.Player;
 
 import RainStarAbility.HuntingDog.DogGui;
 import RainStarEffect.Charm;
+import RainStarEffect.Poison;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.manager.effect.Bleed;
+import daybreak.abilitywar.game.manager.effect.Fear;
+import daybreak.abilitywar.game.manager.effect.Oppress;
+import daybreak.abilitywar.game.manager.effect.Rooted;
+import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.google.common.base.Predicate;
+import daybreak.google.common.collect.ImmutableMap;
+import daybreak.google.common.collect.Multimap;
 
 @AbilityManifest(name = "서큐버스", rank = Rank.S, species = Species.UNDEAD, explain = {
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d유혹§f합니다.",
@@ -134,6 +147,15 @@ public class Succubus extends AbilityBase {
 			return false;
 		}
 	};
+	
+	private static final ImmutableMap<EffectRegistration<?>, Double> multiplyEffects = ImmutableMap.<EffectRegistration<?>, Double>builder()
+			.put(Stun.registration, 4.0)
+			.put(Fear.registration, 4.0)
+			.put(Charm.registration, 1.5)
+			.put(Poison.registration, 1.2)
+			.put(Rooted.registration, 2.5)
+			.put(Oppress.registration, 3.0)
+			.build();
     
 	private ActionbarChannel ac = newActionbarChannel();
     private final double range = RANGE.getValue();
@@ -141,9 +163,15 @@ public class Succubus extends AbilityBase {
     private final int duration = (int) (CHARM_DURATION.getValue() * 20);
     private final int decrease = CHARM_DECREASE.getValue();
     private final int heal = CHARM_HEAL.getValue();
-    private int stack = 0;
+    private int stack = 1;
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     
+    @Override
+    public void onUpdate(Update update) {
+    	if (update == Update.RESTRICTION_CLEAR) ac.update("§d유혹 가능 §f: §e" + count);
+    }
+    
+	@SuppressWarnings("unchecked")
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
@@ -152,17 +180,41 @@ public class Succubus extends AbilityBase {
 	    			Charm.apply(p, TimeUnit.TICKS, duration, getPlayer(), heal, decrease);
 	    		}
 	    		if (stack < count) {
-	    			stack++;
 	    			ac.update("§d유혹 가능 §f: §e" + (count - stack));
+	    			stack++;
 	    		} else {
-	    			stack = 0;
+	    			stack = 1;
 	    			cooldown.start();
+	    			ac.update("§d유혹 가능 §f: §e" + count);
 	    		}
 	    		return true;
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
 	    		for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
-	    			
+	    			Multimap<EffectRegistration<?>, Effect> effectlist = null;
+	    			try {
+						Field field = p.getClass().getDeclaredField("effects");
+						field.setAccessible(true);
+						effectlist = (Multimap<EffectRegistration<?>, Effect>) field.get(p);
+					} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+	    			if (effectlist != null) {
+		    			for (Effect effects : effectlist.values()) {
+		    				
+		    			}	
+		    			p.removeEffects(new Predicate<Effect>() {
+		                    @Override
+		                    public boolean test(Effect effect) {
+		                    	return !effect.getRegistration().equals(Bleed.registration);
+		                    }
+
+							@Override
+							public boolean apply(@Nullable Effect arg0) {
+								return false;
+							}
+		                });
+	    			}
 	    		}
 	    	}
 	    	
