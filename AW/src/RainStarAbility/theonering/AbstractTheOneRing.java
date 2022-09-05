@@ -45,7 +45,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "절대반지", rank = Rank.S, species = Species.HUMAN, explain = {
 		"철괴 우클릭 시 §7은신§f하여 능력의 지정 대상이 되지 않습니다.",
 		"§7은신§f 간 공격력이 $[INCREASE]% 증가하고, 신속 $[AMPLIFIER] 효과를 얻습니다.",
-		"또한 지속적으로 §5광분 수치§f가 쌓입니다. $[RANGE]칸 내 플레이어가 있다면 4배로 쌓입니다.",
+		"또한 지속적으로 §5광분 수치§f가 쌓입니다. $[RANGE]칸 내 플레이어가 있다면 3배로 쌓입니다.",
 		"§5광분 수치§f가 최대치에 달하면 무작위로 화면이 전환되고, 피해를 입습니다.",
 		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§oR§eE§aC§bK §7적용§8)",
 		"§3[§b종족야생 콜라보 능력§3]"
@@ -96,7 +96,7 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 	};
 	
 	public static final SettingObject<Double> SUBTRACT_CRAZY = 
-			abilitySettings.new SettingObject<Double>(AbstractTheOneRing.class, "subtract-crazy", 0.2,
+			abilitySettings.new SettingObject<Double>(AbstractTheOneRing.class, "subtract-crazy", 1.0,
 			"# 0.05초당 감소하는 광분 수치", "# 1000이 되면 이후부터는 피해를 입습니다.", "# WRECK에 의한 영향을 받습니다.") {
 
 		@Override
@@ -200,7 +200,7 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
     		if (hiding) {
     			getPlayer().addPotionEffect(speed);
     			crazy = Math.min(1, crazy + addcrazy);
-    			if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate) != null) crazy = Math.min(1, crazy + (addcrazy * 3));
+    			if (LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate) != null) crazy = Math.min(1, crazy + (addcrazy * 2));
     		} else {
     			if (Wreck.isEnabled(GameManager.getGame())) {
     				final CooldownDecrease cooldownDecrease = Settings.getCooldownDecrease();

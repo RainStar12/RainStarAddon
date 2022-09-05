@@ -53,7 +53,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 	
 	public AbilityRegistration getRandomAbility() {
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && (abilities.contains(ability))
+				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && !(abilities.contains(ability))
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
