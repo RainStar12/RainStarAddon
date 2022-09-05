@@ -15,6 +15,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -48,7 +49,7 @@ import daybreak.google.common.collect.Multimap;
         "§7철괴 우클릭으로§f 주변 적들을 §d유혹§f합니다. $[COUNT]번 쓰면 쿨타임이 생깁니다.",
         "§7철괴 좌클릭으로§f 주변 적들의 §3상태이상§f을 전부 §c출혈§f 효과로 바꿉니다."
         })
-public class Succubus extends AbilityBase {
+public class Succubus extends AbilityBase implements ActiveHandler {
 
 	public Succubus(Participant participant) {
 		super(participant);
@@ -195,22 +196,27 @@ public class Succubus extends AbilityBase {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
-	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
-	    			Participant p = getGame().getParticipant(player);
-	    			Charm.apply(p, TimeUnit.TICKS, duration, getPlayer(), heal, decrease);
-	    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-						ParticleLib.HEART.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
-					}
-	    		}
-	    		if (stack < count) {
-	    			ac.update("§d유혹 가능 §f: §e" + (count - stack));
-	    			stack++;
+	    		if (LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate).size() > 0) {
+		    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
+		    			Participant p = getGame().getParticipant(player);
+		    			Charm.apply(p, TimeUnit.TICKS, duration, getPlayer(), heal, decrease);
+		    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+							ParticleLib.HEART.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+						}
+		    		}
+		    		if (stack < count) {
+		    			ac.update("§d유혹 가능 §f: §e" + (count - stack));
+		    			stack++;
+		    		} else {
+		    			stack = 1;
+		    			cooldown.start();
+		    			ac.update("§d유혹 가능 §f: §e" + count);
+		    		}
+		    		return true;	
 	    		} else {
-	    			stack = 1;
-	    			cooldown.start();
-	    			ac.update("§d유혹 가능 §f: §e" + count);
+	    			getPlayer().sendMessage("§c[§d!§c] §d유혹§f할 수 있는 플레이어가 없습니다.");
+	    			return false;
 	    		}
-	    		return true;
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
 	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
