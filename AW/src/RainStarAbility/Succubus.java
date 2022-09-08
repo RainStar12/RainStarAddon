@@ -227,8 +227,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 		    			p.removeEffects(new Predicate<Effect>() {
 		                    @Override
 		                    public boolean test(Effect effect) {
-		                    	if (effect.getRegistration().equals(Bleed.registration) || effect.getRegistration().equals(Hemophilia.registration)) return false;
-		                    	return true;
+		                    	return !(effect.getRegistration().equals(Bleed.registration) || effect.getRegistration().equals(Hemophilia.registration));
 		                    }
 
 							@Override

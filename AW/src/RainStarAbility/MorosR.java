@@ -51,10 +51,7 @@ public class MorosR extends AbilityBase {
 		super(participant);
 	}
 	
-	private Map<Player, Mortal> mortals = new HashMap<>();
-	private final Random random = new Random();
-	
-	public static final SettingObject<Integer> MORTAL_DUIRATION = abilitySettings.new SettingObject<Integer>(MorosR.class,
+	public static final SettingObject<Integer> MORTAL_DURATION = abilitySettings.new SettingObject<Integer>(MorosR.class,
 			"mortal-duration", 5, "# 필멸 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +59,7 @@ public class MorosR extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> MORTAL_DUIRATION_SPREAD = abilitySettings.new SettingObject<Integer>(MorosR.class,
+	public static final SettingObject<Integer> MORTAL_DURATION_SPREAD = abilitySettings.new SettingObject<Integer>(MorosR.class,
 			"mortal-duration-spread", 3, "# 필멸 지속시간 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -96,7 +93,7 @@ public class MorosR extends AbilityBase {
         }
 	};
 	
-	public static final SettingObject<Integer> DUIRATION = abilitySettings.new SettingObject<Integer>(MorosR.class,
+	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(MorosR.class,
 			"targetable-false-duration", 10, "# 타게팅 불가 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -104,7 +101,7 @@ public class MorosR extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> DUIRATION_SPREAD = abilitySettings.new SettingObject<Integer>(MorosR.class,
+	public static final SettingObject<Integer> DURATION_SPREAD = abilitySettings.new SettingObject<Integer>(MorosR.class,
 			"targetable-false-duration-spread", 7, "# 타게팅 불가 지속시간 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -168,6 +165,11 @@ public class MorosR extends AbilityBase {
 			return "§7±" + getValue() + "§f";
         }
 	};
+	
+	private Map<Player, Mortal> mortals = new HashMap<>();
+	private final Random random = new Random();
+	private final int mortalduration = MORTAL_DURATION.getValue();
+	
 	
 	@Override
 	public void onUpdate(Update update) {
