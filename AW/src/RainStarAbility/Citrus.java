@@ -47,7 +47,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Fear;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
@@ -450,7 +450,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (getPlayer().getInventory().getItemInOffHand().getType().equals(Material.SPLASH_POTION)) {
 			ItemStack item = getPlayer().getInventory().getItemInOffHand();
 			PotionMeta meta = (PotionMeta) item.getItemMeta();

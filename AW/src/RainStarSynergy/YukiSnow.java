@@ -33,7 +33,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.Frost;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
@@ -302,7 +302,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (e.getEffectType().equals(Frost.registration) || e.getEffectType().equals(Chill.registration) || 
 				e.getEffectType().equals(FrozenHeart.registration) || e.getEffectType().equals(SnowflakeMark.registration)) {
 			e.setCancelled(true);

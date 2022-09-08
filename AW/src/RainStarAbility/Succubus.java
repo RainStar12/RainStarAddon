@@ -1,7 +1,5 @@
 package RainStarAbility;
 
-import java.lang.reflect.Field;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -37,7 +35,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableMap;
-import daybreak.google.common.collect.Multimap;
 
 @AbilityManifest(name = "서큐버스", rank = Rank.S, species = Species.UNDEAD, explain = {
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d유혹§f합니다.",
@@ -192,7 +189,6 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     	
 	}.setPeriod(TimeUnit.TICKS, 2).register();
     
-	@SuppressWarnings("unchecked")
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
@@ -220,16 +216,8 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
 	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
-	    			Multimap<EffectRegistration<?>, Effect> effectlist = null;
-	    			try {
-						Field field = p.getClass().getDeclaredField("effects");
-						field.setAccessible(true);
-						effectlist = (Multimap<EffectRegistration<?>, Effect>) field.get(p);
-					} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-						e.printStackTrace();
-					}
-	    			if (effectlist != null) {
-		    			for (Effect effects : effectlist.values()) {
+	    			if (p.getEffects().size() > 0) {
+		    			for (Effect effects : p.getEffects()) {
 		    				if (effects.getRegistration().equals(Hemophilia.registration)) {
 			    				int duration = (int) (effects.getCount() * effects.getPeriod() * 0.25);
 			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));

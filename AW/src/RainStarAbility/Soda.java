@@ -37,7 +37,7 @@ import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -234,7 +234,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		e.setCancelled(true);
 	}
 	

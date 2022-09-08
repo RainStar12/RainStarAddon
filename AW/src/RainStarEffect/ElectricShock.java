@@ -11,7 +11,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
@@ -79,7 +79,7 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 	}
 	
 	@EventHandler
-	private void onParticipantEffectApply(final ParticipantEffectApplyEvent e) {
+	private void onParticipantEffectApply(final ParticipantPreEffectApplyEvent e) {
 		if (e.getParticipant().equals(participant) && e.getEffectType().equals(Stun.registration)) {
 			damagecounter += (e.getDuration() / 4);
 		}

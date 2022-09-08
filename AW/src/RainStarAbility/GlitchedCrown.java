@@ -14,6 +14,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -74,7 +75,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			if (count % period == 0) {
-				stack = (stack < abilities.size() ? stack + 1 : 0);
+				stack = (stack < (abilities.size() - 1) ? stack + 1 : 0);
 				nowAbility = abilities.get(stack);
 				NMS.sendTitle(getPlayer(), rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name(), "§e?????", 0, 10, 0);
 			}
@@ -82,12 +83,30 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onEnd() {
-			try {
-				getPlayer().sendMessage("§6[§e!§6§k] §f당신의 능력이 " + rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name() + "§f으로 변경§k되§f었습니§k다§f.");
-				getParticipant().setAbility(nowAbility);
-				NMS.clearTitle(getPlayer());
-			} catch (UnsupportedOperationException | ReflectiveOperationException e) {
-				e.printStackTrace();
+			getPlayer().sendMessage("§6[§e!§6§k] §f당신의 능력이 " + rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name() + "§f으로 변경§k되§f었습니§k다§f.");
+			NMS.clearTitle(getPlayer());
+			if (getParticipant().getAbility().getClass().equals(Mix.class)) {
+				Mix mix = (Mix) getParticipant().getAbility();
+				AbilityBase first = mix.getFirst(), second = mix.getSecond();
+				if (first.getClass().equals(GlitchedCrown.class)) {
+					try {
+						mix.setAbility(nowAbility.getAbilityClass(), second.getClass());
+					} catch (ReflectiveOperationException e) {
+						e.printStackTrace();
+					}
+				} else if (second.getClass().equals(GlitchedCrown.class)) {
+					try {
+						mix.setAbility(first.getClass(), nowAbility.getAbilityClass());
+					} catch (ReflectiveOperationException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					getParticipant().setAbility(nowAbility);
+				} catch (UnsupportedOperationException | ReflectiveOperationException e) {
+					e.printStackTrace();
+				}	
 			}
 		}
 		

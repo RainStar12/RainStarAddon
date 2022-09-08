@@ -44,7 +44,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -195,8 +195,8 @@ public class Protagonist extends AbilityBase {
     }.setPeriod(TimeUnit.TICKS, 1).register();
     
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
-		if (bufflevel >= 3) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
+		if (bufflevel >= 1) {
 			e.setDuration(TimeUnit.TICKS, (int) (e.getDuration() * 0.5));
 		}
 	}

@@ -21,7 +21,7 @@ import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -141,7 +141,7 @@ public class King extends AbilityBase {
     }.setPeriod(TimeUnit.TICKS, 1).register();
     
     @SubscribeEvent
-    public void onEffectApply(ParticipantEffectApplyEvent e) {
+    public void onEffectApply(ParticipantPreEffectApplyEvent e) {
     	if (e.getParticipant().equals(getParticipant())) {
     		final ImmutableSet<EffectType> effectType = e.getEffectType().getEffectType();
 			if (effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT)) {

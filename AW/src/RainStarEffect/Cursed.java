@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
@@ -45,7 +45,7 @@ public class Cursed extends AbstractGame.Effect implements Listener {
 	}
 	
 	@EventHandler
-	private void onEffectApply(ParticipantEffectApplyEvent e) {
+	private void onEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (e.getPlayer().equals(participant.getPlayer())) {
 			if (!e.getEffectType().equals(Cursed.registration)) {
 				e.setDuration(TimeUnit.TICKS, e.getDuration() * 2);

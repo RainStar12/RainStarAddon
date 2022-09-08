@@ -17,7 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
 import daybreak.abilitywar.game.manager.effect.registry.EffectConstructor;
 import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
@@ -65,7 +65,7 @@ public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 	}
 	
 	@EventHandler
-	private void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	private void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (e.getParticipant().equals(participant)) {
 			if (e.getEffectType().equals(SnowflakeMark.registration)) {
 				if (e.getDuration() > this.getCount()) {

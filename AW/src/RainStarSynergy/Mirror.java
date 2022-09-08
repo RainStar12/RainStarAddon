@@ -48,7 +48,7 @@ import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -313,7 +313,7 @@ public class Mirror extends Synergy {
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (effectblock) {
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation());
 			getPlayer().sendMessage("§3[§b!§3] §f상태이상을 무효화시켰습니다.");

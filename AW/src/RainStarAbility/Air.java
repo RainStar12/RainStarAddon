@@ -12,7 +12,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 		"다른 능력의 지정 대상이 되지 않습니다."
 		},
 		summarize = {
-		"능력의 지정 대상이 되지 않습니다. §8(§7타게팅 불능§8)"
+		"능력의 지정 대상이 되지 않습니다. §8(§7타게팅 불가§8)"
 		})
 public class Air extends AbilityBase {
 

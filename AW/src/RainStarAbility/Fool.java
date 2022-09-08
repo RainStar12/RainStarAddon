@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 
 @AbilityManifest(name = "바보", rank = Rank.A, species = Species.HUMAN, explain = {
-		"피해를 받으면, 해당 피해를 $[DELAY]초 후에는 §b잊어버립니다§8(§7회복합니다§8)§f.",
+		"피해를 받으면, 해당 피해의 $[PERCENTAGE]%를 $[DELAY]초 후에는 §b잊어버립니다§8(§7회복합니다§8)§f.",
 		"철괴 우클릭 시 $[DURATION]초간 더 멍청해져 §b잊어버리는 속도§f가 $[MULTIPLY]배로 빨라지지만",
 		"§c쿨타임§f 동안은 §e똑똑해져§f 잊어버리질 않습니다. $[COOLDOWN]",
 		"§b잊어버릴 때마다§f $[CHANCE]%의 확률로 시야가 흔들립니다."
@@ -73,6 +73,14 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
+	public static final SettingObject<Integer> PERCENTAGE = abilitySettings.new SettingObject<Integer>(Fool.class,
+			"percentage", 75, "# 잊어버릴 피해량의 비율", "# 단위: %") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
 	public static final SettingObject<Integer> MULTIPLY = abilitySettings.new SettingObject<Integer>(Fool.class,
 			"multiply", 2, "# 스킬 사용시 피해를 잊는 속도") {
 		@Override
@@ -82,7 +90,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Fool.class,
-			"chance", 40, "# 시야가 흔들릴 확률") {
+			"chance", 20, "# 시야가 흔들릴 확률") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -92,6 +100,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), 50);
 	private final int delay = (int) (DELAY.getValue() * 20);
 	private final int multiply = MULTIPLY.getValue();
+	private final double percentage = 1 + (PERCENTAGE.getValue() * 0.01);
 	private final DecimalFormat df = new DecimalFormat("0.00");
 	private final DecimalFormat df2 = new DecimalFormat("0.0");
 	private final double chance = CHANCE.getValue() * 0.01;
@@ -100,7 +109,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(priority = 9999)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && !cool.isRunning() && !e.isCancelled()) {
-			new ForgetTimer(delay, e.getFinalDamage()).start();
+			new ForgetTimer(delay, e.getFinalDamage() * percentage).start();
 		}
 	}
 	

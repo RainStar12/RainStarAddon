@@ -35,7 +35,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.Stun;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -133,7 +133,7 @@ public class TeslaPlasma extends Synergy {
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)
-	public void onParticipantEffectApply(ParticipantEffectApplyEvent e) {
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (e.getEffectType().equals(Stun.registration)) {
 			e.setDuration(TimeUnit.TICKS, (int) (e.getDuration() * 0.5));
 		}
