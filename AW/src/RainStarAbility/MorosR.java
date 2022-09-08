@@ -33,13 +33,14 @@ import daybreak.abilitywar.utils.base.random.Random;
 @AbilityManifest(
 		name = "모로스", rank = Rank.S, species = Species.GOD, explain = {
 		"피할 수 없는 운명의 신, 모로스.",
-		"§7게임 시작 §8- §9운명론§f: 자신의 모든 수치화된 효과는 오차범위가 존재합니다.",
-		" 오차범위의 최종 오차값은 게임 시작 시 정해지며, 바뀔 수 없습니다.",
+		"§7게임 시작 §8- §9운명론§f: 자신의 모든 수치화된 효과는 §a오차범위§f가 존재합니다.",
+		" §a오차범위§f의 최종 오차값은 게임 시작 시 정해지며, 바뀔 수 없습니다.",
 		"§7적 타격 §8- §c필멸§f: $[MORTAL_DURATION]$[MORTAL_DURATION_SPREAD]초 이내에 공격했던 대상이 사망 위기에 처했을 때,",
 		" 대상은 §c§n그 어떠한 방법으로도§f 죽음을 피할 수 없습니다.",
 		"§7패시브 §8- §3운명 개찬§f: $[RANGE]$[RANGE_SPREAD]칸 내의 §a액티브§8 / §6타게팅§f 스킬을 미리 감지하고 직전에",
 		" $[DURATION]$[DURATION_SPREAD]초간 §b타게팅 불가 상태§f가 됩니다. $[PASSIVE_COOLDOWN]$[PASSIVE_COOLDOWN_SPREAD]",
-		"§7철괴 우클릭 §8- §b변수 제거§f: §c필멸§f을 전부 §c제압§f으로 바꿉니다. $[ACTIVE_COOLDOWN]$[ACTIVE_COOLDOWN_SPREAD]"
+		"§7철괴 우클릭 §8- §b변수 제거§f: §c필멸§f을 전부 §c제압§f으로 바꿉니다. $[ACTIVE_COOLDOWN]$[ACTIVE_COOLDOWN_SPREAD]",
+		" §c제압§f된 대상에게는 §c필멸§f 부여 대신 $[DAMAGE_INCREASE]$[DAMAGE_INCREASE_SPREAD]%의 추가 피해를 입힙니다."
 		},
 		summarize = {
 		""
@@ -167,14 +168,19 @@ public class MorosR extends AbilityBase {
 	};
 	
 	private Map<Player, Mortal> mortals = new HashMap<>();
+	private boolean first = false;
 	private final Random random = new Random();
-	private final int mortalduration = MORTAL_DURATION.getValue();
-	
+	private int mortalDuration = MORTAL_DURATION.getValue();
+	private final int mortalDurationSpread = MORTAL_DURATION_SPREAD.getValue();
+	private int range = RANGE.getValue();
+	private final int rangeSpread = RANGE_SPREAD.getValue();
 	
 	@Override
 	public void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			
+		if (update == Update.RESTRICTION_CLEAR && !first) {
+			first = true;
+			mortalDuration = (int) (mortalDuration + ((random.nextInt(mortalDurationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01))));
+			range = (int) (range + ((random.nextInt(rangeSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01))));
 		}
 	}
 	
