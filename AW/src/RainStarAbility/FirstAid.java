@@ -151,7 +151,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 			damages.clear();
 		}
 		
-	}.setPeriod(TimeUnit.SECONDS, 1).register();
+	}.setPeriod(TimeUnit.TICKS, 5).register();
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
