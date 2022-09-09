@@ -1,56 +1,42 @@
 package RainStarAbility;
 
-import javax.annotation.Nullable;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.module.DeathManager;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Line;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "복수귀", rank = Rank.A, species = Species.UNDEAD, explain = {
-		"§7패시브 §8- §c선인§f: 공격 시 모든 피해를 25%만 줍니다.",
-		"§7사망 §8- §c한§f: 플레이어에게 사망 시 사망 메시지를 띄우고 다시 부활합니다.",
-		" 한 맺힌 존재가 될 때부터 체력을 회복할 수 없고, 선인 효과가 사라집니다.",
-		"§7패시브 §8- §c복수§f: 오직 나를 죽인 대상과 싸울 수 있으며,",
-		" 대상의 방향이 나타나고, 대상을 공격할 때 모든 피해를 사망 전 최종 피해량에",
-		" 비례해서 증가시킵니다. 대상이 나에게 사망할 경우, 자신도 성불합니다.",
-		" 대상을 바라볼 때마다 10초 주기로 대상이 실명에 걸리고 나와 같은 방향을 바라봅니다.",
-		"§7패시브 §8- §c증오의 씨§f: 대상이 다른 플레이어에게 사망 시",
-		" 복수 대상이 대상을 사망시킨 플레이어로 옮겨갑니다."
+@AbilityManifest(name = "복수귀", rank = Rank.S, species = Species.UNDEAD, explain = {
+		"살해당할 경우, $[WAIT]초간 유령 상태가 되어 돌아다니다 최대 체력으로 부활합니다.",
+		"부활 이후 §c복수귀§f가 되어 체력이 $[DURATION]초에 걸쳐 빠르게 줄어듭니다.",
+		"§c복수귀§f 모드간 자신을 죽인 사람하고만 피해를 주고받을 수 있습니다.",
+		"이때 나를 죽이기 전까지 대상이 내게 줬던 최종 피해량의 $[PERCENTAGE]%만큼 공격력이 증가합니다.",
+		"대상을 내 손으로 처치할 경우, §c복수귀§f 모드가 종료됩니다."
 		},
 		summarize = {
-		"부활 전까지 내가 주는 모든 공격 피해량이 75%가 감소합니다.",
-		"다른 플레이어에게 사망 시 §c복수§f를 시작해, §c복수 대상§f 외에겐 싸우지 못하고",
-		"§c복수 대상§f에겐 대상이 날 죽일때 준 최종 피해량에 비례해 추가 피해를 줍니다.",
-		"대상을 바라보면 대상은 실명에 걸리고 나와 같은 방향을 바라봅니다.",
-		"§c복수§f를 시작하고 나면 체력을 회복할 수 없습니다."
+		""
 		})
 
 public class Revenger extends AbilityBase {
@@ -59,81 +45,46 @@ public class Revenger extends AbilityBase {
 		super(participant);
 	}
 	
-	private boolean checkdeath = true;
-	private boolean checkilook = true;
-	private double lastdmg;
-	private Player target;
-	private static final RGB trace = RGB.of(183, 1, 1);
-	private Location lastlocation;
-	private PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false);
-	private final ActionbarChannel ac = newActionbarChannel();
-	
-	@Override
-	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			getlocation.start();
-		}
-	}
-	
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+	public static final SettingObject<Integer> WAIT = abilitySettings.new SettingObject<Integer>(Revenger.class,
+			"wait", 15, "# 유령 상태 지속시간") {
 		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof Teamable) {
-					final Teamable teamGame = (Teamable) getGame();
-					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-				}
-			}
-			return true;
-		}
-
-		@Override
-		public boolean apply(@Nullable Entity arg0) {
-			return false;
+		public boolean condition(Integer value) {
+			return value >= 0;
 		}
 	};
 	
-	@SubscribeEvent
-	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
-		if (!checkdeath && e.getEntity().equals(getPlayer())) {
-			e.setCancelled(true);
+	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Revenger.class,
+			"duration", 30, "# 체력이 사라지는 시간", "# (최대 체력 / 시간)만큼의 체력을 매 초마다 없앱니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
 		}
-	}
+	};
 	
-	private final AbilityTimer passive = new AbilityTimer() {
-	    	
-    	@Override
-    	public void run(int count) {
-        	for (Location loc : Line.between(target.getLocation(), getPlayer().getLocation(), (int) Math.min(500, (15 * Math.sqrt(target.getLocation().distance(getPlayer().getLocation()))))).toLocations(target.getLocation())) {
-    	   		ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, trace);
-        	}	
-	    }
-    	
-	}.setPeriod(TimeUnit.SECONDS, 2).register();
+	public static final SettingObject<Integer> PERCENTAGE = abilitySettings.new SettingObject<Integer>(Revenger.class,
+			"percentage", 10, "# 증가할 공격력 배율", "# 단위: %") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 	
-	private final AbilityTimer ilook = new AbilityTimer(200) {
+	private GameMode previousGameMode = GameMode.SURVIVAL;
+	private Player killer = null;
+	private boolean revenger = false;
+	private final ActionbarChannel ac = newActionbarChannel();
+	private final DecimalFormat df = new DecimalFormat("0.0");
+	private final Map<UUID, Double> damageCounter = new HashMap<>();
+	private final int wait = WAIT.getValue() * 20;
+	private final int duration = DURATION.getValue();
+	private final double percentage = PERCENTAGE.getValue() * 0.01;
+	
+	public AbilityTimer ghost = new AbilityTimer(wait) {
 		
 		@Override
 		public void run(int count) {
-			Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
-    		if (p != null && p.equals(target)) {
-    			ac.update("§c주시 중");
-    			if (checkilook == true) {
-        			target.addPotionEffect(blind);
-        			SoundLib.AMBIENT_CAVE.playSound(target, 1, 1.5f);
-        			NMS.rotateHead(target, target, getPlayer().getLocation().getYaw(), getPlayer().getLocation().getPitch());
-        			checkilook = false;
-    			}
-    		} else {
-    			ac.update(null);
-    		}
+			ac.update("§c부활까지§7: §f" + df.format(count / 20.0));
+			if (count == 10) SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer().getLocation(), 1, 1.2f);
 		}
 		
 		@Override
@@ -143,120 +94,80 @@ public class Revenger extends AbilityBase {
 		
 		@Override
 		public void onSilentEnd() {
-			checkilook = true;
-			ilook.start();
+			getPlayer().setGameMode(previousGameMode);
+			Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+			revenger = true;
+			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 0.85f);
+			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
+			hpdecrease.start();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer getlocation = new AbilityTimer() {
+	public AbilityTimer hpdecrease = new AbilityTimer() {
 		
-    	@Override
-    	public void run(int count) {
-    		lastlocation = getPlayer().getLocation();
-	    }
+		@Override
+		public void run(int count) {
+			if (revenger && Damages.canDamage(getPlayer(), DamageCause.CUSTOM, 1)) {
+				double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				double decreaseHealth = maxHP / duration;
+				if (getPlayer().getHealth() <= decreaseHealth) getPlayer().damage(Integer.MAX_VALUE);
+				else Healths.setHealth(getPlayer(), getPlayer().getHealth() - decreaseHealth);
+			}
+		}
 		
-	}.setPeriod(TimeUnit.SECONDS, 20).register();
+	}.setPeriod(TimeUnit.SECONDS, 1).register();
+	
+	@SubscribeEvent(priority = 1000)
+	public void onDeath(EntityDamageByEntityEvent e) {
+		if (!e.isCancelled() && !revenger && e.getEntity().equals(getPlayer())) {
+	    	Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (damager != null) {
+				damageCounter.put(damager.getUniqueId(), damageCounter.getOrDefault(damager.getUniqueId(), 0.0) + e.getFinalDamage());
+			}
+			
+			if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && getPlayer().getKiller() != null) {
+				SoundLib.ENTITY_GHAST_SCREAM.playSound(getPlayer().getLocation(), 1, 1.65f);
+				Bukkit.broadcastMessage("§f[§c능력§f] §c" + getPlayer().getName() + "§f님의 능력은 §e복수귀§f였습니다.");
+				Bukkit.broadcastMessage("§c" + getPlayer().getName() + "§f가 §a" + getPlayer().getKiller().getName() + "§f에게 살해당했습니다. §7컷!");
+				Bukkit.broadcastMessage("§c" + getPlayer().getName() + "§f는 이제 §a" + getPlayer().getKiller().getName() + "§f에게 §c복수§f를 준비합니다...");
+				killer = getPlayer().getKiller();
+				e.setCancelled(true);
+				previousGameMode = getPlayer().getGameMode() != GameMode.SPECTATOR ? getPlayer().getGameMode() : GameMode.SURVIVAL;
+				getPlayer().setGameMode(GameMode.SPECTATOR);
+				ghost.start();
+			}	
+		}
+	}
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (!e.isCancelled()) {
-			if (e.getEntity().equals(getPlayer()) && checkdeath) {
-				ParticleLib.SPELL_WITCH.spawnParticle(getPlayer().getLocation(), 0.5, 0.5, 0.5, 1, 30);
-			}
-			
-			if (e.getDamager().equals(getPlayer()) && checkdeath) {
-				e.setDamage(e.getDamage() / 4);
-			}
+		if (revenger && getPlayer().equals(damager)) {
+			if (e.getEntity().equals(killer)) e.setDamage(e.getDamage() + (damageCounter.get(killer.getUniqueId()) * percentage));
+			else e.setCancelled(true);
+		}
 		
-			if (NMS.isArrow(e.getDamager())) {
-				Arrow arrow = (Arrow) e.getDamager();
-				if (arrow.getShooter().equals(getPlayer())) {
-					if (checkdeath) {
-						e.setDamage(e.getDamage() / 4);
-					} else {
-						if (e.getEntity().equals(target) && target != null) {
-							e.setDamage(e.getDamage() + lastdmg);
-						} else {
-							e.setCancelled(true);
-						}
-					}
-				} else if (!arrow.getShooter().equals(target) && e.getEntity().equals(getPlayer()) && target != null) {
-					e.setCancelled(true);
-				}
-			}
-		
-			if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && getPlayer().getKiller() instanceof Player && checkdeath == true) {
-				target = getPlayer().getKiller();
-				if (target != null) {
-					Bukkit.broadcastMessage("§f[§c능력§f] §c" + getPlayer().getName() + "§f님의 능력은 §e복수귀§f였습니다.");
-					Bukkit.broadcastMessage("§c" + getPlayer().getName() + "§f가 §a" + getPlayer().getKiller().getName() + "§f에게 살해당했습니다. §7컷!");
-					Bukkit.broadcastMessage("§c" + getPlayer().getName() + "§f는 이제 §a" + getPlayer().getKiller().getName() + "§f에게 §c복수§f를 준비합니다...");
-					lastdmg = Math.min((2 * (e.getFinalDamage() / 3)), 4);
-					getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							if (lastlocation != null) {
-								getPlayer().teleport(lastlocation);	
-							}
-						}	
-					}.runTaskLater(AbilityWar.getPlugin(), 1L);
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							if (!target.isDead()) target.sendMessage("§7누군가가 쳐다보는 것 같은 기분이 듭니다...");
-						}	
-					}.runTaskLater(AbilityWar.getPlugin(), 200L);
-					checkdeath = false;
-					ilook.start();
-					e.setCancelled(true);
-				}
-			}
-		
-			if (e.getDamager().equals(getPlayer()) && e.getEntity().equals(target) && checkdeath == false) {
-				e.setDamage(e.getDamage() + lastdmg);
-			}
-		
-			if (e.getDamager().equals(getPlayer()) && !e.getEntity().equals(target) && checkdeath == false) {
-				e.setCancelled(true);
-			}	
-		
-			if (e.getEntity().equals(getPlayer()) && !e.getDamager().equals(target) && checkdeath == false
-					&& e.getDamager() instanceof Player) {
-				e.setCancelled(true);
-			}
-		}	
+		if (revenger && getPlayer().equals(e.getEntity()) && damager != null && !damager.equals(killer)) {
+			e.setCancelled(true);
+		}
 	}
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (target != null && !checkdeath) {
-			if (e.getEntity().equals(target)) {
-				if (target.getKiller() == null) {
-					getPlayer().setHealth(0);
-					passive.stop(false);
-					ilook.stop(false);
-				} else {
-					if (!target.getKiller().equals(getPlayer()) && target.getKiller() instanceof Player) {
-						Bukkit.broadcastMessage("§c" + getPlayer().getName() + "§f는 이제 §a" + target.getName() + "§f을 죽인 §a" + target.getKiller().getName() + "§f에게 §c복수§f를 준비합니다...");
-						target = target.getKiller();
-					}
-					if (target.getKiller().equals(getPlayer())) {
-						target = null;
-						getPlayer().setHealth(0);
-						passive.stop(false);
-						ilook.stop(false);
-					}
-					if (!(target.getKiller() instanceof Player)) {
-						target = null;
-						getPlayer().setHealth(0);
-						passive.stop(false);
-						ilook.stop(false);
-					}
-				}
-			}	
+		if (getPlayer().equals(e.getEntity().getKiller()) && revenger && e.getEntity().equals(killer)) {
+			hpdecrease.stop(false);
+			revenger = false;
 		}
 	}
 

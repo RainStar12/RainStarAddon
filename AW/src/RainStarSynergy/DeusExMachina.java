@@ -37,7 +37,7 @@ import kotlin.ranges.RangesKt;
 @AbilityManifest(name = "데우스 엑스 마키나", rank = Rank.L, species = Species.GOD, explain = {
 		"철괴 우클릭 시 $[DURATION]초간 §c공격력(ATK)§f, §3방어력§7(DEF)§f, §d회복력7(REC)§f의 §a수치를 조작§f하여",
 		"게임 내에 있었던 §b최고 기록치§f를 불러옵니다. $[COOLDOWN]",
-		"능력을 사용하고 난 후에는 §b최고 기록치§f가 초기화됩니다.",
+		"능력을 사용하고 난 후에는 무작위 두 개의 §b최고 기록치§f가 초기화됩니다.",
 		"§b[§7아이디어 제공자§b] §dhorn1111"
 })
 
@@ -80,6 +80,7 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 	    } 
 	}
 	
+	private final Random random = new Random();
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private BossBar bossBar = null;
 	private ActionbarChannel acAttack = newActionbarChannel();
@@ -194,12 +195,28 @@ public class DeusExMachina extends Synergy implements ActiveHandler {
 
 		@Override
 		public void onSilentEnd() {
-			topDamage = 0;
-			topDefence = 99999;
-			topRecovery = 0;
-	    	acAttack.update("§cATK§7: §e§k" + 0.00);
-	    	acDefence.update("§bDEF§7: §e§k" + 0.00);
-	    	acRecovery.update("§aREC§7: §e§k" + 0.00);
+			switch(random.nextInt(3)) {
+			case 0:
+				topDamage = 0;
+				topDefence = 99999;
+		    	acAttack.update("§cATK§7: §e§k" + 0.00);
+		    	acDefence.update("§bDEF§7: §e§k" + 0.00);
+		    	break;
+		    
+			case 1:
+				topDamage = 0;
+				topRecovery = 0;
+		    	acAttack.update("§cATK§7: §e§k" + 0.00);
+		    	acRecovery.update("§aREC§7: §e§k" + 0.00);
+		    	break;
+		    	
+			case 2:
+				topDefence = 99999;
+				topRecovery = 0;
+		    	acDefence.update("§bDEF§7: §e§k" + 0.00);
+		    	acRecovery.update("§aREC§7: §e§k" + 0.00);
+		    	break;
+			}
 			bossBar.removeAll();
 			cool.start();
 		}

@@ -444,7 +444,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPreActiveSkillEvent(AbilityPreActiveSkillEvent e) {
-		if (!nontargetable.isRunning() && !passivecool.isRunning() && LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range)) {
+		if (!e.getPlayer().equals(getPlayer()) && !nontargetable.isRunning() && !passivecool.isRunning() && LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range)) {
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			nontargetable.start();
 		}
@@ -452,22 +452,23 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPreTargetEvent(AbilityPreTargetEvent e) {
-		if (!nontargetable.isRunning() && !passivecool.isRunning() && LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range)) {
+		if (!e.getPlayer().equals(getPlayer()) && !nontargetable.isRunning() && !passivecool.isRunning() && LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range)) {
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			nontargetable.start();
 		}
 	}
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !activecool.isCooldown()) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !activecool.isCooldown() && mortals.size() > 0) {
 	    	for (Player player : mortals.keySet()) {
 	    		Oppress.apply(getParticipant(), TimeUnit.TICKS, mortals.get(player).getCount());
 	    		mortals.get(player).stop(false);
 				for (Location location : circle.toLocations(player.getLocation().add(0, 1, 0))) {
 					ParticleLib.REDSTONE.spawnParticle(location, color5);	
 				}
+				SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(player.getLocation(), 1, 0.7f);
 	    	}
-	    	return true;
+	    	return activecool.start();
 	    }
 		return false;
 	}
