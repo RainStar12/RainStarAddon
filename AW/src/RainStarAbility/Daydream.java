@@ -58,6 +58,7 @@ public class Daydream extends AbilityBase implements ActiveHandler {
     
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	
+	@SuppressWarnings("deprecation")
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !cooldown.isCooldown()) {
 			if (ServerVersion.getVersion() >= 13) {

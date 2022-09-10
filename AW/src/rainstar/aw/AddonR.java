@@ -254,7 +254,8 @@ public class AddonR extends Addon implements Listener {
 		
 		AbilityFactory.registerAbility(GlitchedCrown.class);
 		AbilityList.registerAbility(GlitchedCrown.class);
-		
+		AbilityFactory.registerAbility(Rival.class);
+		AbilityList.registerAbility(Rival.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
@@ -323,7 +324,7 @@ public class AddonR extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f74개 §7/ §d시너지 §f43개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f82개 §7/ §d시너지 §f43개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -363,7 +364,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f74개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f82개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f43개 적용 완료.");
 		}
