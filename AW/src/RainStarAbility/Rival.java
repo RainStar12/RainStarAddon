@@ -57,7 +57,11 @@ import daybreak.google.common.base.Predicate;
         "§b[§7아이디어 제공자§b] §bjjapdook"
         },
         summarize = {
-        ""
+        "자신을 공격한 자를 §c§n라이벌§f로 지정해 §c§n라이벌§f 외에게 피해를 주고받지 않습니다.",
+        "§7철괴 우클릭§f으로 §c§n라이벌§f이나 바라본 대상을 새로 §c§n라이벌§f로 지정하여",
+        "§c§n라이벌§f에게 이동 후 §c§n라이벌§f의 능력을 사용합니다.",
+        "§c§n라이벌§f을 처치 시 모든 스킬을 비활성화하고 여태껏 처치한 모든 §c§n라이벌§f의 능력을",
+        "잠시간 사용할 수 있습니다."
         })
 public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 	
@@ -267,22 +271,22 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 							} catch (ReflectiveOperationException e) {
 								e.printStackTrace();
 							}
-							
-							if (rival.getHealth() < getPlayer().getHealth()) {
-								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), getPlayer().getHealth() - rival.getHealth(), RegainReason.CUSTOM);
-								Bukkit.getPluginManager().callEvent(event);
-								if (!event.isCancelled()) {
-									Healths.setHealth(rival, getPlayer().getHealth());
-								}
+						} else cooldown.start();
+						
+						if (rival.getHealth() < getPlayer().getHealth()) {
+							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), getPlayer().getHealth() - rival.getHealth(), RegainReason.CUSTOM);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) {
+								Healths.setHealth(rival, getPlayer().getHealth());
 							}
-							
-							new BukkitRunnable() {
-								@Override
-								public void run() {
-									getPlayer().teleport(rival);
-								}	
-							}.runTaskLater(AbilityWar.getPlugin(), 1L);
 						}
+						
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								getPlayer().teleport(rival);
+							}	
+						}.runTaskLater(AbilityWar.getPlugin(), 1L);
 					} else getPlayer().sendMessage("§c[§e!§c] §f바라보고 있는 곳에 아무런 대상이 없습니다.");
 					return true;
 				}
