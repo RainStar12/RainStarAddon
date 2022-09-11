@@ -57,7 +57,7 @@ public class Revenger extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Revenger.class,
-			"duration", 30, "# 체력이 사라지는 시간", "# (최대 체력 / 시간)만큼의 체력을 매 초마다 없앱니다.") {
+			"duration", 20, "# 체력이 사라지는 시간", "# (최대 체력 / 시간)만큼의 체력을 매 초마다 없앱니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

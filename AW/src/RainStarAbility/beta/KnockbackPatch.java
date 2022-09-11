@@ -1,4 +1,4 @@
-package RainStarAbility;
+package RainStarAbility.beta;
 
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;

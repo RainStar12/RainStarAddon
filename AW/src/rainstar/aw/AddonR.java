@@ -6,6 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
+import RainStarAbility.beta.KnockbackPatch;
+import RainStarAbility.beta.RightClickTest;
 import RainStarAbility.chronos.Chronos;
 import RainStarAbility.theonering.v1_12_R1.TheOneRing;
 import RainStarAbility.timestop.TimeStop;

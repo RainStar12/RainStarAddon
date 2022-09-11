@@ -201,6 +201,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (stopped.contains(e.getEntity())) {
+			rewind.stop(true);
 			Healths.setHealth(getPlayer(), rewindHP);
 			getPlayer().teleport(rewindLocation);
 			
@@ -224,7 +225,6 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 					firework.detonate();
 				}
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
-			rewind.stop(true);
 		}
 	}
 	
@@ -345,6 +345,8 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onEnd() {
+			rewindHP = 0;
+			rewindLocation = null;
 			getPlayer().damage(Integer.MAX_VALUE);
 			onSilentEnd();
 		}
@@ -357,8 +359,6 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 			ac.update(null);
 			armorstands.clear();
 			stopped.clear();
-			rewindHP = 0;
-			rewindLocation = null;
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -383,7 +383,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		}
     		
     		if (count % 2 == 0) {
-    			if (add && y >= 2.0) add = false;
+    			if (add && y >= 0.8) add = false;
     			else if (!add && y <= 0) add = true;
 
     			y = add ? y + 0.1 : y - 0.1;
