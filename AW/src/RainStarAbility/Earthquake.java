@@ -79,7 +79,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(Earthquake.class, "stun", 3.0,
+			abilitySettings.new SettingObject<Double>(Earthquake.class, "stun", 3.5,
 			"# 기절 시간") {
 
 		@Override
@@ -90,7 +90,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 105,
+			abilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 180,
 			"# 쿨타임") {
 
 		@Override

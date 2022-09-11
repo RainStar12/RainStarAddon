@@ -256,6 +256,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(GlitchedCrown.class);
 		AbilityFactory.registerAbility(Rival.class);
 		AbilityList.registerAbility(Rival.class);
+		AbilityFactory.registerAbility(PocketWatch.class);
+		AbilityList.registerAbility(PocketWatch.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

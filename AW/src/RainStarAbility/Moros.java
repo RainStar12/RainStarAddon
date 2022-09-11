@@ -338,7 +338,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	public void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR && !first) {
 			first = true;
-			mortalDuration = (int) (mortalDuration + ((random.nextInt(mortalDurationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01))) * 20);
+			mortalDuration = (int) ((mortalDuration + ((random.nextInt(mortalDurationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))) * 20);
 			range = (range + ((random.nextInt(rangeSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01))));
 			duration = (int) ((duration + ((random.nextInt(durationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))) * 20);
 			passivecool.setCooldown((int) (PASSIVE_COOLDOWN.getValue() + ((random.nextInt(passiveCooldownSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))), CooldownDecrease._50);
@@ -375,7 +375,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 4).register();
 	
-	public AbilityTimer nontargetable = new AbilityTimer(TaskType.REVERSE, duration) {
+	public AbilityTimer nontargetable = new AbilityTimer(TaskType.REVERSE, 10) {
 		
 		private double y;
 		private boolean add;
@@ -383,6 +383,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
+			nontargetable.setCount(duration);
 			SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), (float) 0.7, 2);
 			particle.start();
 			y = 0.0;
@@ -413,6 +414,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
+			ac.update(null);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			passivecool.start();
 		}

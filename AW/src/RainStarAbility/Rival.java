@@ -248,7 +248,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 			}
 		} else {
 			if (Rival.this.rivalability == null) {
-				if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+				if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
 					if (rival != null || LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate) != null) {
 						if (rival == null) rival = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
 						if (!rivaltimer.isRunning()) rivaltimer.start();
@@ -273,6 +273,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 							try {
 								this.rivalability = AbilityBase.create(myab.getClass(), getParticipant());
 								this.rivalability.setRestricted(false);
+								this.checkrivalability = rivalability;
 								getPlayer().sendMessage("§3[§b!§3] §b라이벌의 능력을 복제했습니다. 능력: §a" + rivalability.getDisplayName());
 							} catch (ReflectiveOperationException e) {
 								e.printStackTrace();
@@ -293,7 +294,10 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 								getPlayer().teleport(rival);
 							}	
 						}.runTaskLater(AbilityWar.getPlugin(), 1L);
-					} else getPlayer().sendMessage("§c[§e!§c] §f바라보고 있는 곳에 아무런 대상이 없습니다.");
+					} else {
+						getPlayer().sendMessage("§c[§e!§c] §f바라보고 있는 곳에 아무런 대상이 없습니다.");
+						return false;
+					}
 					return true;
 				}
 			} else {
@@ -404,7 +408,11 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (rival.equals(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
-			abilities.add(checkrivalability);
+			try {
+				abilities.add(AbilityBase.create(checkrivalability.getClass(), getParticipant()));
+			} catch (ReflectiveOperationException e1) {
+				e1.printStackTrace();
+			}
 			ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 25, 1);
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer().getLocation(), 1, 2);
 			champion.start();
