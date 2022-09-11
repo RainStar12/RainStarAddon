@@ -10,6 +10,7 @@ import java.util.StringJoiner;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -37,10 +38,13 @@ import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
@@ -126,7 +130,8 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     private final double multiply = 1 + (PERCENTAGE.getValue() * 0.01);
     private final ActionbarChannel ac = newActionbarChannel();
     private final DecimalFormat df = new DecimalFormat("0.0");
-    
+    private final Random random = new Random();
+	private final Circle circle = Circle.of(1, 25);
     private List<AbilityBase> abilities = new ArrayList<>();
     private AbilityBase checkrivalability;
     private AbilityBase rivalability;
@@ -246,6 +251,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 					if (rival != null || LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate) != null) {
 						if (rival == null) rival = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
+						if (!rivaltimer.isRunning()) rivaltimer.start();
 						rivaltimer.setCount(rivaltimer.getCount() + rivaladdduration);
 						if (getGame().getParticipant(rival).hasAbility()) {
 							AbilityBase ab = getGame().getParticipant(rival).getAbility();
@@ -321,6 +327,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 		@Override
 		public void onStart() {
 			rivaltimer.stop(false);
+			ac.update("§e챔피언§7: §f" + winduration + "초");
 			for (AbilityBase ability : abilities) {
 				ability.setRestricted(false);
 			}
@@ -353,10 +360,25 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 	}.setPeriod(TimeUnit.SECONDS, 1).register();
 	
-    private AbilityTimer rivaltimer = new AbilityTimer(rivalduration) {
+    private AbilityTimer rivaltimer = new AbilityTimer(TaskType.REVERSE, rivalduration) {
+    	
+    	private RGB color;
+    	
+    	@Override
+    	public void onStart() {
+    		color = RGB.of(random.nextInt(254) + 1, random.nextInt(254) + 1, random.nextInt(254) + 1);
+    	}
     	
     	@Override
     	public void run(int count) {
+    		if (count % 5 == 0) {
+				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+					ParticleLib.REDSTONE.spawnParticle(loc, color);
+				}
+				for (Location loc : circle.toLocations(rival.getLocation()).floor(rival.getLocation().getY())) {
+					ParticleLib.REDSTONE.spawnParticle(loc, color);
+				}
+    		}
     		ac.update("§c라이벌 §e" + rival.getName() + "§f " + df.format(count / 20));
     	}
     	
@@ -420,7 +442,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 					rivaltimer.start();
 				}
 			} else {
-				if ((getPlayer().equals(damager) && e.getEntity() instanceof Player) || (getPlayer().equals(e.getEntity()) && rival != damager)) {
+				if ((getPlayer().equals(damager) && e.getEntity() instanceof Player && !e.getEntity().equals(rival)) || (getPlayer().equals(e.getEntity()) && rival != damager)) {
 					e.setCancelled(true);
 				}
 				if (Rival.this.rivalability != null && getPlayer().equals(damager) && e.getEntity().equals(rival)) {

@@ -97,12 +97,23 @@ public class Revenger extends AbilityBase {
 		
 		@Override
 		public void onSilentEnd() {
+			ac.update(null);
 			getPlayer().setGameMode(previousGameMode);
 			Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			revenger = true;
 			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 0.85f);
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
 			hpdecrease.start();
+			revengeParticle.start();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	public AbilityTimer revengeParticle = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			ParticleLib.FLAME.spawnParticle(getPlayer().getLocation().clone().add(0, 2.5, 0), 0, 0, 0, 1, 0);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -170,6 +181,7 @@ public class Revenger extends AbilityBase {
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (getPlayer().equals(e.getEntity().getKiller()) && revenger && e.getEntity().equals(killer)) {
 			hpdecrease.stop(false);
+			revengeParticle.stop(false);
 			revenger = false;
 		}
 	}

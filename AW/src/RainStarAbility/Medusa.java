@@ -64,7 +64,7 @@ public class Medusa extends AbilityBase {
 	
 	public static final SettingObject<Double> PETRIFICATION_DURATION = 
 			abilitySettings.new SettingObject<Double>(Medusa.class, "petrification-duration", 7.5,
-            "# 바라볼 수 있는 시간 최대치", "# 단위: 초") {
+            "# 석화 최대치", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;

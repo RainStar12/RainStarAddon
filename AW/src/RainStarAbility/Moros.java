@@ -392,6 +392,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
+			getParticipant().attributes().TARGETABLE.setValue(false);
 			ac.update("§3운명 개찬§f: " + df.format(count / 20.0));
 			
 			if (add && y >= 2.0) add = false;
@@ -461,7 +462,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !activecool.isCooldown() && mortals.size() > 0) {
 	    	for (Player player : mortals.keySet()) {
-	    		Oppress.apply(getParticipant(), TimeUnit.TICKS, mortals.get(player).getCount());
+	    		Oppress.apply(getGame().getParticipant(player), TimeUnit.TICKS, mortals.get(player).getCount());
 				for (Location location : circle.toLocations(player.getLocation().add(0, 1, 0))) {
 					ParticleLib.REDSTONE.spawnParticle(location, color5);
 				}
