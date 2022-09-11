@@ -1,9 +1,11 @@
 package RainStarAbility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -110,7 +112,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	private final double max = RANGE_MAX.getValue();
 	private final int stun = (int) (STUN.getValue() * 20);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
-	private final Set<Player> airborned = new HashSet<>();
+	private final Map<Player, Airborn> airborned = new HashMap<>();
 	private final Vector upper = new Vector(0, 2.5, 0);
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
@@ -119,13 +121,33 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, null)) {
 				if (livingEntity.isOnGround()) {
 					livingEntity.setVelocity(upper);
-					if (livingEntity instanceof Player) airborned.add((Player) livingEntity);
+					if (livingEntity instanceof Player) new Airborn((Player) livingEntity).start();
 				}
 			}
 			
 			return cooldown.start();
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public class Airborn extends AbilityTimer {
+		
+		private final Player player;
+		
+		public Airborn(Player player) {
+			super(TaskType.INFINITE, -1);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.player = player;
+			airborned.put(player, this);
+		}
+		
+		@Override
+		public void run(int count) {
+			if (player.isOnGround()) this.stop(false);
+		}
+	
+		
 	}
 	
 }
