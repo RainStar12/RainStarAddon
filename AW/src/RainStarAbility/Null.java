@@ -1,6 +1,5 @@
 package RainStarAbility;
 
-import java.util.Iterator;
 import java.util.StringJoiner;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -29,7 +28,7 @@ public class Null extends AbilityBase {
 		@Override
 		public String toString() {
 			final StringJoiner joiner = new StringJoiner("\n");
-			switch(random.nextInt(10)) {
+			switch(random.nextInt(6)) {
 			case 0:
 				joiner.add("능력을 고르지 않으셨군요? 그런 당신에게 아무 능력도 드리지 않습니다!");
 				break;

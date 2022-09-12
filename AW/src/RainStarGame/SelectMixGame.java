@@ -44,14 +44,14 @@ public class SelectMixGame extends AbstractMix {
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1:
-				List<String> lines = Messager.asList("§5==== §d게임 참여자 목록 §5====");
+				List<String> lines = Messager.asList("§2==== §a게임 참여자 목록 §2====");
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;
-					lines.add("§d" + count + ". §f" + p.getPlayer().getName());
+					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
-				lines.add("§5총 인원수 : " + count + "명");
-				lines.add("§5==========================");
+				lines.add("§2총 인원수 : " + count + "명");
+				lines.add("§2==========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);
@@ -64,10 +64,10 @@ public class SelectMixGame extends AbstractMix {
 				break;
 			case 3:
 				lines = Messager.asList(
-						"§5MixAbility §f- §d믹스 능력자 전쟁",
+						"§2SelectMixAbility §f- §a셀렉트 믹스 능력자 전쟁",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
-						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833"
+						"§b모드 개발자 §7: §fRainStar_ 레인스타",
+						"§9디스코드 §7: §f레인스타§7#0846"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);
@@ -113,15 +113,15 @@ public class SelectMixGame extends AbstractMix {
 				if (Seasons.isChristmas()) {
 					final String blocks = Strings.repeat("§c■§2■", 22);
 					Bukkit.broadcastMessage(blocks);
-					Bukkit.broadcastMessage("§f            §cMixAbility §f- §2믹스 능력자 전쟁  ");
+					Bukkit.broadcastMessage("§f       §aSelectMixAbility §f- §2셀렉트 믹스 능력자 전쟁  ");
 					Bukkit.broadcastMessage("§f                   게임 시작                ");
 					Bukkit.broadcastMessage(blocks);
 				} else {
 					for (String line : Messager.asList(
-							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-							"§f            §5MixAbility §f- §d믹스 능력자 전쟁  ",
+							"§a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+							"§f       §aSelectMixAbility §f- §2셀렉트 믹스 능력자 전쟁  ",
 							"§f                    게임 시작                ",
-							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
+							"§a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
 						Bukkit.broadcastMessage(line);
 					}
 				}

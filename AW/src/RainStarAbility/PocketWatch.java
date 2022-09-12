@@ -200,7 +200,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (stopped.contains(e.getEntity())) {
+		if (stopped.contains(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
 			rewind.stop(true);
 			Healths.setHealth(getPlayer(), rewindHP);
 			getPlayer().teleport(rewindLocation);

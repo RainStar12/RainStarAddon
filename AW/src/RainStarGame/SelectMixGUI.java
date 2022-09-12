@@ -1,12 +1,15 @@
 package RainStarGame;
 
 import com.google.common.collect.ImmutableMap;
+
+import RainStarAbility.Null;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.AbstractMix.MixParticipant;
 import daybreak.abilitywar.game.list.mix.Mix;
@@ -20,7 +23,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -58,7 +60,7 @@ public class SelectMixGUI implements Listener {
             .lore("§7현재 선택된 능력들만 다시 추첨합니다.")
             .build();
     
-    private static final ItemStack DECIDE = new ItemBuilder(MaterialX.GREEN_STAINED_GLASS_PANE)
+    private static final ItemStack DECIDE = new ItemBuilder(MaterialX.LIME_STAINED_GLASS_PANE)
             .displayName("§c결정")
             .lore("§7현재 선택된 능력들을 자신의 능력을 결정합니다.")
             .build();
@@ -80,9 +82,10 @@ public class SelectMixGUI implements Listener {
     private Inventory gui = Bukkit.createInventory(null, 45, "§c능력 선택");;
     private final List<AbilityRegistration> randomAbilities = new ArrayList<>();
     private final Random random = new Random();
+    private boolean rerollchance = true;
     private boolean reroll = false;
     private boolean decide = false;
-
+    private boolean will = true;
 
     public SelectMixGUI(@Nullable final MixParticipant player, @Nonnull final AbstractMix game, @Nonnull final Plugin plugin) {
         this.game = game;
@@ -93,6 +96,9 @@ public class SelectMixGUI implements Listener {
                 randomAbilities.add(registration);
             }
         }
+        reroll(RerollTarget.INITIAL);
+        will = false;
+        openGUI();
     }
 
     private void openGUI() {
@@ -125,10 +131,14 @@ public class SelectMixGUI implements Listener {
         gui.setItem(30, SELECT_REROLL);
         gui.setItem(34, DECIDE);
         player.getPlayer().openInventory(gui);
+        will = true;
     }
 
     public void reroll(RerollTarget target) {
+    	rerollchance = false;
+        will = false;
         target.reroll(this);
+        will = false;
         openGUI();
     }
     
@@ -137,7 +147,7 @@ public class SelectMixGUI implements Listener {
         	decide = true;
         	if (selected.size() < 2) {
             	try {
-        			((Mix) player.getAbility()).setAbility(abilities[0], abilities[1]);
+        			((Mix) player.getAbility()).setAbility(Null.class, Null.class);
         		} catch (ReflectiveOperationException e1) {
         			e1.printStackTrace();
         		}
@@ -153,37 +163,50 @@ public class SelectMixGUI implements Listener {
     	}
     }
     
+    @EventHandler
+    private void onGameEnd(GameEndEvent e) {
+    	decide = true;
+    	player.getPlayer().closeInventory();
+    }
+    
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(gui) && !decide) openGUI();
+		if (e.getInventory().equals(gui) && !decide && will) {
+	        will = false;
+			openGUI();
+		}
 	}
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent e) {
+		Bukkit.broadcastMessage("클릭");
         if (e.getInventory().equals(gui)) {
             final int slot = e.getSlot();
             e.setCancelled(true);
             if (reroll) return;
             if (slot >= 10 && slot <= 16) {
+            	if (selected.contains(slot - 10)) return;
                 while (selected.size() >= 2) {
                     selected.removeFirst();
                 }
                 selected.add(slot - 10);
-                if (selected.contains(slot - 10)) return;
+                will = false;
                 openGUI();
             } else if (slot == 28) {
-                reroll(RerollTarget.ALL);
+            	if (rerollchance) reroll(RerollTarget.ALL);
             } else if (slot == 30) {
-            	reroll(RerollTarget.SELECTED);
+            	if (rerollchance) reroll(RerollTarget.SELECTED);
             } else if (slot == 34) {
-            	decide = true;
-            	try {
-					((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()], abilities[selected.getLast()]);
-				} catch (ReflectiveOperationException e1) {
-					e1.printStackTrace();
-				}
-            	HandlerList.unregisterAll(this);
-            	player.getPlayer().closeInventory();
+            	if (selected.size() == 2) {
+                	decide = true;
+                	try {
+    					((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()], abilities[selected.getLast()]);
+    				} catch (ReflectiveOperationException e1) {
+    					e1.printStackTrace();
+    				}
+                	HandlerList.unregisterAll(this);
+                	player.getPlayer().closeInventory();	
+            	}
             }
         }
     }
