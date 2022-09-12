@@ -2,36 +2,30 @@ package RainStarGame;
 
 import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.GameAliases;
-import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
-import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
-import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-
+import java.util.Map;
 
 @GameManifest(name = "셀렉트 믹스 능력자 전쟁", description = {
 		"§f자기가 원하는 능력을 골라서 하는 믹스!",
@@ -39,8 +33,7 @@ import java.util.Random;
 })
 @GameAliases({"셀믹전", "셀믹"})
 public class SelectMixGame extends AbstractMix {
-
-	private static final Logger logger = Logger.getLogger(SelectMixGame.class);
+	
 	private final boolean invincible = InvincibilitySettings.isEnabled();
 
 	public SelectMixGame() {
@@ -174,17 +167,47 @@ public class SelectMixGame extends AbstractMix {
 		}
 	}
 
-	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), Settings.getAbilityChangeCount()) {
+		return new AbilitySelect(this, getParticipants(), 1) {
+			
+			private Map<Participant, SelectMixGUI> guilist = new HashMap<>();
+			
 			@Override
-            protected void drawAbility(Collection<? extends Participant> selectors) {
+			protected boolean changeAbility(Participant arg0) {
+				return false;
 			}
 
 			@Override
-            protected boolean changeAbility(Participant participant) {
-				return false;
+			protected void drawAbility(Collection<? extends Participant> selectors) {
+				for (Participant participant : selectors) {
+					guilist.put(participant, new SelectMixGUI((MixParticipant) participant, SelectMixGame.this, AbilityWar.getPlugin()));
+				}	
 			}
+			
+			@Override
+			public void run(int count) {	
+			}
+			
+			@Override
+			protected void onSkip(final String admin) {
+				Bukkit.broadcastMessage(
+						admin != null ? (
+								"§f관리자 §e" + admin + "§f" + KoreanUtil.getJosa(admin.replaceAll("_", ""), Josa.이가) + " 모든 참가자의 능력을 강제로 확정했습니다."
+						) : "§e모든 참가자§f의 능력이 강제로 확정되었습니다."
+				);
+				for (Participant participant : guilist.keySet()) {
+					guilist.get(participant).skip();
+				}
+			}
+			
+			@Override
+			protected void onChange(final Participant participant) {
+			}
+			
+			@Override
+			protected void onDecision(final Participant participant) {
+			}
+
 		};
 	}
 

@@ -11,6 +11,7 @@ import RainStarAbility.beta.RightClickTest;
 import RainStarAbility.chronos.Chronos;
 import RainStarAbility.theonering.v1_12_R1.TheOneRing;
 import RainStarAbility.timestop.TimeStop;
+import RainStarGame.SelectMixGame;
 import RainStarSynergy.*;
 import RainStarSynergy.chance.Chance;
 import daybreak.abilitywar.AbilityWar;
@@ -44,6 +45,7 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
@@ -326,6 +328,8 @@ public class AddonR extends Addon implements Listener {
 	            }
 	        }   
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
+	    
+	    GameFactory.registerMode(SelectMixGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
 		Bukkit.broadcastMessage("§e능력 §f82개 §7/ §d시너지 §f43개 적용 완료.");
@@ -363,6 +367,9 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Flex.class);
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
+		
+		//event
+		AbilityFactory.registerAbility(Null.class);
 		
 	}
 	

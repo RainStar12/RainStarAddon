@@ -52,11 +52,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 또한 공격에 1~6의 추가 피해를 줍니다."
 		},
 		summarize = {
-		"낙하 피해를 받지 않습니다.",
-		"공중에서 웅크리면 지속 대시하지만 §c히트 수치§f가 기하급수적으로 상승합니다.",
-		"§c히트 수치§f에 비례해 받는 피해량이 증가하고 대시 종료 시 §e기절§f합니다.",
-		"§7철괴 우클릭으로§f §c히트 수치§f를 0으로 만들고 대시 종료 후 공격을 회피합니다.",
-		"또한 공격에 1~6의 추가 피해를 입힙니다."
+		""
 		})
 
 public class SuguriR extends AbilityBase {
@@ -87,6 +83,17 @@ public class SuguriR extends AbilityBase {
 
 	};
 	
+	public static final SettingObject<Integer> DASH_START_HEAT = 
+			abilitySettings.new SettingObject<Integer>(SuguriR.class, "dash-start-heat", 20,
+			"# 대시 시작 시 추가 히트") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
     
     @Override
     public void onUpdate(Update update) {
@@ -98,11 +105,13 @@ public class SuguriR extends AbilityBase {
 	private static final Set<Material> swords;
 	private final int evadeduration = (int) (EVADE_DURATION.getValue() * 20);
 	private final int duration = (int) (ACCELERATOR_DURATION.getValue() * 20);
+	private final int dashstartheat = DASH_START_HEAT.getValue();
 	
 	private final DecimalFormat df = new DecimalFormat("0");
 	private int heat = 0;
 	private BossBar bossBar = null;
 	private long last;
+	private double longHeat = 0;
 
 	static {
 		if (MaterialX.NETHERITE_SWORD.isSupported()) {
@@ -126,7 +135,7 @@ public class SuguriR extends AbilityBase {
 		@Override
 		public void onStart() {
 			evade.start();
-			heat += 20;
+			heat += dashstartheat;
 		}
 		
 		@Override
@@ -159,10 +168,10 @@ public class SuguriR extends AbilityBase {
 				bossBar.setProgress(accelerator.getCount() / (double) duration);
 			} else {
 				if (heat <= 100) bossBar.setColor(BarColor.PINK);
-				else if (heat <= 200) bossBar.setColor(BarColor.RED);
+				else if (heat <= 250) bossBar.setColor(BarColor.RED);
 				else bossBar.setColor(BarColor.PURPLE);
 				bossBar.setTitle("§c히트 §e" + df.format(heat) + "§c%");
-				bossBar.setProgress(Math.min(1, heat * 0.01));
+				bossBar.setProgress(Math.min(1, (heat - (heat/100) * 100) * 0.01));
 			}
     	}
     	
@@ -196,6 +205,23 @@ public class SuguriR extends AbilityBase {
     	}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	public void heatGain(int value) {
+		heat = Math.min(300, heat + value);
+		longHeatGain(heat * 0.01);
+	}
+	
+	public void heatLose(int value) {
+		heat = Math.max(0, heat - value);		
+	}
+	
+	public void longHeatGain(double value) {
+		longHeat = longHeat + heat;
+	}
+	
+	public void longHeatLose(double value) {
+		
+	}
 	
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent e) {
