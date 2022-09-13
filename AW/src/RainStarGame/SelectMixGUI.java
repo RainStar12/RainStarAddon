@@ -3,6 +3,7 @@ package RainStarGame;
 import com.google.common.collect.ImmutableMap;
 
 import RainStarAbility.Null;
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
@@ -31,6 +32,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -53,11 +55,13 @@ public class SelectMixGUI implements Listener {
     private static final ItemStack ALL_REROLL = new ItemBuilder(MaterialX.PAPER)
             .displayName("§c전체 리롤")
             .lore("§7선택지의 모든 능력을 다시 추첨합니다.")
+            .lore("§7리롤은 두 가지 중 하나만 한 번 가능합니다.")
             .build();
     
     private static final ItemStack SELECT_REROLL = new ItemBuilder(MaterialX.PAPER)
             .displayName("§c선택 리롤")
             .lore("§7현재 선택된 능력들만 다시 추첨합니다.")
+            .lore("§7리롤은 두 가지 중 하나만 한 번 가능합니다.")
             .build();
     
     private static final ItemStack DECIDE = new ItemBuilder(MaterialX.LIME_STAINED_GLASS_PANE)
@@ -84,8 +88,8 @@ public class SelectMixGUI implements Listener {
     private final Random random = new Random();
     private boolean rerollchance = true;
     private boolean reroll = false;
-    private boolean decide = false;
-    private boolean will = true;
+    public boolean decide = false;
+    private boolean handleCloseInventory = true;
 
     public SelectMixGUI(@Nullable final MixParticipant player, @Nonnull final AbstractMix game, @Nonnull final Plugin plugin) {
         this.game = game;
@@ -97,7 +101,6 @@ public class SelectMixGUI implements Listener {
             }
         }
         reroll(RerollTarget.INITIAL);
-        will = false;
         openGUI();
     }
 
@@ -130,15 +133,14 @@ public class SelectMixGUI implements Listener {
         gui.setItem(28, ALL_REROLL);
         gui.setItem(30, SELECT_REROLL);
         gui.setItem(34, DECIDE);
+        handleCloseInventory = false;
         player.getPlayer().openInventory(gui);
-        will = true;
+        handleCloseInventory = true;
     }
 
     public void reroll(RerollTarget target) {
     	rerollchance = false;
-        will = false;
         target.reroll(this);
-        will = false;
         openGUI();
     }
     
@@ -171,15 +173,19 @@ public class SelectMixGUI implements Listener {
     
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(gui) && !decide && will) {
-	        will = false;
-			openGUI();
+		if (e.getInventory().equals(gui) && !decide) {
+			if (!handleCloseInventory) return;
+			new BukkitRunnable() {				
+				@Override
+				public void run() {
+					openGUI();
+				}				
+			}.runTaskLater(AbilityWar.getPlugin(), 1);
 		}
 	}
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent e) {
-		Bukkit.broadcastMessage("클릭");
         if (e.getInventory().equals(gui)) {
             final int slot = e.getSlot();
             e.setCancelled(true);
@@ -190,7 +196,6 @@ public class SelectMixGUI implements Listener {
                     selected.removeFirst();
                 }
                 selected.add(slot - 10);
-                will = false;
                 openGUI();
             } else if (slot == 28) {
             	if (rerollchance) reroll(RerollTarget.ALL);

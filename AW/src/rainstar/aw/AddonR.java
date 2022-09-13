@@ -7,7 +7,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
 import RainStarAbility.beta.KnockbackPatch;
-import RainStarAbility.beta.RightClickTest;
 import RainStarAbility.chronos.Chronos;
 import RainStarAbility.theonering.v1_12_R1.TheOneRing;
 import RainStarAbility.timestop.TimeStop;
@@ -332,7 +331,7 @@ public class AddonR extends Addon implements Listener {
 	    GameFactory.registerMode(SelectMixGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f82개 §7/ §d시너지 §f43개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f83개 §7/ §d시너지 §f43개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -375,7 +374,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f82개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f83개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f43개 적용 완료.");
 		}

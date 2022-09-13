@@ -147,6 +147,10 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 			if (player.isOnGround()) this.stop(false);
 		}
 	
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
 		
 	}
 	

@@ -185,7 +185,12 @@ public class SelectMixGame extends AbstractMix {
 			}
 			
 			@Override
-			public void run(int count) {	
+			public void run(int count) {
+				int stack = 0;
+				for (Participant participant : guilist.keySet()) {
+					if (guilist.get(participant).decide) stack++;
+				}
+				if (stack == guilist.size()) stop(false);
 			}
 			
 			@Override
