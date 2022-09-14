@@ -39,7 +39,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"살해당할 경우 §b유령 상태§f로 돌아다니다 최대 체력으로 §a부활§f합니다.",
 		"§a부활§f 이후에는 §c복수귀§f가 됩니다. 체력이 빠르게 감소하고,",
 		"자신을 죽인 사람하고만 싸울 수 있으며 대상이 내게 준 피해량에 비례해",
-		"공격력이 증가합니다. 대상 처치 시 §c복수귀§f 모드만 종료됩니다."
+		"공격력이 증가합니다. 대상 처치 시, §c복수귀§f 모드만 종료됩니다."
 		})
 
 public class Revenger extends AbilityBase {
