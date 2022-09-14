@@ -261,6 +261,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Rival.class);
 		AbilityFactory.registerAbility(PocketWatch.class);
 		AbilityList.registerAbility(PocketWatch.class);
+		AbilityFactory.registerAbility(Earthquake.class);
+		AbilityList.registerAbility(Earthquake.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
@@ -314,16 +316,19 @@ public class AddonR extends Addon implements Listener {
 					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.DataMining"), AkashicRecords.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
+	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 				try {
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.Cokes"), Citrus.class, NaturalScienceStudent.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
+	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 				try {
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("me.breakofday.yeomryo.abilities.Kaiji"), Moros.class, Sharper.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
+	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 	        }   
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
@@ -331,7 +336,7 @@ public class AddonR extends Addon implements Listener {
 	    GameFactory.registerMode(SelectMixGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f83개 §7/ §d시너지 §f43개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f84개 §7/ §d시너지 §f43개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -374,7 +379,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f83개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f84개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f43개 적용 완료.");
 		}

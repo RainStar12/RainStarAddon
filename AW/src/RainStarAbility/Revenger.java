@@ -28,7 +28,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "복수귀", rank = Rank.S, species = Species.UNDEAD, explain = {
+@AbilityManifest(name = "복수귀", rank = Rank.L, species = Species.UNDEAD, explain = {
 		"살해당할 경우, $[WAIT]초간 §b유령 상태§f가 되어 돌아다니다 최대 체력으로 §a부활§f합니다.",
 		"§a부활§f 이후 §c복수귀§f가 되어 체력이 $[DURATION]초에 걸쳐 빠르게 줄어듭니다.",
 		"§c복수귀§f 모드간 자신을 죽인 사람하고만 피해를 주고받을 수 있습니다.",

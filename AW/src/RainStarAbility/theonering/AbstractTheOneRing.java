@@ -96,7 +96,7 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 	};
 	
 	public static final SettingObject<Double> SUBTRACT_CRAZY = 
-			abilitySettings.new SettingObject<Double>(AbstractTheOneRing.class, "subtract-crazy", 1.0,
+			abilitySettings.new SettingObject<Double>(AbstractTheOneRing.class, "subtract-crazy", 0.5,
 			"# 0.05초당 감소하는 광분 수치", "# 1000이 되면 이후부터는 피해를 입습니다.", "# WRECK에 의한 영향을 받습니다.") {
 
 		@Override
@@ -207,7 +207,7 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
     				if (cooldownDecrease == CooldownDecrease._100) {
     					crazy = 0;
     				} else {
-    					crazy = Math.max(0, crazy - (cooldownDecrease.getPercentage() * 0.01) * subtractcrazy); 
+    					crazy = Math.max(0, crazy - ((1 + (cooldownDecrease.getPercentage() * 0.01)) * subtractcrazy)); 
     				}
     			} else crazy = Math.max(0, crazy - subtractcrazy);
     		}

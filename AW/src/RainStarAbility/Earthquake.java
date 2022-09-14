@@ -1,46 +1,30 @@
 package RainStarAbility;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.module.DeathManager;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "지진", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴 우클릭 시 §6지진§f을 일으켜 §c$[RANGE_MIN]§7~§b$[RANGE_MAX]§f칸 내의 지면에 착지 중인",
@@ -114,17 +98,24 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final Map<Player, Airborn> airborned = new HashMap<>();
 	private final Vector upper = new Vector(0, 2.5, 0);
+	private final DecimalFormat df = new DecimalFormat("0.000");
+	private Circle circle;
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
 			double range = (random.nextDouble() * (max - min)) + min;
+			circle = Circle.of(range, (int) (range * 15));
+			getPlayer().sendMessage("§e범위§f: " + df.format(range));
 			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, null)) {
 				if (livingEntity.isOnGround()) {
 					livingEntity.setVelocity(upper);
 					if (livingEntity instanceof Player) new Airborn((Player) livingEntity).start();
 				}
 			}
-			
+			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+				ParticleLib.CLOUD.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+			}
+			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), (float) (range / 5), 1);
 			return cooldown.start();
 		}
 		return false;
@@ -149,7 +140,8 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	
 		@Override
 		public void onEnd() {
-			onSilentEnd();
+			airborned.remove(player);
+			Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, stun);
 		}
 		
 	}

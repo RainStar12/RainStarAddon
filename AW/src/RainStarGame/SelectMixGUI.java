@@ -55,13 +55,13 @@ public class SelectMixGUI implements Listener {
     private static final ItemStack ALL_REROLL = new ItemBuilder(MaterialX.PAPER)
             .displayName("§c전체 리롤")
             .lore("§7선택지의 모든 능력을 다시 추첨합니다.")
-            .lore("§7리롤은 두 가지 중 하나만 한 번 가능합니다.")
+            .lore("§7리롤 기회를 1회 소모합니다.")
             .build();
     
     private static final ItemStack SELECT_REROLL = new ItemBuilder(MaterialX.PAPER)
             .displayName("§c선택 리롤")
             .lore("§7현재 선택된 능력들만 다시 추첨합니다.")
-            .lore("§7리롤은 두 가지 중 하나만 한 번 가능합니다.")
+            .lore("§7리롤 기회를 1회 소모합니다.")
             .build();
     
     private static final ItemStack DECIDE = new ItemBuilder(MaterialX.LIME_STAINED_GLASS_PANE)
@@ -86,14 +86,17 @@ public class SelectMixGUI implements Listener {
     private Inventory gui = Bukkit.createInventory(null, 45, "§c능력 선택");;
     private final List<AbilityRegistration> randomAbilities = new ArrayList<>();
     private final Random random = new Random();
-    private boolean rerollchance = true;
+    private int rerollused;
+    private final int rerollable;
     private boolean reroll = false;
     public boolean decide = false;
     private boolean handleCloseInventory = true;
 
-    public SelectMixGUI(@Nullable final MixParticipant player, @Nonnull final AbstractMix game, @Nonnull final Plugin plugin) {
+    public SelectMixGUI(@Nullable final MixParticipant player, @Nonnull final AbstractMix game, @Nonnull final int rerollable, @Nonnull final Plugin plugin) {
         this.game = game;
         this.player = player;
+        this.rerollable = rerollable;
+        this.rerollused = 0;
         Bukkit.getPluginManager().registerEvents(this, plugin);
         for (AbilityRegistration registration : AbilityList.values()) {
             if (!Settings.isBlacklisted(registration.getManifest().name()) && registration.isAvailable(game.getClass()) && (Settings.isUsingBetaAbility() || !registration.hasFlag(Flag.BETA))) {
@@ -137,9 +140,8 @@ public class SelectMixGUI implements Listener {
         player.getPlayer().openInventory(gui);
         handleCloseInventory = true;
     }
-
+    
     public void reroll(RerollTarget target) {
-    	rerollchance = false;
         target.reroll(this);
         openGUI();
     }
@@ -198,9 +200,15 @@ public class SelectMixGUI implements Listener {
                 selected.add(slot - 10);
                 openGUI();
             } else if (slot == 28) {
-            	if (rerollchance) reroll(RerollTarget.ALL);
+            	if (rerollused < rerollable) {
+            		reroll(RerollTarget.ALL);
+                	rerollused++;
+            	}
             } else if (slot == 30) {
-            	if (rerollchance) reroll(RerollTarget.SELECTED);
+            	if (rerollused < rerollable) {
+            		reroll(RerollTarget.SELECTED);
+                	rerollused++;
+            	}
             } else if (slot == 34) {
             	if (selected.size() == 2) {
                 	decide = true;
@@ -253,6 +261,7 @@ public class SelectMixGUI implements Listener {
                     gui.abilities[i] = gui.random.pick(gui.randomAbilities);
                 }
                 gui.selected.clear();
+                SoundLib.ENTITY_PLAYER_LEVELUP.playSound(gui.player.getPlayer(), 1, 2);
                 gui.reroll = false;
                 gui.openGUI();
             }

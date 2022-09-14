@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
+import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
@@ -35,6 +36,13 @@ import java.util.Map;
 public class SelectMixGame extends AbstractMix {
 	
 	private final boolean invincible = InvincibilitySettings.isEnabled();
+	
+	public static final Setting<Integer> CHANGE = gameSettings.new Setting<Integer>(SelectMixGame.class, "change-count", 1, "# 리롤 기회") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+	};
 
 	public SelectMixGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
@@ -180,7 +188,7 @@ public class SelectMixGame extends AbstractMix {
 			@Override
 			protected void drawAbility(Collection<? extends Participant> selectors) {
 				for (Participant participant : selectors) {
-					guilist.put(participant, new SelectMixGUI((MixParticipant) participant, SelectMixGame.this, AbilityWar.getPlugin()));
+					guilist.put(participant, new SelectMixGUI((MixParticipant) participant, SelectMixGame.this, CHANGE.getValue(), AbilityWar.getPlugin()));
 				}	
 			}
 			
