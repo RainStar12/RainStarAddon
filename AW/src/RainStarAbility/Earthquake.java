@@ -4,8 +4,11 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -18,6 +21,8 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -25,10 +30,11 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "지진", rank = Rank.S, species = Species.OTHERS, explain = {
-		"철괴 우클릭 시 §6지진§f을 일으켜 §c$[RANGE_MIN]§7~§b$[RANGE_MAX]§f칸 내의 지면에 착지 중인",
-		"생명체들을 §b띄워올립니다§f. 이후 대상은 $[STUN]초간 §e기절§f합니다. $[COOLDOWN]",
+		"철괴 우클릭 시 무작위 §2진도§f의 §6지진§f을 일으켜 §c$[RANGE_MIN]§7~§b$[RANGE_MAX]§f칸 내의 지면에 착지 중인",
+		"생명체들을 §2진도§f에 비례해 §b띄워올립니다§f. 이후 대상은 $[STUN]초간 §e기절§f합니다. $[COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §dspace_kdd"
 		},
 		summarize = {
@@ -91,13 +97,41 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 
 	};
 	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler &&
+								((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(
+							entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant)
+							|| (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
+	
 	private final Random random = new Random();
 	private final double min = RANGE_MIN.getValue();
 	private final double max = RANGE_MAX.getValue();
 	private final int stun = (int) (STUN.getValue() * 20);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final Map<Player, Airborn> airborned = new HashMap<>();
-	private final Vector upper = new Vector(0, 2.5, 0);
+	private Vector upper;
 	private final DecimalFormat df = new DecimalFormat("0.000");
 	private Circle circle;
 	
@@ -105,8 +139,9 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
 			double range = (random.nextDouble() * (max - min)) + min;
 			circle = Circle.of(range, (int) (range * 15));
-			getPlayer().sendMessage("§e범위§f: " + df.format(range));
-			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, null)) {
+			getPlayer().sendMessage("§e진도 범위§f: " + df.format(range));
+			upper = new Vector(0, (range * 0.1), 0);
+			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, predicate)) {
 				if (livingEntity.isOnGround()) {
 					livingEntity.setVelocity(upper);
 					if (livingEntity instanceof Player) new Airborn((Player) livingEntity).start();

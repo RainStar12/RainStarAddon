@@ -82,7 +82,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> MAX_TIME = abilitySettings.new SettingObject<Integer>(PocketWatch.class,
-			"max-time", 60, "# 시간 가속 최대 시간") {
+			"max-time", 30, "# 시간 가속 최대 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -90,7 +90,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> MULTIPLY = abilitySettings.new SettingObject<Double>(PocketWatch.class,
-			"multiply-cooldown", 2.5, "# 사용한 시간의 쿨타임 배수") {
+			"multiply-cooldown", 3.3, "# 사용한 시간의 쿨타임 배수") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -131,7 +131,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	private int cooldown = 0;
 	private int effectcount = 0;
 	private final DecimalFormat df = new DecimalFormat("0.0");
-	private final Circle circle = Circle.of(1, 25);
+	private final Circle circle = Circle.of(0.5, 15);
 	private static final RGB startColor = RGB.of(1, 254, 254), endColor = RGB.of(1, 147, 147);
 	private final List<RGB> gradations = Gradient.createGradient(15, startColor, endColor);
 	private Set<Player> stopped = new HashSet<>();
@@ -396,11 +396,11 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		
     		if (usedtime < maxtime) {
     			usedtime++;
-    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.0004));
+    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.0003));
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.0001, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.0001));
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.0002));
 				}
     		} else stop(false);
     	}

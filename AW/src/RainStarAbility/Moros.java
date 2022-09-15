@@ -332,7 +332,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	private static final RGB color1 = RGB.of(1, 204, 254), color2 = RGB.of(101, 224, 254), color3 = RGB.of(195, 243, 254), color4 = RGB.of(153, 102, 1),
 			color5 = RGB.of(182, 10, 5), startColor = RGB.of(49, 254, 254), endColor = RGB.of(234, 111, 254);
 	private final List<RGB> gradations = Gradient.createGradient(30, startColor, endColor);
-	private final Circle circle = Circle.of(1, 25);
+	private final Circle circle = Circle.of(0.75, 25);
 	
 	@Override
 	public void onUpdate(Update update) {
