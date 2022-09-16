@@ -41,11 +41,14 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.color.Gradient;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -164,7 +167,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 								if (mix.getFirst().getClass().equals(TimeStop.class)
 										|| mix.getSecond().getClass().equals(TimeStop.class)) {
 										return false;
-									}
+								}
 							}
 						}
 					}
@@ -417,7 +420,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		slower.start();
     		getPlayer().setSprinting(false);
     		getPlayer().setWalkSpeed(0.2f);
-    		cooldown = (int) (usedtime * multiply);
+    		cooldown = (int) (Wreck.isEnabled(GameManager.getGame()) ? (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.75) * (usedtime * multiply)) : (usedtime * multiply));
     		usedtime = 0;
     	}
 		

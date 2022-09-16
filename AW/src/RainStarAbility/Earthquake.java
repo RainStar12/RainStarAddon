@@ -82,7 +82,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 180,
+			abilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 200,
 			"# 쿨타임") {
 
 		@Override
@@ -140,7 +140,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 			double range = (random.nextDouble() * (max - min)) + min;
 			circle = Circle.of(range, (int) (range * 15));
 			getPlayer().sendMessage("§e진도 범위§f: " + df.format(range));
-			upper = new Vector(0, (range * 0.1), 0);
+			upper = new Vector(0, (range * 0.07), 0);
 			for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, getPlayer().getLocation(), range, predicate)) {
 				if (livingEntity.isOnGround()) {
 					livingEntity.setVelocity(upper);
@@ -162,7 +162,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		private final Player player;
 		
 		public Airborn(Player player) {
-			super(TaskType.INFINITE, -1);
+			super(TaskType.REVERSE, 100);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.player = player;
 			airborned.put(player, this);
