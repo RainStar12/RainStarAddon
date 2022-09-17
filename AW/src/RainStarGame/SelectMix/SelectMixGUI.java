@@ -1,8 +1,7 @@
-package RainStarGame;
+package RainStarGame.SelectMix;
 
 import com.google.common.collect.ImmutableMap;
 
-import RainStarAbility.Null;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
@@ -44,7 +43,7 @@ import javax.annotation.Nullable;
 
 public class SelectMixGUI implements Listener {
 
-    private static final int[] GLASS_PANES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int[] GLASS_PANES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 31, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     //10 ~ 16
 
@@ -64,6 +63,17 @@ public class SelectMixGUI implements Listener {
             .lore("§7리롤 기회를 1회 소모합니다.")
             .build();
     
+    private static final ItemStack EXPLAIN = new ItemBuilder(MaterialX.OAK_SIGN)
+            .displayName("§eGUI 사용방법")
+            .lore("§7콘크리트 블럭을 클릭하면, 해당 §b능력§f을 §d선택§f합니다.")
+            .lore("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,")
+            .lore("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.")
+            .lore("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.")
+            .lore("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.")
+            .lore("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.")
+            .lore("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...")
+            .build();
+    
     private static final ItemStack DECIDE = new ItemBuilder(MaterialX.LIME_STAINED_GLASS_PANE)
             .displayName("§c결정")
             .lore("§7현재 선택된 능력들을 자신의 능력을 결정합니다.")
@@ -74,7 +84,7 @@ public class SelectMixGUI implements Listener {
             .put(Rank.B, MaterialX.LIGHT_BLUE_CONCRETE)
             .put(Rank.A, MaterialX.LIME_CONCRETE)
             .put(Rank.S, MaterialX.PINK_CONCRETE)
-            .put(Rank.L, MaterialX.YELLOW_CONCRETE)
+            .put(Rank.L, MaterialX.ORANGE_CONCRETE)
             .put(Rank.SPECIAL, MaterialX.RED_CONCRETE)
             .build();
 
@@ -135,6 +145,7 @@ public class SelectMixGUI implements Listener {
         }
         gui.setItem(28, ALL_REROLL);
         gui.setItem(30, SELECT_REROLL);
+        gui.setItem(32, EXPLAIN);
         gui.setItem(34, DECIDE);
         handleCloseInventory = false;
         player.getPlayer().openInventory(gui);
@@ -146,22 +157,37 @@ public class SelectMixGUI implements Listener {
         openGUI();
     }
     
+    public void setAbility() {
+    	switch(selected.size()) {
+    	case 0:
+        	try {
+    			((Mix) player.getAbility()).setAbility(abilities[0], abilities[1]);
+    		} catch (ReflectiveOperationException e1) {
+    			e1.printStackTrace();
+    		}
+    		break;
+    	case 1:
+        	try {
+    			((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()].getAbilityClass(), Null.class);
+    		} catch (ReflectiveOperationException e1) {
+    			e1.printStackTrace();
+    		}
+    		break;
+    	case 2:
+        	try {
+    			((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()], abilities[selected.getLast()]);
+    		} catch (ReflectiveOperationException e1) {
+    			e1.printStackTrace();
+    		}
+    		break;
+    	}
+    	player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + ((Mix) player.getAbility()).getFirst().getDisplayName() + " §7+ §b" + ((Mix) player.getAbility()).getSecond().getDisplayName() + "§f입니다.");
+    }
+    
     public void skip() {
     	if (!decide) {
         	decide = true;
-        	if (selected.size() < 2) {
-            	try {
-        			((Mix) player.getAbility()).setAbility(Null.class, Null.class);
-        		} catch (ReflectiveOperationException e1) {
-        			e1.printStackTrace();
-        		}
-        	} else {
-            	try {
-        			((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()], abilities[selected.getLast()]);
-        		} catch (ReflectiveOperationException e1) {
-        			e1.printStackTrace();
-        		}	
-        	}
+        	setAbility();
         	HandlerList.unregisterAll(this);
         	player.getPlayer().closeInventory();	
     	}
@@ -212,11 +238,7 @@ public class SelectMixGUI implements Listener {
             } else if (slot == 34) {
             	if (selected.size() == 2) {
                 	decide = true;
-                	try {
-    					((Mix) player.getAbility()).setAbility(abilities[selected.getFirst()], abilities[selected.getLast()]);
-    				} catch (ReflectiveOperationException e1) {
-    					e1.printStackTrace();
-    				}
+                	setAbility();
                 	HandlerList.unregisterAll(this);
                 	player.getPlayer().closeInventory();	
             	}
@@ -251,7 +273,7 @@ public class SelectMixGUI implements Listener {
                     protected void onEnd() {
                         gui.reroll = false;
                     }
-                }.setPeriod(TimeUnit.TICKS, 3).start();
+                }.setPeriod(TimeUnit.TICKS, 2).start();
             }
         }, SELECTED {
             @Override

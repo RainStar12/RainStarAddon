@@ -1,4 +1,4 @@
-package RainStarAbility;
+package RainStarGame.SelectMix;
 
 import java.util.StringJoiner;
 

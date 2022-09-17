@@ -87,8 +87,10 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
         }
     };
 	
-	private ActionbarChannel ac = newActionbarChannel();
-	private List<Double> damages = new ArrayList<>();
+    private final DecimalFormat df = new DecimalFormat("0.00");
+	private final ActionbarChannel ac = newActionbarChannel();
+	private final ActionbarChannel ac2 = newActionbarChannel();
+	private final List<Double> damages = new ArrayList<>();
 	private final int healcount = HEAL_COUNT.getValue();
 	private final int dechealcount = DECREASED_HEAL_COUNT.getValue();
 	private final int duration = (int) (INBATTLE_CHECK_DURATION.getValue() * 20);
@@ -97,6 +99,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	ac.update("§a비전투 중");
+    		ac2.update("§a0");
 	    }
 	}
 	
@@ -104,6 +107,8 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
+    		double sum = damages.stream().limit(inbattle.isRunning() ? dechealcount : healcount).mapToDouble(Double::doubleValue).sum();
+    		ac2.update("§a" + df.format(sum));
 			ac.update("§c전투 중");
 		}
 		
@@ -119,6 +124,8 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
+    		double sum = damages.stream().limit(inbattle.isRunning() ? dechealcount : healcount).mapToDouble(Double::doubleValue).sum();
+    		ac2.update("§a" + df.format(sum));
 			ac.update("§a비전투 중");
 		}
 		
@@ -138,6 +145,8 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 					new Holograms(getPlayer().getLocation(), damages.get(0));
 				}
 				damages.remove(0);
+	    		double sum = damages.stream().limit(inbattle.isRunning() ? count - (healcount - dechealcount) : count).mapToDouble(Double::doubleValue).sum();
+	    		ac2.update("§a" + df.format(sum));
 			} else stop(false);
 		}
 		
@@ -149,6 +158,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onSilentEnd() {
 			damages.clear();
+    		ac2.update("§a0");
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 5).register();
@@ -160,7 +170,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 				else {
 					healing.start();
 					healing.setCount(dechealcount);
-					cooldown.start();
+					return cooldown.start();
 				}
 			} else {
 				if (damages.size() <= 0) getPlayer().sendMessage("§4[§c!§4] §f마지막 전투에서 입은 피해 기록이 없습니다.");
@@ -191,6 +201,8 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     		if (damages.size() >= healcount + 1) {
     			damages.remove(0);
     		}
+    		double sum = damages.stream().limit(inbattle.isRunning() ? dechealcount : healcount).mapToDouble(Double::doubleValue).sum();
+    		ac2.update("§a" + df.format(sum));
     	}
     }
     

@@ -1,6 +1,7 @@
-package RainStarGame;
+package RainStarGame.SelectMix;
 
 import com.google.common.base.Strings;
+
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
