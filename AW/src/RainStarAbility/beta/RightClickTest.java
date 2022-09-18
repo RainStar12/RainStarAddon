@@ -30,7 +30,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @Beta
 
 @AbilityManifest(name = "우클릭 테스트", rank = Rank.A, species = Species.OTHERS, explain = {
-		"이벤트 호출 중"
+		"이벤트 호출 중 "
 		})
 
 public class RightClickTest extends AbilityBase {
@@ -44,7 +44,7 @@ public class RightClickTest extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			Bukkit.broadcastMessage("차이: " + (System.currentTimeMillis() - last));
+			Bukkit.broadcastMessage("차이:  " + (System.currentTimeMillis() - last));
 			last = System.currentTimeMillis();
 		}
 	}
