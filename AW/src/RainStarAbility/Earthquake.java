@@ -136,8 +136,6 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	private final int stun = (int) (STUN.getValue() * 20);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final Map<Player, Airborn> airborned = new HashMap<>();
-	private final DecimalFormat df = new DecimalFormat("0.000");
-	private Circle circle;
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown() && !earthquakeready.isRunning()) {
@@ -146,20 +144,24 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 	
-	public AbilityTimer earthquakeready = new AbilityTimer() {
+	public AbilityTimer earthquakeready = new AbilityTimer(10) {
 		
 		double richter;
 		
 		@Override
 		public void onStart() {
 			richter = (random.nextInt(96) + 5) * 0.1;
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				
+			}
 			Bukkit.broadcastMessage("§4[§c!§4] §d" + getPlayer().getLocation().getX() + "");
-			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), (float) (richter / 2), 1);
+			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), (float) (richter / 3), 1);
+			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 1, 1);
 		}
 		
 		@Override
-		public void run(int count) {
-			
+		public void onEnd() {
+			new EarthquakeWave((int) (richter * 10), getPlayer().getLocation()).start();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
