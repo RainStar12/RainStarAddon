@@ -59,7 +59,7 @@ public class SelectMixGUI implements Listener {
     
     private static final ItemStack SELECT_REROLL = new ItemBuilder(MaterialX.PAPER)
             .displayName("§c선택 리롤")
-            .lore("§7현재 선택된 능력들만 다시 추첨합니다.")
+            .lore("§7현재 선택해 놓은 능력들만 다시 추첨합니다.")
             .lore("§7리롤 기회를 1회 소모합니다.")
             .build();
     
@@ -231,7 +231,7 @@ public class SelectMixGUI implements Listener {
                 	rerollused++;
             	}
             } else if (slot == 30) {
-            	if (rerollused < rerollable) {
+            	if (rerollused < rerollable && selected.size() > 0) {
             		reroll(RerollTarget.SELECTED);
                 	rerollused++;
             	}
@@ -279,13 +279,28 @@ public class SelectMixGUI implements Listener {
             @Override
             public void reroll(SelectMixGUI gui) {
                 gui.reroll = true;
-                for (Integer i : gui.selected) {
-                    gui.abilities[i] = gui.random.pick(gui.randomAbilities);
-                }
-                gui.selected.clear();
-                SoundLib.ENTITY_PLAYER_LEVELUP.playSound(gui.player.getPlayer(), 1, 2);
-                gui.reroll = false;
-                gui.openGUI();
+                gui.game.new GameTimer(TaskType.NORMAL, 5) {   	
+                    @Override
+                    protected void run(int count) {
+                    	for (Integer i : gui.selected) {
+                        	gui.abilities[i] = gui.random.pick(gui.randomAbilities);
+                    	}
+                    	gui.openGUI();
+                        SoundLib.BLOCK_WOODEN_TRAPDOOR_CLOSE.playSound(gui.player.getPlayer(), 1, 2);
+                        SoundLib.BLOCK_WOODEN_TRAPDOOR_OPEN.playSound(gui.player.getPlayer(), 1, 2);
+                    }
+                    
+                    @Override
+                    protected void onEnd() {
+                        for (Integer i : gui.selected) {
+                            gui.abilities[i] = gui.random.pick(gui.randomAbilities);
+                        }
+                        gui.selected.clear();
+                        gui.openGUI();
+                        gui.reroll = false;
+                        SoundLib.ENTITY_PLAYER_LEVELUP.playSound(gui.player.getPlayer(), 1, 2);
+                    }
+                }.setPeriod(TimeUnit.TICKS, 2).start();
             }
         }, INITIAL {
             @Override

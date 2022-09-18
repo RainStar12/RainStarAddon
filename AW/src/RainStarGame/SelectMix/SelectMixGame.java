@@ -31,7 +31,9 @@ import java.util.Map;
 
 @GameManifest(name = "셀렉트 믹스 능력자 전쟁", description = {
 		"§f자기가 원하는 능력을 골라서 하는 믹스!",
-		"§f가진 패 중 최강의 조합을 뽑아보세요!"
+		"§f가진 패 중 최강의 조합을 뽑아보세요!",
+		"",
+		"§7/aw config games로 리롤 횟수를 조절 가능합니다."
 })
 @GameAliases({"셀믹전", "셀믹"})
 public class SelectMixGame extends AbstractMix {

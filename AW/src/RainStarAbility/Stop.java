@@ -104,7 +104,7 @@ public class Stop extends AbilityBase {
 						for (Player players : attackers) {
 							if (predicate.test(players)) Stiffen.apply(getGame().getParticipant(players), TimeUnit.TICKS, duration);	
 						}
-						getPlayer().chat("§6[§e능력§6] §c멈춰!");
+						getPlayer().chat("[능력] 멈춰!");
 						cooldown.start();
 						attackers.clear();
 					} else {
