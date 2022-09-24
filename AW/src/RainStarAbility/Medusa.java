@@ -187,7 +187,7 @@ public class Medusa extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			if (!LocationUtil.getEntityLookingAt(Player.class, player, range, predicate).equals(getPlayer())) this.stop(true);
+			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, player, range, predicate))) this.stop(true);
 			else ac.update("§c" + df.format(count));
 		}
 		
