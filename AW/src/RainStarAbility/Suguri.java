@@ -102,6 +102,17 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
+	public static final SettingObject<Double> DASH_RUNNING_HEAT = 
+			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-running-heat", 10.0,
+			"# 대시 유지 시 초당 증가하는 히트량") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
     
     @Override
     public void onUpdate(Update update) {
@@ -115,6 +126,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	private final int evadeduration = (int) (EVADE_DURATION.getValue() * 20);
 	private final int duration = (int) (ACCELERATOR_DURATION.getValue() * 20);
 	private final int dashstartheat = DASH_START_HEAT.getValue();
+	private final double dashrunningheat = DASH_RUNNING_HEAT.getValue() / 20.0;
 	
 	private RGB rainbow;
 	private int rainbowstack = 0;
@@ -209,9 +221,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			if (System.currentTimeMillis() - last >= 220) {
-				this.stop(false);
-			}
+			if (System.currentTimeMillis() - last >= 220) this.stop(false);
+			else heatGain(dashrunningheat);
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.25));
 		}
 		

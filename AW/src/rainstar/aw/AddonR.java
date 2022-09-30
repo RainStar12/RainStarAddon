@@ -1,8 +1,11 @@
 package rainstar.aw;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
@@ -15,6 +18,8 @@ import RainStarGame.SelectMix.SelectMixGame;
 import RainStarSynergy.*;
 import RainStarSynergy.chance.Chance;
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.Command;
+import daybreak.abilitywar.Command.Condition;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.list.Assassin;
@@ -41,11 +46,15 @@ import daybreak.abilitywar.ability.list.Vampire;
 import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.addon.Addon;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.event.GameEndEvent;
+import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
@@ -375,6 +384,38 @@ public class AddonR extends Addon implements Listener {
 		
 		//event
 		AbilityFactory.registerAbility(Null.class);
+		
+		getPlugin().getCommands().getMainCommand().addSubCommand("nodelay", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (GameManager.isGameRunning()) {
+					Messager.sendErrorMessage(sender, "게임이 진행되는 중에는 변경할 수 없습니다.");
+				} else {
+					
+				}
+				return false;
+			}
+		});
+		
+	}
+	
+	@EventHandler()
+	public void onGameStart(GameStartEvent e) {
+		
+	}
+	
+	@EventHandler()
+	public void onGameEnd(GameEndEvent e) {
+		
+	}
+	
+	@EventHandler()
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		
+	}
+	
+	@EventHandler()
+	public void onPlayerJoin(PlayerJoinEvent e) {
 		
 	}
 	
