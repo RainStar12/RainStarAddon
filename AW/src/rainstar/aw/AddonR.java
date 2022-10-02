@@ -13,6 +13,7 @@ import RainStarAbility.beta.KnockbackPatch;
 import RainStarAbility.chronos.Chronos;
 import RainStarAbility.theonering.v1_12_R1.TheOneRing;
 import RainStarAbility.timestop.TimeStop;
+import RainStarGame.NoDelay;
 import RainStarGame.SelectMix.Null;
 import RainStarGame.SelectMix.SelectMixGame;
 import RainStarSynergy.*;
@@ -46,6 +47,9 @@ import daybreak.abilitywar.ability.list.Vampire;
 import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.addon.Addon;
+import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.ability.AbilitySettings;
+import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.event.GameEndEvent;
@@ -326,19 +330,19 @@ public class AddonR extends Addon implements Listener {
 					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.DataMining"), AkashicRecords.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
-	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
+	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 				try {
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.Cokes"), Citrus.class, NaturalScienceStudent.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
-	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
+	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 				try {
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("me.breakofday.yeomryo.abilities.Kaiji"), Moros.class, Sharper.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
-	                Bukkit.broadcastMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
+	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 	        }   
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
@@ -385,13 +389,13 @@ public class AddonR extends Addon implements Listener {
 		//event
 		AbilityFactory.registerAbility(Null.class);
 		
-		getPlugin().getCommands().getMainCommand().addSubCommand("nodelay", new Command(Condition.OP) {
+		getPlugin().getCommands().getMainCommand().addSubCommand("delay", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
 				if (GameManager.isGameRunning()) {
-					Messager.sendErrorMessage(sender, "게임이 진행되는 중에는 변경할 수 없습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되는 도중에는 변경할 수 없습니다.");
 				} else {
-					
+					//컨피그
 				}
 				return false;
 			}
@@ -401,22 +405,7 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameStart(GameStartEvent e) {
-		
-	}
-	
-	@EventHandler()
-	public void onGameEnd(GameEndEvent e) {
-		
-	}
-	
-	@EventHandler()
-	public void onPlayerQuit(PlayerQuitEvent e) {
-		
-	}
-	
-	@EventHandler()
-	public void onPlayerJoin(PlayerJoinEvent e) {
-		
+		e.getGame().addModule(new NoDelay(e.getGame()));
 	}
 	
 	@EventHandler()

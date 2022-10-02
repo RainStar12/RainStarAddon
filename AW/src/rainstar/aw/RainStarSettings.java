@@ -6,8 +6,6 @@ import com.google.common.collect.TreeBasedTable;
 import daybreak.abilitywar.config.Cache;
 import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.interfaces.Configurable;
-import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +23,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Daybreak 새벽
  */
-public class RainStarSetting {
+public class RainStarSettings {
 
-	private static final Logger logger = Logger.getLogger(RainStarSetting.class);
-	private static final Map<String, RainStarSetting> gameSettings = new HashMap<>();
+	private static final Logger logger = Logger.getLogger(RainStarSettings.class);
+	private static final Map<String, RainStarSettings> gameSettings = new HashMap<>();
 	private final Table<String, String, Setting<?>> settings = TreeBasedTable.create();
 
-	public RainStarSetting(final File configFile) {
+	public RainStarSettings(final File configFile) {
 		this.configFile = configFile;
 		if (!configFile.exists()) {
 			if (configFile.getParentFile() != null && !configFile.getParentFile().exists()) {
@@ -58,7 +56,7 @@ public class RainStarSetting {
 	private final File configFile;
 	private final CommentedConfiguration config;
 
-	public static Collection<RainStarSetting> getGameSettings() {
+	public static Collection<RainStarSettings> getGameSettings() {
 		return gameSettings.values();
 	}
 
@@ -66,7 +64,7 @@ public class RainStarSetting {
 	private long lastModified;
 	private boolean error = false;
 
-	public static RainStarSetting getGameSetting(String fileName) {
+	public static RainStarSettings getGameSetting(String fileName) {
 		return gameSettings.get(fileName);
 	}
 
@@ -139,7 +137,6 @@ public class RainStarSetting {
 			this.key = key;
 			this.defaultValue = checkNotNull(defaultValue);
 			this.comments = comments;
-			registerSetting(manifest.name(), this);
 		}
 
 		@Override
