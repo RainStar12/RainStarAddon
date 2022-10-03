@@ -70,7 +70,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> EVADE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "evade-duration", 0.5,
+			abilitySettings.new SettingObject<Double>(Suguri.class, "evade-duration", 1.5,
 			"# 대시 간 회피 지속시간") {
 
 		@Override
@@ -91,8 +91,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DASH_START_HEAT = 
-			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat", 20,
+	public static final SettingObject<Integer> DASH_STARTING_HEAT = 
+			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-starting-heat", 30,
 			"# 대시 시작 시 추가 히트") {
 
 		@Override
@@ -125,7 +125,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	private static final Set<Material> swords;
 	private final int evadeduration = (int) (EVADE_DURATION.getValue() * 20);
 	private final int duration = (int) (ACCELERATOR_DURATION.getValue() * 20);
-	private final int dashstartheat = DASH_START_HEAT.getValue();
+	private final int dashstartheat = DASH_STARTING_HEAT.getValue();
 	private final double dashrunningheat = DASH_RUNNING_HEAT.getValue() / 20.0;
 	
 	private RGB rainbow;
@@ -206,6 +206,9 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			for (Location location : circle.toLocations(getPlayer().getLocation().add(0, y, 0))) {
 				ParticleLib.REDSTONE.spawnParticle(location, rainbow);
 			}
+			for (Location location : circle.toLocations(getPlayer().getLocation().add(0, 2.0 - y, 0))) {
+				ParticleLib.REDSTONE.spawnParticle(location, rainbow);
+			}
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -223,7 +226,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		public void run(int count) {
 			if (System.currentTimeMillis() - last >= 220) this.stop(false);
 			else heatGain(dashrunningheat);
-			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.25));
+			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.2));
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -328,7 +331,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			last = System.currentTimeMillis();
 			if (!rightclickchecker.isRunning()) {
 				rightclickchecker.start();
-				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.4));
+				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.3));
 			}
 		}
 	}
@@ -339,7 +342,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			last = System.currentTimeMillis();
 			if (!rightclickchecker.isRunning()) {
 				rightclickchecker.start();
-				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.4));
+				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(1.3));
 			}
 		}
 	}

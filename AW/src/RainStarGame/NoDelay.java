@@ -16,18 +16,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 @ModuleBase(NoDelay.class)
 public final class NoDelay implements ListenerModule {
 
-	public static final AttributeModifier PLUS_FIVE = new AttributeModifier(UUID.fromString("73a02314-fe33-11ea-adc1-0242ac120002"), "zerotick", 6, Operation.ADD_NUMBER);
+	public static final AttributeModifier PLUS_FIVE = new AttributeModifier(UUID.fromString("f218c7c4-c879-403e-b16c-df81e8383a63"), "zerotick", 6, Operation.ADD_NUMBER);
 
-	private final Map<LivingEntity, Integer> entities;
+	private final Set<LivingEntity> entities;
 
 	private void addModifier(final Player player) {
 		addModifier0(player, Attribute.GENERIC_ATTACK_SPEED, PLUS_FIVE);
@@ -45,10 +44,11 @@ public final class NoDelay implements ListenerModule {
 
 	public NoDelay(AbstractGame game) {
 		final Collection<? extends Participant> participants = game.getParticipants();
-		this.entities = new WeakHashMap<>(participants.size());
+		this.entities = new HashSet<>(participants.size());
 		for (Participant participant : participants) {
 			final Player player = participant.getPlayer();
 			if (player.isOnline()) {
+				entities.add(player);
 				addModifier(player);
 			}
 		}
@@ -57,6 +57,7 @@ public final class NoDelay implements ListenerModule {
 	@EventHandler
 	private void onPlayerJoin(final PlayerJoinEvent e) {
 		final Player player = e.getPlayer();
+		entities.add(player);
 		addModifier(player);
 	}
 
@@ -70,9 +71,8 @@ public final class NoDelay implements ListenerModule {
 	@Override
 	public void unregister() {
 		HandlerList.unregisterAll(this);
-		for (final Iterator<Entry<LivingEntity, Integer>> iterator = entities.entrySet().iterator(); iterator.hasNext();) {
-			final Entry<LivingEntity, Integer> entry = iterator.next();
-			final LivingEntity livingEntity = entry.getKey();
+		for (final Iterator<LivingEntity> iterator = entities.iterator(); iterator.hasNext();) {
+			final LivingEntity livingEntity = iterator.next();
 			if (livingEntity instanceof Player) {
 				removeModifier(livingEntity);
 			}

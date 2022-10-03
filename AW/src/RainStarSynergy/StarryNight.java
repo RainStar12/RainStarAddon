@@ -20,7 +20,6 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
@@ -69,7 +68,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
-import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(
@@ -88,6 +86,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 2초간 더 날아가며 §b원거리 피해§f를 입힙니다."
 		})
 
+@SuppressWarnings("deprecation")
 public class StarryNight extends Synergy {
 	
 	public StarryNight(Participant participant) {
@@ -167,11 +166,6 @@ public class StarryNight extends Synergy {
 		}
 	};
 	
-	private static final ImmutableMap<Boolean, String> type = ImmutableMap.<Boolean, String>builder()
-			.put(true, "§e✭")
-			.put(false, "§e🌙")
-			.build();
-	
 	private static boolean isNight(long time) {
 		return time > 12300 && time < 23850;
 	}
@@ -214,7 +208,7 @@ public class StarryNight extends Synergy {
 		}
 	}
 	
-    @SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
     	if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
     		if (bullet != null) {
@@ -412,7 +406,6 @@ public class StarryNight extends Synergy {
 		
 		private final Player player;
 		private final IHologram hologram;
-		private int stack = 0;
 		private List<Boolean> stacks = new ArrayList<>();
 		
 		private Stack(Player player, boolean stacktype) {
@@ -441,14 +434,13 @@ public class StarryNight extends Synergy {
 					entity.setVelocity(player.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
 				}
 			} else player.setVelocity(getPlayer().getLocation().toVector().subtract(player.getLocation().toVector()).multiply(0.6).setY(0));
-			stack++;
 			stacks.add(stacktype);
 			String string = "";
 			for (Boolean booleans : stacks) {
-				string = string + type.get(booleans);
+				string += (booleans ? "§e✭" : "§e🌙");
 			}
-			hologram.setText(string + Strings.repeat("§7?", 4 - stack));
-			if (stack >= 4) {
+			hologram.setText(string + Strings.repeat("§7?", 4 - stacks.size()));
+			if (stacks.size() >= 4) {
 				return true;
 			} else {
 				return false;
@@ -523,6 +515,7 @@ public class StarryNight extends Synergy {
 				gradation18 = RGB.of(1, 118, 214), gradation19 = RGB.of(1, 109, 207), gradation20 = RGB.of(1, 101, 199),
 				gradation21 = RGB.of(1, 92, 191);
 		
+		@SuppressWarnings("serial")
 		private List<RGB> gradations = new ArrayList<RGB>() {
 			{
 				add(gradation1);

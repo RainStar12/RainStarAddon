@@ -454,6 +454,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 					e.setCancelled(true);
 				}
 				if (Rival.this.rivalability != null && getPlayer().equals(damager) && e.getEntity().equals(rival)) {
+					rivaltimer.setCount(rivalduration);
 					e.setDamage(e.getDamage() * multiply);
 				}
 			}	

@@ -1,11 +1,12 @@
 package rainstar.aw;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
@@ -47,12 +48,8 @@ import daybreak.abilitywar.ability.list.Vampire;
 import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.addon.Addon;
-import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.ability.AbilitySettings;
-import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
@@ -63,6 +60,8 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
 public class AddonR extends Addon implements Listener {
+	
+	File file = new File("plugins/AbilityWar/nodelay.txt");
 	
 	@Override
 	public void onEnable() {
@@ -342,7 +341,7 @@ public class AddonR extends Addon implements Listener {
 					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("me.breakofday.yeomryo.abilities.Kaiji"), Moros.class, Sharper.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
-	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
+	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 염료 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 	        }   
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
@@ -395,18 +394,32 @@ public class AddonR extends Addon implements Listener {
 				if (GameManager.isGameRunning()) {
 					Messager.sendErrorMessage(sender, "게임이 진행되는 도중에는 변경할 수 없습니다.");
 				} else {
-					//컨피그
+					if (file.exists()) {
+						file.delete();
+						sender.sendMessage("§3[§b!§3] §f공격 쿨타임 제거 옵션을 §c비활성화§f합니다.");
+					} else {
+						try {
+							file.createNewFile();
+							sender.sendMessage("§3[§b!§3] §f공격 쿨타임 제거 옵션을 §a활성화§f합니다.");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
-				return false;
+				return true;
 			}
 		});
-		
 	}
 	
 	@EventHandler()
 	public void onGameStart(GameStartEvent e) {
-		e.getGame().addModule(new NoDelay(e.getGame()));
+		if (file.exists()) {
+			Bukkit.broadcastMessage("§2[§a!§2] §c공격 쿨타임 제거!");
+			e.getGame().addModule(new NoDelay(e.getGame()));
+		}
 	}
+	
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {

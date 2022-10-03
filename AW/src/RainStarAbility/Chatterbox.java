@@ -2166,7 +2166,7 @@ public class Chatterbox extends AbilityBase {
 		public void run(int count) {
 			if (count % 15 == 0) {
 				nowType = random.pick(potiontypes);
-				nowDuration = random.nextInt(300);
+				nowDuration = random.nextInt(600);
 				nowAmplifier = random.nextInt(3);
 				nowEffect = "" + POTIONS.get(nowType) + " §e" + (nowAmplifier + 1) + " §8(§7" + df.format(nowDuration / 20.0) + "초§8)";
 			}

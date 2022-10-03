@@ -131,7 +131,6 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 				double distance = Math.sqrt(Math.abs(noY.distanceSquared(noYcenter)));
 				player.sendMessage("§4[§c!§4] §d" + df.format(distance) + "m§f 밖에서 진도 §b" + df.format(richter) + "§f의 지진이 일어났습니다!");
 			}
-			Bukkit.broadcastMessage("§4[§c!§4] §d" + getPlayer().getLocation().getX() + "");
 			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), (float) (richter / 3), 1);
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 1, 1);
 		}
@@ -139,6 +138,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onEnd() {
 			new EarthquakeWave((int) (richter * 10), getPlayer().getLocation()).start();
+			cooldown.start();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -223,7 +223,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 				LocationUtil.floorY(loc);
 				ParticleLib.CRIT.spawnParticle(loc, 0, 0, 0, 1, 0.35);
 				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count));
-				SoundLib.BLOCK_STONE_HIT.playSound(loc, 0.5f, 1);
+				SoundLib.BLOCK_STONE_BREAK.playSound(loc, 0.5f, 1);
 				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.6, 0.6, predicate)) {
 					hitEntity.add(damageable);
 					damageable.setVelocity(new Vector(0, maxCount / 100.0, 0));

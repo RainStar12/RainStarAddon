@@ -26,10 +26,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -76,13 +78,18 @@ public class SelectMixGUI implements Listener {
             .displayName("§eGUI 사용방법")
             .lore(new ArrayList<String>() {
             	{
-            		add("§7콘크리트 블럭을 클릭하면, 해당 §b능력§f을 §d선택§f합니다.");
+            		add("§a==========================================");
+            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
                     add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
                     add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
                     add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
                     add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+                    add("§a==========================================");
                     add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
+                    add("§7리롤 기회: -회");
+                    add("§a==========================================");
                     add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
+                    add("§a==========================================");
             	}
             })
             .build();
@@ -106,7 +113,7 @@ public class SelectMixGUI implements Listener {
     private final Deque<Integer> selected = new ArrayDeque<>(2);
     private final AbilityRegistration[] abilities = new AbilityRegistration[7];
     private final MixParticipant player;
-    private Inventory gui = Bukkit.createInventory(null, 45, "§c능력 선택");;
+    private Inventory gui = Bukkit.createInventory(null, 45, "§4능력 선택");
     private final List<AbilityRegistration> randomAbilities = new ArrayList<>();
     private final Random random = new Random();
     private int rerollused;
@@ -114,6 +121,7 @@ public class SelectMixGUI implements Listener {
     private boolean reroll = false;
     public boolean decide = false;
     private boolean handleCloseInventory = true;
+    private boolean explain = false;
 
     public SelectMixGUI(@Nullable final MixParticipant player, @Nonnull final AbstractMix game, @Nonnull final int rerollable, @Nonnull final Plugin plugin) {
         this.game = game;
@@ -126,6 +134,24 @@ public class SelectMixGUI implements Listener {
                 randomAbilities.add(registration);
             }
         }
+    	ItemMeta meta = EXPLAIN.getItemMeta();
+    	meta.setLore(new ArrayList<String>() {
+        	{
+        		add("§a==========================================");
+        		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
+                add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
+                add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
+                add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
+                add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+                add("§a==========================================");
+                add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
+                add("§3리롤 기회§f: §a" + rerollable + "§f회");
+                add("§a==========================================");
+                add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
+                add("§a==========================================");
+        	}
+        });
+    	EXPLAIN.setItemMeta(meta);
         reroll(RerollTarget.INITIAL);
         openGUI();
     }
@@ -142,9 +168,12 @@ public class SelectMixGUI implements Listener {
                 if (registration == null) continue;
                 final AbilityManifest manifest = registration.getManifest();
                 final ArrayList<String> lore = new ArrayList<>();
-                AbilityBase.getExplanation(registration).forEachRemaining(exp -> {
-                    lore.add(ChatColor.WHITE + exp);
-                });
+                lore.add("우클릭으로 능력 설명을 켜고 끌 수 있습니다.");
+                if (explain) {
+                    AbilityBase.getExplanation(registration).forEachRemaining(exp -> {
+                        lore.add(ChatColor.WHITE + exp);
+                    });	
+                }
                 final ItemStack item = new ItemBuilder(RANK_MATERIALS.get(manifest.rank()))
                         .displayName("§b" + manifest.name())
                         .lore(lore)
@@ -232,21 +261,61 @@ public class SelectMixGUI implements Listener {
             e.setCancelled(true);
             if (reroll) return;
             if (slot >= 10 && slot <= 16) {
-            	if (selected.contains(slot - 10)) return;
-                while (selected.size() >= 2) {
-                    selected.removeFirst();
-                }
-                selected.add(slot - 10);
+            	if (e.getClick().equals(ClickType.RIGHT)) {
+            		explain = !explain;
+            	} else {
+                	if (selected.contains(slot - 10)) return;
+                    while (selected.size() >= 2) {
+                        selected.removeFirst();
+                    }
+                    selected.add(slot - 10);	
+            	}
                 openGUI();
             } else if (slot == 28) {
             	if (rerollused < rerollable) {
-            		reroll(RerollTarget.ALL);
                 	rerollused++;
+                	ItemMeta meta = EXPLAIN.getItemMeta();
+                	meta.setLore(new ArrayList<String>() {
+		            	{
+		            		add("§a==========================================");
+		            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
+		                    add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
+		                    add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
+		                    add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
+		                    add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+		                    add("§a==========================================");
+		                    add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
+		                    add("§3리롤 기회§f: §a" + (rerollable - rerollused) + "§f회");
+		                    add("§a==========================================");
+		                    add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
+		                    add("§a==========================================");
+		            	}
+		            });
+                	EXPLAIN.setItemMeta(meta);
+            		reroll(RerollTarget.ALL);
             	}
             } else if (slot == 30) {
             	if (rerollused < rerollable && selected.size() > 0) {
-            		reroll(RerollTarget.SELECTED);
                 	rerollused++;
+                	ItemMeta meta = EXPLAIN.getItemMeta();
+                	meta.setLore(new ArrayList<String>() {
+		            	{
+		            		add("§a==========================================");
+		            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
+		                    add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
+		                    add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
+		                    add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
+		                    add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+		                    add("§a==========================================");
+		                    add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
+		                    add("§3리롤 기회§f: §a" + (rerollable - rerollused) + "§f회");
+		                    add("§a==========================================");
+		                    add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
+		                    add("§a==========================================");
+		            	}
+		            });
+                	EXPLAIN.setItemMeta(meta);
+            		reroll(RerollTarget.SELECTED);
             	}
             } else if (slot == 34) {
             	if (selected.size() == 2) {

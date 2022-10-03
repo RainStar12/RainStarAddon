@@ -77,7 +77,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 			if (count % period == 0) {
 				stack = (stack < (abilities.size() - 1) ? stack + 1 : 0);
 				nowAbility = abilities.get(stack);
-				NMS.sendTitle(getPlayer(), rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name(), "§e?????", 0, 10, 0);
+				NMS.sendTitle(getPlayer(), rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name(), "§e?????", 0, 100, 0);
 			}
 		}
 		
@@ -121,6 +121,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 			} else if (clicktype == ClickType.LEFT_CLICK) {
 				if (abilities.size() < 9) {
 					abilities.add(getRandomAbility());
+					getPlayer().sendMessage("§6[§e!§6] §f능력 " + rankcolor.get(abilities.get(abilities.size() - 1).getManifest().rank()) + abilities.get(abilities.size() - 1).getManifest().name() + "§f를 배열에 추가하였습니다.");
 					switch(abilities.size()) {
 					case 0:
 						period = 20;

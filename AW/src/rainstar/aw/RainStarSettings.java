@@ -137,6 +137,7 @@ public class RainStarSettings {
 			this.key = key;
 			this.defaultValue = checkNotNull(defaultValue);
 			this.comments = comments;
+			registerSetting("rainstar", this);
 		}
 
 		@Override
