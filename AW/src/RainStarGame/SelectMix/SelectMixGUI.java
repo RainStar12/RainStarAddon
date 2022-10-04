@@ -107,6 +107,15 @@ public class SelectMixGUI implements Listener {
             .put(Rank.L, MaterialX.ORANGE_CONCRETE)
             .put(Rank.SPECIAL, MaterialX.RED_CONCRETE)
             .build();
+    
+    private static final ImmutableMap<Rank, String> NAMETAG = ImmutableMap.<Rank, String>builder()
+            .put(Rank.C, "§6[§eC§6] §b")
+            .put(Rank.B, "§3[§bB§3] §b")
+            .put(Rank.A, "§2[§aA§2] §b")
+            .put(Rank.S, "§5[§dS§5] §b")
+            .put(Rank.L, "§c[§6L§c] §b")
+            .put(Rank.SPECIAL, "§4[§cSPECIAL§4] §b")
+            .build();
 
 
     private final AbstractMix game;
@@ -168,14 +177,14 @@ public class SelectMixGUI implements Listener {
                 if (registration == null) continue;
                 final AbilityManifest manifest = registration.getManifest();
                 final ArrayList<String> lore = new ArrayList<>();
-                lore.add("우클릭으로 능력 설명을 켜고 끌 수 있습니다.");
+                lore.add("§7우클릭으로 능력 설명을 켜고 끌 수 있습니다.");
                 if (explain) {
                     AbilityBase.getExplanation(registration).forEachRemaining(exp -> {
                         lore.add(ChatColor.WHITE + exp);
                     });	
                 }
                 final ItemStack item = new ItemBuilder(RANK_MATERIALS.get(manifest.rank()))
-                        .displayName("§b" + manifest.name())
+                        .displayName(NAMETAG.get(manifest.rank()) + manifest.name())
                         .lore(lore)
                         .build();
                 if (selected.contains(i)) {

@@ -10,11 +10,13 @@ import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -24,7 +26,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.naming.OperationNotSupportedException;
@@ -33,15 +34,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Beta
 @GameManifest(name = "킬 셀렉트 믹스 능력자 전쟁", description = {
 		"§f자기가 원하는 능력을 골라서 하는 믹스!",
 		"§f가진 패 중 최강의 조합을 뽑아보세요!",
 		"§f무한히 부활하고, 일정량의 킬을 모으는 사람이 최종 승자가 됩니다!",
 		"",
-		"§7/aw config games로 리롤 횟수, 킬 횟수를 조절 가능합니다."
+		"§7/aw config games로 리롤 횟수, 킬 횟수를 조절 가능합니다.",
+		"",
+		"현재 베타입니다"
 })
 @GameAliases({"킬셀믹전", "킬셀믹", "킬믹"})
-public class SelectMixKillGame extends AbstractMix {
+public class SelectMixKillGame extends AbstractMix implements Winnable {
 	
 	private final boolean invincible = InvincibilitySettings.isEnabled();
 	
@@ -59,6 +63,8 @@ public class SelectMixKillGame extends AbstractMix {
 		}
 	};
 
+	private Map<Participant, Integer> killcount = new HashMap<>();
+	
 	public SelectMixKillGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 	}
@@ -195,8 +201,13 @@ public class SelectMixKillGame extends AbstractMix {
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {
-				Player victimPlayer = victim.getPlayer();
-				
+				if (getParticipant(victim.getPlayer().getKiller()) != null) {
+					Participant participant = getParticipant(victim.getPlayer().getKiller());
+					killcount.put(participant, killcount.getOrDefault(participant, 0) + 1);
+					if (killcount.get(participant) >= KILL_COUNT.getValue()) {
+						Win(participant);
+					}
+				}
 			}
 		};
 	}
