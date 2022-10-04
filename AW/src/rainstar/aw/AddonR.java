@@ -24,6 +24,7 @@ import daybreak.abilitywar.Command;
 import daybreak.abilitywar.Command.Condition;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Berserker;
 import daybreak.abilitywar.ability.list.Curse;
@@ -51,17 +52,23 @@ import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.event.GameStartEvent;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
+import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
 public class AddonR extends Addon implements Listener {
 	
-	File file = new File("plugins/AbilityWar/nodelay.txt");
+	File nodelay = new File("plugins/AbilityWar/nodelay.txt");
+	File hy = new File("plugins/AbilityWar/hy.txt");
 	
 	@Override
 	public void onEnable() {
@@ -394,17 +401,34 @@ public class AddonR extends Addon implements Listener {
 				if (GameManager.isGameRunning()) {
 					Messager.sendErrorMessage(sender, "게임이 진행되는 도중에는 변경할 수 없습니다.");
 				} else {
-					if (file.exists()) {
-						file.delete();
+					if (nodelay.exists()) {
+						nodelay.delete();
 						sender.sendMessage("§3[§b!§3] §f공격 쿨타임 제거 옵션을 §c비활성화§f합니다.");
 					} else {
 						try {
-							file.createNewFile();
+							nodelay.createNewFile();
 							sender.sendMessage("§3[§b!§3] §f공격 쿨타임 제거 옵션을 §a활성화§f합니다.");
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					}
+				}
+				return true;
+			}
+		});
+		
+		getPlugin().getCommands().getMainCommand().addSubCommand("hy", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (hy.exists()) {
+					hy.delete();
+					sender.sendMessage("§3[§b!§3] §f사망 메시지 옵션을 §c비활성화§f합니다.");
+				} else {
+					try {
+						hy.createNewFile();
+						sender.sendMessage("§3[§b!§3] §f사망 메시지 옵션을 §a활성화§f합니다.");
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 				return true;
@@ -414,9 +438,35 @@ public class AddonR extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameStart(GameStartEvent e) {
-		if (file.exists()) {
+		if (nodelay.exists()) {
 			Bukkit.broadcastMessage("§2[§a!§2] §c공격 쿨타임 제거!");
 			e.getGame().addModule(new NoDelay(e.getGame()));
+		}
+	}
+	
+	@EventHandler()
+	public void onParticipantDeath(ParticipantDeathEvent e) {
+		if (hy.exists()) {
+			if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()) != null) {
+				if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).hasAbility()) {
+					AbilityBase ab = e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).getAbility();
+					if (ab.getClass().equals(Mix.class)) {
+						Mix mix = (Mix) ab;
+						if (mix.hasAbility()) {
+							if (mix.hasSynergy()) {
+								Synergy synergy = mix.getSynergy();
+								Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+								String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
+								Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+							} else {
+								String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+								Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+							}
+						} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님은 능력이 없습니다.");
+					} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + ab.getDisplayName() + "§f입니다.");
+				} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님은 능력이 없습니다.");
+			}
+			Bukkit.broadcastMessage("§4[§c!§4]§f 현재 참가자가 §c" + e.getParticipant().getGame().getParticipants().size() + "§f명 남았습니다.");
 		}
 	}
 	
