@@ -71,13 +71,13 @@ import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "귤즙", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7게이지 §8- §e과즙§f: $[PERIOD]초마다 한 칸씩 최대 10칸을 보유 가능합니다.",
-		" 게이지 소모 이후엔 다음 게이지 차징까진 $[NEED_WAIT]초를 기다려야 합니다.",
+		" 게이지 소모 이후엔 다음 게이지 차징까진 $[NEED_TO_WAIT]초를 기다려야 합니다.",
 		"§7화살 발사 §8- §6귤 화살§f: 적중 위치에 §a과즙 장판§f이 터집니다. $[ARROW_CONSUME]",
 		" 만일 생명체를 적중시킨다면 $[GAUGE_RETURN]칸만큼 §e과즙 게이지§f를 돌려받습니다.",
 		" §a장판§f 위의 적은 중심으로 끌려가며 이외 §3끌리거나 밀리는§8(§7벡터§8)§f 효과가 감소합니다.",
-		" §a장판§f은 $[FIELD_RANGE]칸, $[FIELD_DURATION]초 유지되며 장판 위 적에게 주는 §b원거리 피해§f가 $[LONG_DISTANCE_DAMAGE_INCREASE]% 증가합니다.",
+		" §a장판§f은 $[FIELD_RANGE]칸, $[FIELD_DURATION]초 유지되며 장판 위 적에게 주는 §b원거리 피해§f가 $[CREEP_LONG_DISTANCE_DAMAGE_INCREASE]% 증가합니다.",
 		"§7철괴 우클릭 §8- §c과즙 폭발§f: 과즙 게이지를 전부 소모하여 잠시간 §b신속 버프§f를 얻고,",
-		" $[RANGE]칸 내의 생명체들을 강하게 밀쳐내고 §7실명§f시킵니다.",
+		" $[JUICE_EXPLODE_RANGE]칸 내의 생명체들을 강하게 밀쳐내고 §7실명§f시킵니다.",
 		" 모든 효과§8(§7넉백, 실명, 신속§8)§f의 세기는 게이지에 비례합니다.",
 		"§b[§7아이디어 제공자§b] §6Tangerine_Ring"
 		},
@@ -106,8 +106,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> NEED_WAIT = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-wait", 15.0,
+	public static final SettingObject<Double> NEED_TO_WAIT = 
+			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-to-wait", 12.0,
 			"# 과즙 사용 후 대기시간", "# WRECK 효과 50%까지 적용") {
 
 		@Override
@@ -144,9 +144,9 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> LONG_DISTANCE_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "long-distance-damage-increase", 25,
-			"# 장판 위 적에게 주는 추가 대미지") {
+	public static final SettingObject<Integer> CREEP_LONG_DISTANCE_DAMAGE_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "creep-long-distance-damage-increase", 35,
+			"# 장판 위 적에게 주는 원거리 추가 피해량", "# 단위: %") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -155,8 +155,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "range", 3.0,
+	public static final SettingObject<Double> JUICE_EXPLODE_RANGE = 
+			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "juice-explode-range", 4.0,
 			"# 과즙 폭발 사거리") {
 
 		@Override
@@ -217,11 +217,11 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
-	private final int wait = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (NEED_WAIT.getValue() * 20) : (NEED_WAIT.getValue() * 20));
+	private final int wait = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (NEED_TO_WAIT.getValue() * 20) : (NEED_TO_WAIT.getValue() * 20));
 	private final int consume = ARROW_CONSUME.getValue();
 	private final int returngauge = GAUGE_RETURN.getValue();
-	private final double dmgIncrease = 1 + (LONG_DISTANCE_DAMAGE_INCREASE.getValue() * 0.01);
-	private final double range = RANGE.getValue();
+	private final double dmgIncrease = 1 + (CREEP_LONG_DISTANCE_DAMAGE_INCREASE.getValue() * 0.01);
+	private final double range = JUICE_EXPLODE_RANGE.getValue();
 	private final int fieldrange = FIELD_RANGE.getValue();
 	private final int fieldduration = FIELD_DURATION.getValue() * 5;
 	private final Set<Vector> vectors = new HashSet<>();
@@ -387,7 +387,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			}
 			
 			for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, fieldrange, predicate)) {
-				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.08));
+				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.095));
 				vectors.add(vector);
 				players.setVelocity(vector);
 			}

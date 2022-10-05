@@ -63,13 +63,13 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "대시", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §b스태미나§f: 스태미나를 회복하여 총 5초에 1 게이지가 찹니다.",
+		"§7패시브 §8- §b스태미나§f: 스태미나를 회복하여 총 3초에 1 게이지가 찹니다.",
 		" 스태미나는 전투 도중에는 더 적게 차오르고, 더 많이 소모합니다.",
 		" 화면을 전환하지도 않고 움직이지도 않고 있다면 더 빨리 차오릅니다.",
 		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. $[DASH_STAMINA_CONSUME]",
 		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
 		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. $[DASH_STAMINA_HEAL]",
-		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 2초간",
+		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 3초간",
 		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]",
 		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"},
 		summarize = {
@@ -183,7 +183,7 @@ public class Dash extends AbilityBase {
 	};
 	
 	private static final Set<Material> swords;
-	private double stamina = 5;
+	private double stamina = 10;
 	private BossBar bossBar = null;
 	private ActionbarChannel ac = newActionbarChannel();
 	
@@ -199,7 +199,7 @@ public class Dash extends AbilityBase {
 	private Participant target;
 	private boolean onetime = true;
 	private static final Vector zerov = new Vector(0, 0, 0);
-	private int timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 5 : 5);
+	private double timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 3 : 3);
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 200, 2, true, false);
 	private PotionEffect normalspeed = new PotionEffect(PotionEffectType.SPEED, 100, 1, true, false);
 	private PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 3, 0, true, false);
@@ -343,6 +343,12 @@ public class Dash extends AbilityBase {
 		stamina = Math.min(10, stamina + value);
 	}
 	
+	public void lightspeed() {
+		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
+		Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+		staminaTrueGain(skillheal);
+	}
+	
 	private final AbilityTimer dashing = new AbilityTimer(1) {
 		
 		@Override
@@ -375,26 +381,10 @@ public class Dash extends AbilityBase {
 						    			staminaGain(10);
 						    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 						    			onetime = false;
-									} else {
-										Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
-							    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-							    		staminaTrueGain(skillheal);
-									}
-							} else {
-								Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
-								Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-								staminaTrueGain(skillheal);
-							}
-						} else {
-				    		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
-				    		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-				    		staminaTrueGain(skillheal);
-			    		}
-					} else if (onetime == false || !target.hasAbility()) {
-			   			Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
-			   			Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
-			   			staminaTrueGain(skillheal);
-					}
+									} else lightspeed();
+							} else lightspeed();
+						} else lightspeed();
+					} else if (onetime == false || !target.hasAbility()) lightspeed();
 		   		}	
 			}
 	   	}
