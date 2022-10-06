@@ -48,7 +48,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §8- §c전쟁 병기§f: 모든 피해를 §c$[GET_DAMAGE_INCREASE]배§f로 받습니다.",
 		" 그 대신, 피해를 $[EVADE]% 확률로 §b회피§f합니다.",
 		"§7검 들고 F §8- §3절박한 시도§f: 3초간 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_DAMAGE_INCREASE]배§f로 받습니다.",
-		" 이 피해로 사망할 경우 피해량의 2배의 체력으로 부활하고, 폭발을 일으킵니다.",
+		" 이 피해로 사망할 경우 피해량의 2.5배의 체력으로 부활하고, 폭발을 일으킵니다.",
 		" 또한 영구 공격력 §c$[DAMAGE_INCREASE]%§f를 획득합니다. $[COOLDOWN]",
 		" 다만 자폭에 실패할 경우 체력이 §c§l1§f이 됩니다."
 		},
@@ -67,7 +67,7 @@ public class Alte extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> GET_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "get-damage-increase", 1.2,
+			abilitySettings.new SettingObject<Double>(Alte.class, "get-damage-increase", 1.1,
 			"# 받는 피해량 증가 배율") {
 
 		@Override
@@ -255,7 +255,7 @@ public class Alte extends AbilityBase {
 	        			e.setDamage(e.getDamage() * skillgetIncrease);
 	        			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 	        				e.setCancelled(true);
-	        				Healths.setHealth(getPlayer(), e.getFinalDamage() * 2);
+	        				Healths.setHealth(getPlayer(), e.getFinalDamage() * 2.5);
 	        				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
 	        				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation());
 	        				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {

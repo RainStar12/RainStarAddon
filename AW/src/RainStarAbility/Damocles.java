@@ -34,7 +34,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 @AbilityManifest(name = "다모클레스", rank = Rank.L, species = Species.HUMAN, explain = {
 		"모든 §c공격력§f이 §c$[DAMAGE_INCREASE]§f배가 됩니다.",
 		"피격 후 매 틱마다 §b$[CHANCE_NUMERATOR]§7/§b$[CHANCE_DENOMINATOR]§f의 확률로 머리 위 §3검§f이 떨어집니다.",
-		"또한 매번 피격 시 받은 최종 피해량만큼§8(§7최소 1번§8)§f 확률을 추가로 시도합니다.",
+		"또한 매번 피격 시 받은 최종 피해량의 3배만큼§8(§7최소 1번§8)§f 확률을 추가로 시도합니다.",
 		"§3검§f은 사용자에게 §4치명적인 피해§8(§721억 대미지§8)§f를 입힙니다."
 		},
 		summarize = {
@@ -193,34 +193,18 @@ public class Damocles extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() * damagemultiply);
-		
-		if (!fallen && e.getEntity().equals(getPlayer()) && !getPlayer().equals(damager) && !falling.isRunning()) {
-			if (!timer.isRunning()) timer.start();
-			if (e.getFinalDamage() < 1) {
-				int randomvalue = random.nextInt(deno);
-				ActionbarChannel actionbar = newActionbarChannel();
-				actionbar.update("§b" + randomvalue);
-	            if (!falling.isRunning()) time++;
-				if (randomvalue < nume && !falling.isRunning()) {
-					falling.start();
-				}
-				new BukkitRunnable() {					
-					@Override
-					public void run() {
-						actionbar.unregister();
-					}
-				}.runTaskLater(AbilityWar.getPlugin(), 1L);
-			} else {
-				for (int a = 1; a <= e.getFinalDamage(); a++) {
+	@SubscribeEvent(priority = 1000)
+	public void onDamaged(EntityDamageByEntityEvent e) {
+		if (!e.isCancelled()) {
+			Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (!fallen && e.getEntity().equals(getPlayer()) && !getPlayer().equals(damager) && !falling.isRunning()) {
+				if (!timer.isRunning()) timer.start();
+				if ((e.getFinalDamage() * 3) < 1) {
 					int randomvalue = random.nextInt(deno);
 					ActionbarChannel actionbar = newActionbarChannel();
 					actionbar.update("§b" + randomvalue);
@@ -234,9 +218,36 @@ public class Damocles extends AbilityBase {
 							actionbar.unregister();
 						}
 					}.runTaskLater(AbilityWar.getPlugin(), 1L);
+				} else {
+					for (int a = 1; a <= (e.getFinalDamage() * 3); a++) {
+						int randomvalue = random.nextInt(deno);
+						ActionbarChannel actionbar = newActionbarChannel();
+						actionbar.update("§b" + randomvalue);
+			            if (!falling.isRunning()) time++;
+						if (randomvalue < nume && !falling.isRunning()) {
+							falling.start();
+						}
+						new BukkitRunnable() {					
+							@Override
+							public void run() {
+								actionbar.unregister();
+							}
+						}.runTaskLater(AbilityWar.getPlugin(), 1L);
+					}
 				}
-			}
+			}	
 		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() * damagemultiply);
 	}
 	
 }

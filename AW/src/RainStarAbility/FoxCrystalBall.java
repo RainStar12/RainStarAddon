@@ -69,7 +69,7 @@ import daybreak.google.common.base.Predicate;
 		"§d유도 §7-§f 대상의 방향으로 빠르게 나아가는 §d유도 미사일§f을 발사합니다.",
 		" 미사일은 지형지물 혹은 생명체에 충돌 시 폭발합니다. $[MANA_HOMING]",
 		"§e관통 §7-§f $[PIERCE_RANGE]칸 내의 가장 먼 대상에게 직격하는 특수 투사체를 발사합니다.",
-		" 투사체는 적을 기절시키고 지형지물과 생명체, 방어력을 §e관통§f합니다. $[MANA_PIERCE]",
+		" 투사체는 적을 기절시키고 지형지물과 생명체, 방어력을 §e관통§f합니다. $[MANA_PIERCE_SHOT]",
 		"§8은신 §7-§f 신속 및 타게팅 불능 상태가 됩니다. §3소모 §7: §f0",
 		"§b[§7아이디어 제공자§b] §5Phillip_MS"
 		},
@@ -162,9 +162,9 @@ public class FoxCrystalBall extends AbilityBase {
 		
 	};
 	
-	public static final SettingObject<Integer> MANA_PIERCE 
+	public static final SettingObject<Integer> MANA_PIERCE_SHOT 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-pierce", 20, "# 관통 상태의 마나 소모량") {
+			"mana-pierce", 25, "# 관통 상태의 마나 소모량") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -297,7 +297,7 @@ public class FoxCrystalBall extends AbilityBase {
 	private final double rapidRange = RAPID_RANGE.getValue();
 	private final int homingRange = HOMING_RANGE.getValue();
 	
-	private final int pierceMana = MANA_PIERCE.getValue();
+	private final int pierceMana = MANA_PIERCE_SHOT.getValue();
 	private final int healMana = MANA_HEAL.getValue();
 	private final int rapidMana = MANA_RAPID.getValue();
 	private final int homingMana = MANA_HOMING.getValue();

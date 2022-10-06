@@ -69,7 +69,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. $[DASH_STAMINA_CONSUME]",
 		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
 		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. $[DASH_STAMINA_HEAL]",
-		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 3초간",
+		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 2초간",
 		" §c출혈§f 및 무작위 방향으로 튕겨나가는 §6혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]",
 		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"},
 		summarize = {
@@ -345,7 +345,7 @@ public class Dash extends AbilityBase {
 	
 	public void lightspeed() {
 		Bleed.apply(getGame(), target.getPlayer(), TimeUnit.SECONDS, 2);
-		Confusion.apply(target, TimeUnit.SECONDS, 3, 20);
+		Confusion.apply(target, TimeUnit.SECONDS, 2, 20);
 		staminaTrueGain(skillheal);
 	}
 	

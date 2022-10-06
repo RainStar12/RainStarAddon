@@ -145,7 +145,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CREEP_LONG_DISTANCE_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "creep-long-distance-damage-increase", 35,
+			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "creep-long-distance-damage-increase", 25,
 			"# 장판 위 적에게 주는 원거리 추가 피해량", "# 단위: %") {
 
 		@Override
@@ -387,7 +387,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			}
 			
 			for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, fieldrange, predicate)) {
-				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.095));
+				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.08));
 				vectors.add(vector);
 				players.setVelocity(vector);
 			}
