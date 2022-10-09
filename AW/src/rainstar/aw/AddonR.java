@@ -333,13 +333,13 @@ public class AddonR extends Addon implements Listener {
 			@Override
 			public void run() {
 				try {
-					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.DataMining"), AkashicRecords.class);
+					SynergyFactory.registerSynergy(Empty.class, (Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.cokesaddon.ability.list.DataMining"), AkashicRecords.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
 	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");
 	            }
 				try {
-					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.addon.ability.list.Cokes"), Citrus.class, NaturalScienceStudent.class);
+					SynergyFactory.registerSynergy((Class<? extends AbilityBase>) ReflectionUtil.ClassUtil.forName("cokes86.cokesaddon.ability.list.Cokes"), Citrus.class, NaturalScienceStudent.class);
 	            } catch (ClassNotFoundException e) {
 	                e.printStackTrace();
 	                Messager.sendConsoleMessage("§4[§c!§4] §e버그가 아닙니다! 코크스 애드온을 설치해야 이용 가능한 시너지입니다.");

@@ -45,7 +45,6 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
@@ -139,7 +138,6 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	private final List<RGB> gradations = Gradient.createGradient(15, startColor, endColor);
 	private Set<Player> stopped = new HashSet<>();
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
-	private ActionbarChannel ac = newActionbarChannel();
 	
 	private Location rewindLocation;
 	private double rewindHP;
@@ -326,7 +324,8 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
-			ac.update("§c사망 지연§7: §e" + df.format(duration / 20.0) + "§f초");
+			SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), 1, 1.5f);
+			NMS.sendTitle(getPlayer(), "§c사망 지연", "§e" + df.format(duration / 20.0), 0, 20, 0);
 			timeaccel.stop(true);
 			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
 				stopped.add(player);
@@ -343,7 +342,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac.update("§c사망 지연§7: §e" + df.format(count / 20.0) + "§f초");
+			NMS.sendTitle(getPlayer(), "§c사망 지연", "§e" + df.format(duration / 20.0), 0, 20, 0);
 		}
 		
 		@Override
@@ -356,10 +355,10 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
+			NMS.clearTitle(getPlayer());
 			for (ArmorStand armorstand : armorstands) {
 				armorstand.remove();
 			}
-			ac.update(null);
 			armorstands.clear();
 			stopped.clear();
 		}

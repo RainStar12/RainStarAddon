@@ -1,5 +1,6 @@
 package RainStarAbility;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -37,9 +38,9 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "왕", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만듭니다.",
-		" 범위 내 대상은 공격력이 $[DECREASE]% 감소합니다.",
+		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만들고, 공격력을 $[DECREASE]% 감소시킵니다.",
 		" 범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
+		" 범위는 매 초마다 $[ADD_RANGE]씩 영구히 증가합니다.",
 		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
 		" 그 대신 §3이동계 상태이상§f에 면역을 가지고, §b원거리 공격자§f를 내게 끌어옵니다."
 		},
@@ -66,6 +67,15 @@ public class King extends AbilityBase {
 	public static final SettingObject<Double> RANGE = 
 			abilitySettings.new SettingObject<Double>(King.class, "range", 5.0,
             "# 위압감 범위", "# 단위: 칸") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Double> ADD_RANGE = 
+			abilitySettings.new SettingObject<Double>(King.class, "add-range", 0.5,
+            "# 위압감 증가 범위", "# 값 / 10을 매 초마다 증가시킵니다.", "# 단위: 칸") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;
@@ -108,8 +118,9 @@ public class King extends AbilityBase {
     
 	private final double damageDecrease = 1 - (DECREASE.getValue() * 0.01);
 	private final double decrease = 1 - (TIMER_DECREASE.getValue() * 0.01);
-    private final double range = RANGE.getValue();
-    private final Circle circle = Circle.of(range, (int) (range * 12));
+    private double range = RANGE.getValue();
+    private final double addrange = ADD_RANGE.getValue() * 0.005;
+    private final int maxCount = 500;
     private final List<RGB> gradations = Gradient.createGradient(10, RGB.of(227, 1, 1), RGB.BLACK);
 	private int stack = 0;
     
@@ -125,17 +136,20 @@ public class King extends AbilityBase {
     	public void run(int count) {
     		if (count % 2 == 0) {
         		if (stack > 0) {
-        			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-    					loc.add(0, (stack * 0.1), 0);
+        			for (Iterator<Location> iterator = Circle.iteratorOf(getPlayer().getLocation(), range, maxCount); iterator.hasNext(); ) {
+        				Location loc = iterator.next();
+        				loc.add(0, (stack * 0.1), 0);
         				ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, gradations.get(stack - 1));
     				}
         		} else if (stack > -10) {
-        			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+        			for (Iterator<Location> iterator = Circle.iteratorOf(getPlayer().getLocation(), range, maxCount); iterator.hasNext(); ) {
+        				Location loc = iterator.next();
         				ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, gradations.get(0));
     				}
         		} else stack = 11;
         		stack--;
     		}
+    		range += addrange;
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -163,8 +177,7 @@ public class King extends AbilityBase {
 			else if (getPlayer().equals(e.getEntity())) damager.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(0).multiply(2)));
 		}
     }
-    
-	@SuppressWarnings("deprecation")
+
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
@@ -174,14 +187,11 @@ public class King extends AbilityBase {
 			dx = to.getX() - from.getX();
 			dy = to.getY() - from.getY();
 			dz = to.getZ() - from.getZ();
-			if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-				e.getPlayer().setVelocity(new Vector((dx * 0.7), (dy * 0.1), (dz * 0.7)));	
-		} else if (e.getPlayer().isOnGround()) {
-			if (e.getPlayer().equals(getPlayer())) {
-				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.925));
-				ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation(), 0.15, 0, 0.15, 1, 1);
-			} else if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-				e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.7));	
+			if (toY - fromY <= 1) {
+				if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
+					e.getPlayer().setVelocity(new Vector((dx * 0.7), (dy * 0.1), (dz * 0.7)));	
+				if (e.getPlayer().equals(getPlayer())) e.getPlayer().setVelocity(new Vector((dx * 0.9), (dy * 0.9), (dz * 0.9)));
+			}
 		}
 	}
 	
