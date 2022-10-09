@@ -38,7 +38,7 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "왕", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만들고, 공격력을 $[DECREASE]% 감소시킵니다.",
+		"§7패시브 §8- §c위압§f: $[RANGE]칸 내의 플레이어를 매우 느리게 만들고, 공격력을 $[DAMAGE_DECREASE]% 감소시킵니다.",
 		" 범위 내에서 §a액티브 스킬§f 사용 시, §c쿨타임§f을 제외한 §6지속 시간§f이 $[TIMER_DECREASE]% 감소합니다.",
 		" 범위는 매 초마다 $[ADD_RANGE]씩 영구히 증가합니다.",
 		"§7패시브 §8- §b위풍당당!§f: 위풍당당한 걸음 탓에 기본 이동 속도가 느립니다.",
@@ -82,8 +82,8 @@ public class King extends AbilityBase {
         }
     };
     
-	public static final SettingObject<Integer> DECREASE = 
-			abilitySettings.new SettingObject<Integer>(King.class, "damage-decrease", 15,
+	public static final SettingObject<Integer> DAMAGE_DECREASE = 
+			abilitySettings.new SettingObject<Integer>(King.class, "damage-decrease", 10,
             "# 공격력 감소율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -116,7 +116,7 @@ public class King extends AbilityBase {
 		}
 	};
     
-	private final double damageDecrease = 1 - (DECREASE.getValue() * 0.01);
+	private final double damageDecrease = 1 - (DAMAGE_DECREASE.getValue() * 0.01);
 	private final double decrease = 1 - (TIMER_DECREASE.getValue() * 0.01);
     private double range = RANGE.getValue();
     private final double addrange = ADD_RANGE.getValue() * 0.005;
@@ -189,7 +189,7 @@ public class King extends AbilityBase {
 			dz = to.getZ() - from.getZ();
 			if (toY - fromY <= 1) {
 				if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-					e.getPlayer().setVelocity(new Vector((dx * 0.7), (dy * 0.1), (dz * 0.7)));	
+					e.getPlayer().setVelocity(new Vector((dx * 0.8333), (dy * 0.8333), (dz * 0.8333)));	
 				if (e.getPlayer().equals(getPlayer())) e.getPlayer().setVelocity(new Vector((dx * 0.9), (dy * 0.9), (dz * 0.9)));
 			}
 		}
