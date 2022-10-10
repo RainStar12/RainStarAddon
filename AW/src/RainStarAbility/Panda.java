@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -32,24 +31,23 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
-import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "판다", rank = Rank.S, species = Species.ANIMAL, explain = {
-		"웅크린 채 철괴를 우클릭하면 §3방어 상태§f가 됩니다. $[COOLDOWN]",
-		"웅크리기를 풀거나 §79.15초§f를 넘으면 §3방어 상태§f는 자동 해제됩니다.",
-		"§3방어 상태§f간 모든 대미지 감소 효과(방어력, 저항 등)를 2배로 받습니다.",
-		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 $[COUNTER_DAMAGE_MULTIPLY]배를 반격합니다.",
+		"§7패시브 §8- §3아머§f: 기본 공격력이 §c$[DAMAGE_DECREASE]% 감소§f합니다.",
+        " 매번 §e감소시킨 피해량§f만큼 §b아머§f를 획득해, §b아머§f 당 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
+        " §b아머§f는 $[MAX_STACK]까지 모을 수 있으며, $[DURATION]초간 갱신하지 않을 경우 전부 잃습니다.",
+        "§7철괴 우클릭 §8- §3방어 상태§f: §79.15초§f간 §e대미지 감소 효과§8(§7방어력, 저항 등§8)§f를 2배로 받습니다.",
+        " 방어 상태간 §b아머§f 최대치가 $[MAX_STACK_INCREASED]까지 증가합니다. $[SKILL_COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §7Woojaekkun"
 		},
 		summarize = {
-		"웅크린 채 철괴를 우클릭하면 §3방어 상태§f가 됩니다. $[COOLDOWN]",
-		"웅크리기를 풀거나 §79.15초§f를 넘으면 §3방어 상태§f는 자동 해제됩니다.",
-		"§3방어 상태§f간 모든 대미지 감소 효과(방어력, 저항 등)를 2배로 받습니다.",
-		"§3방어 상태§f가 해제될 때, 공격자가 내게 준 최고 대미지의 $[COUNTER_DAMAGE_MULTIPLY]배를 반격합니다."
+		"기본 공격력이 대폭 감소하나 방어한 피해량에 비례해 공격력이 일시적 증가합니다.",
+		"§7철괴 우클릭§f으로 §79.15초§f간 대미지 감소 효과가 2배가 되며,",
+		"증가할 수 있는 공격력의 한도치가 증가합니다. $[COOLDOWN]"
 		})
 
 public class Panda extends AbilityBase implements ActiveHandler {
@@ -58,10 +56,8 @@ public class Panda extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private ActionbarChannel ac = newActionbarChannel();
-	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Panda.class, "cooldown", 85, "# 쿨타임") {
+	public static final SettingObject<Integer> SKILL_COOLDOWN = abilitySettings.new SettingObject<Integer>(
+			Panda.class, "skill-cooldown", 150, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -75,8 +71,49 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Double> COUNTER_DAMAGE_MULTIPLY = abilitySettings.new SettingObject<Double>(Panda.class,
-			"counter-damage-multiply", 1.5, "# 반격 대미지 배율") {
+	
+	public static final SettingObject<Integer> DAMAGE_DECREASE = abilitySettings.new SettingObject<Integer>(
+			Panda.class, "damage-decrease", 30, "# 기본 피해량 감소", "# 단위: %") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_INCREASE = abilitySettings.new SettingObject<Integer>(
+			Panda.class, "damage-increase", 10, "# 아머당 피해량 증가", "# 단위: %") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> MAX_STACK = abilitySettings.new SettingObject<Integer>(
+			Panda.class, "max-stack", 5, "# 아머 최대 스택") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> MAX_STACK_INCREASED = abilitySettings.new SettingObject<Integer>(
+			Panda.class, "max-stack", 10, "# 증가된 아머 최대 스택") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	private static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(Panda.class,
+			"stack-duration", 3.0, "# 아머 지속시간") {
 
 		@Override
 		public boolean condition(Double arg0) {
@@ -85,19 +122,17 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	@Override
-	protected void onUpdate(Update update) {
-	    if (update == Update.RESTRICTION_CLEAR) {
-	    	isSneaking.start();
-	    }	
-	}
-	
-	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
-	private final double counter = COUNTER_DAMAGE_MULTIPLY.getValue();
+	private final ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
+	private final Cooldown cooldown = new Cooldown(SKILL_COOLDOWN.getValue());
+	private final int duration = (int) (DURATION.getValue() * 20);
+	private final double decrease = DAMAGE_DECREASE.getValue() * 0.01;
+	private final double increase = DAMAGE_INCREASE.getValue() * 0.01;
+	private final int maxstack = MAX_STACK.getValue();
+	private final int increasedmaxstack = MAX_STACK_INCREASED.getValue();
 	private final DecimalFormat df = new DecimalFormat("0.00");
-	private Map<LivingEntity, Double> damageMap = new HashMap<>();
-	private Map<LivingEntity, Stack> stackMap = new HashMap<>();
 	private Map<Player, ShieldSpin> shieldMap = new HashMap<>();
+	private int stack = 0;
+	private int ministack = 0;
 	private double firstDamage = 0;
 	private static final double pointrange = 0.10;
 	private Random random = new Random();
@@ -232,22 +267,29 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
-	    	if (getPlayer().isSneaking() && !protecting.isRunning() && !cooldown.isCooldown()) {
+	    	if (!protecting.isRunning() && !cooldown.isCooldown()) {
 				return protecting.start();
 			}
 	    }
 		return false;
 	}
 	
-	private final AbilityTimer isSneaking = new AbilityTimer() {
+	private final AbilityTimer stackduration = new AbilityTimer(duration) {
 		
 		@Override
 		public void run(int count) {
-			if (protecting.isRunning()) {
-				if (!getPlayer().isSneaking()) {
-					protecting.stop(false);
-				}
-			}
+			ac2.update("§b아머§f: §3" + stack + "§7/§9" + (protecting.isRunning() ? maxstack : increasedmaxstack));
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			stack = 0;
+			ac2.update("§b아머§f: " + stack);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -278,11 +320,6 @@ public class Panda extends AbilityBase implements ActiveHandler {
 			if (shieldMap.containsKey(getPlayer())) shieldMap.get(getPlayer()).stop(false);
 			ac.update(null);
 			cooldown.start();
-			for (LivingEntity l : damageMap.keySet()) {
-				l.damage(damageMap.get(l) * counter, getPlayer());
-				stackMap.get(l).stop(false);
-			}
-			damageMap.clear();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -372,7 +409,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 						e.setDamage(fixDamage);
 					} else e.setDamage(e.getFinalDamage());	
 				}
-			}
+			}	
 		}
 	}
 	
@@ -395,56 +432,28 @@ public class Panda extends AbilityBase implements ActiveHandler {
 						e.setDamage(fixDamage);
 					} else e.setDamage(e.getFinalDamage());	
 				}
-			}
+			}	
 		}
 	}
 	
 	@SubscribeEvent(priority = -999, onlyRelevant = true)
 	public void onEntityDamageByEntityFirst(EntityDamageByEntityEvent e) {
-		if (protecting.isRunning()) {
-			firstDamage = e.getDamage();
-		}
+		firstDamage = e.getDamage();
 	} 
 	
 	@SubscribeEvent(priority = 6, onlyRelevant = true)
-	public void onEntityDamageByEntityLast(EntityDamageByEntityEvent e) {
+	public void onEntityDamageByEntityLast(EntityDamageByEntityEvent e) {	
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
 		if (protecting.isRunning()) {
 			if (e.getDamage() != 0 && e.getFinalDamage() != 0) {
 				if (e.getDamage() > firstDamage) {
-					if (e.getDamager() instanceof Projectile) {
-						Projectile p = (Projectile) e.getDamager();
-						if (!getPlayer().equals(p.getShooter())) {
-							if (p.getShooter() != null) {
-								if (damageMap.containsKey(p.getShooter())) {
-									if (e.getDamage() > damageMap.get(p.getShooter())) damageMap.put((LivingEntity) p.getShooter(), e.getDamage());
-								} else damageMap.put((LivingEntity) p.getShooter(), e.getDamage());
-								if (!stackMap.containsKey(p.getShooter())) new Stack((LivingEntity) p.getShooter()).start();
-							}
-						}
-					} else if (e.getDamager() instanceof LivingEntity) {
-						if (damageMap.containsKey(e.getDamager())) {
-							if (e.getDamage() > damageMap.get(e.getDamager())) damageMap.put((LivingEntity) e.getDamager(), e.getDamage());
-						} else damageMap.put((LivingEntity) e.getDamager(), e.getDamage());
-						if (!stackMap.containsKey(e.getDamager())) new Stack((LivingEntity) e.getDamager()).start();
-					}
 					e.setDamage(e.getFinalDamage());
 				} else {
-					if (e.getDamager() instanceof Projectile) {
-						Projectile p = (Projectile) e.getDamager();
-						if (!getPlayer().equals(p.getShooter())) {
-							if (p.getShooter() != null) {
-								if (damageMap.containsKey(p.getShooter())) {
-									if (firstDamage > damageMap.get(p.getShooter())) damageMap.put((LivingEntity) p.getShooter(), firstDamage);
-								} else damageMap.put((LivingEntity) p.getShooter(), firstDamage);
-								if (!stackMap.containsKey(p.getShooter())) new Stack((LivingEntity) p.getShooter()).start();
-							}
-						}
-					} else if (e.getDamager() instanceof LivingEntity) {
-						if (damageMap.containsKey(e.getDamager())) {
-							if (firstDamage > damageMap.get(e.getDamager())) damageMap.put((LivingEntity) e.getDamager(), firstDamage);
-						} else damageMap.put((LivingEntity) e.getDamager(), firstDamage);
-						if (!stackMap.containsKey(e.getDamager())) new Stack((LivingEntity) e.getDamager()).start();
-					}
 					if ((firstDamage - e.getFinalDamage()) == 0 && firstDamage == 0) e.setDamage(e.getFinalDamage());
 					else {
 						double decreasePercent = (double) ((firstDamage - e.getFinalDamage()) / firstDamage);
@@ -454,47 +463,30 @@ public class Panda extends AbilityBase implements ActiveHandler {
 						} else e.setDamage(e.getFinalDamage());	
 					}
 				}	
-			}
+			}	
+		}
+		
+		if (!getPlayer().equals(damager)) {
+			double decreasePercent = (double) ((firstDamage - e.getFinalDamage()) / firstDamage);
+			ministack += decreasePercent;
+			if (ministack > 1) {
+				ministack -= 1;
+				stack = Math.min(protecting.isRunning() ? increasedmaxstack : maxstack, stack + 1);
+				if (!stackduration.isRunning()) stackduration.start();
+				else stackduration.setCount(duration);
+			}	
 		}
 	}
 	
-	private class Stack extends AbilityTimer {
+	@SubscribeEvent()
+	public void onEntityAddDamage(EntityDamageByEntityEvent e) {
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		private final LivingEntity livingEntity;
-		private final IHologram hologram;
-		private final DecimalFormat df = new DecimalFormat("0.00");
-		
-		private Stack(LivingEntity livingEntity) {
-			setPeriod(TimeUnit.TICKS, 1);
-			this.livingEntity = livingEntity;
-			this.hologram = NMS.newHologram(livingEntity.getWorld(), livingEntity.getLocation().getX(),
-					livingEntity.getLocation().getY() + livingEntity.getEyeHeight() + 0.6, livingEntity.getLocation().getZ());
-			hologram.setText("§c§l0");
-			hologram.display(getPlayer());
-			stackMap.put(livingEntity, this);
-		}
-
-		@Override
-		protected void run(int count) {
-			hologram.teleport(livingEntity.getWorld(), livingEntity.getLocation().getX(), 
-					livingEntity.getLocation().getY() + livingEntity.getEyeHeight() + 0.6, livingEntity.getLocation().getZ(), 
-					livingEntity.getLocation().getYaw(), 0);
-			if (damageMap.containsKey(livingEntity)) {
-				hologram.setText("§c§l" + df.format(damageMap.get(livingEntity) * counter));
-			}
-		}
-		
-		@Override
-		protected void onEnd() {
-			onSilentEnd();
-		}
-		
-		@Override
-		protected void onSilentEnd() {
-			hologram.unregister();
-			stackMap.remove(livingEntity);
-		}
-		
+		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() * (1 - decrease + (stack * increase)));
 	}
 	
 	private class ShieldSpin extends AbilityTimer {
