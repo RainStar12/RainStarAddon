@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/AbilityWar-3.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/CokesAddon.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.16.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/spigot-1.12.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.13.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.15-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.16.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.16.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rains/OneDrive/바탕 화면/Downloads (1)/craftbukkit-1.17.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
