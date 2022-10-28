@@ -69,7 +69,7 @@ public class Encore extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
 			if (!cooldown.isCooldown() && !skill.isRunning()) {
-				if (damageMap.size() > 0) {
+				if (damageMap.size() <= 0) {
 					getPlayer().sendMessage("§f[§c!§f] 최근에 피해를 준 생명체가 없습니다.");
 					return false;
 				} else {

@@ -65,7 +65,7 @@ import daybreak.google.common.base.Strings;
 		"§b얼음 속성§f의 눈꽃 마법사, 유키.",
 		"§7지팡이 우클릭 §8- §b프로스트바이트§f: 영창을 시작합니다. 다시 지팡이를 우클릭하면",
 		" 바라보는 방향으로 서리를 내뿜습니다. 서리는 영창한 만큼의 마법 대미지를 입히며",
-		" 적중 대상이 냉기 상태라면 빙결시키고, 아니라면 냉기시킵니다. $[CAST_COOLDOWN]",
+		" 적중 대상이 냉기 상태라면 빙결시키고, 아니라면 냉기시킵니다. $[CASTING_COOLDOWN]",
 		" 눈과 얼음 위에서 서리의 대미지 및 사거리가 1씩 증가하며 신속 버프를 받습니다.",
 		" §7적 처치 시 눈사람 소환§f: $[SNOWMAN_SPAWN]",
 		"§7지팡이 좌클릭 §8- §b앱솔루트 제로§f: 주변의 모든 빙결 상태이상을 가진 플레이어를",
@@ -97,7 +97,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 	private Random random = new Random();
 	private static final Vector zeroV = new Vector(0, 0, 0);
 	
-	private final Cooldown castcool = new Cooldown(CAST_COOLDOWN.getValue(), "영창", CooldownDecrease._25);
+	private final Cooldown castcool = new Cooldown(CASTING_COOLDOWN.getValue(), "영창", CooldownDecrease._25);
 	private final Cooldown breakcool = new Cooldown(BREAK_COOLDOWN.getValue(), "파괴");
 	private boolean snowman = SNOWMAN_SPAWN.getValue();
 	
@@ -171,9 +171,9 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CAST_COOLDOWN 
+	public static final SettingObject<Integer> CASTING_COOLDOWN 
 	= abilitySettings.new SettingObject<Integer>(Yuki.class,
-			"cast-cooldown", 6, "# 영창 쿨타임") {
+			"casting-cooldown", 5, "# 영창 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

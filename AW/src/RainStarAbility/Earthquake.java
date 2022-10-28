@@ -137,7 +137,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onEnd() {
-			new EarthquakeWave((int) (richter * 10), getPlayer().getLocation()).start();
+			new EarthquakeWave((int) (richter * 15), getPlayer().getLocation()).start();
 			cooldown.start();
 		}
 		
@@ -149,7 +149,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		private final Player player;
 		
 		public Airborn(Player player) {
-			super(TaskType.REVERSE, 100);
+			super(TaskType.NORMAL, 100000);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.player = player;
 			airborned.put(player, this);
@@ -157,7 +157,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			if (player.isOnGround()) this.stop(false);
+			if (count >= 5 && player.isOnGround()) this.stop(false);
 		}
 	
 		@Override
@@ -222,11 +222,11 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 				Location loc = iterator.next();
 				LocationUtil.floorY(loc);
 				ParticleLib.CRIT.spawnParticle(loc, 0, 0, 0, 1, 0.35);
-				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count));
+				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count - 1));
 				SoundLib.BLOCK_STONE_BREAK.playSound(loc, 0.5f, 1);
 				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.6, 0.6, predicate)) {
 					hitEntity.add(damageable);
-					damageable.setVelocity(new Vector(0, maxCount / 100.0, 0));
+					damageable.setVelocity(new Vector(0, 0.5 + (maxCount / 75.0), 0));
 					if (damageable instanceof Player) new Airborn((Player) damageable).start();
 				}
 			}

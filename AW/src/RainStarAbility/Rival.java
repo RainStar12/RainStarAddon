@@ -407,7 +407,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (rival.equals(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
+		if (e.getEntity().equals(rival) && getPlayer().equals(e.getEntity().getKiller())) {
 			try {
 				abilities.add(AbilityBase.create(checkrivalability.getClass(), getParticipant()));
 			} catch (ReflectiveOperationException e1) {

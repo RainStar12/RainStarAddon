@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -48,9 +50,9 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 최대 §e300§c%§f까지 증가하고, 대시 중 §e250§c%§f 이상이라면 §6잔열§f이 쌓입니다.",
 		"§7수치 §8- §6잔열§f: 증가할 때 체력이 감소하고, 감소할 때 체력이 증가합니다.",
 		" §6잔열§f은 최대 체력을 차지해, §6잔열§f만큼의 최대 체력은 채울 수 없습니다.",
-		"§7검 우클릭 §8- §3대시§f: 바라보는 방향을 향해 지속 대시합니다. §c히트§f 수치가 지속 상승하며,",
+		"§7검 우클릭 §8- §3대시§f: 바라보는 방향으로 지속 대시합니다. §c히트§f 수치가 지속 상승하며,",
 		" 사용 직후엔 §c히트§f, 대시 거리가 추가 증가하고 $[EVADE_DURATION]초간 공격을 회피합니다.",
-		" 회피한 피해량에 비례하여, §6잔열§f은 감소하고, §b액셀러레이터§f 스킬 게이지가 모여듭니다.",
+		" 회피한 피해량에 비례하여, §6잔열§f은 감소하고, §b액셀러레이터§f가 충전됩니다.",
 		"§7철괴 우클릭 §8- §b액셀러레이터§f: 게이지를 모으면 사용할 수 있습니다.",
 		" $[ACCELERATOR_DURATION]초간 §c히트§f가 §e0§c%§f가 되고, §6잔열§f이 빠르게 감소합니다.",
 		" 또한 공격에 1~6의 추가 피해를 줍니다."
@@ -281,7 +283,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		heat = 0;
-    		longHeatLose(0.025);
+    		longHeatLose(0.1);
     	}
     	
     	@Override
@@ -292,7 +294,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	
 	public void heatGain(double value) {
 		heat = Math.min(300, heat + value);
-		if (heat >= 250) longHeatGain(value);
+		if (heat >= 250) longHeatGain(value * 0.1);
 	}
 	
 	public void heatLose(double value) {
@@ -359,6 +361,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 						getPlayer().sendMessage("§c[§b!§c] §f액셀러레이터를 사용할 수 있습니다.");
 					}
 				}
+				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
+				e.setCancelled(true);
 			} else if (heat > 100) longHeatGain(e.getFinalDamage() * (heat * 0.0025));
 		}
 	}
@@ -375,5 +379,14 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 			e.setDamage(e.getDamage() + random.nextInt(6) + 1);
 		}
 	}
+	
+    @SubscribeEvent
+    private void onEntityDamage(EntityDamageEvent e) {
+        if (!e.isCancelled() && getPlayer().equals(e.getEntity()) && e.getCause().equals(DamageCause.FALL)) {
+            e.setCancelled(true);
+            getPlayer().sendMessage("§a낙하 대미지를 받지 않습니다.");
+            SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
+        }
+    }
 	
 }

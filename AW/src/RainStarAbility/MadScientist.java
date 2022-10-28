@@ -143,6 +143,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	};
 	
     private ActionbarChannel ac = newActionbarChannel();
+    private ActionbarChannel ac2 = newActionbarChannel();
     private final double gainhealth = HEALTH_GAIN_AMOUNT.getValue();
     private final double decrease = HEALTHY_DECREASE.getValue() * 0.01;
 	private double healthy = 1.0;
@@ -152,6 +153,13 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final double healamount = HEAL_AMOUNT.getValue();
 	private final int poisonduration = (int) (POISON.getValue() * 20);
+	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			ac.update("§d♥§f: §a" + df.format(healthy * 100) + "§2%");
+		}
+	}
 	
 	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
@@ -203,7 +211,10 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 						if (cooldown.isRunning()) cooldown.setCount(0);
 						return doping.start();
 					} else {
-						doping.setCount(doping.getCount() + duration);
+						int count = doping.getCount();
+						doping.stop(false);
+						doping.start();
+						doping.setCount(count + duration);
 						return true;
 					}
 				}
@@ -226,16 +237,22 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 		}
 		
 		@Override
+		public void run(int count) {
+			ac2.update("§5도핑§f: " + df.format(count / 20.0) + "초");
+		}
+		
+		@Override
 		public void onEnd() {
 			onSilentEnd();
 		}
 		
 		@Override
 		public void onSilentEnd() {
+			ac2.update(null);
 			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier);
 		}
 		
-	};
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

@@ -47,10 +47,10 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 한 줄을 알아낼 수 있습니다. §d믹스 능력자§f에서는 각각 한 줄씩 알아냅니다.",
 		"§7패시브 §8- §c전쟁 병기§f: 모든 피해를 §c$[GET_DAMAGE_INCREASE]배§f로 받습니다.",
 		" 그 대신, 피해를 $[EVADE]% 확률로 §b회피§f합니다.",
-		"§7검 들고 F §8- §3절박한 시도§f: 3초간 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_DAMAGE_INCREASE]배§f로 받습니다.",
+		"§7검 들고 F §8- §3절박한 시도§f: 3초간 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_DAMAGE_INCREASED]배§f로 받습니다.",
 		" 이 피해로 사망할 경우 피해량의 2.5배의 체력으로 부활하고, 폭발을 일으킵니다.",
 		" 또한 영구 공격력 §c$[DAMAGE_INCREASE]%§f를 획득합니다. $[COOLDOWN]",
-		" 다만 자폭에 실패할 경우 체력이 §c§l1§f이 됩니다."
+		" 다만 자폭에 실패할 경우 매번 영구적으로 받는 피해량이 §c§l$[GET_DAMAGE_ADD_INCREASE]%§f 증가합니다."
 		},
 		summarize = {
 		"대상 당 한 번 피해를 받으면 대상의 §a능력 설명 한 줄§f을 읽습니다.",
@@ -77,8 +77,8 @@ public class Alte extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Double> SKILL_GET_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increase", 2.3,
+	public static final SettingObject<Double> SKILL_GET_DAMAGE_INCREASED = 
+			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increase", 2.5,
 			"# 절박한 시도 간 받는 피해량 증가 배율") {
 
 		@Override
@@ -110,6 +110,17 @@ public class Alte extends AbilityBase {
 
 	};
 	
+	public static final SettingObject<Integer> GET_DAMAGE_ADD_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(Alte.class, "damage-increase", 10,
+			"# 영구 받는 피해량 증가량", "# 단위: %") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Alte.class, "cooldown", 90,
             "# 쿨타임") {
@@ -130,10 +141,12 @@ public class Alte extends AbilityBase {
 	private static final Set<Material> swords;
 	private final Random random = new Random();
 	private final double getIncrease = GET_DAMAGE_INCREASE.getValue();
-	private final double skillgetIncrease = SKILL_GET_DAMAGE_INCREASE.getValue();
+	private final double skillgetIncrease = SKILL_GET_DAMAGE_INCREASED.getValue();
+	private final int addIncrease = GET_DAMAGE_ADD_INCREASE.getValue();
 	private final int evade = EVADE.getValue();
 	private final int damageincrease = DAMAGE_INCREASE.getValue();
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private int failstack = 0;
 	private int stack = 0;
 	private ActionbarChannel ac = newActionbarChannel();
 	private boolean success = false;
@@ -205,7 +218,7 @@ public class Alte extends AbilityBase {
 				success = false;
 			} else {
 				ParticleLib.DAMAGE_INDICATOR.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
-				Healths.setHealth(getPlayer(), 1);
+				failstack++;
 			}
 			cooldown.start();
 			bossBar.removeAll();
@@ -268,7 +281,7 @@ public class Alte extends AbilityBase {
 	        			}
 	        			skill.stop(false);
 	        		} else {
-	        			e.setDamage(e.getDamage() * getIncrease);
+	        			e.setDamage(e.getDamage() * (getIncrease + (addIncrease * failstack * 0.01)));
 	        		}	
 	    		}
 	    	}

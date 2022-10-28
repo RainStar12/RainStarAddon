@@ -192,7 +192,10 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 				if (cooldown != 0) {
 					getPlayer().sendMessage("§4[§c!§4] §f아직 쿨타임입니다.");
 					return false;
-				} else timeaccel.start();
+				} else {
+					effectcount = 0;
+					timeaccel.start();
+				}
 			}
 			return true;
 		}
@@ -292,6 +295,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     			if (cooldown == 0) {
     				if (count % 2 == 0) {
         				if (effectcount <= 5) {
+        					SoundLib.BELL.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
         					effectcount++;
         					bossbar.setColor(effectcount % 2 == 0 ? BarColor.WHITE : BarColor.YELLOW);
         					bossbar.setTitle("§e사용 가능");
@@ -385,13 +389,15 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		}
     		
     		if (count % 2 == 0) {
+    			double nowmultiply = 1 + (usedtime * 2 / (double) maxtime);
+    			
     			if (add && y >= 0.8) add = false;
     			else if (!add && y <= 0) add = true;
 
-    			y = add ? y + 0.1 : y - 0.1;
+    			y = add ? Math.min(0.8, y + (0.1 * nowmultiply)) : Math.max(0, y - (0.1 * nowmultiply));
     			stack = stack < 15 ? stack + 1 : 0;
     			
-				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+				for (Location loc : circle.toLocations(getPlayer().getLocation().add(0, y, 0))) {
 					ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(Math.max(0, stack - 1)));
 				}
     		}
@@ -402,7 +408,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.0001, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.0002));
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.00015));
 				}
     		} else stop(false);
     	}
@@ -425,7 +431,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer faster = new AbilityTimer(TaskType.REVERSE, 50) {
+	private final AbilityTimer faster = new AbilityTimer(TaskType.REVERSE, 98) {
 		
 		@Override
 		public void onStart() {
@@ -435,16 +441,22 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		switch(count) {
-    		case 30:
+    		case 78:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
     			break;
-    		case 24:
+    		case 60:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
     			break;
-    		case 12:
+    		case 44:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
     			break;
-    		case 4:
+    		case 30:
+    			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
+    			break;
+    		case 18:
+    			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
+    			break;
+    		case 8:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
     			break;
     		}
@@ -457,7 +469,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 
-	private final AbilityTimer slower = new AbilityTimer(TaskType.NORMAL, 50) {
+	private final AbilityTimer slower = new AbilityTimer(TaskType.NORMAL, 98) {
 		
 		@Override
 		public void onStart() {
@@ -467,16 +479,22 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		switch(count) {
-    		case 30:
+    		case 78:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
     			break;
-    		case 24:
+    		case 60:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
     			break;
-    		case 12:
+    		case 44:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
     			break;
-    		case 4:
+    		case 30:
+    			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
+    			break;
+    		case 18:
+    			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 2f);
+    			break;
+    		case 8:
     			SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f);
     			break;
     		}

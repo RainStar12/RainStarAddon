@@ -1,5 +1,8 @@
 package RainStarAbility;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -217,11 +220,12 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
 	    			if (p.getEffects().size() > 0) {
-		    			for (Effect effects : p.getEffects()) {
+	    				Collection<Effect> effectlist = new HashSet<>(p.getEffects());
+		    			for (Effect effects : effectlist) {
 		    				if (!effects.getRegistration().equals(Hemophilia.registration)) {
-			    				int duration = (int) (effects.getCount() * effects.getPeriod() * 0.25);
+			    				int duration = (int) (effects.getCount() * effects.getPeriod());
 			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
-			    				Bleed.apply(p, TimeUnit.TICKS, duration);	
+			    				Bleed.apply(p, TimeUnit.TICKS, duration);
 		    				}
 		    			}	
 		    			p.removeEffects(new Predicate<Effect>() {

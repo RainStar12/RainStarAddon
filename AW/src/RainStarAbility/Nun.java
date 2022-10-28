@@ -41,8 +41,8 @@ import daybreak.google.common.collect.ImmutableMap;
 @AbilityManifest(name = "수녀", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §b십자가§f: §c언데드§f 종족에게 가하는 피해가 $[UNDEAD_DAMAGE]% 증가합니다.",
 		" §b신§f 종족에게 받는 피해가 $[GOD_DAMAGE_DECREASE]% 감소합니다.",
-		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING]초간 간절히 기도합니다. $[COOLDOWN]",
-		" 기도가 끝나면 무작위 §b신§f이 $[DURATION]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
+		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING_COUNT]초간 간절히 기도합니다. $[COOLDOWN]",
+		" 기도가 끝나면 무작위 §b신§f이 $[GOD_DURATION]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
 		" 강신 도중엔 사망하지 않으며, §b신§f의 등급당 $[RANK_DAMAGE]%의 §c추가 피해§f를 입힙니다.",
 		"§8[§7HIDDEN§8] §b11:25§f: 예수께서 이르시되 나는 부활이요 생명이니",
 		"§e---------------------------------",
@@ -79,8 +79,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	};
 	
-	public static final SettingObject<Double> CHANNELING = abilitySettings.new SettingObject<Double>(
-			Nun.class, "channeling", 5.0, "# 기도하는 시간", "# 단위: 초") {
+	public static final SettingObject<Double> CHANNELING_COUNT = abilitySettings.new SettingObject<Double>(
+			Nun.class, "channeling", 3.0, "# 기도하는 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -88,8 +88,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	
-	public static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(
-			Nun.class, "being-god-duration", 15.0, "# 강신 지속시간", "# 단위: 초") {
+	public static final SettingObject<Double> GOD_DURATION = abilitySettings.new SettingObject<Double>(
+			Nun.class, "being-god-duration", 30.0, "# 강신 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -140,8 +140,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	private boolean risky = false;
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
 	private final int chance = CHANCE.getValue();
-	private final int channelingDur = (int) (CHANNELING.getValue() * 20);
-	private final int duration = (int) (DURATION.getValue() * 20);
+	private final int channelingDur = (int) (CHANNELING_COUNT.getValue() * 20);
+	private final int duration = (int) (GOD_DURATION.getValue() * 20);
 	private final double decreaseDMG = (GOD_DAMAGE_DECREASE.getValue() * 0.01);
 	private final double undeadDMG = 1 + (UNDEAD_DAMAGE.getValue() * 0.01);
 	private final double rankDMG = (RANK_DAMAGE.getValue() * 0.01);

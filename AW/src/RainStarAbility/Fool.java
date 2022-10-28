@@ -100,7 +100,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), 50);
 	private final int delay = (int) (DELAY.getValue() * 20);
 	private final int multiply = MULTIPLY.getValue();
-	private final double percentage = 1 + (PERCENTAGE.getValue() * 0.01);
+	private final double percentage = (PERCENTAGE.getValue() * 0.01);
 	private final DecimalFormat df = new DecimalFormat("0.00");
 	private final DecimalFormat df2 = new DecimalFormat("0.0");
 	private final double chance = CHANCE.getValue() * 0.01;

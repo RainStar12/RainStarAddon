@@ -58,7 +58,7 @@ public class Chatterbox extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DEADLINE = 
-			abilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline", 10.0,
+			abilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline", 15.0,
 			"# 받아쓰기 제한시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {

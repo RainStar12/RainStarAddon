@@ -40,7 +40,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7패시브 §8- §3아머§f: 기본 공격력이 §c$[DAMAGE_DECREASE]% 감소§f합니다.",
         " 매번 §e감소시킨 피해량§f만큼 §b아머§f를 획득해, §b아머§f 당 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
         " §b아머§f는 $[MAX_STACK]까지 모을 수 있으며, $[DURATION]초간 갱신하지 않을 경우 전부 잃습니다.",
-        "§7철괴 우클릭 §8- §3방어 상태§f: §79.15초§f간 §e대미지 감소 효과§8(§7방어력, 저항 등§8)§f를 2배로 받습니다.",
+        "§7철괴 우클릭 §8- §3방어 상태§f: §79.15초§f간 §e대미지 감소 효과§f를 2배로 받습니다.",
         " 방어 상태간 §b아머§f 최대치가 $[MAX_STACK_INCREASED]까지 증가합니다. $[SKILL_COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §7Woojaekkun"
 		},
@@ -103,7 +103,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> MAX_STACK_INCREASED = abilitySettings.new SettingObject<Integer>(
-			Panda.class, "max-stack", 10, "# 증가된 아머 최대 스택") {
+			Panda.class, "max-stack-increased", 10, "# 증가된 아머 최대 스택") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -132,7 +132,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	private final DecimalFormat df = new DecimalFormat("0.00");
 	private Map<Player, ShieldSpin> shieldMap = new HashMap<>();
 	private int stack = 0;
-	private int ministack = 0;
+	private double ministack = 0;
 	private double firstDamage = 0;
 	private static final double pointrange = 0.10;
 	private Random random = new Random();
@@ -278,7 +278,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac2.update("§b아머§f: §3" + stack + "§7/§9" + (protecting.isRunning() ? maxstack : increasedmaxstack));
+			ac2.update("§b아머§f: §3" + stack + "§7/§9" + (protecting.isRunning() ? increasedmaxstack : maxstack));
 		}
 		
 		@Override
@@ -320,6 +320,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 			if (shieldMap.containsKey(getPlayer())) shieldMap.get(getPlayer()).stop(false);
 			ac.update(null);
 			cooldown.start();
+			if (stack > 5) stack = 5;
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -471,7 +472,8 @@ public class Panda extends AbilityBase implements ActiveHandler {
 			ministack += decreasePercent;
 			if (ministack > 1) {
 				ministack -= 1;
-				stack = Math.min(protecting.isRunning() ? increasedmaxstack : maxstack, stack + 1);
+				if (protecting.isRunning()) stack = Math.min(increasedmaxstack, stack + 1);
+				else stack = Math.min(maxstack, stack + 1);
 				if (!stackduration.isRunning()) stackduration.start();
 				else stackduration.setCount(duration);
 			}	

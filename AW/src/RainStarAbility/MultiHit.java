@@ -130,10 +130,10 @@ public class MultiHit extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = 5)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
-		if (e.getDamager().equals(getPlayer()) && !attacking.isRunning()) {
+		if (e.getDamager().equals(getPlayer()) && !attacking.isRunning() && !e.isCancelled()) {
 			dmg = e.getDamage() * (multiply / (double) 100);
 			e.setDamage(dmg);
 			target = (LivingEntity) e.getEntity();

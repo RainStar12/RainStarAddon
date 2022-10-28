@@ -50,13 +50,13 @@ import daybreak.google.common.base.Strings;
 @AbilityManifest(name = "러시안 룰렛", rank = Rank.S, species = Species.HUMAN, explain = {
 		"탄이 비었을 때 철괴 우클릭 시, 실탄 하나를 넣고 실린더를 돌립니다. $[COOLDOWN]",
 		"이후 철괴 우클릭으로 한 발씩 발사 가능합니다. 실탄을 발사할 경우,",
-		"맞힌 대상에게 §c회복 불능§f $[HEALBAN]초와 §b트루 대미지§f $[TRUEDMG]%를 입힙니다.",
+		"맞힌 대상에게 §c회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
 		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
 		},
 		summarize = {
 		"실린더가 빈 상태에서 §7철괴 우클릭으로§f 10칸 중 한 곳에 실탄을 장전합니다.",
 		"이후 §7철괴 우클릭으로§f 한 발씩 발사하고, 실탄 발사 시",
-		"맞힌 대상에게 §c회복 불능§f $[HEALBAN]초와 §b트루 대미지§f $[TRUEDMG]%를 입힙니다.",
+		"맞힌 대상에게 §c회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
 		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
 		})
 public class RussianRoulette extends AbilityBase implements ActiveHandler {
@@ -78,7 +78,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
         }
     };
 	
-	public static final SettingObject<Double> HEALBAN = 
+	public static final SettingObject<Double> HEAL_BAN = 
 			abilitySettings.new SettingObject<Double>(RussianRoulette.class, "heal-ban-duration", 15.0,
             "# 회복 불능 지속 시간") {
         @Override
@@ -96,8 +96,8 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
         }
     };
     
-	public static final SettingObject<Integer> TRUEDMG = 
-			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "true-damage", 25,
+	public static final SettingObject<Integer> TRUE_DMG = 
+			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "true-damage", 33,
             "# 대상에게 입힐 트루 대미지", "# 단위: 최대 체력의 %") {
         @Override
         public boolean condition(Integer value) {
@@ -111,9 +111,9 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     private Random random = new Random();
     private int truecylinder = 0;
     private Bullet bullet = null;
-    private final int healban = (int) (HEALBAN.getValue() * 20);
+    private final int healban = (int) (HEAL_BAN.getValue() * 20);
     private final int stun = (int) (STUN.getValue() * 20);
-    private final int damage = TRUEDMG.getValue();
+    private final int damage = TRUE_DMG.getValue();
     
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
@@ -131,7 +131,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		SoundLib.BLOCK_IRON_DOOR_CLOSE.playSound(getPlayer(), 1, 1.7f);
-    		if (truecylinder == count) ac.update(Strings.repeat("§b○", Math.max(0, count - 1)) + "§9●" + Strings.repeat("§b○", Math.max(0, 10 - count)));
+    		if (truecylinder == count) ac.update(Strings.repeat("§b○", Math.max(0, count - 1)) + "§d●" + Strings.repeat("§b○", Math.max(0, 10 - count)));
     		else ac.update(Strings.repeat("§b○", Math.max(0, count - 1)) + "§b●" + Strings.repeat("§b○", Math.max(0, 10 - count)));
     	}
     	
@@ -179,7 +179,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 			setPeriod(TimeUnit.TICKS, 1);
 			RussianRoulette.this.bullet = this;
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-1.25, -1.25, -1.25, 1.25, 1.25, 1.25);
 			this.forward = arrowVelocity.multiply(3.75);
 			this.damage = damage;
 			this.color = color;

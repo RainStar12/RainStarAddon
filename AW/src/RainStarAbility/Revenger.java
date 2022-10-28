@@ -13,6 +13,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -81,6 +83,7 @@ public class Revenger extends AbilityBase {
 	private final int wait = WAIT.getValue() * 20;
 	private final int duration = DURATION.getValue();
 	private final double percentage = PERCENTAGE.getValue() * 0.01;
+	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 10000, 0, true, false);
 	
 	public AbilityTimer ghost = new AbilityTimer(wait) {
 		
@@ -105,6 +108,7 @@ public class Revenger extends AbilityBase {
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
 			hpdecrease.start();
 			revengeParticle.start();
+			getPlayer().addPotionEffect(speed);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -183,6 +187,7 @@ public class Revenger extends AbilityBase {
 			hpdecrease.stop(false);
 			revengeParticle.stop(false);
 			revenger = false;
+			getPlayer().removePotionEffect(PotionEffectType.SPEED);
 		}
 	}
 

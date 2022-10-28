@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "글리치드 크라운", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
-        "§7철괴 좌클릭 §8- §c?????§f: 최대 10개까지, 무작위 능력을 배열에 집어넣습니다.",
+        "§7철괴 좌클릭 §8- §c?????§f: 최대 15개까지, 무작위 능력을 배열에 집어넣습니다.",
         " 배열에 능력이 많을수록 순환 속도는 점점 더 빨라집니다.",
         "§7철괴 우클릭 §8- §7§k?????§f: 빠르게 순환하고 있는 능력들 중, 우클릭한 타이밍의",
         " 현재 능력을 자신의 능력으로 변경합니다. 이후 §e§o글리치드 크라운§f 효과는 사라집니다."
@@ -119,38 +119,53 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 				passive.stop(false);
 				return true;
 			} else if (clicktype == ClickType.LEFT_CLICK) {
-				if (abilities.size() < 9) {
+				if (abilities.size() < 14) {
 					abilities.add(getRandomAbility());
 					getPlayer().sendMessage("§6[§e!§6] §f능력 " + rankcolor.get(abilities.get(abilities.size() - 1).getManifest().rank()) + abilities.get(abilities.size() - 1).getManifest().name() + "§f를 배열에 추가하였습니다.");
 					switch(abilities.size()) {
 					case 0:
-						period = 20;
+						period = 60;
 						break;
 					case 1:
-						period = 18;
+						period = 40;
 						break;
 					case 2:
-						period = 15;
+						period = 20;
 						break;
 					case 3:
-						period = 13;
+						period = 18;
 						break;
 					case 4:
-						period = 10;
+						period = 15;
 						break;
 					case 5:
-						period = 7;
+						period = 13;
 						break;
 					case 6:
-						period = 5;
+						period = 10;
 						break;
 					case 7:
-						period = 4;
+						period = 7;
 						break;
 					case 8:
-						period = 2;
+						period = 5;
 						break;
 					case 9:
+						period = 4;
+						break;
+					case 10:
+						period = 3;
+						break;
+					case 11:
+						period = 2;
+						break;
+					case 12:
+						period = 1;
+						break;
+					case 13:
+						period = 1;
+						break;
+					case 14:
 						period = 1;
 						break;
 					}

@@ -505,6 +505,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			};iterator.hasNext();) {
 				final Location location = iterator.next();
 				ParticleLib.REDSTONE.spawnParticle(location, random.pick(orangecolors));
+				lastloc = newLocation;
 			}
     	}
     	

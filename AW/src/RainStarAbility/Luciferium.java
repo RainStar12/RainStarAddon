@@ -98,7 +98,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     private int strength = STRENGTH.getValue();
     private int speed = SPEED.getValue();
     private int resistance = RESISTANCE.getValue();
-    private int unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
+    private int unknown = (int) ((MAX_NOT_TAKE.getValue() * 20) / 6.0);
     
     public AbilityTimer nextpill = new AbilityTimer(MAX_NOT_TAKE.getValue() * 20) {
     	
@@ -138,7 +138,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), 0.25, 0, 0.25, 50, 1);
 			takecount.setCount(0);
 			nextpill.setCount(MAX_NOT_TAKE.getValue() * 20);
-			unknown = (int) (MAX_NOT_TAKE.getValue() / 6.0);
+			unknown = (int) ((MAX_NOT_TAKE.getValue() * 20) / 6.0);
 		}
 	}
 	
