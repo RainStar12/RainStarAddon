@@ -2,15 +2,18 @@ package RainStarAbility;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -123,6 +126,7 @@ public class King extends AbilityBase {
     private final int maxCount = 300;
     private final List<RGB> gradations = Gradient.createGradient(10, RGB.of(227, 1, 1), RGB.BLACK);
 	private int stack = 0;
+	private AttributeModifier decmovespeed;
     
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
@@ -131,6 +135,11 @@ public class King extends AbilityBase {
 	}
     
     private AbilityTimer timer = new AbilityTimer() {
+    	
+    	@Override
+    	public void onStart() {
+    		decmovespeed = new AttributeModifier(UUID.randomUUID(), "decmovespeed", -0.2, Operation.ADD_SCALAR);
+    	}
 	
     	@Override
     	public void run(int count) {
@@ -149,7 +158,21 @@ public class King extends AbilityBase {
         		} else stack = 11;
         		stack--;
     		}
+    		
+    		for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, getPlayer().getLocation(), range, range, predicate)) {
+    			entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.9, -0.65, entity.getVelocity().getZ() * 0.9)));	
+    		}
     		range += addrange;
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	public void onSilentEnd() {
+    		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(decmovespeed);
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -177,23 +200,6 @@ public class King extends AbilityBase {
 			else if (getPlayer().equals(e.getEntity())) damager.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(damager.getLocation().toVector()).normalize().setY(0).multiply(2)));
 		}
     }
-
-	@SubscribeEvent
-	public void onPlayerMove(PlayerMoveEvent e) {
-		final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
-		if (toY > fromY) {
-			double dx, dy, dz;
-			final Location from = e.getFrom(), to = e.getTo();
-			dx = to.getX() - from.getX();
-			dy = to.getY() - from.getY();
-			dz = to.getZ() - from.getZ();
-			if (toY - fromY <= 1) {
-				if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer()))
-					e.getPlayer().setVelocity(new Vector((dx * 0.8333), (dy * 0.8333), (dz * 0.8333)));	
-				if (e.getPlayer().equals(getPlayer())) e.getPlayer().setVelocity(new Vector((dx * 0.9), (dy * 0.9), (dz * 0.9)));
-			}
-		}
-	}
 	
 	@SubscribeEvent
 	public void onActiveSkill(AbilityActiveSkillEvent e) {
