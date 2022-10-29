@@ -106,11 +106,6 @@ public class Echo extends AbilityBase {
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
 	};
 	
 	private final ActionbarChannel ac = newActionbarChannel();

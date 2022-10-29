@@ -80,7 +80,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	public static final SettingObject<Double> CHANNELING_COUNT = abilitySettings.new SettingObject<Double>(
-			Nun.class, "channeling", 3.0, "# 기도하는 시간", "# 단위: 초") {
+			Nun.class, "channeling-count", 3.0, "# 기도하는 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -89,7 +89,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	
 	public static final SettingObject<Double> GOD_DURATION = abilitySettings.new SettingObject<Double>(
-			Nun.class, "being-god-duration", 30.0, "# 강신 지속시간", "# 단위: 초") {
+			Nun.class, "god-duration", 30.0, "# 강신 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;

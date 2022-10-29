@@ -89,7 +89,7 @@ public class Detection extends AbilityBase {
 		super(participant);
 	}
 
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(SKILL_COOLDOWN.getValue(), CooldownDecrease._50);
 	private final int duration = DURATION.getValue();
 
 	private Set<UUID> noatk = new HashSet<>();
@@ -142,8 +142,8 @@ public class Detection extends AbilityBase {
 	
 	};
 	 
-	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Detection.class, "cooldown", 20,
+	public static final SettingObject<Integer> SKILL_COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Detection.class, "skill-cooldown", 15,
             "# 쿨타임") {
 
         @Override

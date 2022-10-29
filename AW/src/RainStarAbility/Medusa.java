@@ -72,7 +72,7 @@ public class Medusa extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> LOOKING_COUNT = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "look-count", 2.0,
+			abilitySettings.new SettingObject<Double>(Medusa.class, "looking-count", 2.0,
             "# 바라볼 수 있는 시간 최대치", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {

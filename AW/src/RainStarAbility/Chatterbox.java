@@ -29,14 +29,14 @@ import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "수다쟁이", rank = Rank.A, species = Species.ANIMAL, explain = {
 		"$[PERIOD]초마다 채팅창에 §a속담 문장 한 줄§f이 나옵니다.",
-		"$[DEADLINE]초 안에 문장을 채팅으로 §b§l§n§o완벽하게§f 작성할 경우,",
+		"$[DEADLINE_TIME]초 안에 문장을 채팅으로 §b§l§n§o완벽하게§f 작성할 경우,",
 		"무작위 포션 버프를 획득할 수 있습니다.",
 		"문장이 나오는 동안은 주고받는 피해가 $[DECREASE]% 경감됩니다.",
 		"§b[§7아이디어 제공자§b] §dsudapeople"
 		},
 		summarize = {
 		"$[PERIOD]초마다 채팅창에 §a속담 문장 한 줄§f이 나옵니다.",
-		"$[DEADLINE]초 안에 문장을 채팅으로 §b§l§n§o완벽하게§f 작성할 경우,",
+		"$[DEADLINE_TIME]초 안에 문장을 채팅으로 §b§l§n§o완벽하게§f 작성할 경우,",
 		"무작위 포션 버프를 획득할 수 있습니다.",
 		"문장이 나오는 동안은 주고받는 피해가 $[DECREASE]% 경감됩니다."
 		})
@@ -57,8 +57,8 @@ public class Chatterbox extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> DEADLINE = 
-			abilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline", 15.0,
+	public static final SettingObject<Double> DEADLINE_TIME = 
+			abilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline-time", 15.0,
 			"# 받아쓰기 제한시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -2128,7 +2128,7 @@ public class Chatterbox extends AbilityBase {
 	private static final String[] englishlist = englishes.split("#");
 	
 	private final int period = (int) (PERIOD.getValue() * 20 * Wreck.calculateDecreasedAmount(33));
-	private final int duration = (int) (DEADLINE.getValue() * 20);
+	private final int duration = (int) (DEADLINE_TIME.getValue() * 20);
 	private final double decrease = 1 - (DECREASE.getValue() * 0.01);
 	private final Random random = new Random();
 	private String nowProverb = null;

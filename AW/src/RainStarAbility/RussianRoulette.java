@@ -97,7 +97,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> TRUE_DMG = 
-			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "true-damage", 33,
+			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "projectile-true-damage", 33,
             "# 대상에게 입힐 트루 대미지", "# 단위: 최대 체력의 %") {
         @Override
         public boolean condition(Integer value) {

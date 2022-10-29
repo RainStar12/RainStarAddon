@@ -9,7 +9,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @AbilityManifest(name = "공기", rank = Rank.A, species = Species.HUMAN, explain = {
 		"능력도 없는 당신은 존재감이 너무 없는 나머지,", 
-		"다른 능력의 지정 대상이 되지 않습니다."
+		"능력의 지정 대상이 되지 않습니다. §8(§7타게팅 불가§8)"
 		},
 		summarize = {
 		"능력의 지정 대상이 되지 않습니다. §8(§7타게팅 불가§8)"

@@ -78,7 +78,7 @@ public class PrecisionAiming extends AbilityBase {
 		super(participant);
 	}
 	
-	private final int range = RANGE.getValue();
+	private int range = RANGE.getValue();
 	private final int ammo = AMMO_SIZE.getValue();
 	private final int reload = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * RELOAD.getValue() : RELOAD.getValue());
 	private final ActionbarChannel ac = newActionbarChannel();
@@ -237,10 +237,11 @@ public class PrecisionAiming extends AbilityBase {
 				if (stack == 0) {
 					if (target != null) {
 						if (e.getEntity().equals(target) && target.getHealth() - e.getFinalDamage() <= 0) {
-							Healths.setHealth(getPlayer(), getPlayer().getHealth() * 4);
+							Healths.setHealth(getPlayer(), getPlayer().getHealth() * 8);
 			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f나를 죽이려 한 대상에게 마지막 화살로 되갚음해주었습니다.");
 			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c아직 한 발 남았다§f를 달성하였습니다.");
 			    			ammocharging.start();
+			    			range += 10;
 			    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 							final Firework firework = getPlayer().getWorld().spawn(target.getEyeLocation().add(0, 2, 0), Firework.class);
 							final FireworkMeta meta = firework.getFireworkMeta();

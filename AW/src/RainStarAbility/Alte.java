@@ -78,7 +78,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> SKILL_GET_DAMAGE_INCREASED = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increase", 2.5,
+			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increased", 2.5,
 			"# 절박한 시도 간 받는 피해량 증가 배율") {
 
 		@Override
@@ -111,7 +111,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> GET_DAMAGE_ADD_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Alte.class, "damage-increase", 10,
+			abilitySettings.new SettingObject<Integer>(Alte.class, "get-damage-add-increase", 10,
 			"# 영구 받는 피해량 증가량", "# 단위: %") {
 
 		@Override

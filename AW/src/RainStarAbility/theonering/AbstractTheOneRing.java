@@ -272,7 +272,7 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
 			if (getPlayer().equals(damager)) {
-				e.setDamage(e.getDamage() + (e.getDamage() * increase));
+				e.setDamage(e.getDamage() * increase);
 			}	
 		}
 	}

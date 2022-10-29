@@ -27,12 +27,12 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "멈춰!", rank = Rank.A, species = Species.HUMAN, explain = {
 		"채팅으로 §c멈춰!§f를 치면 10초 내로 자신에게 피해를 줬던",
-		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[COOLDOWN]",
+		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[SKILL_COOLDOWN]",
 		"§0[§8경직§0]§f 이동, 공격, 체력 회복이 불가능합니다."
 		},
 		summarize = {
 		"채팅으로 §c멈춰!§f를 치면 10초 내로 자신에게 피해를 줬던",
-		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[COOLDOWN]",
+		"모든 플레이어에게 $[STIFFEN_DURATION]초간 §8경직§f 상태이상을 부여합니다. $[SKILL_COOLDOWN]",
 		"§0[§8경직§0]§f 이동, 공격, 체력 회복이 불가능합니다."
 		})
 
@@ -43,8 +43,8 @@ public class Stop extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
-			"cooldown", 30, "# 멈춰! 쿨타임") {
+	public static final SettingObject<Integer> SKILL_COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
+			"skill-cooldown", 60, "# 멈춰! 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -57,7 +57,7 @@ public class Stop extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> STIFFEN_DURATION = abilitySettings.new SettingObject<Double>(Stop.class,
-			"stiffen-duration", 1.5, "# 지속시간") {
+			"stiffen-duration-time", 3.0, "# 지속시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -92,7 +92,7 @@ public class Stop extends AbilityBase {
 	private Set<Player> attackers = new HashSet<>();
 	
 	private final int duration = (int) (STIFFEN_DURATION.getValue() * 20);
-	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private final Cooldown cooldown = new Cooldown(SKILL_COOLDOWN.getValue());
 	
 	@SubscribeEvent(ignoreCancelled = false)
 	public void onPlayerChat(PlayerChatEvent e) {

@@ -1,6 +1,7 @@
 package RainStarAbility;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,7 +75,7 @@ import daybreak.google.common.collect.Iterables;
 		" 근접 피해를 주고, 플라즈마 폭발을 일으키고 대상의 위치로 순간 이동합니다. $[RIGHT_COOLDOWN]",
 		"§7상태이상 §8- §d감전§f: 매 2초마다 0.5초간 기절합니다. 감전 도중에 기절 효과가 새로이",
 		" 들어올 때마다 획득한 기절의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다.",
-		"§8[§7HIDDEN§8] §b초전도§f: 이거 뜨고 있는거야?"
+		"§8[§7HIDDEN§8] §b초전도§f: 원소 반응."
 		},
 		summarize = {
 		"자신이 주는 모든 §c근접 피해 외 피해§f는 피해량에 비례한 §e기절 부여§f로 대체됩니다.",
@@ -428,6 +429,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		private final CustomEntity entity;
 		private final Predicate<Entity> predicate;
 		private final Iterator<Vector> twist;
+		private final Set<Player> hitPlayer = new HashSet<>();
 		private Vector forward;
 		private int stacks = 0;
 		private boolean turns = true;
@@ -463,6 +465,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			this.predicate = new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
+					if (hitPlayer.contains(entity)) return false;
 					if (entity.equals(shooter)) return false;
 					if (entity instanceof ArmorStand) return false;
 					if (entity instanceof Player) {
@@ -523,6 +526,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 					player.getWorld().strikeLightningEffect(player.getLocation());
 					player.damage(15, getPlayer());
 					player.getWorld().createExplosion(player.getLocation(), 1.4f, false, false);
+					hitPlayer.add(player);
 					new BukkitRunnable() {
 						@Override
 						public void run() {
