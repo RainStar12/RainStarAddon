@@ -83,7 +83,7 @@ public class Revenger extends AbilityBase {
 	private final int wait = WAIT.getValue() * 20;
 	private final int duration = DURATION.getValue();
 	private final double percentage = PERCENTAGE.getValue() * 0.01;
-	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 10000, 0, true, false);
+	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, duration * 20, 1, true, false);
 	
 	public AbilityTimer ghost = new AbilityTimer(wait) {
 		
@@ -187,7 +187,6 @@ public class Revenger extends AbilityBase {
 			hpdecrease.stop(false);
 			revengeParticle.stop(false);
 			revenger = false;
-			getPlayer().removePotionEffect(PotionEffectType.SPEED);
 		}
 	}
 

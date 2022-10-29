@@ -62,7 +62,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "여우 구슬", rank = Rank.L, species = Species.OTHERS, explain = {
 		"주변 $[EATING_RANGE]칸 내 생명체가 회복할 때 정기를 획득합니다.",
 		"구슬의 효과는 $[CHANGE_PERIOD]초마다 현재 상황에 적합하게 변경됩니다.",
-		"§a회복 §7-§f 5초 지속의 §d초회복§f 상태를 하나 부여합니다. $[MANA_HEAL]",
+		"§a회복 §7-§f 5초 지속의 §d초회복§f 상태를 하나 부여합니다. $[MANA_HEALING]",
 		"§b속사 §7-§f $[RAPID_RANGE]칸 내의 가장 가까운 적에게 §c고정 피해§f §50.211§f의 투사체를 §b속사§f합니다.",
 		" 속사 피해는 기본 무적 시스템을 무시하고 계속 입힙니다. $[MANA_RAPID]",
 		" 속사 피해를 입은 적은 밀려나지 않고 반대로 끌려옵니다.",
@@ -178,9 +178,9 @@ public class FoxCrystalBall extends AbilityBase {
 		
 	};
 	
-	public static final SettingObject<Integer> MANA_HEAL 
+	public static final SettingObject<Integer> MANA_HEALING 
 	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"mana-heal", 50, "# 회복 상태의 마나 소모량") {
+			"mana-heal", 70, "# 회복 상태의 마나 소모량") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -298,7 +298,7 @@ public class FoxCrystalBall extends AbilityBase {
 	private final int homingRange = HOMING_RANGE.getValue();
 	
 	private final int pierceMana = MANA_PIERCE_SHOT.getValue();
-	private final int healMana = MANA_HEAL.getValue();
+	private final int healMana = MANA_HEALING.getValue();
 	private final int rapidMana = MANA_RAPID.getValue();
 	private final int homingMana = MANA_HOMING.getValue();
 	
