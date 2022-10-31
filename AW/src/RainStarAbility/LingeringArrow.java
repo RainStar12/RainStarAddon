@@ -1,6 +1,7 @@
 package RainStarAbility;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Color;
@@ -34,11 +35,11 @@ import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "잔류 화살", rank = Rank.B, species = Species.HUMAN, explain = {
 		"활로 적을 맞히면 포션 지대를 잔류시킵니다. $[COOLDOWN]",
-		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE]"
+		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE_COOLDOWN]"
 		},
 		summarize = {
 		"활로 적을 맞히면 포션 지대를 잔류시킵니다. $[COOLDOWN]",
-		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE]"
+		"철괴 우클릭 시 포션 효과를 다음으로 넘깁니다. $[ACTIVE_COOLDOWN]"
 		})
 
 @Tips(tip = {
@@ -70,7 +71,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	}
 	
 	private final Cooldown arrowC = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
-	private final Cooldown activeC = new Cooldown(ACTIVE.getValue(), CooldownDecrease._50);
+	private final Cooldown activeC = new Cooldown(ACTIVE_COOLDOWN.getValue(), CooldownDecrease._50);
 	private ActionbarChannel actionbar = newActionbarChannel();
 	private Random random = new Random();
 	
@@ -86,8 +87,8 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
 		}
-	}, ACTIVE = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
-			"active-cooldown", 30, "# 변경 쿨타임") {
+	}, ACTIVE_COOLDOWN = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
+			"change-cooldown", 10, "# 변경 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -99,24 +100,82 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private PotionEffectType potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
+	private PotionEffectType potionEffect = POTION_LIST.get(random.nextInt(POTION_LIST.size() - 1));
 
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
+			potionEffect = POTION_LIST.get(random.nextInt(POTION_LIST.size() - 1));
 			actionbar.update("§b다음 효과§f: §e" + POTION_TYPES.get(potionEffect).getLeft());
 		}
 	}
 
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !activeC.isCooldown()) {
-			potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
+			potionEffect = POTION_LIST.get(random.nextInt(POTION_LIST.size() - 1));
 			actionbar.update("§b다음 효과§f: §e" + POTION_TYPES.get(potionEffect).getLeft());
 			return activeC.start();
 		}
 		return false;
 	}
+	
+	@SuppressWarnings("serial")
+	private static final List<PotionEffectType> POTION_LIST = new ArrayList<PotionEffectType>() {
+		{
+			add(PotionEffectType.REGENERATION);
+			add(PotionEffectType.SPEED);
+			add(PotionEffectType.FIRE_RESISTANCE);
+			add(PotionEffectType.HEAL);
+			add(PotionEffectType.NIGHT_VISION);
+			add(PotionEffectType.INCREASE_DAMAGE);
+			add(PotionEffectType.JUMP);
+			add(PotionEffectType.WATER_BREATHING);
+			add(PotionEffectType.INVISIBILITY);
+			add(PotionEffectType.LUCK);
+			add(PotionEffectType.ABSORPTION);
+			add(PotionEffectType.FAST_DIGGING);
+			add(PotionEffectType.HEALTH_BOOST);
+			add(PotionEffectType.SATURATION);
+			add(PotionEffectType.DAMAGE_RESISTANCE);
+			
+			add(PotionEffectType.POISON);
+			add(PotionEffectType.POISON);
+			add(PotionEffectType.POISON);
+			add(PotionEffectType.WEAKNESS);
+			add(PotionEffectType.WEAKNESS);
+			add(PotionEffectType.WEAKNESS);
+			add(PotionEffectType.SLOW);
+			add(PotionEffectType.SLOW);
+			add(PotionEffectType.SLOW);
+			add(PotionEffectType.HARM);
+			add(PotionEffectType.HARM);
+			add(PotionEffectType.HARM);
+			add(PotionEffectType.WITHER);
+			add(PotionEffectType.WITHER);
+			add(PotionEffectType.WITHER);
+			add(PotionEffectType.BLINDNESS);
+			add(PotionEffectType.BLINDNESS);
+			add(PotionEffectType.BLINDNESS);
+			add(PotionEffectType.CONFUSION);
+			add(PotionEffectType.CONFUSION);
+			add(PotionEffectType.CONFUSION);
+			add(PotionEffectType.GLOWING);
+			add(PotionEffectType.GLOWING);
+			add(PotionEffectType.GLOWING);
+			add(PotionEffectType.HUNGER);
+			add(PotionEffectType.HUNGER);
+			add(PotionEffectType.HUNGER);
+			add(PotionEffectType.LEVITATION);
+			add(PotionEffectType.LEVITATION);
+			add(PotionEffectType.LEVITATION);
+			add(PotionEffectType.SLOW_DIGGING);
+			add(PotionEffectType.SLOW_DIGGING);
+			add(PotionEffectType.SLOW_DIGGING);
+			add(PotionEffectType.UNLUCK);
+			add(PotionEffectType.UNLUCK);
+			add(PotionEffectType.UNLUCK);
+		}
+	};
 	
 	private static final ImmutableMap<PotionEffectType, Pair<String, Color>> POTION_TYPES 
 	= ImmutableMap.<PotionEffectType, Pair<String, Color>>builder()
@@ -161,14 +220,14 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 				AreaEffectCloud AEC
 					= target.getPlayer().getWorld().spawn(target.getPlayer().getLocation().add(0, 0.2, 0), 
 							AreaEffectCloud.class);
-				AEC.setDuration(200);
+				AEC.setDuration(300);
 				AEC.addCustomEffect(new PotionEffect((potionEffect), (random.nextInt(15) + 5) * 20, 0), true);
 				AEC.setColor(POTION_TYPES.get(potionEffect).getRight());
 				AEC.setWaitTime(0);
 				getPlayer().sendMessage(POTION_TYPES.get(potionEffect).getLeft() + "§f 지대가 생성되었습니다.");
 				arrowC.start();
 
-				potionEffect = new ArrayList<>(POTION_TYPES.keySet()).get(random.nextInt(POTION_TYPES.size()));
+				potionEffect = POTION_LIST.get(random.nextInt(POTION_LIST.size() - 1));
 				actionbar.update("§b다음 효과§f: §e" + POTION_TYPES.get(potionEffect).getLeft());
 			}
 		}

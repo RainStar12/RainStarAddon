@@ -18,6 +18,7 @@ import RainStarGame.NoDelay;
 import RainStarGame.SelectMix.Null;
 import RainStarGame.SelectMix.SelectMixGame;
 import RainStarSynergy.*;
+import RainStarSynergy.AkashicRecords;
 import RainStarSynergy.chance.Chance;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.Command;

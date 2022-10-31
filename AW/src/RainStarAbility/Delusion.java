@@ -30,8 +30,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "나 방금 강해지는 상상함", rank = Rank.C, species = Species.OTHERS, explain = {
-		"검 우클릭 시 공격력이 $[DAMAGE_UP]% 증가합니다.",
-		"0.5초에 거쳐 공격력은 빠르게 줄어듭니다. $[COOLDOWN]"
+		"검 우클릭 시 공격력이 $[DAMAGE_BOOST]% 증가합니다.",
+		"0.5초에 거쳐 추가된 공격력은 빠르게 줄어듭니다. $[COOLDOWN]"
 		},
 		summarize = {
 		"§7검 우클릭 시§f 매우 짧은 시간동안 공격력이 폭증합니다."
@@ -43,8 +43,8 @@ public class Delusion extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> DAMAGE_UP = 
-			abilitySettings.new SettingObject<Integer>(Delusion.class, "damage-up", 100,
+	public static final SettingObject<Integer> DAMAGE_BOOST = 
+			abilitySettings.new SettingObject<Integer>(Delusion.class, "damage-boost", 75,
             "# 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -66,7 +66,7 @@ public class Delusion extends AbilityBase {
     };
     
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
-	private final int fulldmg = DAMAGE_UP.getValue();
+	private final int fulldmg = DAMAGE_BOOST.getValue();
 	private int incdamage = fulldmg;
 	private static final Set<Material> swords;
 	private BossBar bossBar = null;
