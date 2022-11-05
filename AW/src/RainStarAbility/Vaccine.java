@@ -12,9 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.potion.PotionEffectType;
 
-import RainStarAbility.Butterfly.PowderGui;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
@@ -25,7 +23,6 @@ import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "백신", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §a면역§f: §e바이러스 능력§f에게 감염되지 않습니다.",
