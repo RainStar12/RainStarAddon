@@ -214,8 +214,8 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(FirstAid.class);
 		AbilityFactory.registerAbility(Nun.class);
 		AbilityList.registerAbility(Nun.class);
-		AbilityFactory.registerAbility(Tolerance.class);
-		AbilityList.registerAbility(Tolerance.class);
+		AbilityFactory.registerAbility(Vaccine.class);
+		AbilityList.registerAbility(Vaccine.class);
 		AbilityFactory.registerAbility(Medusa.class);
 		AbilityList.registerAbility(Medusa.class);
 		AbilityFactory.registerAbility(MadScientist.class);
