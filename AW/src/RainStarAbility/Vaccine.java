@@ -46,6 +46,7 @@ public class Vaccine extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (effects.contains(e.getEffectType())) {
+			getPlayer().sendMessage("§a[§d!§a] §f" + e.getEffectType().getManifest().displayName() + "§f 면역.");
 			ParticleLib.VILLAGER_HAPPY.spawnParticle(getPlayer().getLocation(), 0.2, 1, 0.2, 10, 1);
 			e.setCancelled(true);
 		}

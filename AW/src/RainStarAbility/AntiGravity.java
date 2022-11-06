@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -31,6 +33,7 @@ import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -41,6 +44,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "반중력", rank = Rank.C, species = Species.OTHERS, explain = {
+		"§5지급 아이템§7: 화살 $[ARROW]개, 엔더 진주 $[ENDERPEARL]개",
 		"자신이 발사하는 모든 발사체가 1틱 후 §b정지§f합니다.",
 		"정지된 발사체가 화살일 때 나 이외의 존재가 닿으면 정지가 해제됩니다.",
 		"§7철괴 좌클릭 시§f, 정지된 모든 발사체를 정지 해제합니다.",
@@ -77,10 +81,25 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	ActionbarChannel ac = newActionbarChannel();
+	public static final SettingObject<Integer> ARROW = abilitySettings.new SettingObject<Integer>(AntiGravity.class,
+			"arrow-amount", 64, "# 화살 추가 지급 개수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 	
+	public static final SettingObject<Integer> ENDERPEARL = abilitySettings.new SettingObject<Integer>(AntiGravity.class,
+			"enderpearl-amount", 16, "# 엔더진주 추가 지급 개수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	private ActionbarChannel ac = newActionbarChannel();	
 	private final Map<Projectile, AntiGravitied> antigravityMap = new HashMap<>();
-	private boolean arrows = true;
+	private boolean kit = true;
 	private int timer = 1;
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
@@ -116,7 +135,26 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 	
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR && arrows == true) {		
+		if (update == Update.RESTRICTION_CLEAR && kit == true) {
+			
+			ItemStack arrow = new ItemStack(Material.ARROW, ARROW.getValue());
+			ItemStack enderpearl = new ItemStack(Material.ENDER_PEARL, ENDERPEARL.getValue());
+			ItemMeta ameta = arrow.getItemMeta();
+			ItemMeta emeta = enderpearl.getItemMeta();
+			
+			ameta.setDisplayName("§5반중력 실험 키트 §7- §f화살");
+			ameta.addEnchant(Enchantment.MENDING, 1, true);
+			
+			emeta.setDisplayName("§5반중력 실험 키트 §7- §3엔더 진주");
+			emeta.addEnchant(Enchantment.MENDING, 1, true);
+			
+			enderpearl.setItemMeta(emeta);
+			arrow.setItemMeta(ameta);
+			
+			getPlayer().getInventory().addItem(arrow);
+			getPlayer().getInventory().addItem(enderpearl);
+			kit = false;
+
 			ac.update("§b정지 시간 §f: " + timer + "틱 후");
 		}
 		

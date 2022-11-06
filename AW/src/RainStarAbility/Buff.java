@@ -2,9 +2,12 @@ package RainStarAbility;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
+import RainStarAbility.Dinosaur.Shockwave;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -16,9 +19,11 @@ import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 
 @AbilityManifest(name = "근육돼지", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c근육 강화§f: §6힘 §f또는 §8저항§f $[AMPLIFIER] 버프를 획득합니다. $[EFFECT_CHANGE]초마다 효과는 변경됩니다.",
-        "§7철괴 우클릭 §8- §e파운딩§f: 바라보는 방향으로 도약하고 이후 찍어내립니다.",
-        " 범위 내 대상에게 피해입히고 $[STUN_DURATION]초간 §e기절§f시킵니다. $[LEFT_COOLDOWN]",
-        "§7철괴 좌클릭 §8- §a스테로이드§f: $[CHANNELING]초간 이동 불가 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다. $[RIGHT_COOLDOWN]",
+		" §6힘§f일땐 §e파운딩§f 스킬을, §8저항§f일땐 §a스테로이드§f 스킬을 사용할 수 있습니다.",
+		" 두 스킬은 §c쿨타임§f을 공유합니다. $[COOLDOWN]",
+        "§7철괴 우클릭§8(§7힘§8) §8- §e파운딩§f: 높게 떠오른 뒤 바라보는 방향으로 찍어내립니다.",
+        " $[RANGE]칸 내 대상에게 피해입히고 $[STUN_DURATION]초간 §e기절§f시킵니다.",
+        "§7철괴 우클릭§8(§7저항§8) §8- §a스테로이드§f: $[CHANNELING]초간 이동 불가 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다.",
 		"§b[§7아이디어 제공자§b] §dhandony"
 		},
 		summarize = {
@@ -31,23 +36,8 @@ public class Buff extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> LEFT_COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Buff.class, "left-cooldown", 80, "# 철괴 좌클릭 쿨타임") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-
-	};
-	
-	public static final SettingObject<Integer> RIGHT_COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Buff.class, "right-cooldown", 75, "# 철괴 우클릭 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
+			Buff.class, "cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -73,6 +63,16 @@ public class Buff extends AbilityBase {
 		public String toString() {
 			return "" + (1 + getValue());
         }
+
+	};
+	
+	public static final SettingObject<Double> RANGE = abilitySettings.new SettingObject<Double>(
+			Buff.class, "range", 5.0, "# 파운딩 범위") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
 
 	};
 	
@@ -116,13 +116,14 @@ public class Buff extends AbilityBase {
 
 	};
 	
-	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue());
-	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue());
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private final int stun = (int) (STUN_DURATION.getValue() * 20);
 	private final int channelingDur = (int) (CHANNELING.getValue() * 20);
 	private final int amplifier = AMPLIFIER.getValue();
 	private final int period = (int) (EFFECT_CHANGE.getValue() * 20);
 	private final double healamount = HEAL_AMOUNT.getValue();
+	private final double range = RANGE.getValue();
+	private boolean nofall = false;
 	private boolean str = false;
 	
 	private final PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, period, amplifier, true, false);
@@ -142,6 +143,37 @@ public class Buff extends AbilityBase {
 		
 	}.setPeriod(TimeUnit.TICKS, period).register();
 	
-	
+	private final AbilityTimer skill = new AbilityTimer() {
+
+		@Override
+		public void onStart() {
+			this.setCount(0);
+			nofall = true;
+			getPlayer().setVelocity(new Vector(0, 1.7, 0));
+		}
+
+		@Override
+		public void run(int count) {
+			if (count >= 7) {
+				if (count == 7) getPlayer().setVelocity(new Vector(0, 0, 0));
+				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(4).setY(-4));
+				if (getPlayer().isOnGround()) {
+					getPlayer().setVelocity(new Vector(0, 0, 0));
+					stop(false);
+				}
+			}
+		}
+
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			cool.start();
+		}
+
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 }

@@ -195,11 +195,6 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
 	};
 	
 	public AbilityRegistration getRandomAbility(Participant target, Rank rank) {
