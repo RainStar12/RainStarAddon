@@ -80,7 +80,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	public static final SettingObject<Double> CHANNELING_COUNT = abilitySettings.new SettingObject<Double>(
-			Nun.class, "channeling-count", 3.0, "# 기도하는 시간", "# 단위: 초") {
+			Nun.class, "channeling-count", 2.0, "# 기도하는 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;

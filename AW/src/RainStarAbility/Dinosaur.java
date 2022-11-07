@@ -54,6 +54,7 @@ import daybreak.google.common.base.Predicate;
 		" 누군가가 이 화석을 찾거나 유령 상태로 빙의를 시도할 때",
 		" 유령 상태가 해제되고 화석에서 깨어나 §e흡수 체력§f을 잔뜩 획득합니다.",
 		" 혹은 $[LONGEST_WAIT]초가 지나도 자동으로 풀려납니다.",
+		" 강제로 깨어날 경우에는 흡수 체력을 절반만 획득합니다.",
 		"§7철괴 좌클릭 §8- §2압도적인 힘으로§f: 조금 떠오른 뒤 바라보는 방향으로 찍어내립니다.",
 		" 이를 §2$[COUNT]§f회, §2$[DAMAGE]§f의 피해로 반복합니다. $[COOLDOWN]",
 		" 이후 대미지를 입힌 사람 수에 비례해 §e흡수 체력§f을 천천히 획득합니다.",
@@ -124,7 +125,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ABSORTION_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 100,
+			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 150,
 			"# 획득하는 흡수 체력", "# 단위는 %로, 최대 체력에 비례합니다.") {
 
 		@Override
@@ -171,6 +172,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	private ActionbarChannel ac2 = newActionbarChannel();
 	private boolean onetime = true;
 	private Set<Player> damagecounter = new HashSet<>();
+	private boolean forced = false;
 	
 	@Override
 	protected void onUpdate(Update update) {
@@ -205,7 +207,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 			egg = getPlayer().getWorld().dropItem(getPlayer().getEyeLocation(), eggcreate);
 			egg.setCustomName("§2공룡 알");
 			egg.setCustomNameVisible(true);
-			if (getPlayer().getLocation().getY() > 4) teleLoc = getPlayer().getLocation().clone().add(0, -3, 0);
+			if (getPlayer().getLocation().getY() > 4) teleLoc = getPlayer().getLocation().clone().add(0, -2, 0);
 		}
 		
 		@Override
@@ -241,7 +243,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 		public void onStart() {
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			float yellowheart = NMS.getAbsorptionHearts(getPlayer());
-			goalHeart = (float) (yellowheart + (maxHealth * (absortion * 0.01)));
+			goalHeart = (float) ((yellowheart + (maxHealth * (absortion * 0.01))) * (forced ? 0.5 : 1));
 		}
 		
 		@Override
@@ -268,6 +270,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	public void onEntityPickup(EntityPickupItemEvent e) {
 		if (egg != null) {
 			if (e.getItem().equals(egg)) {
+				forced = true;
 				fossil.stop(false);
 				e.setCancelled(true);
 			}

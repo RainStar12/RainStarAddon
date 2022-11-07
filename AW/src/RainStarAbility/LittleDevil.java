@@ -43,11 +43,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(
-		name = "꼬마 악마",
-		rank = Rank.A, 
-		species = Species.UNDEAD, 
-		explain = {
+@AbilityManifest(name = "꼬마 악마", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"§7철괴 우클릭 §8- §6트릭 오어 트릿!§f: 주변 $[RANGE_CONFIG]칸 내의 모든 플레이어의",
 		" 인벤토리에 포션 등의 소모형 아이템이 있다면 한 개 받아갑니다.",
 		" 만약 소모형 아이템이 단 하나도 없거나 이미 트릿을 시전한 대상에겐 장난을 쳐",
