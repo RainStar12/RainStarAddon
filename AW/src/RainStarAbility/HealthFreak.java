@@ -45,10 +45,10 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(name = "헬창", rank = Rank.S, species = Species.OTHERS, explain = {
-		"웅크리고 있을 때 회복 속도가 빨라지고 공격력이 강해집니다.",
+		"웅크리고 있을 때 회복 속도가 빨라지고 §c근접 공격력§f이 강해집니다.",
 		"오랫동안 연속해 웅크리고 있을수록 효과들이 점점 더 강해집니다.",
 		"웅크리지 않은 채 움직일 경우 근손실이 옵니다.",
-		"적을 처치할 때마다 프로틴을 획득하고 소모 시 여러 가지 버프를 획득합니다.",
+		"적을 처치할 때마다 §b프로틴§f을 획득하고 소모 시 여러 가지 버프를 획득합니다.",
 		"§b[§7아이디어 제공자§b] §6_Choco_pie"},
 		summarize = {
 		"계속 웅크리고 있으면 점점 회복 속도가 빨라지고 공격력이 강해집니다.",
@@ -148,7 +148,8 @@ public class HealthFreak extends AbilityBase {
 				}
     		} else {
     			longsneak = 0;
-    			addDamage = Math.max(0, addDamage - 0.04);
+    			if (getParticipant().hasEffect(SuperRegen.registration)) addDamage = Math.max(0, addDamage - 0.02);
+    			else addDamage = Math.max(0, addDamage - 0.04);
     		}
     	}
     	
@@ -167,8 +168,8 @@ public class HealthFreak extends AbilityBase {
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerMove(PlayerMoveEvent e) {
     	if (!getPlayer().isSneaking()) {
-    		if (getParticipant().hasEffect(SuperRegen.registration)) addDamage = Math.max(0, addDamage - 0.005);
-    		else addDamage = Math.max(0, addDamage - 0.03);
+    		if (getParticipant().hasEffect(SuperRegen.registration)) addDamage = Math.max(0, addDamage - 0.0015);
+    		else addDamage = Math.max(0, addDamage - 0.01);
 			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(movespeed);
 			onetime = true;
     	} else {
