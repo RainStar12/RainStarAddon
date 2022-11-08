@@ -1,18 +1,36 @@
 package RainStarAbility;
 
+import java.text.DecimalFormat;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "섀도우", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §9가장 오래된 감정§f: §b공포 상태§f의 적에게 주는 피해가 $[FEAR_DAMAGE_INCREASE]% 증가합니다.",
@@ -177,6 +195,18 @@ public class Shadow extends AbilityBase {
 	private final Cooldown darkartscool = new Cooldown(DARKARTS_COOLDOWN.getValue());
 	private final Cooldown shadowcool = new Cooldown(SHADOW_COOLDOWN.getValue());
 	
+	private ActionbarChannel ac = newActionbarChannel();
+	private final DecimalFormat df = new DecimalFormat("0.0");
+	
+	private static final Set<Material> swords;
+	static {
+		if (MaterialX.NETHERITE_SWORD.isSupported()) {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
+		} else {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
+		}
+	}
+	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		Player damager = null;
@@ -185,44 +215,107 @@ public class Shadow extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (getPlayer().equals(damager) && e.getEntity() instanceof Player && getGame().isParticipating((Player) e.getEntity())) {
-			Participant p = getGame().getParticipant((Player) e.getEntity());
-			if (p.hasEffect(Fear.registration)) {
-				
+		if (damager != null) {
+			if (getPlayer().equals(damager) && e.getEntity() instanceof Player && getGame().isParticipating((Player) e.getEntity())) {
+				Participant p = getGame().getParticipant((Player) e.getEntity());
+				if (p.hasEffect(Fear.registration)) {
+					e.setDamage(e.getDamage() * feardamageincrease);
+					ParticleLib.ITEM_CRACK.spawnParticle(p.getPlayer().getLocation(), .5f, 1f, .5f, 100, 0.35, MaterialX.BLACK_CONCRETE);
+				}
 			}
+			
+			if (darkarts.isRunning() && e.getEntity().equals(getPlayer()) && !getPlayer().equals(damager) && getGame().isParticipating(damager)) {
+				Fear.apply(getParticipant(), TimeUnit.TICKS, darkartsfear, getPlayer());
+			}
+		}
+		
+	}
+	
+	@SubscribeEvent
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !darkartscool.isCooldown()) {
+			final AbilityActiveSkillEvent event = new AbilityActiveSkillEvent(this, e.getItem().getType(), ClickType.RIGHT_CLICK);
+			Bukkit.getPluginManager().callEvent(event);
+			getPlayer().sendMessage("§d능력을 사용하였습니다.");
+			
 		}
 	}
 	
+	private AbilityTimer darkarts = new AbilityTimer(darkartsduration) {
+		
+		@Override
+		public void onStart() {
+			
+			ParticleLib.REVERSE_PORTAL.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0, 0, 0, 50, 1);
+		}
+		
+		@Override
+		public void run(int count) {
+			Random random = new Random();
+			switch(random.nextInt(4)) {
+			case 0:
+				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.PURPLE_STAINED_GLASS);
+				break;
+			case 1:
+				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.GRAY_STAINED_GLASS_PANE);
+				break;
+			case 2:
+				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.MAGENTA_STAINED_GLASS_PANE);
+				break;
+			case 3:
+				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.BLACK_STAINED_GLASS_PANE);
+				break;
+			}
+			ac.update("§5흑마술§f: §d" + df.format(count / 20.0) + "§f초");
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+			}
+			ac.update(null);
+			darkartscool.start();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	private AbilityTimer shadow = new AbilityTimer(darkartsduration) {
+		
+		@Override
+		public void onStart() {
+			
+			ParticleLib.REVERSE_PORTAL.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0, 0, 0, 50, 1);
+		}
+		
+		@Override
+		public void run(int count) {
+			Random random = new Random();
+			ac.update("§5흑마술§f: §d" + df.format(count / 20.0) + "§f초");
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+			}
+			darkartscool.start();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 }

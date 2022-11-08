@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -34,6 +33,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -133,7 +133,6 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     private final Random random = new Random();
 	private final Circle circle = Circle.of(1, 25);
     private List<AbilityBase> abilities = new ArrayList<>();
-    private AbilityBase checkrivalability;
     private AbilityBase rivalability;
     private Player rival;
     
@@ -273,7 +272,6 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 							try {
 								this.rivalability = AbilityBase.create(myab.getClass(), getParticipant());
 								this.rivalability.setRestricted(false);
-								this.checkrivalability = rivalability;
 								getPlayer().sendMessage("§3[§b!§3] §b라이벌의 능력을 복제했습니다. 능력: §a" + rivalability.getDisplayName());
 							} catch (ReflectiveOperationException e) {
 								e.printStackTrace();
@@ -399,17 +397,16 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     			Rival.this.rivalability = null;
     			cooldown.start();
     		}
-    		checkrivalability = null;
     		rival = null;
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (e.getEntity().equals(rival) && getPlayer().equals(e.getEntity().getKiller())) {
+	public void onParticipantDeath(ParticipantDeathEvent e) {
+		if (e.getPlayer().equals(rival) && getPlayer().equals(e.getPlayer().getKiller())) {
 			try {
-				abilities.add(AbilityBase.create(checkrivalability.getClass(), getParticipant()));
+				abilities.add(AbilityBase.create(e.getParticipant().getAbility().getClass(), getParticipant()));
 			} catch (ReflectiveOperationException e1) {
 				e1.printStackTrace();
 			}
@@ -431,26 +428,13 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (rival == null) {
 				if (e.getEntity().equals(getPlayer()) && damager != null) {
 					rival = damager;
-					if (getGame().getParticipant(rival).hasAbility()) {
-						AbilityBase ab = getGame().getParticipant(rival).getAbility();
-						if (ab.getClass().equals(Mix.class)) {
-							Mix mix = (Mix) ab;
-							Mix myMix = (Mix) getParticipant().getAbility();
-							if (mix.hasSynergy()) {
-								checkrivalability = mix.getSynergy();
-							} else {
-								if (myMix.getFirst().equals(Rival.this)) {
-									checkrivalability = mix.getFirst();
-								} else if (myMix.getSecond().equals(Rival.this)) {
-									checkrivalability = mix.getSecond();
-								}	
-							}
-						} else checkrivalability = ab;
-					}
 					rivaltimer.start();
 				}
 			} else {
-				if ((getPlayer().equals(damager) && e.getEntity() instanceof Player && !e.getEntity().equals(rival)) || (getPlayer().equals(e.getEntity()) && rival != damager)) {
+				if (getPlayer().equals(damager) && e.getEntity() instanceof Player && !e.getEntity().equals(rival)) {
+					e.setCancelled(true);
+				}
+				if (getPlayer().equals(e.getEntity()) && !rival.equals(damager)) {
 					e.setCancelled(true);
 				}
 				if (Rival.this.rivalability != null && getPlayer().equals(damager) && e.getEntity().equals(rival)) {

@@ -120,7 +120,7 @@ public class Delusion extends AbilityBase {
 			incdamage = fulldmg;
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

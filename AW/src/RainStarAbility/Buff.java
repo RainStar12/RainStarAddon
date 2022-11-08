@@ -29,6 +29,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
@@ -210,6 +211,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 			str = !str;
 			for (int i = 0; i < 5; i++) {
 				SoundLib.BLOCK_CHORUS_FLOWER_GROW.playSound(getPlayer().getLocation(), 1, 0.75f);
+				ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0, 0, 0, 10, 0.33);
 			}
 			getPlayer().addPotionEffect(str ? strength : resistance);
 		}
@@ -233,6 +235,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 				getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(4).setY(-4));
 				if (getPlayer().isOnGround()) {
 					getPlayer().setVelocity(new Vector(0, 0, 0));
+					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1);
 					double nowdamage = getPlayer().getInventory().getContents().length * damage;
 					for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						livingEntity.damage(nowdamage, getPlayer());
