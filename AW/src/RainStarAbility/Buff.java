@@ -3,7 +3,10 @@ package RainStarAbility;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -23,6 +26,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Rooted;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -34,7 +38,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
+import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 
 @AbilityManifest(name = "근육돼지", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c근육 강화§f: §6힘 §f또는 §3저항§f $[AMPLIFIER] 버프를 획득합니다. $[EFFECT_CHANGE]초마다 효과는 변경됩니다.",
@@ -185,6 +192,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 	private final double damage = DAMAGE.getValue();
 	private boolean nofall = false;
 	private boolean str = false;
+	private ActionbarChannel ac = newActionbarChannel();
 	
 	private final PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, period, amplifier, true, false);
 	private final PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, period, amplifier, true, false);
@@ -204,11 +212,12 @@ public class Buff extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 	
-	private final AbilityTimer buff = new AbilityTimer(TaskType.INFINITE, -1) {
+	private final AbilityTimer buff = new AbilityTimer() {
 	
 		@Override
 		public void run(int count) {
 			str = !str;
+			ac.update("§c근육 강화§f: " + (str ? "§6힘" : "§3저항"));
 			for (int i = 0; i < 5; i++) {
 				SoundLib.BLOCK_CHORUS_FLOWER_GROW.playSound(getPlayer().getLocation(), 1, 0.75f);
 				ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0, 0, 0, 10, 0.33);
@@ -236,6 +245,21 @@ public class Buff extends AbilityBase implements ActiveHandler {
 				if (getPlayer().isOnGround()) {
 					getPlayer().setVelocity(new Vector(0, 0, 0));
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1);
+					if (ServerVersion.getVersion() >= 13) {
+						for (Block block : LocationUtil.getBlocks2D(getPlayer().getLocation(), 3, true, true, true)) {
+							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+							if (block.getType() == Material.AIR) continue;
+							Location location = block.getLocation().add(0, 1, 0);
+							FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
+						}
+					} else {
+						for (Block block : LocationUtil.getBlocks2D(getPlayer().getLocation(), 3, true, true, true)) {
+							if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+							if (block.getType() == Material.AIR) continue;
+							Location location = block.getLocation().add(0, 1, 0);
+							FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
+						}
+					}
 					double nowdamage = getPlayer().getInventory().getContents().length * damage;
 					for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						livingEntity.damage(nowdamage, getPlayer());
