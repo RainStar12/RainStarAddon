@@ -24,8 +24,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
