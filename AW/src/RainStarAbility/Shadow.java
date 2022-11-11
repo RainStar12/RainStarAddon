@@ -1,18 +1,25 @@
 package RainStarAbility;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
@@ -20,10 +27,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
@@ -31,11 +40,15 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
+import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -215,6 +228,8 @@ public class Shadow extends AbilityBase {
 	private double addDamage = 0;
 	private ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
 	private final DecimalFormat df = new DecimalFormat("0.0");
+	private final Crescent crescent = Crescent.of(1.5, 15);
+	private Random random = new Random();
 	
 	private static final Set<Material> swords;
 	static {
@@ -256,12 +271,16 @@ public class Shadow extends AbilityBase {
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (damager != null) {
-			if (getPlayer().equals(damager) && e.getEntity() instanceof Player && getGame().isParticipating((Player) e.getEntity())) {
-				Participant p = getGame().getParticipant((Player) e.getEntity());
-				if (p.hasEffect(Fear.registration)) {
-					e.setDamage(e.getDamage() * feardamageincrease);
-					ParticleLib.ITEM_CRACK.spawnParticle(p.getPlayer().getLocation(), .5f, 1f, .5f, 100, 0.35, MaterialX.BLACK_CONCRETE);
+			if (getPlayer().equals(damager)) {
+				if (e.getEntity() instanceof Player && getGame().isParticipating((Player) e.getEntity())) {
+					Participant p = getGame().getParticipant((Player) e.getEntity());
+					if (p.hasEffect(Fear.registration)) {
+						e.setDamage(e.getDamage() * feardamageincrease);
+						ParticleLib.ITEM_CRACK.spawnParticle(p.getPlayer().getLocation(), .5f, 1f, .5f, 100, 0.35, MaterialX.BLACK_CONCRETE);
+					}	
 				}
+				
+				if (addDamage > 0) e.setDamage(e.getDamage() * (1 + (addDamage * 0.01)));
 			}
 			
 			if (darkarts.isRunning() && e.getEntity().equals(getPlayer()) && !getPlayer().equals(damager) && getGame().isParticipating(damager)) {
@@ -270,6 +289,7 @@ public class Shadow extends AbilityBase {
 			}
 			
 			if (shadow.isRunning() && getPlayer().equals(e.getDamager())) {
+				new CutParticle(180).start();
 				getPlayer().setVelocity(e.getEntity().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(0.75).setY(0));
 				for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
 					Fear.apply(getGame().getParticipant(player), TimeUnit.TICKS, shadowfear, getPlayer());
@@ -307,7 +327,6 @@ public class Shadow extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			Random random = new Random();
 			switch(random.nextInt(4)) {
 			case 0:
 				ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.PURPLE_STAINED_GLASS);
@@ -368,6 +387,10 @@ public class Shadow extends AbilityBase {
 			SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer().getLocation(), 1, 0.7f);
 			ac2.update(null);
 			shadowcool.start();
+			if (killed > 0) {
+				addDamage = addDamage + (killed * shadowdamageincrease);
+				damageAdder.start();
+			}
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -387,7 +410,7 @@ public class Shadow extends AbilityBase {
     	
     	@Override
 		public void run(int count) {
-    		addDamage = addDamage - 0.15;
+    		addDamage = addDamage - 0.05;
     		bossBar.setTitle("§c공격력 증가 §7: §e" + df.format(addDamage));
 			bossBar.setProgress(RangesKt.coerceIn(addDamage / maxDamage, 0, 1));
 			if (addDamage <= 0) stop(false);
@@ -395,16 +418,50 @@ public class Shadow extends AbilityBase {
     	
 		@Override
 		public void onEnd() {
+			addDamage = 0;
 			bossBar.removeAll();
 		}
 
 		@Override
 		public void onSilentEnd() {
+			addDamage = 0;
 			bossBar.removeAll();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	
+	private class CutParticle extends AbilityTimer {
+
+		private final Vector vector;
+		private final Vectors crescentVectors;
+
+		private CutParticle(double angle) {
+			super(4);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.vector = getPlayer().getLocation().getDirection().setY(0).normalize().multiply(0.5);
+			this.crescentVectors = crescent.clone()
+					.rotateAroundAxisY(-getPlayer().getLocation().getYaw())
+					.rotateAroundAxis(getPlayer().getLocation().getDirection().setY(0).normalize(), (180 - angle) % 180);
+		}
+
+		@Override
+		protected void run(int count) {
+			Location baseLoc = getPlayer().getLocation().clone().add(vector).add(0, 1, 0);
+			for (Location loc : crescentVectors.toLocations(baseLoc)) {
+				switch(random.nextInt(3)) {
+				case 0:
+					ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.BLACK_CONCRETE);
+					break;
+				case 1:
+					ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.OBSIDIAN);
+					break;
+				case 2:
+					ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 1, 0, MaterialX.BLACK_STAINED_GLASS_PANE);
+					break;
+				}
+			}
+		}
+
+	}
 	
 }
