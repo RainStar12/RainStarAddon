@@ -1,9 +1,11 @@
 package RainStarAbility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -53,6 +55,7 @@ import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -79,16 +82,13 @@ import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "하늘고래", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §d드림 이터§f: 누군가를 죽이면 적의 §e꿈§f을 먹어 §a꿈 레벨§f을 올립니다.",
-		" §e꿈§f을 먹을 때 체력을 §b12§f% 회복하고, 남은 쿨타임이 §b28§f%로 줄어듭니다.",
-		" 만약 능력 지속 중에 §e꿈§f을 먹었다면 지속시간을 $[ADD_DURATION]초 연장합니다.",
+		"§7패시브 §8- §d드림 이터§f: §a액티브 능력§f이 사용된 곳에 꿈 조각이 남습니다.",
+		" 이 조각을 모아 §a꿈 레벨§f을 올릴 수 있습니다. 레벨은 최대 §e10§f까지 오릅니다.",
 		" §a꿈 레벨§f로 얻는 효과는 §7철괴를 좌클릭§f하여 볼 수 있습니다.",
-		"§7철괴 우클릭 §8- §b드림 아쿠아리움§f: $[DURATION]초간 나갈 수 없는 §b꿈§f의 §b들판§f을 펼칩니다.",
-		" 영역 내에서 자신이 잃은 체력의 $[HEAL_PERCENT]%는 영역 지속이 끝날 때 §d회복§f됩니다.",
-		" 또한 §a꿈 레벨§f에 따른 추가 효과를 사용할 수 있습니다. $[COOLDOWN]",
+		"§7철괴 우클릭 §8- §b드림 아쿠아리움§f: $[DURATION]초간 §b꿈§f의 §b들판§f을 펼칩니다. $[COOLDOWN]",
+		" 들판 내에서 꿈 조각을 획득 시 체력을 §b1.228§f만큼 회복합니다.",
 		"§7영역 내 패시브 §8- §3웨이브§f: 영역의 중심에서부터 파도가 퍼져나가",
 		" 적을 피해입히며 밀쳐냅니다. 피해는 중심에서 멀어질수록 강력해집니다.",
-		" 피해는 영역에서 자신의 최고 대미지에 비례§8(§7× 0.5~1.5§8)§f합니다.",
 		"§b[§7아이디어 제공자§b] §bSleepground"
 		},
 		summarize = {
@@ -160,7 +160,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> INCREASE_DAMAGE = abilitySettings.new SettingObject<Double>(
-			SkyWhale.class, "increase-damage", 0.8, "# 꿈 레벨당 추가 공격력") {
+			SkyWhale.class, "increase-damage", 0.4, "# 꿈 레벨당 추가 공격력") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -172,7 +172,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("§b꿈 레벨§f: §a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
+			ac.update("§b꿈 레벨§f: §a" + (dreamlevel == 10 ? "MAX§8(§710§8)" : dreamlevel));
 			if (isSkillRunning == true) isSkillRunning = false;
 		}
 	}
@@ -184,6 +184,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	private boolean isSkillRunning = false;
 	private Random random = new Random();
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
+	private Map<Location, Rank> dreams = new HashMap<>();
 	
 	private ActionbarChannel ac = newActionbarChannel();
 	
@@ -202,7 +203,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 	private final static Color sky = Color.fromRGB(72, 254, 254), mint = Color.fromRGB(236, 254, 254), snow = Color.fromRGB(28, 254, 243),
 			teal = Color.TEAL, lime = Color.fromRGB(49, 254, 32), yellow = Color.YELLOW, pink = Color.fromRGB(254, 174, 201),
-			orange = Color.fromRGB(254, 177, 32), applemint = Color.fromRGB(34, 253, 220);
+			orange = Color.fromRGB(254, 177, 32), applemint = Color.fromRGB(34, 254, 171);
 	
 	private RGB aqua1 = RGB.of(74, 208, 229), aqua2 = RGB.of(85, 212, 231), aqua3 = RGB.of(96, 216, 232),
 			aqua4 = RGB.of(107, 221, 234), aqua5 = RGB.of(118, 225, 235), aqua6 = RGB.of(130, 230, 237),
@@ -394,6 +395,13 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 					}
 				}
 			}	
+		}
+	}
+	
+	@SubscribeEvent
+	public void onActiveSkill(AbilityActiveSkillEvent e) {
+		if (!e.getParticipant().equals(getParticipant())) {
+			dreams.put(e.getPlayer().getLocation(), e.getAbility().getRank());
 		}
 	}
 	

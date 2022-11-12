@@ -72,7 +72,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Buff.class, "cooldown", 60, "# 쿨타임") {
+			Buff.class, "cooldown", 75, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -152,7 +152,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> HEAL_AMOUNT = abilitySettings.new SettingObject<Double>(
-			Buff.class, "heal-amount", 8.0, "# 체력 회복량") {
+			Buff.class, "heal-amount", 5.0, "# 체력 회복량") {
 
 		@Override
 		public boolean condition(Double value) {

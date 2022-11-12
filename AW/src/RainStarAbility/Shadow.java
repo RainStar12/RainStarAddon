@@ -104,7 +104,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DARKARTS_FEAR = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "darkarts-fear", 3.0,
+			abilitySettings.new SettingObject<Double>(Shadow.class, "darkarts-fear", 1.5,
 			"# 흑마술 공포 지속시간") {
 
 		@Override

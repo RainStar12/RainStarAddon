@@ -9,8 +9,9 @@ import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 
 @AbilityManifest(name = "선견지명", rank = Rank.S, species = Species.HUMAN, explain = {
-		"철괴로 적을 타격해서 대상을 지정할 수 있습니다.",
-		"철괴 우클릭 시, 지정된 대상이 5초 이내로 능력을 사용할 때"
+		"검 들고 F키를 눌러 자신이 가장 마지막으로 피해를 입힌 대상을 $[DURATION]초간 지정합니다.",
+		"지정된 대상이 §a액티브 스킬§f을 사용하면 스킬이 캔슬되고, $[STUN]초간 기절됩니다.",
+		"예측에 성공할 때마다 이동 속도가 "
 		},
 		summarize = {
 		""
