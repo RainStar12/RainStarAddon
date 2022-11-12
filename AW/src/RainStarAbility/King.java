@@ -123,7 +123,7 @@ public class King extends AbilityBase {
 	private final double decrease = 1 - (TIMER_DECREASE.getValue() * 0.01);
     private double range = RANGE.getValue();
     private final double addrange = ADD_RANGE.getValue() * 0.005;
-    private final int maxCount = 300;
+    private final int maxCount = 200;
     private final List<RGB> gradations = Gradient.createGradient(10, RGB.of(227, 1, 1), RGB.BLACK);
 	private int stack = 0;
 	private AttributeModifier decmovespeed;
@@ -138,12 +138,13 @@ public class King extends AbilityBase {
     	
     	@Override
     	public void onStart() {
-    		decmovespeed = new AttributeModifier(UUID.randomUUID(), "decmovespeed", -0.2, Operation.ADD_SCALAR);
+    		decmovespeed = new AttributeModifier(UUID.randomUUID(), "decmovespeed", -0.23, Operation.ADD_SCALAR);
+    		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(decmovespeed);
     	}
 	
     	@Override
     	public void run(int count) {
-    		if (count % 4 == 0) {
+    		if (count % 2 == 0) {
         		if (stack > 0) {
         			for (Iterator<Location> iterator = Circle.iteratorOf(getPlayer().getLocation(), range, maxCount); iterator.hasNext(); ) {
         				Location loc = iterator.next();
