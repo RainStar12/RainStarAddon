@@ -1,5 +1,8 @@
 package RainStarAbility;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -14,6 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -108,7 +112,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DAMAGE = abilitySettings.new SettingObject<Double>(
-			Buff.class, "item-damage", 1.0, "# 채워진 칸당 피해량") {
+			Buff.class, "item-damage", 0.3, "# 채워진 칸당 피해량") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -260,7 +264,14 @@ public class Buff extends AbilityBase implements ActiveHandler {
 							FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 						}
 					}
-					double nowdamage = getPlayer().getInventory().getContents().length * damage;
+					List<ItemStack> list = new CopyOnWriteArrayList<>(getPlayer().getInventory().getContents());					
+					for (ItemStack item : list) {
+						if (item == null) {
+							list.remove(item);
+							continue;
+						}
+					}
+					double nowdamage = list.size() * damage;
 					for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						livingEntity.damage(nowdamage, getPlayer());
 						if (livingEntity instanceof Player) Stun.apply(getGame().getParticipant((Player) livingEntity), TimeUnit.TICKS, stun);
