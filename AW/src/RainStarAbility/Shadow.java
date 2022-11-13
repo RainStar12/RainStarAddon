@@ -82,7 +82,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> FEAR_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "fear-damage-increase", 20,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "fear-damage-increase", 15,
 			"# 공포 대상에게 피해량 증가 수치") {
 
 		@Override
@@ -164,7 +164,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_FEAR = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-fear", 1.0,
+			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-fear", 0.8,
 			"# 흑마술 공포 지속시간") {
 
 		@Override
@@ -175,8 +175,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_ADD_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-duration", 5.0,
-			"# 그림자 베기 지속시간") {
+			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-add-duration", 5.0,
+			"# 그림자 베기 추가 지속시간") {
 
 		@Override
 		public boolean condition(Double value) {

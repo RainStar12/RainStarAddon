@@ -11,6 +11,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -160,7 +161,7 @@ public class King extends AbilityBase {
         		stack--;
     		}
     		
-    		for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, getPlayer().getLocation(), range, range, predicate)) {
+    		for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
     			entity.setVelocity(VectorUtil.validateVector(new Vector(entity.getVelocity().getX() * 0.9, -0.65, entity.getVelocity().getZ() * 0.9)));	
     		}
     		range += addrange;

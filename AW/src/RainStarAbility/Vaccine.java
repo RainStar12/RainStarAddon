@@ -39,7 +39,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 		summarize = {
 		"§e바이러스 능력§f에게 감염되지 않습니다.",
 		"공허, 압사, 생명체와 발사체에 의한 피해 외의 피해를 입지 않습니다.",
-		"§7철괴 F키§f로 단 한 번 가진 상태이상을 전부 제거합니다.",
+		"§7철괴 F키§f로 단 한 번 가진 상태이상을 전부 제거하고 체력을 전부 회복합니다.",
 		"스킬로 지운 상태이상을 영원히 받지 않고 체력을 $[HEAL_AMOUNT] 회복합니다."
 		})
 public class Vaccine extends AbilityBase {

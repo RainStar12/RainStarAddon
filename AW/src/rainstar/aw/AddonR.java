@@ -290,6 +290,7 @@ public class AddonR extends Addon implements Listener {
 		AbilityList.registerAbility(Shadow.class);
 		
 		
+		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
 		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, Gravity.class);
 		SynergyFactory.registerSynergy(TimeRewind.class, TimeStop.class, TimeTravel.class);
