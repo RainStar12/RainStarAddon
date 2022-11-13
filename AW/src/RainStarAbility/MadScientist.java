@@ -201,10 +201,11 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 					return cooldown.start();
 				} else return false;
 			} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
-				if (healthy <= 0) getPlayer().sendMessage("§5[§c!§5] §f생명력이 다했습니다.");
+				if (healthy <= 0.01) getPlayer().sendMessage("§5[§c!§5] §f생명력이 다했습니다.");
 				else {
 					SoundLib.BLOCK_BREWING_STAND_BREW.playSound(getPlayer(), 1, 0.5f);
-					healthy = Math.max(0, healthy - decrease);
+					healthy = Math.max(0.01, healthy - decrease);
+					if (healthy <= 0.011) healthy = 0.01;
 					ac.update("§d♥§f: §a" + df.format(healthy * 100) + "§2%");
 					Healths.setHealth(getPlayer(), getPlayer().getHealth() + gainhealth);
 					if (!doping.isRunning()) {

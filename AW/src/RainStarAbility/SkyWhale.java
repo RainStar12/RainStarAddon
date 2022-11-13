@@ -298,13 +298,16 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	    		joiner.add("§aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel) + " §7| §c추가 공격력 §e+" + (dreamlevel * increasedamage));
 	    		if (dreamlevel == 0) joiner.add("§7아직 활성화된 스킬이 없습니다.");
 	    		if (dreamlevel >= 1) joiner.add("§c화염 내성§7: §f모든 화염계 피해에 내성이 생깁니다.");
-	    		if (dreamlevel >= 2) joiner.add("§a정보 통제§7: §f적의 체력을 실시간으로 확인 가능합니다.");
-	    		if (dreamlevel >= 3) joiner.add("§b자유 비행§7: §f자유롭게 비행할 수 있습니다.");
-	    		if (dreamlevel >= 4) {
+	    		if (dreamlevel >= 2) joiner.add("§b수분 보충§7: §f필드 위에서 이동 속도가 증가합니다.");
+	    		if (dreamlevel >= 3) joiner.add("§c화염 내성§7: §f모든 화염계 피해에 내성이 생깁니다.");
+	    		if (dreamlevel >= 4) joiner.add("§c화염 내성§7: §f모든 화염계 피해에 내성이 생깁니다.");
+	    		if (dreamlevel >= 5) joiner.add("§a정보 통제§7: §f적의 체력을 실시간으로 확인 가능합니다.");
+	    		if (dreamlevel >= 6) joiner.add("§b자유 비행§7: §f자유롭게 비행할 수 있습니다.");
+	    		if (dreamlevel >= 7) {
 	    			joiner.add("§d공간 초월§7: §f3초마다 사거리가 매우 길고 지형지물을 관통하는");
 	    			joiner.add("           §f특수한 근접 공격을 사용 가능합니다.");
 	    		}	
-	    		if (dreamlevel == 5) {
+	    		if (dreamlevel >= 8) {
 	    			joiner.add("§6시간 단축§7: §f사망 위기에 빠지면 능력 지속시간을 0초로 만들고");
 	    			joiner.add("           §f영역이 끝나면 받는 회복을 바로 받습니다.");
 	    		}

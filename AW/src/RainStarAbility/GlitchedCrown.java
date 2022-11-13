@@ -83,7 +83,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onEnd() {
-			getPlayer().sendMessage("§6[§e!§6§k] §f당신의 능력이 " + rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name() + "§f으로 변경§k되§f었습니§k다§f.");
+			getPlayer().sendMessage("§6[§e!§6§k] §f당신의§k?§f능력이§k?§f" + rankcolor.get(nowAbility.getManifest().rank()) + nowAbility.getManifest().name() + "§f으로§ka§f변경되었습니다§f.");
 			NMS.clearTitle(getPlayer());
 			if (getParticipant().getAbility().getClass().equals(Mix.class)) {
 				Mix mix = (Mix) getParticipant().getAbility();
@@ -119,7 +119,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 				passive.stop(false);
 				return true;
 			} else if (clicktype == ClickType.LEFT_CLICK) {
-				if (abilities.size() < 14) {
+				if (abilities.size() < 15) {
 					abilities.add(getRandomAbility());
 					getPlayer().sendMessage("§6[§e!§6] §f능력 " + rankcolor.get(abilities.get(abilities.size() - 1).getManifest().rank()) + abilities.get(abilities.size() - 1).getManifest().name() + "§f를 배열에 추가하였습니다.");
 					switch(abilities.size()) {
@@ -169,7 +169,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 						period = 1;
 						break;
 					}
-				} else getPlayer().sendMessage("§6[§e!§6] §f이미 넣을 수 있는 능력이 최대치입니다.");
+				} else getPlayer().sendMessage("§6§k[§e§k!§6§k]§f §c이미 넣을 수 있는 능력이 최대치입니다.");
 			}
 		}
 		return false;

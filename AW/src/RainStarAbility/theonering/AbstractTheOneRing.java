@@ -47,7 +47,7 @@ import daybreak.google.common.base.Predicate;
 		"§7은신§f 간 공격력이 $[INCREASE]% 증가하고, 신속 $[AMPLIFIER] 효과를 얻습니다.",
 		"또한 지속적으로 §5광분 수치§f가 쌓입니다. $[RANGE]칸 내 플레이어가 있다면 3배로 쌓입니다.",
 		"§5광분 수치§f가 최대치에 달하면 무작위로 화면이 전환되고, 피해를 입습니다.",
-		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§oR§eE§aC§bK §7적용§8)",
+		"반지를 해제 시 매우 천천히 수치가 내려갑니다. §8(§cW§6R§eE§aC§bK §7적용§8)",
 		"§3[§b종족야생 콜라보 능력§3]"
 		},
 		summarize = {
@@ -157,12 +157,14 @@ public abstract class AbstractTheOneRing extends AbilityBase implements ActiveHa
 
 	private void hide() {
 		this.hiding = true;
+		getPlayer().sendMessage("§3[§7!§3] §b은신합니다.");
 		getParticipant().attributes().TARGETABLE.setValue(false);
 		hide0();
 	}
 
 	private void show() {
 		this.hiding = false;
+		getPlayer().sendMessage("§3[§7!§3] §b해제합니다.");
 		getPlayer().removePotionEffect(PotionEffectType.SPEED);
 		getParticipant().attributes().TARGETABLE.setValue(true);
 		show0();

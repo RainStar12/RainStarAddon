@@ -405,7 +405,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac2.update("§9그림자f: §3" + df.format(count / 20.0) + "§f초");
+			ac2.update("§9그림자§f: §3" + df.format(count / 20.0) + "§f초");
 			
 			double angle = Math.toRadians(count * 5);
 			double x = Math.cos(angle);

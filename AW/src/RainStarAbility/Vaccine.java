@@ -1,6 +1,7 @@
 package RainStarAbility;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -58,7 +59,7 @@ public class Vaccine extends AbilityBase {
 	
     private final double healamount = HEAL_AMOUNT.getValue();
 	private boolean onetime = true;
-	private Set<EffectRegistration<?>> effects;
+	private Set<EffectRegistration<?>> effects = new HashSet<>();
 	
 	@SubscribeEvent(onlyRelevant = true)
 	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
@@ -81,12 +82,14 @@ public class Vaccine extends AbilityBase {
     	if (e.getOffHandItem().getType().equals(Material.IRON_INGOT) && e.getPlayer().equals(getPlayer()) && onetime) {
     		onetime = false;
     		Collection<Effect> nowEffects = getParticipant().getEffects();
-    		final StringJoiner joiner = new StringJoiner("§f, ");
-    		for (Effect effect : nowEffects) {
-    			effects.add(effect.getRegistration());
-    			joiner.add(effect.getRegistration().getManifest().displayName());
+    		if (nowEffects.size() >= 1) {
+        		final StringJoiner joiner = new StringJoiner("§f, ");
+        		for (Effect effect : nowEffects) {
+        			effects.add(effect.getRegistration());
+        			joiner.add(effect.getRegistration().getManifest().displayName());
+        		}
+        		getPlayer().sendMessage("§d[§a!§d] §f" + joiner.toString() + "§f의 효과를 치료하였습니다.");
     		}
-			getPlayer().sendMessage("§d[§a!§d] §f" + joiner.toString() + "§f의 효과를 치료하였습니다.");
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
@@ -100,6 +103,7 @@ public class Vaccine extends AbilityBase {
     
     @SubscribeEvent
     public void onInfect(VirusInfectionEvent e) {
+    	Bukkit.broadcastMessage("e.getParticipant() " + e.getParticipant().getPlayer().getName());
     	if (e.getParticipant().equals(getParticipant())) e.setCancelled(true);
     }
 
