@@ -19,6 +19,7 @@ public enum RainStarEffectFactory {
     FROZEN_HEART(FrozenHeart.class),
     IRREPARABLE(Irreparable.class),
     MADNESS(Madness.class),
+    MUTE(Mute.class),
     PARALYSIS(Paralysis.class),
     PETRIFICATION(Petrification.class),
     POISON(Poison.class),
