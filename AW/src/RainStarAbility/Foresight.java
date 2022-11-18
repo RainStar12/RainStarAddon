@@ -1,9 +1,13 @@
 package RainStarAbility;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,9 +29,12 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
 
@@ -112,9 +119,30 @@ public class Foresight extends AbilityBase implements ActiveHandler, TargetHandl
 		}
 	};
 	
+	private static final Points CLOSED_EYE = Points.of(0.12, new boolean[][]{
+		{true, false, false, false, false, false, false, false, false, false, false, false, false, false, true},
+		{false, true, false, false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, true, true, false, false, false, false, false, false, false, true, true, false, false},
+		{false, true, false, false, true, true, true, true, true, true, true, false, false, true, false},
+		{false, false, false, false, true, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, true, false, false, false, true, false, false, false, true, false, false, false},
+		{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false}
+	});
+	
+	private static final Points OPEN_EYE = Points.of(0.12, new boolean[][]{
+		{false, false, false, false, true, true, true, true, true, true, true, false, false, false, false},
+		{false, false, true, true, false, false, true, true, true, false, false, true, true, false, false},
+		{false, true, false, false, false, true, true, true, false, true, false, false, false, true, false},
+		{true, false, false, false, false, true, true, true, true, true, false, false, false, false, true},
+		{false, true, false, false, false, true, true, true, true, true, false, false, false, true, false},
+		{false, false, true, true, false, false, true, true, true, false, false, true, true, false, false},
+		{false, false, false, false, true, true, true, true, true, true, true, false, false, false, false}
+	});	
+	
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final int foresightdur = (int) (FORESIGHT_DURATION.getValue() * 20);
 	private final int skilldur = (int) (SKILL_DURATION.getValue() * 20);
+	private static final RGB color = RGB.of(1, 35, 49);
 
 	private Player target = null;
 	private static final Set<Material> swords;
@@ -128,21 +156,39 @@ public class Foresight extends AbilityBase implements ActiveHandler, TargetHandl
 	
 	@SubscribeEvent
 	public void onSwap(PlayerSwapHandItemsEvent e) {
-		if (swords.contains(e.getOffHandItem().getType())) {
-			if (e.getPlayer().equals(getPlayer()) && !cooldown.isCooldown()) {
+		if (swords.contains(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
+			if (!cooldown.isCooldown() && !targettimer.isRunning()) {
 				if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate) != null) {
 					Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate);
 					target = p;
+					targettimer.start();
 				}
 			}
+			e.setCancelled(true);
 		}
 	}
 	
-	public AbilityTimer targettimer = new AbilityTimer() {
+	public AbilityTimer targettimer = new AbilityTimer(foresightdur) {
+		
+		private List<Participant> showplayers;
+		
+		@Override
+		public void onStart() {
+			showplayers = new ArrayList<>(getGame().getParticipants());
+			showplayers.remove(getGame().getParticipant(target));
+		}
 		
 		@Override
 		public void run(int count) {
-			
+			for (Participant participant : showplayers) {
+				final Location headLocation = participant.getPlayer().getEyeLocation().clone().add(0, 1.5, 0);
+				final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+				final float yaw = participant.getPlayer().getLocation().getYaw();
+				for (Location loc : CLOSED_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
+					ParticleLib.REDSTONE.spawnParticle(loc, color);
+				}
+				CLOSED_EYE.rotateAroundAxisY(yaw);	
+			}
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
