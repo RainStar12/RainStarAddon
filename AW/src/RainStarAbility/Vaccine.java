@@ -77,26 +77,28 @@ public class Vaccine extends AbilityBase {
 	
     @SubscribeEvent(onlyRelevant = true)
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
-    	final AbilityPreActiveSkillEvent activeevent = new AbilityPreActiveSkillEvent(this, Material.IRON_INGOT, null);
-    	Bukkit.getPluginManager().callEvent(activeevent);
     	if (e.getOffHandItem().getType().equals(Material.IRON_INGOT) && e.getPlayer().equals(getPlayer()) && onetime) {
-    		onetime = false;
-    		Collection<Effect> nowEffects = getParticipant().getEffects();
-    		if (nowEffects.size() >= 1) {
-        		final StringJoiner joiner = new StringJoiner("§f, ");
-        		for (Effect effect : nowEffects) {
-        			effects.add(effect.getRegistration());
-        			joiner.add(effect.getRegistration().getManifest().displayName());
+    		final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, Material.IRON_INGOT, null);
+    		Bukkit.getPluginManager().callEvent(event);
+    		if (!event.isCancelled()) {
+        		onetime = false;
+        		Collection<Effect> nowEffects = getParticipant().getEffects();
+        		if (nowEffects.size() >= 1) {
+            		final StringJoiner joiner = new StringJoiner("§f, ");
+            		for (Effect effect : nowEffects) {
+            			effects.add(effect.getRegistration());
+            			joiner.add(effect.getRegistration().getManifest().displayName());
+            		}
+            		getPlayer().sendMessage("§d[§a!§d] §f" + joiner.toString() + "§f의 효과를 치료하였습니다.");
         		}
-        		getPlayer().sendMessage("§d[§a!§d] §f" + joiner.toString() + "§f의 효과를 치료하였습니다.");
-    		}
-			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
-			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), maxHealth);	
-			}
-    		getParticipant().removeEffects();
+    			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+    			final EntityRegainHealthEvent healevent = new EntityRegainHealthEvent(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
+    			Bukkit.getPluginManager().callEvent(healevent);
+    			if (!healevent.isCancelled()) {
+    				Healths.setHealth(getPlayer(), maxHealth);	
+    			}
+        		getParticipant().removeEffects();
+        	}	
     		e.setCancelled(true);
     	}
     }

@@ -19,7 +19,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -82,11 +82,13 @@ public class Delusion extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !cooldown.isCooldown()) {
-			final AbilityActiveSkillEvent event = new AbilityActiveSkillEvent(this, e.getItem().getType(), ClickType.RIGHT_CLICK);
+			final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getItem().getType(), ClickType.RIGHT_CLICK);
 			Bukkit.getPluginManager().callEvent(event);
-			getPlayer().sendMessage("§d능력을 사용하였습니다.");
-			damageUp.start();
-			cooldown.start();
+			if (!event.isCancelled()) {
+				getPlayer().sendMessage("§d능력을 사용하였습니다.");
+				damageUp.start();
+				cooldown.start();	
+			}
 		}
 	}
 	

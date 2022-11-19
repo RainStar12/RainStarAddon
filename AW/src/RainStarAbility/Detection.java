@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
@@ -195,11 +197,54 @@ public class Detection extends AbilityBase {
 		if (swords.contains(e.getOffHandItem().getType())) {
 			if (e.getPlayer().equals(getPlayer()) && !cool.isCooldown()) {
 				if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate) != null) {
-					Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate);
-					if (config) {
-						for (Player player : LocationUtil.getNearbyEntities(Player.class, p.getLocation(), range, range, predicate)) {
-							Participant target = getGame().getParticipant(player);
-							new AbilityTimer(duration * 20) {
+	    			final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getOffHandItem().getType(), ClickType.RIGHT_CLICK);
+	    			Bukkit.getPluginManager().callEvent(event);
+	    			if (!event.isCancelled()) {
+	    				Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate);
+						if (config) {
+							for (Player player : LocationUtil.getNearbyEntities(Player.class, p.getLocation(), range, range, predicate)) {
+								Participant target = getGame().getParticipant(player);
+								new AbilityTimer(duration * 20) {
+
+									private ActionbarChannel actionbarChannel;
+
+									@Override
+									protected void run(int count) {
+										actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + df.format(count * 0.05) + " 초");
+									}
+
+									@Override
+									protected void onStart() {
+										noatk.add(target.getPlayer().getUniqueId());
+										actionbarChannel = target.actionbar().newChannel();
+									}
+
+									@Override
+									protected void onEnd() {
+										noatk.remove(target.getPlayer().getUniqueId());
+										if (actionbarChannel != null)
+											actionbarChannel.unregister();
+									}
+
+									@Override
+									protected void onSilentEnd() {
+										noatk.remove(target.getPlayer().getUniqueId());
+										if (actionbarChannel != null)
+											actionbarChannel.unregister();
+									}
+									
+								}.setPeriod(TimeUnit.TICKS, 1).start();		
+								SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
+								getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §2간파§f하였습니다.");
+							}
+							SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
+							ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
+							cool.start();
+						} else {
+							if (stacker.containsKey(p)) stacker.put(p, stacker.get(p) + 1);	
+							else stacker.put(p, 1);
+							Participant target = getGame().getParticipant(p);
+							new AbilityTimer((duration * 20) + ((stacker.get(p) - 1) * 20)) {
 
 								private ActionbarChannel actionbarChannel;
 
@@ -213,7 +258,7 @@ public class Detection extends AbilityBase {
 									noatk.add(target.getPlayer().getUniqueId());
 									actionbarChannel = target.actionbar().newChannel();
 								}
-
+									
 								@Override
 								protected void onEnd() {
 									noatk.remove(target.getPlayer().getUniqueId());
@@ -229,54 +274,15 @@ public class Detection extends AbilityBase {
 								}
 								
 							}.setPeriod(TimeUnit.TICKS, 1).start();		
+							SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
 							SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
-							getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §2간파§f하였습니다.");
-						}
-						SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
-						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
-						cool.start();
-					} else {
-						if (stacker.containsKey(p)) stacker.put(p, stacker.get(p) + 1);	
-						else stacker.put(p, 1);
-						Participant target = getGame().getParticipant(p);
-						new AbilityTimer((duration * 20) + ((stacker.get(p) - 1) * 20)) {
-
-							private ActionbarChannel actionbarChannel;
-
-							@Override
-							protected void run(int count) {
-								actionbarChannel.update("§e" + getPlayer().getName() + " §f에게 §c근접 공격 불능 §7: §f" + df.format(count * 0.05) + " 초");
-							}
-
-							@Override
-							protected void onStart() {
-								noatk.add(target.getPlayer().getUniqueId());
-								actionbarChannel = target.actionbar().newChannel();
-							}
-								
-							@Override
-							protected void onEnd() {
-								noatk.remove(target.getPlayer().getUniqueId());
-								if (actionbarChannel != null)
-									actionbarChannel.unregister();
-							}
-
-							@Override
-							protected void onSilentEnd() {
-								noatk.remove(target.getPlayer().getUniqueId());
-								if (actionbarChannel != null)
-									actionbarChannel.unregister();
-							}
+							int nowduration = duration + stacker.get(p) - 1;
+							getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §a" + nowduration + "§f초 §2간파§f하였습니다.");
+							ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
 							
-						}.setPeriod(TimeUnit.TICKS, 1).start();		
-						SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer());
-						SoundLib.ENTITY_IRON_GOLEM_DEATH.playSound(target.getPlayer(), 10, 0.5f);
-						int nowduration = duration + stacker.get(p) - 1;
-						getPlayer().sendMessage("§2[§a!§2] §e" + target.getPlayer().getName() + " §f님의 공격을 §a" + nowduration + "§f초 §2간파§f하였습니다.");
-						ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 500, 0);
-						
-						cool.start();
-					}
+							cool.start();
+						}	
+	    			}
 				}
 			}
 			e.setCancelled(true);

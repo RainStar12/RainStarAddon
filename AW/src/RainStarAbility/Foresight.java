@@ -180,15 +180,27 @@ public class Foresight extends AbilityBase implements ActiveHandler, TargetHandl
 		
 		@Override
 		public void run(int count) {
-			for (Participant participant : showplayers) {
-				final Location headLocation = participant.getPlayer().getEyeLocation().clone().add(0, 1.5, 0);
-				final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
-				final float yaw = participant.getPlayer().getLocation().getYaw();
-				for (Location loc : CLOSED_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
-					ParticleLib.REDSTONE.spawnParticle(loc, color);
-				}
-				CLOSED_EYE.rotateAroundAxisY(yaw);	
+			if (count % 2 == 0) {
+				for (Participant participant : showplayers) {
+					final Location headLocation = target.getEyeLocation().clone().add(0, 1.5, 0);
+					final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+					final float yaw = participant.getPlayer().getLocation().getYaw();
+					for (Location loc : CLOSED_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
+						ParticleLib.REDSTONE.spawnParticle(participant.getPlayer(), loc, color);
+					}
+					CLOSED_EYE.rotateAroundAxisY(yaw);	
+				}	
 			}
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			showplayers.clear();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();

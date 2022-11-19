@@ -454,6 +454,7 @@ public class AddonR extends Addon implements Listener {
 	public void onParticipantDeath(ParticipantDeathEvent e) {
 		if (hy.exists()) {
 			if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()) != null) {
+				
 				if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).hasAbility()) {
 					AbilityBase ab = e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).getAbility();
 					if (ab.getClass().equals(Mix.class)) {
