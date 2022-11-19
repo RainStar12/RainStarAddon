@@ -134,7 +134,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	private int rainbowstack = 0;
 
 	private final RGB rainbow1 = RGB.of(216, 103, 221), rainbow2 = RGB.of(187, 114, 211), rainbow3 = RGB.of(108, 125, 251),
-			rainbow4 = RGB.of(117, 183, 252), rainbow5 = RGB.of(126, 241, 172), rainbow6 = RGB.of(228, 292, 140),
+			rainbow4 = RGB.of(117, 183, 252), rainbow5 = RGB.of(126, 241, 172), rainbow6 = RGB.of(228, 192, 140),
 			rainbow7 = RGB.of(254, 254, 101), rainbow8 = RGB.of(241, 221, 111), rainbow9 = RGB.of(241, 175, 105),
 			rainbow10 = RGB.of(235, 144, 161), rainbow11 = RGB.of(232, 123, 202), rainbow12 = RGB.of(198, 113, 237);
 

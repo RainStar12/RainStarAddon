@@ -62,7 +62,6 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
-import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
@@ -453,8 +452,9 @@ public class AddonR extends Addon implements Listener {
 	@EventHandler()
 	public void onParticipantDeath(ParticipantDeathEvent e) {
 		if (hy.exists()) {
+			String killerabilityname = "";
+			String deathabilityname = "";
 			if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()) != null) {
-				
 				if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).hasAbility()) {
 					AbilityBase ab = e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()).getAbility();
 					if (ab.getClass().equals(Mix.class)) {
@@ -463,16 +463,31 @@ public class AddonR extends Addon implements Listener {
 							if (mix.hasSynergy()) {
 								Synergy synergy = mix.getSynergy();
 								Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-								String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
-								Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+								killerabilityname = synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
 							} else {
-								String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
-								Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+								killerabilityname = mix.getFirst().getName() + " + " + mix.getSecond().getName();
 							}
-						} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님은 능력이 없습니다.");
-					} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님의 능력은 §e" + ab.getDisplayName() + "§f입니다.");
-				} else Bukkit.broadcastMessage("§f[§c능력§f] 처치자 §c" + e.getPlayer().getKiller().getName() + "§f님은 능력이 없습니다.");
+						} else killerabilityname = "능력 없음";
+					} else killerabilityname = ab.getDisplayName();
+				} else killerabilityname = "능력 없음";
 			}
+			
+			if (e.getParticipant().hasAbility()) {
+				AbilityBase ab = e.getParticipant().getAbility();
+				if (ab.getClass().equals(Mix.class)) {
+					Mix mix = (Mix) ab;
+					if (mix.hasAbility()) {
+						if (mix.hasSynergy()) {
+							Synergy synergy = mix.getSynergy();
+							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+							deathabilityname = synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
+						} else {
+							deathabilityname = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+						}
+					} else deathabilityname = "능력 없음";
+				} else deathabilityname = ab.getDisplayName();
+			} else deathabilityname = "능력 없음";
+			Bukkit.broadcastMessage("§f[§c능력§f] §c" + e.getPlayer().getKiller().getName() + "§7[" + killerabilityname + "§7]§f님이 §a" + e.getPlayer().getName() + "§7[" + deathabilityname + "§7]§f님을 처치하였습니다.");
 			Bukkit.broadcastMessage("§4[§c!§4]§f 현재 참가자가 §c" + e.getParticipant().getGame().getParticipants().size() + "§f명 남았습니다.");
 		}
 	}
