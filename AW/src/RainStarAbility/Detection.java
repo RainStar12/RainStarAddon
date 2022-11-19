@@ -197,7 +197,7 @@ public class Detection extends AbilityBase {
 		if (swords.contains(e.getOffHandItem().getType())) {
 			if (e.getPlayer().equals(getPlayer()) && !cool.isCooldown()) {
 				if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate) != null) {
-	    			final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getOffHandItem().getType(), ClickType.RIGHT_CLICK);
+	    			final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getOffHandItem().getType(), null);
 	    			Bukkit.getPluginManager().callEvent(event);
 	    			if (!event.isCancelled()) {
 	    				Player p = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate);

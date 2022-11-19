@@ -87,10 +87,6 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
         public boolean condition(Integer value) {
             return value >= 0;
         }
-		@Override
-		public String toString() {
-			return "" + (1 + getValue());
-        }
     };
     
     private ActionbarChannel ac = newActionbarChannel();

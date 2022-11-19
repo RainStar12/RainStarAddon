@@ -16,6 +16,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -54,7 +55,7 @@ public class GlitchedCrown extends AbilityBase implements ActiveHandler {
 	
 	public AbilityRegistration getRandomAbility() {
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && !(abilities.contains(ability))
+				ability -> ability.getAbilityClass().getAnnotation(Beta.class) != null && ability.isAvailable(getGame().getClass()) && !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && !(abilities.contains(ability))
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
