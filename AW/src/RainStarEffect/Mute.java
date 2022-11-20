@@ -1,12 +1,12 @@
 package RainStarEffect;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.game.AbstractGame;
@@ -22,7 +22,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 		"채팅을 칠 수 없습니다.",
 		"액티브, 타게팅 스킬을 사용할 수 없습니다."
 })
-@SuppressWarnings("deprecation")
 public class Mute extends AbstractGame.Effect implements Listener {
 
 	public static final EffectRegistration<Mute> registration = EffectRegistry.registerEffect(Mute.class);
@@ -45,15 +44,15 @@ public class Mute extends AbstractGame.Effect implements Listener {
 		super.onStart();
 	}
 	
-	@SubscribeEvent
-	public void onChat(PlayerChatEvent e) {
+	@EventHandler()
+	public void onChat(AsyncPlayerChatEvent e) {
 		if (participant.getPlayer().equals(e.getPlayer())) {
 			participant.getPlayer().sendMessage("§3[§b!§3] §c침묵되었습니다!");
 			e.setCancelled(true);
 		}
 	}
 
-	@SubscribeEvent
+	@EventHandler()
 	public void onPreActiveSkill(AbilityPreActiveSkillEvent e) {
 		if (e.getParticipant().equals(participant)) {
 			participant.getPlayer().sendMessage("§3[§b!§3] §c침묵되었습니다!");
@@ -61,7 +60,7 @@ public class Mute extends AbstractGame.Effect implements Listener {
 		}
 	}
 	
-	@SubscribeEvent
+	@EventHandler()
 	public void onPreTargetSkill(AbilityPreTargetEvent e) {
 		if (e.getParticipant().equals(participant)) {
 			participant.getPlayer().sendMessage("§3[§b!§3] §c침묵되었습니다!");

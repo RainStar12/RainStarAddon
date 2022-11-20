@@ -2,11 +2,19 @@ package rainstar.aw;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
@@ -26,6 +34,7 @@ import daybreak.abilitywar.Command.Condition;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Berserker;
 import daybreak.abilitywar.ability.list.Curse;
@@ -50,8 +59,10 @@ import daybreak.abilitywar.ability.list.Vampire;
 import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.addon.Addon;
+import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
@@ -60,15 +71,32 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
+import daybreak.google.common.collect.ImmutableMap;
 
 public class AddonR extends Addon implements Listener {
 	
-	File nodelay = new File("plugins/AbilityWar/nodelay.txt");
-	File hy = new File("plugins/AbilityWar/hy.txt");
+	private File nodelay = new File("plugins/AbilityWar/nodelay.txt");
+	private File hy = new File("plugins/AbilityWar/hy.txt");
+	
+	private final YamlConfiguration winconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("wincount.txt"));
+	private final YamlConfiguration killconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("killcount.txt"));
+	
+	private Map<UUID, Integer> nowkillcount = new HashMap<>();
+	
+	private static final ImmutableMap<Rank, String> rankcolor = ImmutableMap.<Rank, String>builder()
+			.put(Rank.C, "§e")
+			.put(Rank.B, "§b")
+			.put(Rank.A, "§a")
+			.put(Rank.S, "§d")
+			.put(Rank.L, "§6")
+			.put(Rank.SPECIAL, "§c")
+			.build();
 	
 	@Override
 	public void onEnable() {
@@ -292,6 +320,7 @@ public class AddonR extends Addon implements Listener {
 		
 		
 		
+		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
 		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, Gravity.class);
 		SynergyFactory.registerSynergy(TimeRewind.class, TimeStop.class, TimeTravel.class);
@@ -402,6 +431,13 @@ public class AddonR extends Addon implements Listener {
 		//event
 		AbilityFactory.registerAbility(Null.class);
 		
+		if (hy.exists()) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				int count = winconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) winconfig.get(player.getUniqueId().toString());
+				player.setPlayerListName(player.getGameMode().equals(GameMode.SPECTATOR) ? "§8§o[§7§o" + count + "§8§o] §7§o" + player.getName() : "§a[§e" + count + "§a] §f" + player.getName());
+			}	
+		}
+		
 		getPlugin().getCommands().getMainCommand().addSubCommand("delay", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -441,6 +477,104 @@ public class AddonR extends Addon implements Listener {
 				return true;
 			}
 		});
+		
+		getPlugin().getCommands().getMainCommand().addSubCommand("win", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (!hy.exists()) {
+					sender.sendMessage("§4[§c!§4] §f사망 메시지 옵션을 먼저 활성화해주세요. /aw hy");
+				} else {
+					if (args.length >= 2) {
+						if (args[0].equals("add")) {
+							if (Bukkit.getPlayer(args[1]).isOnline()) {
+								Player player = Bukkit.getPlayer(args[1]);
+								int count = (winconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) winconfig.get(player.getUniqueId().toString())) + 1;
+								winconfig.set(player.getUniqueId().toString(), count);
+								player.setPlayerListName(player.getGameMode().equals(GameMode.SPECTATOR) ? "§8§o[§7§o" + count + "§8§o] §7§o" + player.getName() : "§a[§e" + count + "§a] §f" + player.getName());
+								try {
+									winconfig.save(FileUtil.newFile("wincount.txt"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								sender.sendMessage("§a[§e!§a] §b" + player.getName()+ "§f님은 이제 §e" + count + "§f승입니다.");
+							}
+						}
+						if (args[0].equals("del")) {
+							if (Bukkit.getPlayer(args[1]).isOnline()) {
+								Player player = Bukkit.getPlayer(args[1]);
+								int count = (winconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) winconfig.get(player.getUniqueId().toString())) - 1;
+								winconfig.set(player.getUniqueId().toString(), count);
+								player.setPlayerListName(player.getGameMode().equals(GameMode.SPECTATOR) ? "§8§o[§7§o" + count + "§8§o] §7§o" + player.getName() : "§a[§e" + count + "§a] §f" + player.getName());
+								try {
+									winconfig.save(FileUtil.newFile("wincount.txt"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								sender.sendMessage("§a[§e!§a] §b" + player.getName()+ "§f님은 이제 §e" + count + "§f승입니다.");
+							}
+						}
+					}	
+				}
+				return true;
+			}
+		});
+		
+		getPlugin().getCommands().getMainCommand().addSubCommand("kill", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (!hy.exists()) {
+					sender.sendMessage("§4[§c!§4] §f사망 메시지 옵션을 먼저 활성화해주세요. /aw hy");
+				} else {
+					if (args.length >= 2) {
+						if (args[0].equals("add")) {
+							if (Bukkit.getPlayer(args[1]).isOnline()) {
+								Player player = Bukkit.getPlayer(args[1]);
+								int count = (killconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) killconfig.get(player.getUniqueId().toString())) + 1;
+								killconfig.set(player.getUniqueId().toString(), count);
+								try {
+									killconfig.save(FileUtil.newFile("killcount.txt"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								sender.sendMessage("§4[§c!§4] §b" + player.getName()+ "§f님은 이제 전체 §c" + count + "§f킬입니다.");
+							}
+						}
+						if (args[0].equals("del")) {
+							if (Bukkit.getPlayer(args[1]).isOnline()) {
+								Player player = Bukkit.getPlayer(args[1]);
+								int count = (killconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) killconfig.get(player.getUniqueId().toString())) - 1;
+								killconfig.set(player.getUniqueId().toString(), count);
+								try {
+									killconfig.save(FileUtil.newFile("killcount.txt"));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								sender.sendMessage("§4[§c!§4] §b" + player.getName()+ "§f님은 이제 전체 §c" + count + "§f킬입니다.");
+							}
+						}
+					}	
+				}
+				return true;
+			}
+		});
+	}
+	
+	@EventHandler()
+	public void onChangeGameMode(PlayerGameModeChangeEvent e) {
+		if (hy.exists()) {
+			Player player = e.getPlayer();
+			int count = winconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) winconfig.get(player.getUniqueId().toString());
+			player.setPlayerListName(player.getGameMode().equals(GameMode.SPECTATOR) ? "§8§o[§7§o" + count + "§8§o] §7§o" + player.getName() : "§a[§e" + count + "§a] §f" + player.getName());	
+		}
+	}
+	
+	@EventHandler()
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (hy.exists()) {
+			Player player = e.getPlayer();
+			int count = winconfig.get(player.getUniqueId().toString()) == null ? 0 : (int) winconfig.get(player.getUniqueId().toString());
+			player.setPlayerListName(player.getGameMode().equals(GameMode.SPECTATOR) ? "§8§o[§7§o" + count + "§8§o] §7§o" + player.getName() : "§a[§e" + count + "§a] §f" + player.getName());	
+		}
 	}
 	
 	@EventHandler()
@@ -449,6 +583,11 @@ public class AddonR extends Addon implements Listener {
 			Bukkit.broadcastMessage("§2[§a!§2] §c공격 쿨타임 제거!");
 			e.getGame().addModule(new NoDelay(e.getGame()));
 		}
+	}
+	
+	@EventHandler()
+	public void onGameEnd(GameEndEvent e) {
+		if (!nowkillcount.isEmpty()) nowkillcount.clear();
 	}
 	
 	@EventHandler()
@@ -465,13 +604,13 @@ public class AddonR extends Addon implements Listener {
 							if (mix.hasSynergy()) {
 								Synergy synergy = mix.getSynergy();
 								Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-								killerabilityname = synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
+								killerabilityname = rankcolor.get(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
 							} else {
-								killerabilityname = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+								killerabilityname = rankcolor.get(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + rankcolor.get(mix.getSecond().getRank()) + mix.getSecond().getName();
 							}
-						} else killerabilityname = "능력 없음";
-					} else killerabilityname = ab.getDisplayName();
-				} else killerabilityname = "능력 없음";
+						} else killerabilityname = "§7능력 없음";
+					} else killerabilityname = rankcolor.get(ab.getRank()) + ab.getDisplayName();
+				} else killerabilityname = "§7능력 없음";
 			}
 			
 			if (e.getParticipant().hasAbility()) {
@@ -482,15 +621,33 @@ public class AddonR extends Addon implements Listener {
 						if (mix.hasSynergy()) {
 							Synergy synergy = mix.getSynergy();
 							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-							deathabilityname = synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
+							deathabilityname = rankcolor.get(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
 						} else {
-							deathabilityname = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+							deathabilityname = rankcolor.get(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + rankcolor.get(mix.getSecond().getRank()) + mix.getSecond().getName();
 						}
-					} else deathabilityname = "능력 없음";
-				} else deathabilityname = ab.getDisplayName();
-			} else deathabilityname = "능력 없음";
-			Bukkit.broadcastMessage("§f[§c능력§f] §c" + e.getPlayer().getKiller().getName() + "§7[" + killerabilityname + "§7]§f님이 §a" + e.getPlayer().getName() + "§7[" + deathabilityname + "§7]§f님을 처치하였습니다.");
-			Bukkit.broadcastMessage("§4[§c!§4]§f 현재 참가자가 §c" + e.getParticipant().getGame().getParticipants().size() + "§f명 남았습니다.");
+					} else deathabilityname = "§7능력 없음";
+				} else deathabilityname = rankcolor.get(ab.getRank()) + ab.getDisplayName();
+			} else deathabilityname = "§7능력 없음";
+			
+			if (e.getPlayer().getKiller() != null) {
+				Player killer = e.getPlayer().getKiller();
+				nowkillcount.put(killer.getUniqueId(), nowkillcount.getOrDefault(killer.getUniqueId(), 0) + 1);
+				int count = (killconfig.get(killer.getUniqueId().toString()) == null ? 0 : (int) killconfig.get(killer.getUniqueId().toString())) + 1;
+				killconfig.set(killer.getUniqueId().toString(), count);
+				try {
+					killconfig.save(FileUtil.newFile("killcount.txt"));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				Bukkit.broadcastMessage("§f[§c능력§f] §c" + e.getPlayer().getName() + "§8[§7" + deathabilityname + "§8]§f님이 §a" + e.getPlayer().getKiller().getName() + "§8[§7" + killerabilityname + "§8]§f님에게 살해당했습니다. §c킬 수§7: §c(§e" + nowkillcount.get(killer.getUniqueId()) + "§7/§e" + count + "§c)");
+			} else Bukkit.broadcastMessage("§f[§c능력§f] §c" + e.getPlayer().getName() + "§8[" + deathabilityname + "§8]§f님이 사망하였습니다.");
+			int left = e.getParticipant().getGame().getParticipants().size();
+			for (Participant participant : e.getParticipant().getGame().getParticipants()) {
+				if ((e.getParticipant().getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) e.getParticipant().getGame()).getDeathManager().isExcluded(participant.getPlayer().getUniqueId()))) {
+					left--;
+				}
+			}
+			Bukkit.broadcastMessage("§4[§c!§4]§f 현재 참가자가 §c" + (left - 1) + "§f명 남았습니다.");
 		}
 	}
 	

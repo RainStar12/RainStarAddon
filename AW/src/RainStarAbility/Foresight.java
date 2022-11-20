@@ -20,6 +20,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.NotAvailable;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
@@ -27,6 +28,8 @@ import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.mix.AbstractMix;
+import daybreak.abilitywar.game.list.mix.triplemix.AbstractTripleMix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -55,6 +58,8 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§3침묵§f된 대상이 사용하려던 스킬을 자신이 대신하여 사용합니다.",
 		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		})
+
+@NotAvailable({AbstractMix.class, AbstractTripleMix.class})
 public class Foresight extends AbilityBase {
 	
 	public Foresight(Participant participant) {
@@ -127,7 +132,7 @@ public class Foresight extends AbilityBase {
 		}
 	};
 	
-	private static final Points CLOSED_EYE = Points.of(0.12, new boolean[][]{
+	private static final Points CLOSED_EYE = Points.of(0.17, new boolean[][]{
 		{true, false, false, false, false, false, false, false, false, false, false, false, false, false, true},
 		{false, true, false, false, false, false, false, false, false, false, false, false, false, true, false},
 		{false, false, true, true, false, false, false, false, false, false, false, true, true, false, false},
@@ -137,7 +142,7 @@ public class Foresight extends AbilityBase {
 		{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false}
 	});
 	
-	private static final Points OPEN_EYE = Points.of(0.12, new boolean[][]{
+	private static final Points OPEN_EYE = Points.of(0.17, new boolean[][]{
 		{false, false, false, false, true, true, true, true, true, true, true, false, false, false, false},
 		{false, false, true, true, false, false, true, true, true, false, false, true, true, false, false},
 		{false, true, false, false, false, true, true, true, false, true, false, false, false, true, false},
@@ -204,10 +209,10 @@ public class Foresight extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			if (count % 2 == 0) {
+			if (count % 4 == 0) {
 				for (Participant participant : showplayers) {
-					final Location headLocation = target.getEyeLocation().clone().add(0, 1.5, 0);
-					final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+					final Location headLocation = target.getEyeLocation().clone().add(0, 1.7, 0);
+					final Location baseLocation = headLocation.clone().subtract(0, 1.6, 0);
 					final float yaw = participant.getPlayer().getLocation().getYaw();
 					for (Location loc : CLOSED_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
 						ParticleLib.REDSTONE.spawnParticle(participant.getPlayer(), loc, color);
@@ -235,7 +240,7 @@ public class Foresight extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			ac.update(rankcolor.get(ab.getRank()) + ab.getDisplayName() + "§7: " + df.format(count / 20.0) + "§f초");
+			ac.update(rankcolor.get(ab.getRank()) + ab.getDisplayName() + "§7: §a" + df.format(count / 20.0) + "§f초");
 		}
 		
 		@Override
@@ -254,7 +259,7 @@ public class Foresight extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onPreActiveSkill(AbilityPreActiveSkillEvent e) {
-		if (e.getParticipant().getPlayer().equals(target)) {
+		if (!e.getParticipant().hasEffect(Mute.registration) && !e.isCancelled() && e.getParticipant().getPlayer().equals(target)) {
 			e.setCancelled(true);
 			Mute.apply(getGame().getParticipant(target), TimeUnit.TICKS, skilldur);
 			new OpenEyeParticle(getGame().getParticipant(target)).start();
@@ -274,7 +279,7 @@ public class Foresight extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onPreTargetSkill(AbilityPreTargetEvent e) {
-		if (e.getParticipant().getPlayer().equals(target)) {
+		if (!e.getParticipant().hasEffect(Mute.registration) && !e.isCancelled() && e.getParticipant().getPlayer().equals(target)) {
 			e.setCancelled(true);
 			Mute.apply(getGame().getParticipant(target), TimeUnit.TICKS, skilldur);
 			new OpenEyeParticle(getGame().getParticipant(target)).start();
@@ -298,7 +303,7 @@ public class Foresight extends AbilityBase {
 		
 		public OpenEyeParticle(Participant participant) {
 			super(TaskType.INFINITE, -1);
-			setPeriod(TimeUnit.TICKS, 2);
+			setPeriod(TimeUnit.TICKS, 4);
 			this.participant = participant;
 		}
 		
@@ -306,8 +311,8 @@ public class Foresight extends AbilityBase {
 		public void run(int count) {
 			if (!participant.hasEffect(Mute.registration)) this.stop(false);
 			else {
-				final Location headLocation = participant.getPlayer().getEyeLocation().clone().add(0, 1.5, 0);
-				final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
+				final Location headLocation = participant.getPlayer().getEyeLocation().clone().add(0, 1.7, 0);
+				final Location baseLocation = headLocation.clone().subtract(0, 1.6, 0);
 				final float yaw = participant.getPlayer().getLocation().getYaw();
 				for (Location loc : OPEN_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
 					ParticleLib.REDSTONE.spawnParticle(loc, color);
