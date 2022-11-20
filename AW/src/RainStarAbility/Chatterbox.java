@@ -2145,9 +2145,12 @@ public class Chatterbox extends AbilityBase {
 	
 	public AbilityTimer passive = new AbilityTimer(period) {
 		
+		boolean korean;
+		
 		@Override
 		public void onEnd() {
-			boolean korean = (random.nextInt(10) <= 8);
+			if (random.nextInt(10) <= 8) korean = true;
+			else korean = false;
 			nowProverb = random.pick(korean ? koreanlist : englishlist);
 			skill.start();
 			if (!korean) skill.setCount((int) (duration + (duration * 0.5)));
