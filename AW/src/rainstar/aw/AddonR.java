@@ -2,7 +2,10 @@ package rainstar.aw;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -514,6 +517,23 @@ public class AddonR extends Addon implements Listener {
 							}
 						}
 					}	
+					if (args[0].equals("list")) {
+						Map<Player, Integer> winmap = new HashMap<>();
+						List<Player> playerList = new ArrayList<>(winmap.keySet());
+						int stack = 0;
+						for (String strings : winconfig.getKeys(false)) {
+							Player player = Bukkit.getPlayer(UUID.fromString(strings));
+							winmap.put(player, winconfig.getInt(strings));
+						}
+						Collections.sort(playerList, (value1, value2) -> (winmap.get(value2).compareTo(winmap.get(value1))));
+						sender.sendMessage("§a========= §e우승 TOP10 §a=========");
+						for (Player player : playerList) {
+							sender.sendMessage("§e" + player.getName() + "§7: §b" + winmap.get(player));
+							stack++;
+							if (stack == 10) break;
+						}
+						sender.sendMessage("§a===========================");
+					}
 				}
 				return true;
 			}
@@ -552,7 +572,24 @@ public class AddonR extends Addon implements Listener {
 								sender.sendMessage("§4[§c!§4] §b" + player.getName()+ "§f님은 이제 전체 §c" + count + "§f킬입니다.");
 							}
 						}
-					}	
+					}
+					if (args[0].equals("list")) {
+						Map<Player, Integer> killmap = new HashMap<>();
+						List<Player> playerList = new ArrayList<>(killmap.keySet());
+						int stack = 0;
+						for (String strings : killconfig.getKeys(false)) {
+							Player player = Bukkit.getPlayer(UUID.fromString(strings));
+							killmap.put(player, killconfig.getInt(strings));
+						}
+						Collections.sort(playerList, (value1, value2) -> (killmap.get(value2).compareTo(killmap.get(value1))));
+						sender.sendMessage("§5========= §c킬 TOP10 §5=========");
+						for (Player player : playerList) {
+							sender.sendMessage("§c" + player.getName() + "§7: §e" + killmap.get(player));
+							stack++;
+							if (stack == 10) break;
+						}
+						sender.sendMessage("§5==========================");
+					}
 				}
 				return true;
 			}
