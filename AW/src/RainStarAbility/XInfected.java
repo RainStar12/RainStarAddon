@@ -55,9 +55,10 @@ public class XInfected extends AbilityBase {
     };
     
     private final int duration = (int) (DURATION.getValue() * 20);
-    private final double damage = DAMAGE.getValue() * 0.01;
+    private final double damagemultiply = DAMAGE.getValue() * 0.01;
     private final double decrease = 1 - (DECREASE.getValue() * 0.01);
     private Zombie zombie;
+    private double damage;
     
     private AbilityTimer infected = new AbilityTimer(duration) {
     	
@@ -98,7 +99,13 @@ public class XInfected extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager().equals(zombie)) {
+			e.setDamage(damage * damagemultiply);
+		}
 		
+		if (e.getEntity().equals(zombie)) {
+			e.setDamage(e.getDamage() * decrease);
+		}
 	}
 
 }
