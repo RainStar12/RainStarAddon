@@ -14,9 +14,9 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @AbilityManifest(name = "X-Infected", rank = Rank.S, species = Species.UNDEAD, explain = {
-		"철괴 우클릭 시 $[DURATION]초간 §2좀비§f가 되어 컨트롤이 불가능해집니다.",
+		"철괴 우클릭 시 $[DURATION]초간 20HP의 §2좀비§f가 되어 컨트롤이 불가능해집니다.",
 		"§2좀비§f는 내 최종 공격력의 §c$[DAMAGE]%§f의 피해를 주고, 받는 피해가 $[DECREASE]% 감소합니다.",
-		"§2좀비§f와 자신의 체력을 공유하며, §2좀비화§f 중에는 §d회복 효과§f가 §c피해 효과§f가 됩니다."
+		"§2좀비화§f 도중 §c사망 시§f 지속시간이 즉시 종료되고 $[HEALTH_LOSE]%의 체력을 잃습니다."
 		},
 		summarize = {
 		""
