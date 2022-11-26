@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.SoundLib;
 
 @SuppressWarnings("serial")
 public class KillRewardGUI implements Listener {
@@ -46,25 +47,26 @@ public class KillRewardGUI implements Listener {
             .build();
 	
 	public KillRewardGUI(Player opener, Plugin plugin) {
-        this.plugin = plugin;
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         this.player = opener;
         openGUI();
 	}
 	
-	private Plugin plugin;
 	public static Status status = Status.DISABLE;
 	public static Type type = Type.ALL;
 	private final Player player;
 	private final YamlConfiguration rewardconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("killreward.txt"));
-    private Inventory gui = Bukkit.createInventory(null, 54, "§c킬 보상 GUI");
-    private List<ItemStack> itemstacks = new ArrayList<>();
+    private Inventory gui = Bukkit.createInventory(null, 54, "§c킬 보상 설정");
+    private static List<ItemStack> itemstacks = new ArrayList<>();
+    private boolean openguicalled = false;
 	
     @SuppressWarnings("unchecked")
 	private void openGUI() {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    	openguicalled = true;
     	if (rewardconfig.get("활성화 여부") != null) status = Status.valueOf(rewardconfig.getString("활성화 여부"));
     	if (rewardconfig.get("지급 방법") != null) type = Type.valueOf(rewardconfig.getString("지급 방법"));
     	if (rewardconfig.get("킬 보상 아이템") != null) itemstacks = (List<ItemStack>) rewardconfig.get("킬 보상 아이템");
+    	gui.clear();
         gui.setItem(0, status.getItem());
         gui.setItem(2, type.getItem());
         gui.setItem(8, RUNE_BAG);
@@ -76,22 +78,32 @@ public class KillRewardGUI implements Listener {
         }
         if (!itemstacks.isEmpty()) gui.addItem(getItems().toArray(new ItemStack[0]));
         player.getPlayer().openInventory(gui);
+        openguicalled = false;
     }
     
     public ItemStack getItem(int slot) {
     	return itemstacks.get(slot);
     }
     
-	public List<ItemStack> getItems() {
+	public static List<ItemStack> getItems() {
 		return itemstacks;
 	}
-    
+	
     @EventHandler()
     public void onInventoryClick(InventoryClickEvent e) {
-    	if (e.getInventory().equals(gui)) {
+    	if (e.getClickedInventory().equals(gui)) {
         	if (e.getSlot() >= 0 && e.getSlot() <= 17) {
-            	if (e.getSlot() == 0) status = status.flip();
-            	if (e.getSlot() == 2) type = type.next();
+            	if (e.getSlot() == 0) {
+            		SoundLib.UI_BUTTON_CLICK.playSound(player);
+            		status = status.flip();
+            	}
+            	if (e.getSlot() == 2) {
+            		SoundLib.UI_BUTTON_CLICK.playSound(player);
+            		type = type.next();
+            	}
+            	if (e.getSlot() == 8) {
+            		SoundLib.BLOCK_ENDER_CHEST_OPEN.playSound(player, 1, 1.25f);
+            	}
         		e.setCancelled(true);
             	save();
             	openGUI();
@@ -100,6 +112,10 @@ public class KillRewardGUI implements Listener {
     }
     
     public void save() {
+        itemstacks.clear();
+        for (int a = 18; a < 53; a++) {
+        	if (gui.getItem(a) != null) itemstacks.add(gui.getItem(a));
+        }
 		rewardconfig.set("활성화 여부", status.name());
 		rewardconfig.set("지급 방법", type.name());
 		rewardconfig.set("킬 보상 아이템", itemstacks);
@@ -112,20 +128,13 @@ public class KillRewardGUI implements Listener {
     
     @EventHandler()
     public void onInventoryClose(InventoryCloseEvent e) {
-    	if (e.getInventory().equals(gui)) {
-        	itemstacks.clear();
-        	
-        	for (int a = 18; a < 53; a++) {
-        		if (gui.getItem(a) != null) itemstacks.add(gui.getItem(a));
-        	}
+    	if (e.getInventory().equals(gui) && !openguicalled) {
         	save();
-        	
         	HandlerList.unregisterAll(this);	
     	}
     }
     
-    enum Type {
-    	
+    enum Type {  	
     	ALL("전체", new ItemBuilder(MaterialX.CHEST)
                 .displayName("§a보상 지급 방법")
                 .lore(new ArrayList<String>() {
@@ -189,8 +198,7 @@ public class KillRewardGUI implements Listener {
 		
     }
     
-    enum Status {
-    	
+    enum Status { 	
     	ENABLE("활성화", new ItemBuilder(MaterialX.GREEN_WOOL)
                 .displayName("§b킬 보상§7: §a켜짐")
                 .build()) {
@@ -227,6 +235,5 @@ public class KillRewardGUI implements Listener {
 		public abstract Status flip();
 		
     }
-	
 	
 }

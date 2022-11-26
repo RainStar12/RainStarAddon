@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import RainStarAbility.*;
@@ -79,6 +80,7 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.google.common.collect.ImmutableMap;
 
@@ -91,6 +93,7 @@ public class AddonR extends Addon implements Listener {
 	private final YamlConfiguration killconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("killcount.txt"));
 	
 	private Map<UUID, Integer> nowkillcount = new HashMap<>();
+	private Random random = new Random();
 	
 	private static final ImmutableMap<Rank, String> rankcolor = ImmutableMap.<Rank, String>builder()
 			.put(Rank.C, "§e")
@@ -699,14 +702,18 @@ public class AddonR extends Addon implements Listener {
 		}
 		
 		if (KillRewardGUI.status.equals(KillRewardGUI.Status.ENABLE)) {
-			if (KillRewardGUI.type.equals(KillRewardGUI.Type.ALL)) {
-				
-			}
-			if (KillRewardGUI.type.equals(KillRewardGUI.Type.RANDOM)) {
-				
-			}
-			if (KillRewardGUI.type.equals(KillRewardGUI.Type.SELECT)) {
-				
+			if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()) != null) {
+				Participant killerparticipant = e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller());
+				Player killer = killerparticipant.getPlayer();
+				if (KillRewardGUI.type.equals(KillRewardGUI.Type.ALL)) {
+					killer.getInventory().addItem(KillRewardGUI.getItems().toArray(new ItemStack[0]));
+				}
+				if (KillRewardGUI.type.equals(KillRewardGUI.Type.RANDOM)) {
+					killer.getInventory().addItem(KillRewardGUI.getItems().get(random.nextInt(KillRewardGUI.getItems().size())));
+				}
+				if (KillRewardGUI.type.equals(KillRewardGUI.Type.SELECT)) {
+					new KillRewardSelectGUI(killer, AbilityWar.getPlugin());
+				}	
 			}
 		}
 	}

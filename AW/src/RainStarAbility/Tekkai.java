@@ -94,7 +94,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
 	}
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.IRON_INGOT && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
+		if (material == Material.IRON_INGOT && clicktype.equals(ClickType.RIGHT_CLICK) && !blocking.isRunning() && !cooldown.isCooldown()) {
 			return blocking.start();
 		}
 		return false;
