@@ -69,7 +69,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
         "§7가속 간 사망 §8- §a되감기§f: $[RANGE]칸 내 적의 시간을 $[DURATION]초간 정지시킵니다.",
         " 이 안에 정지된 적을 처치한다면 §b가속§f 간 가장 체력이 많은 시간으로 §a역행§f합니다.",
         " §a역행§f하지 못하면 사망합니다. 정지된 적은 받는 피해가 $[DECREASE]% 감소합니다.",
-        "§b[§7아이디어 제공자§b] §eLUCKY7_cross"
+        "§a[§e능력 제공자§a] §eLUCKY7_cross"
         },
         summarize = {
         "§7철괴 좌클릭§f으로 §b이동 속도§f, §d회복 속도§f가 증가하는 §b시간 가속§f을 켜고 끕니다.",

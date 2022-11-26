@@ -65,7 +65,7 @@ import kotlin.ranges.RangesKt;
 		" 대상의 방향으로 짧게 돌진 이후 $[RANGE]칸 내의 적들을 $[SHADOW_FEAR]초간 §b공포§f에 빠뜨립니다.",
 		" 이때 적을 처치하면 §3그림자 상태§f를 $[SHADOW_ADD_DURATION]초 증가시키고, §3그림자 상태§f가 끝날 때",
 		" 천천히 줄어드는 §c공격력 $[SHADOW_DAMAGE_INCREASE]% × 처치 수§f를 획득합니다. $[SHADOW_COOLDOWN]",
-		"§b[§7아이디어 제공자§b] §dspace_kdd"
+		"§a[§e능력 제공자§a] §dspace_kdd"
 		},
 		summarize = {
 		"§b공포§f에 빠진 적에게 주는 피해량이 증가합니다.",

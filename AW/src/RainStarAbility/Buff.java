@@ -55,7 +55,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
         " $[RANGE]칸 내 대상에게 피해입히고 $[STUN_DURATION]초간 §e기절§f시킵니다.",
         " 피해량은 인벤토리의 차지된 칸에 비례합니다. §8(§7칸당 $[DAMAGE]§8)",
         "§7철괴 우클릭§8(§3저항§8) §8- §a스테로이드§f: $[CHANNELING]초간 이동 불가 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다.",
-		"§b[§7아이디어 제공자§b] §dhandony"
+		"§a[§e능력 제공자§a] §dhandony"
 		},
 		summarize = {
 		"§6힘§f 또는 §7저항§f 버프를 바꿔가며 획득합니다.",

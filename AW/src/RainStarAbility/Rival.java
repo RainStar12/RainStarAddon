@@ -58,7 +58,7 @@ import daybreak.google.common.base.Predicate;
         " 공격력이 $[PERCENTAGE]% 증가합니다. $[COOLDOWN]",
         "§7§n라이벌§7 처치 §8- §e챔피언§f: $[WIN_DURATION]초간 이 능력의 모든 스킬이 §3비활성화§f되지만,",
         " 지금까지 처치했던 모든 §c§n라이벌§f들의 능력을 사용할 수 있습니다.",
-        "§b[§7아이디어 제공자§b] §bjjapdook"
+        "§a[§e능력 제공자§a] §bjjapdook"
         },
         summarize = {
         "자신을 공격한 자를 §c§n라이벌§f로 지정해 §c§n라이벌§f 외에게 피해를 주고받지 않습니다.",
