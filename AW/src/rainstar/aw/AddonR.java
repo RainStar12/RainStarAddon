@@ -481,6 +481,17 @@ public class AddonR extends Addon implements Listener {
 			}
 		});
 		
+		getPlugin().getCommands().getMainCommand().addSubCommand("killreward", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (sender instanceof Player) {
+					Player opener = (Player) sender;
+					new KillRewardGUI(opener, AbilityWar.getPlugin());
+				}
+				return true;
+			}
+		});
+		
 		getPlugin().getCommands().getMainCommand().addSubCommand("win", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -686,8 +697,19 @@ public class AddonR extends Addon implements Listener {
 			}
 			Bukkit.broadcastMessage("§4[§c!§4]§f 현재 참가자가 §c" + (left - 1) + "§f명 남았습니다.");
 		}
+		
+		if (KillRewardGUI.status.equals(KillRewardGUI.Status.ENABLE)) {
+			if (KillRewardGUI.type.equals(KillRewardGUI.Type.ALL)) {
+				
+			}
+			if (KillRewardGUI.type.equals(KillRewardGUI.Type.RANDOM)) {
+				
+			}
+			if (KillRewardGUI.type.equals(KillRewardGUI.Type.SELECT)) {
+				
+			}
+		}
 	}
-	
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
