@@ -39,12 +39,14 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "천본앵", rank = Rank.L, species = Species.HUMAN, explain = {
-		"$[RANGE]칸 내에 $[PERIOD]초마다 칼날비가 떨어져 적에게 피해를 입힙니다.",
-		"철괴 우클릭 시, ",
-		"§b[§7아이디어 제공자§b] §bSlowrain"
+		"철괴 우클릭 시 $[DURATION]초간 $[RANGE]칸 내에 칼날§b비§f를 내리게 합니다. $[COOLDOWN]",
+		"칼이 떨어지면서 파괴되고, 칼날이 §d벚꽃§f이 되어 §d벚꽃 스택§f이 최대 §d1000§f개까지 증가합니다.",
+		"§d벚꽃 스택§f은 매번 10~50개를 획득할 수 있습니다. 1000개의 벚꽃을 전부 모으면,",
+		"철괴 좌클릭으로 전부 소모해 $[SENBONSAKURA_DURATION]초간 주변에 벚꽃을 맴돌게 합니다.",
+		"§b[§7아이디어 제공자§b] §bSlowRain"
 		},
 		summarize = {
-		"일정 주기로 §d유도 화살§f을 §a충전§f합니다. §d유도 화살§f은 적 $[RANGE]칸에서 §5유도§f됩니다."
+		""
 		})
 
 public class Senbonsakura extends AbilityBase {
@@ -56,20 +58,22 @@ public class Senbonsakura extends AbilityBase {
 	private Random random = new Random();
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
 	private List<ArmorStand> armorstands = new ArrayList<>();
+	private List<Location> locations = new ArrayList<>();
 	private Player target;
 	
 	private AbilityTimer skill = new AbilityTimer() {
 		
 		@Override
 		public void onStart() {
-			for (int i = 0; i < (random.nextInt(20) + 1); i++) {
-				armorstands.add(target.getWorld().spawn(target.getLocation().add(random.nextDouble() * 10 - 5, random.nextDouble() * 10 - 5, random.nextDouble() * 10 - 5), ArmorStand.class));
+			for (int i = 0; i < 10; i++) {
+				armorstands.add(getPlayer().getWorld().spawn(getPlayer().getLocation(), ArmorStand.class));
+				locations.add(LocationUtil.getRandomLocation(target.getLocation(), 7.5));
 			}
 			
 			for (ArmorStand armorStand : armorstands) {
 				armorStand.setFireTicks(Integer.MAX_VALUE);
 				NMS.removeBoundingBox(armorStand);
-				armorStand.setMetadata("SwordMaster", new FixedMetadataValue(AbilityWar.getPlugin(), null));
+				armorStand.setMetadata("Senbonsakura", new FixedMetadataValue(AbilityWar.getPlugin(), null));
 				armorStand.setVisible(false);
 				armorStand.setInvulnerable(true);
 				armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
@@ -80,7 +84,9 @@ public class Senbonsakura extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			
+			for (ArmorStand armorstand : armorstands) {
+				
+			}
 		}
 		
 	};

@@ -29,6 +29,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "다모클레스", rank = Rank.L, species = Species.HUMAN, explain = {
@@ -153,10 +154,15 @@ public class Damocles extends AbilityBase {
 	
 	private AbilityTimer falling = new AbilityTimer(TaskType.REVERSE, 60) {
 		
+		private IWorldBorder worldBorder;
+		
 		@Override
 		public void onStart() {
 			getPlayer().sendMessage("§c§o불길한 예감이 듭니다.");
 			SoundLib.AMBIENT_CAVE.playSound(getPlayer(), 1, 0.5f);
+			worldBorder = NMS.createWorldBorder(getPlayer().getWorld().getWorldBorder());
+			worldBorder.setWarningDistance(Integer.MAX_VALUE);
+			NMS.setWorldBorder(getPlayer(), worldBorder);
 		}
 		
 		@Override
@@ -186,6 +192,7 @@ public class Damocles extends AbilityBase {
                 Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
             }
 			fallen = true;
+			NMS.resetWorldBorder(getPlayer());
 		}
 		
 		@Override

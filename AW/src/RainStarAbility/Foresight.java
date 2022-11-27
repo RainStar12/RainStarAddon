@@ -288,7 +288,7 @@ public class Foresight extends AbilityBase {
 				ab = AbilityBase.create(e.getAbility().getRegistration(), getParticipant());
 				ab.setRestricted(false);
 				getPlayer().sendMessage("§3[§b선견지명§3] " + rankcolor.get(ab.getRank()) + ab.getDisplayName() + "§f" + KoreanUtil.getJosa(ab.getDisplayName(), Josa.을를) + " 예측하고 저지하였습니다.");
-				((TargetHandler) ab).TargetSkill(Material.IRON_INGOT, target);
+				((TargetHandler) ab).TargetSkill(e.getMaterial(), target);
 				skilltimer.start();
 			} catch (ReflectiveOperationException e1) {
 				e1.printStackTrace();

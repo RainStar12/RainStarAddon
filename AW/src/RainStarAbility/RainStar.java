@@ -351,34 +351,34 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			final StringJoiner joiner = new StringJoiner("\n");
 			switch(constellation) {
 			case 0:
-				joiner.add(" §b양자리§f: 흡수 체력이 없을 때 10초마다");
-				joiner.add(" 최대 체력의 25%만큼 흡수 체력을 획득합니다.");
+				joiner.add(" §b양자리§f: 15초마다, 방어한 피해량의 30%만큼");
+				joiner.add(" 흡수 체력을 획득합니다.");
 				break;
 			case 1:
 				joiner.add(" §b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다.");
 				joiner.add(" 달리는 도중엔 §3저지 불가§f 상태가 됩니다.");
 				break;
 			case 2:
-				joiner.add(" §b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다.");
-				joiner.add(" 별소나기의 공전 범위도 조금 커집니다.");
+				joiner.add(" §b쌍둥이자리§f: 더 넓은 범위에 별소나기가 추가로 생성됩니다.");
 				break;
 			case 3:
-				joiner.add(" §b게자리§f: 10초마다 화살을 발사해 대상을 맞힐 때");
+				joiner.add(" §b게자리§f: 15초마다 화살을 발사해 대상을 맞힐 때");
 				joiner.add(" 잠시 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
 				break;
 			case 4:
 				joiner.add(" §b사자자리§f: 내가 잃은 체력에 비례해 모든 피해량이 강해집니다.");
 				break;
 			case 5:
-				joiner.add(" §b처녀자리§f: 별소나기가 타격한 적이 20%의 확률로 3초간");
+				joiner.add(" §b처녀자리§f: 별소나기가 타격한 적이 25%의 확률로 3초간");
 				joiner.add(" 약화된 유혹 상태에 빠집니다.");
 				break;
 			case 6:
 				joiner.add(" §b천칭자리§f: 체력이 절반 이상일 때 회복력이 감소, 공격력이 올라가고");
 				joiner.add(" 절반 이하일 때 공격력이 감소, 회복 속도가 증가합니다.");
+				joiner.add(" 절반의 ±5%일 땐 공격력과 회복력이 최대로 증가합니다.");
 				break;
 			case 7:
-				joiner.add(" §b전갈자리§f: 별소나기가 타격한 적이 일정 시간 중독 피해를 입습니다.");
+				joiner.add(" §b전갈자리§f: 별소나기가 타격한 적을 잠시간 §2중독§f시킵니다.");
 				break;
 			case 8:
 				joiner.add(" §b궁수자리§f: 화살을 발사하면 혜성을 같이 발사합니다.");
@@ -388,7 +388,8 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				joiner.add(" §b염소자리§f: 모든 회복 효과를 받을 때 2.2배로 강화됩니다.");
 				break;
 			case 10:
-				joiner.add(" §b물병자리§f: 10초마다 화살이 블록에 적중할 때 시듦의 은하수를 생성합니다.");
+				joiner.add(" §b물병자리§f: 15초마다 화살이 적중한 위치에 장판을 생성합니다.");
+				joiner.add(" 장판 위의 생명체는 지속적으로 체력을 잃습니다.");
 				break;
 			case 11:
 				joiner.add(" §b물고기자리§f: 화살을 발사하면 혜성을 같이 발사합니다.");

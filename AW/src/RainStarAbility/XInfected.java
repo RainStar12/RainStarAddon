@@ -8,6 +8,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -21,6 +22,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.manager.effect.Infection;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -146,7 +149,12 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     	public void run(int count) {
     		ac.update("§2좀비화§f: " + df.format(count / 20.0));
     		if (zombie.isDead()) this.stop(true);
-    		else getPlayer().setSpectatorTarget(zombie);
+    		else {
+    			getPlayer().setSpectatorTarget(zombie);
+    			Vector direction = zombie.getLocation().getDirection();
+    			float yaw = LocationUtil.getYaw(direction), pitch = LocationUtil.getPitch(direction);
+    			NMS.rotateHead(getPlayer(), getPlayer(), yaw, pitch);
+    		}
     	}
     	
     	@Override

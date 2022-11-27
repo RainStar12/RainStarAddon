@@ -6,7 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/CKIRUser/Desktop/Downloads/AbilityWar-3.2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/CKIRUser/Desktop/Downloads/AbilityWar-3.2.10.jar"/>
 	<classpathentry kind="lib" path="C:/Users/CKIRUser/Desktop/Downloads/CokesAddon.jar"/>
 	<classpathentry kind="lib" path="C:/Users/CKIRUser/Desktop/Downloads/craftbukkit-1.16.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/CKIRUser/Desktop/Downloads/spigot-1.12.2.jar"/>
