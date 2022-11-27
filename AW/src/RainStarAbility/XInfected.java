@@ -21,6 +21,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.manager.effect.Infection;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -112,12 +113,14 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     
     private AbilityTimer infected = new AbilityTimer(duration) {
     	
-    	@Override
+    	@SuppressWarnings("deprecation")
+		@Override
     	public void onStart() {
     		getPlayer().setGameMode(GameMode.SPECTATOR);
     		
     		zombie = getPlayer().getWorld().spawn(getPlayer().getLocation(), Zombie.class);
-			zombie.setAdult();
+			if (ServerVersion.getVersion() >= 16) zombie.setAdult();
+			else zombie.setBaby(false);
 			zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.45);
 			
 			zombie.getEquipment().setItemInMainHand(null);
@@ -141,9 +144,9 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void run(int count) {
-    		ac.update("§2좀비화§f: " + df.format(duration / 20.0));
-    		
+    		ac.update("§2좀비화§f: " + df.format(count / 20.0));
     		if (zombie.isDead()) this.stop(true);
+    		else getPlayer().setSpectatorTarget(zombie);
     	}
     	
     	@Override
