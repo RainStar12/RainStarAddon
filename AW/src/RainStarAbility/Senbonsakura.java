@@ -39,11 +39,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "천본앵", rank = Rank.L, species = Species.HUMAN, explain = {
-		"철괴 우클릭 시 $[DURATION]초간 $[RANGE]칸 내에 칼날§b비§f를 내리게 합니다. $[COOLDOWN]",
-		"칼이 떨어지면서 파괴되고, 칼날이 §d벚꽃§f이 되어 §d벚꽃 스택§f이 최대 §d1000§f개까지 증가합니다.",
-		"§d벚꽃 스택§f은 매번 10~50개를 획득할 수 있습니다. 1000개의 벚꽃을 전부 모으면,",
-		"철괴 좌클릭으로 전부 소모해 $[SENBONSAKURA_DURATION]초간 주변에 벚꽃을 맴돌게 합니다.",
-		"§b[§7아이디어 제공자§b] §bSlowRain"
+		"천 그루의 벚꽃 밤에 흩날려",
+		"그대의 목소리에 닿지도 못해요"
 		},
 		summarize = {
 		""

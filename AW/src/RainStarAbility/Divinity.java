@@ -79,8 +79,8 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(Divinity.class,
-			"duration", 10.0, "# 분신 지속 시간") {
+	public static final SettingObject<Double> ALTER_DURATION = abilitySettings.new SettingObject<Double>(Divinity.class,
+			"alter-duration", 10.0, "# 분신 지속 시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -109,7 +109,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	private boolean fallcancel = false;
 	private BossBar bossBar = null;
 	private final int decrease = ATTACK_DAMAGE_DECREASE.getValue();
-	private final int duration = (int) (DURATION.getValue() * 20);
+	private final int duration = (int) (ALTER_DURATION.getValue() * 20);
 	private final int durationdec = (int) (DURATION_DECREASE.getValue() * 20);
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	

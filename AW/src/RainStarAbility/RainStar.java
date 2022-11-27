@@ -11,11 +11,11 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -24,8 +24,9 @@ import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
@@ -35,21 +36,25 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import RainStarEffect.Charm;
+import RainStarEffect.Poison;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -74,6 +79,8 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -82,6 +89,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.random.RouletteWheel;
+import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -115,7 +123,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 	}
 
 	public static final SettingObject<Integer> LEFT_COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			RainStar.class, "left-cooldown", 7, "# 좌클릭 쿨타임") {
+			RainStar.class, "left-cooldown", 3, "# 좌클릭 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -203,8 +211,8 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			negative = rouletteWheel.newSlice(100 - positive.getWeight());
 	private Location mylocation;
 	private final ActionbarChannel ac1 = newActionbarChannel();
-	private PotionEffect poison = new PotionEffect(PotionEffectType.POISON, 60, 1, true, false);
 	private int soundplaycount = 0;
+	private double firstDamage;
 
 	private RGB lemonlime;
 	private int lemonlimestacks = 0;
@@ -351,19 +359,21 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			final StringJoiner joiner = new StringJoiner("\n");
 			switch(constellation) {
 			case 0:
-				joiner.add(" §b양자리§f: 15초마다, 방어한 피해량의 30%만큼");
+				joiner.add(" §b양자리§f: 15초마다, 방어한 피해량의 25%만큼");
 				joiner.add(" 흡수 체력을 획득합니다.");
 				break;
 			case 1:
 				joiner.add(" §b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다.");
 				joiner.add(" 달리는 도중엔 §3저지 불가§f 상태가 됩니다.");
+				joiner.add(" 대신 달리는 도중에 받는 피해량이 20% 증가합니다.");
 				break;
 			case 2:
-				joiner.add(" §b쌍둥이자리§f: 더 넓은 범위에 별소나기가 추가로 생성됩니다.");
+				joiner.add(" §b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다.");
+				joiner.add(" 별소나기의 공전 범위가 증가하고, 히트박스가 2배가 됩니다.");
 				break;
 			case 3:
 				joiner.add(" §b게자리§f: 15초마다 화살을 발사해 대상을 맞힐 때");
-				joiner.add(" 잠시 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
+				joiner.add(" 1.5초간 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
 				break;
 			case 4:
 				joiner.add(" §b사자자리§f: 내가 잃은 체력에 비례해 모든 피해량이 강해집니다.");
@@ -375,20 +385,21 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			case 6:
 				joiner.add(" §b천칭자리§f: 체력이 절반 이상일 때 회복력이 감소, 공격력이 올라가고");
 				joiner.add(" 절반 이하일 때 공격력이 감소, 회복 속도가 증가합니다.");
-				joiner.add(" 절반의 ±5%일 땐 공격력과 회복력이 최대로 증가합니다.");
+				joiner.add(" 절반의 ±10%일 땐 공격력과 회복력이 둘 다 증가합니다.");
 				break;
 			case 7:
-				joiner.add(" §b전갈자리§f: 별소나기가 타격한 적을 잠시간 §2중독§f시킵니다.");
+				joiner.add(" §b전갈자리§f: 별소나기가 타격한 적을 4초간 §2중독§f시킵니다.");
 				break;
 			case 8:
-				joiner.add(" §b궁수자리§f: 화살을 발사하면 혜성을 같이 발사합니다.");
+				joiner.add(" §b궁수자리§f: 15초마다 화살을 발사하면 혜성을 같이 발사합니다.");
 				joiner.add(" 혜성은 착탄 위치에서 가장 가까운 적에게 자동 유도됩니다.");
+				joiner.add(" 발사하는 투사체가 5초간 중력을 무시하고 더 빨리 나아갑니다.");
 				break;
 			case 9:
 				joiner.add(" §b염소자리§f: 모든 회복 효과를 받을 때 2.2배로 강화됩니다.");
 				break;
 			case 10:
-				joiner.add(" §b물병자리§f: 15초마다 화살이 적중한 위치에 장판을 생성합니다.");
+				joiner.add(" §b물병자리§f: 15초마다 화살이 적중한 위치에 5초간 장판을 생성합니다.");
 				joiner.add(" 장판 위의 생명체는 지속적으로 체력을 잃습니다.");
 				break;
 			case 11:
@@ -401,7 +412,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final AbilityTimer skillperiod = new AbilityTimer(200) {
+	private final AbilityTimer skillperiod = new AbilityTimer(300) {
 		
 		@Override
 		public void onEnd() {
@@ -415,7 +426,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
-    		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", 0.07, Operation.ADD_NUMBER);
+    		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", 0.06, Operation.ADD_NUMBER);
     		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(movespeed);
 		}
 		
@@ -446,13 +457,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			switch (constellation) {
 			case 0:
 				ac1.update("§b양자리");
-				if (!skillperiod.isRunning()) {
-					if (NMS.getAbsorptionHearts(getPlayer()) <= 0) {
-						double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-						NMS.setAbsorptionHearts(getPlayer(), (float) (maxHealth * 0.25));
-						skillperiod.start();
-					}
-				}
 				break;
 			case 1:
 				ac1.update("§b황소자리");
@@ -479,11 +483,11 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				ac1.update("§b천칭자리");
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				double health = getPlayer().getHealth();
-				if (health < (maxHealth / 2)) {
+				if (health < (maxHealth / 2) || ((maxHealth * 0.4 <= health) || (maxHealth * 0.6 >= health))) {
 					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.05, RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						Healths.setHealth(getPlayer(), health + 0.05);
+						Healths.setHealth(getPlayer(), health + 0.025);
 					}
 				}
 				break;
@@ -513,7 +517,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (constellation == 6) {
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double health = getPlayer().getHealth();
-			if (health > (maxHealth / 2)) {
+			if (!((maxHealth * 0.4 <= health) || (maxHealth * 0.6 >= health)) && health > (maxHealth / 2)) {
 				e.setAmount(e.getAmount() * 0.25);
 			}
 		}
@@ -599,19 +603,48 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
+		
 		Player damager = null;
 		if (e.getDamager().equals(getPlayer())) damager = getPlayer();
 		if (e.getDamager() instanceof Projectile) {
 			Projectile projectile = (Projectile) e.getDamager();
 			if (getPlayer().equals(projectile.getShooter())) damager = getPlayer();
 		}
+		
 		if (getPlayer().equals(damager)) {
 			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double health = getPlayer().getHealth();
 			if (constellation == 4) e.setDamage(e.getDamage() * (((1 - (health / maxHealth)) * 0.5) + 1));
 			if (constellation == 6) {
-				if (health > (maxHealth / 2)) e.setDamage(e.getDamage() * 1.2);
-				else if (health < (maxHealth / 2)) e.setDamage(e.getDamage() * 0.7);
+				if (health < (maxHealth / 2) || ((maxHealth * 0.4 <= health) || (maxHealth * 0.6 >= health))) {
+					e.setDamage(e.getDamage() * 1.3);
+				} else if (health < (maxHealth / 2)) e.setDamage(e.getDamage() * 0.7);
+			}
+		}
+		
+		if (e.getEntity().equals(getPlayer())) {
+			if (constellation == 1 && getPlayer().isSprinting()) {
+				e.setDamage(e.getDamage() * 1.2);
+			}
+		}
+	}
+	
+	@SubscribeEvent(priority = -999, onlyRelevant = true)
+	public void onEntityDamageByEntityFirst(EntityDamageByEntityEvent e) {
+		firstDamage = e.getDamage();
+	} 
+	
+	@SubscribeEvent(priority = 6, onlyRelevant = true)
+	public void onEntityDamageByEntityLast(EntityDamageByEntityEvent e) {	
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (!getPlayer().equals(damager)) {
+			if (constellation == 0 && !skillperiod.isRunning()) {
+				NMS.setAbsorptionHearts(getPlayer(), (float) ((firstDamage - e.getFinalDamage()) * 0.25) + NMS.getAbsorptionHearts(getPlayer()));
 			}
 		}
 	}
@@ -622,13 +655,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			if (NMS.isArrow(e.getEntity()) && constellation == 10) {
 				if (!skillperiod.isRunning()) {
 					Location hitLoc = e.getHitBlock().getLocation();
-					AreaEffectCloud AEC = hitLoc.getWorld().spawn(hitLoc.add(0, 1.2, 0),
-	                          AreaEffectCloud.class);
-					AEC.setDuration(70);
-					AEC.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 200, 3), true);
-					AEC.setColor(Color.BLACK);
-					AEC.setWaitTime(2);
-					skillperiod.start();
+					new Field(25, hitLoc).start();
 				}
 			}
 		} else {
@@ -636,7 +663,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				if (NMS.isArrow(e.getEntity()) && constellation == 3) {
 	            	Location hitloc = e.getHitEntity().getLocation().clone();
 	            	if (e.getHitEntity() instanceof Player) {
-	            		Stun.apply(getGame().getParticipant((Player) e.getHitEntity()), TimeUnit.TICKS, 10);
+	            		Stun.apply(getGame().getParticipant((Player) e.getHitEntity()), TimeUnit.TICKS, 30);
 	            	}
 	            	new BukkitRunnable() {
 	            		@Override
@@ -682,6 +709,27 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					arrowcool.start();
 				}	
 			}
+			if (constellation == 8) {
+				new AbilityTimer(100) {
+
+					@Override
+					public void onStart() {
+						arrow.setGravity(false);
+						arrow.setVelocity(arrow.getVelocity().multiply(1.1));
+					}
+
+					@Override
+					public void onEnd() {
+						onSilentEnd();
+					}
+
+					@Override
+					public void onSilentEnd() {
+						arrow.setGravity(true);
+					}
+
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+			}
 		}
 	}
 
@@ -695,7 +743,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				}
 			} else if (clickType == ClickType.LEFT_CLICK) {
 				if (!leftcool.isCooldown()) {
-					if (skillperiod.isRunning()) skillperiod.setCount(200);
+					if (skillperiod.isRunning()) skillperiod.setCount(300);
 					else skillperiod.start();
 					if (constellation == 11)
 						constellation = 0;
@@ -703,37 +751,37 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						constellation++;
 					switch (constellation) {
 					case 0:
-						getPlayer().sendMessage("§b양자리§f: 흡수 체력이 없을 때 10초마다 최대 체력의 25%만큼 흡수 체력을 획득합니다.");
+						getPlayer().sendMessage("§b양자리§f: 15초마다, 방어한 피해량의 25%만큼 흡수 체력을 획득합니다.");
 						break;
 					case 1:
-						getPlayer().sendMessage("§b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다. 달리는 도중엔 §3저지 불가§f 상태가 됩니다.");
+						getPlayer().sendMessage("§b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다. 달리는 도중엔 §3저지 불가§f 상태가 됩니다. 대신 달리는 도중에 받는 피해량이 20% 증가합니다.");
 						break;
 					case 2:
-						getPlayer().sendMessage("§b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다. 별소나기의 공전 범위도 조금 커집니다.");
+						getPlayer().sendMessage("§b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다. 별소나기의 공전 범위가 증가하고, 히트박스가 2배가 됩니다.");
 						break;
 					case 3:
-						getPlayer().sendMessage("§b게자리§f: 10초마다 화살을 발사해 대상을 맞힐 때 잠시 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
+						getPlayer().sendMessage("§b게자리§f: 15초마다 화살을 발사해 대상을 맞힐 때 1.5초간 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
 						break;
 					case 4:
 						getPlayer().sendMessage("§b사자자리§f: 내가 잃은 체력에 비례해 모든 피해량이 강해집니다.");
 						break;
 					case 5:
-						getPlayer().sendMessage("§b처녀자리§f: 별소나기가 타격한 적이 20%의 확률로 4초간 약화된 유혹 상태에 빠집니다.");
+						getPlayer().sendMessage("§b처녀자리§f: 별소나기가 타격한 적이 25%의 확률로 3초간 약화된 유혹 상태에 빠집니다.");
 						break;
 					case 6:
-						getPlayer().sendMessage("§b천칭자리§f: 체력이 절반 이상일 때 회복력이 감소, 공격력이 올라가고, 절반 이하일 때 공격력이 감소, 회복 속도가 증가합니다.");
+						getPlayer().sendMessage("§b천칭자리§f: 체력이 절반 이상일 때 회복력이 감소, 공격력이 올라가고 절반 이하일 때 공격력이 감소, 회복 속도가 증가합니다. 절반의 ±10%일 땐 공격력과 회복력이 둘 다 증가합니다.");
 						break;
 					case 7:
-						getPlayer().sendMessage("§b전갈자리§f: 별소나기가 타격한 적이 일정 시간 중독 피해를 입습니다.");
+						getPlayer().sendMessage("§b전갈자리§f: 별소나기가 타격한 적을 4초간 §2중독§f시킵니다.");
 						break;
 					case 8:
-						getPlayer().sendMessage("§b궁수자리§f: 화살을 발사하면 혜성을 같이 발사합니다. 혜성은 착탄 위치에서 가장 가까운 적에게 자동 유도됩니다.");
+						getPlayer().sendMessage("§b궁수자리§f: 15초마다 화살을 발사하면 혜성을 같이 발사합니다. 혜성은 착탄 위치에서 가장 가까운 적에게 자동 유도됩니다. 발사하는 투사체가 5초간 중력을 무시하고 더 빨리 나아갑니다.");
 						break;
 					case 9:
 						getPlayer().sendMessage("§b염소자리§f: 모든 회복 효과를 받을 때 2.2배로 강화됩니다.");
 						break;
 					case 10:
-						getPlayer().sendMessage("§b물병자리§f: 10초마다 화살이 블록에 적중할 때 시듦의 은하수를 생성합니다.");
+						getPlayer().sendMessage("§b물병자리§f: 15초마다 화살이 적중한 위치에 5초간 장판을 생성합니다. 장판 위의 생명체는 지속적으로 체력을 잃습니다.");
 						break;
 					case 11:
 						getPlayer().sendMessage("§b물고기자리§f: 화살을 발사하면 혜성을 같이 발사합니다. 혜성의 대미지는 매우 낮지만, 착탄 위치에서 가장 가까운 적에게 유도되며 혜성이 피해입힌 적을 착탄 위치까지 끌어당깁니다.");
@@ -907,7 +955,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 	public class Bullet {
 
 		private final LivingEntity shooter;
-		private final CenteredBoundingBox boundingBox;
+		private CenteredBoundingBox boundingBox;
 		private final Predicate<Entity> predicate;
 		private final double damage;
 		private Set<Damageable> hitcheck = new HashSet<>();
@@ -1030,13 +1078,15 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			};iterator.hasNext();) {
 				final Location location = iterator.next();
 				if (!hologram.isUnregistered()) hologram.teleport(location);
+				if (constellation == 2) {
+					boundingBox = CenteredBoundingBox.of(location, -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
+				}
 				boundingBox.setCenter(location);
-				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(),
-						boundingBox, predicate)) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), boundingBox, predicate)) {
 					if (!shooter.equals(damageable) && !hitcheck.contains(damageable) && !damageable.isInvulnerable()) {
 						Damages.damageMagic(damageable, (Player) shooter, false, (float) damage);
 						if (constellation == 5) {
-							int random = new Random().nextInt(5);
+							int random = new Random().nextInt(4);
 							if (random == 0) {
 								if (damageable instanceof Player) {
 									Player p = (Player) damageable;
@@ -1047,7 +1097,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						if (constellation == 7) {
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
-								p.addPotionEffect(poison);
+								if (getGame().isParticipating(p)) Poison.apply(getGame().getParticipant(p), TimeUnit.TICKS, 80);
 							}
 						}
 						if (attackcount.containsKey(this)) {
@@ -1318,7 +1368,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	}
 
-	class Grab extends AbilityTimer {
+	private class Grab extends AbilityTimer {
 
 		private Damageable damageable;
 		private Location arrowLocation;
@@ -1348,6 +1398,85 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			}
 		}
 
+	}
+	
+	public class Field extends AbilityTimer implements Listener {
+		
+		private final Location center;
+		private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
+		private final Set<Block> notchangedblocks = new HashSet<>();
+		
+		public Field(int duration, Location center) {
+			super(TaskType.NORMAL, duration);
+			setPeriod(TimeUnit.TICKS, 4);
+			this.center = center;
+		}
+		
+		@Override
+		public void onStart() {
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		}
+		
+		@Override
+		public void run(int count) {
+			if (count <= 3) {
+				for (Block block : LocationUtil.getBlocks2D(center, count, true, true, true)) {
+					Block belowBlock = block.getRelative(BlockFace.DOWN);
+					if (MaterialX.ORANGE_CONCRETE.compare(belowBlock)) {
+						block = belowBlock;
+						belowBlock = belowBlock.getRelative(BlockFace.DOWN);
+						notchangedblocks.add(belowBlock);
+					} else {
+						blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
+					}
+					BlockX.setType(belowBlock, MaterialX.OBSIDIAN);
+				}
+			}
+
+			if (count % 5 == 0) {
+				for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, 3, predicate)) {
+					Healths.setHealth(players, Math.max(1, players.getHealth() - 1.5));
+				}	
+			}
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			HandlerList.unregisterAll(this);
+			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
+				Block key = entry.getKey();
+				if (MaterialX.ORANGE_CONCRETE.compare(key)) {
+					entry.getValue().apply();
+				}
+			}
+			blockData.clear();
+			notchangedblocks.clear();
+		}
+		
+		@EventHandler()
+		public void onBlockBreak(BlockBreakEvent e) {
+			if (blockData.containsKey(e.getBlock()) || notchangedblocks.contains(e.getBlock())) {
+				e.setCancelled(true);
+			}
+		}
+
+		@EventHandler()
+		public void onExplode(BlockExplodeEvent e) {
+			e.blockList().removeIf(blockData::containsKey);
+			e.blockList().removeIf(notchangedblocks::contains);
+		}
+
+		@EventHandler()
+		public void onExplode(EntityExplodeEvent e) {
+			e.blockList().removeIf(blockData::containsKey);
+			e.blockList().removeIf(notchangedblocks::contains);
+		}
+		
 	}
 	
 	private final AbilityTimer music = new AbilityTimer(TaskType.NORMAL, 121) {

@@ -324,9 +324,7 @@ public class AddonR extends Addon implements Listener {
 		AbilityFactory.registerAbility(Foresight.class);
 		AbilityList.registerAbility(Foresight.class);
 		AbilityFactory.registerAbility(XInfected.class);
-		AbilityList.registerAbility(XInfected.class);
-		
-		
+		AbilityList.registerAbility(XInfected.class);		
 		
 		
 		
