@@ -1075,12 +1075,11 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					cursor++;
 					return lastLocation.clone().add(unit.clone().multiply(cursor));
 				}
-			};iterator.hasNext();) {
+			}; iterator.hasNext();) {
 				final Location location = iterator.next();
 				if (!hologram.isUnregistered()) hologram.teleport(location);
-				if (constellation == 2) {
-					boundingBox = CenteredBoundingBox.of(location, -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
-				}
+				if (constellation == 2) boundingBox = CenteredBoundingBox.of(location, -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
+				else boundingBox = CenteredBoundingBox.of(location, -.75, -.75, -.75, .75, .75, .75);
 				boundingBox.setCenter(location);
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), boundingBox, predicate)) {
 					if (!shooter.equals(damageable) && !hitcheck.contains(damageable) && !damageable.isInvulnerable()) {
