@@ -2,7 +2,10 @@ package rainstar.aw;
 
 import java.util.ArrayList;
 
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
@@ -155,6 +158,17 @@ public class Rune implements Listener {
 				.build());
 		
 		Runes(String name, ItemStack item) {
+		}
+	
+		
+	}
+	
+	
+	
+	@EventHandler()
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (e.getMaterial().equals(material.getMaterial())) {
+			
 		}
 	}
 	

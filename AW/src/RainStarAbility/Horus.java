@@ -40,7 +40,7 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "호루스", rank = Rank.S, species = Species.HUMAN, explain = {
 		"$[PERIOD]초마다 지난 $[PERIOD]초간 남들에게 §c최종 피해를 가장 많이 준 적§f에게",
 		"§5고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
-		"그 적이 $[PERIOD]초간 입힌 피해의 $[PERCENTAGE]%만큼 자신의 §c공격력§f이 증가합니다.",
+		"그 적이 $[PERIOD]초간 입힌 최종 피해량의 $[PERCENTAGE]만큼 자신의 §c공격력§f이 증가합니다.",
 		"§0[§5고대 저주§0]§f 중복 부여 시마다 단계가 상승합니다. 저주 단계 1당",
 		" 공격력 및 받는 피해량이 각각 10%씩 증가합니다."
 		},
@@ -75,6 +75,15 @@ public class Horus extends AbilityBase {
         }
     };
     
+	public static final SettingObject<Double> LIMIT_VALUE = 
+			abilitySettings.new SettingObject<Double>(Horus.class, "limit-value", 7.5,
+            "# 제한값", "# 대미지를 집계할 때 (대미지 * (제한값 / (제한값 + 집계된 총대미지)))로 집계합니다.", "# 즉, 쌓인 총 대미지가 제한값에 도달하면 올라가는 수치가 절반이 됩니다.") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -102,6 +111,7 @@ public class Horus extends AbilityBase {
     
     private final int period = PERIOD.getValue();
     private final double percentage = PERCENTAGE.getValue() * 0.01;
+    private final double limitvalue = LIMIT_VALUE.getValue();
     private final DecimalFormat df = new DecimalFormat("0.00");
     private double bestDamage = 0;
     private Map<Player, Double> damageCollector = new HashMap<>();
@@ -151,7 +161,10 @@ public class Horus extends AbilityBase {
 		
 		if (damager != null) {
 			if (!getPlayer().equals(damager)) {
-				if (predicate.test(damager)) damageCollector.put(damager, damageCollector.getOrDefault(damager, 0.0) + (e.getFinalDamage() * (10 / 10 + damageCollector.getOrDefault(damager, 0.0))));
+				if (predicate.test(damager)) {
+					double collected = damageCollector.getOrDefault(damager, 0.0);
+					damageCollector.put(damager, collected + (e.getFinalDamage() * (limitvalue / (limitvalue + collected))));
+				}
 			} else e.setDamage(e.getDamage() + bestDamage);
 		}
     }
