@@ -534,20 +534,20 @@ public class AddonR extends Addon implements Listener {
 					}	
 					if (args[0].equals("list")) {
 						Map<Player, Integer> winmap = new HashMap<>();
-						List<Player> playerList = new ArrayList<>(winmap.keySet());
-						int stack = 0;
 						for (String strings : winconfig.getKeys(false)) {
 							Player player = Bukkit.getPlayer(UUID.fromString(strings));
 							winmap.put(player, winconfig.getInt(strings));
 						}
+						List<Player> playerList = new ArrayList<>(winmap.keySet());
+						int stack = 0;
 						Collections.sort(playerList, (value1, value2) -> (winmap.get(value2).compareTo(winmap.get(value1))));
 						sender.sendMessage("§a========= §e우승 TOP10 §a=========");
 						for (Player player : playerList) {
-							sender.sendMessage("§e" + player.getName() + "§7: §b" + winmap.get(player));
 							stack++;
+							sender.sendMessage((stack <= 3 ? "§2§l" : "§2") + stack + ". §b" + player.getName() + " §a[§e" + winmap.get(player) + "§a]");
 							if (stack == 10) break;
 						}
-						sender.sendMessage("§a===========================");
+						sender.sendMessage("§a=============================");
 					}
 				}
 				return true;
@@ -590,20 +590,20 @@ public class AddonR extends Addon implements Listener {
 					}
 					if (args[0].equals("list")) {
 						Map<Player, Integer> killmap = new HashMap<>();
-						List<Player> playerList = new ArrayList<>(killmap.keySet());
-						int stack = 0;
 						for (String strings : killconfig.getKeys(false)) {
 							Player player = Bukkit.getPlayer(UUID.fromString(strings));
 							killmap.put(player, killconfig.getInt(strings));
 						}
+						List<Player> playerList = new ArrayList<>(killmap.keySet());
+						int stack = 0;
 						Collections.sort(playerList, (value1, value2) -> (killmap.get(value2).compareTo(killmap.get(value1))));
 						sender.sendMessage("§5========= §c킬 TOP10 §5=========");
 						for (Player player : playerList) {
-							sender.sendMessage("§c" + player.getName() + "§7: §e" + killmap.get(player));
 							stack++;
+							sender.sendMessage((stack <= 3 ? "§4§l" : "§4") + ". §e" + player.getName() + "§4[§c" + killmap.get(player) + "§4]");
 							if (stack == 10) break;
 						}
-						sender.sendMessage("§5==========================");
+						sender.sendMessage("§5============================");
 					}
 				}
 				return true;

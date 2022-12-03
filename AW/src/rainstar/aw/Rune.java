@@ -1,8 +1,11 @@
 package rainstar.aw;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -157,7 +160,11 @@ public class Rune implements Listener {
 				})
 				.build());
 		
+		private Map<String, Runes> runes = new HashMap<>();
+		
 		Runes(String name, ItemStack item) {
+			item.addEnchantment(Enchantment.MENDING, 1);
+			runes.put(name, this);
 		}
 	
 		
