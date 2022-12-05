@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "수다쟁이", rank = Rank.A, species = Species.ANIMAL, explain = {
+@AbilityManifest(name = "수다쟁이", rank = Rank.A, species = Species.HUMAN, explain = {
 		"$[PERIOD]초마다 채팅창에 §a속담 문장 한 줄§f이 나옵니다.",
 		"$[DEADLINE_TIME]초 안에 문장을 채팅으로 §b§l§n§o완벽하게§f 작성할 경우,",
 		"무작위 포션 버프를 획득할 수 있습니다.",

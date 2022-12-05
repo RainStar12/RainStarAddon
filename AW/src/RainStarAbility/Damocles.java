@@ -99,11 +99,12 @@ public class Damocles extends AbilityBase {
     private int time = 0;
     private final double multiply = MULTIPLY.getValue();
 	private Random random = new Random();
-	private ArmorStand armorstand = getPlayer().getLocation().getWorld().spawn(getPlayer().getLocation().clone().add(0, 3, 0), ArmorStand.class);
+	private ArmorStand armorstand = null;
 	private ActionbarChannel ac = newActionbarChannel();
 	
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
+			if (armorstand == null) armorstand = getPlayer().getLocation().getWorld().spawn(getPlayer().getLocation().clone().add(0, 3, 0), ArmorStand.class);
 			if (checked) falling.start();
 			armorstand.setRightArmPose(new EulerAngle(Math.toRadians(80), 0, 0));
 			armorstand.setMetadata("Damocles", new FixedMetadataValue(AbilityWar.getPlugin(), null));
