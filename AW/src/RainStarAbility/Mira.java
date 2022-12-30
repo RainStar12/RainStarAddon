@@ -339,7 +339,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 							@Override
 							public void run() {
 								ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
-								getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.8f, false, false);
+								getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), 1.8f, false, false);
 							}	
 						}.runTaskLater(AbilityWar.getPlugin(), 1L);
 					} else {
@@ -359,7 +359,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 								@Override
 								public void run() {
 									ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
-									getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.8f, false, false);
+									getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), 1.8f, false, false);
 								}	
 							}.runTaskLater(AbilityWar.getPlugin(), 1L);
 						}	

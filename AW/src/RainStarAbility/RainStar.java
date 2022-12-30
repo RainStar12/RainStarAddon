@@ -656,6 +656,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				if (!skillperiod.isRunning()) {
 					Location hitLoc = e.getHitBlock().getLocation();
 					new Field(25, hitLoc).start();
+					skillperiod.start();
 				}
 			}
 		} else {
@@ -1421,7 +1422,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			if (count <= 3) {
 				for (Block block : LocationUtil.getBlocks2D(center, count, true, true, true)) {
 					Block belowBlock = block.getRelative(BlockFace.DOWN);
-					if (MaterialX.ORANGE_CONCRETE.compare(belowBlock)) {
+					if (MaterialX.OBSIDIAN.compare(belowBlock)) {
 						block = belowBlock;
 						belowBlock = belowBlock.getRelative(BlockFace.DOWN);
 						notchangedblocks.add(belowBlock);
@@ -1449,7 +1450,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			HandlerList.unregisterAll(this);
 			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
-				if (MaterialX.ORANGE_CONCRETE.compare(key)) {
+				if (MaterialX.OBSIDIAN.compare(key)) {
 					entry.getValue().apply();
 				}
 			}

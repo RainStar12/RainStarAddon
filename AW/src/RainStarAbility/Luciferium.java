@@ -129,7 +129,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (e.getEntity().getKiller().equals(getPlayer()) && nextpill.isRunning()) {
+		if (getPlayer().equals(e.getEntity().getKiller()) && nextpill.isRunning()) {
 			SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.75f);
 			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), 0.25, 0, 0.25, 50, 1);
 			takecount.setCount(0);

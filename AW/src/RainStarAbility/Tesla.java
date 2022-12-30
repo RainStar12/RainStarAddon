@@ -401,7 +401,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			for (Location loc : explosioncircle.toLocations(location)) {
-				location.getWorld().createExplosion(loc, 1.35f, false, false);
+				location.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.35f, false, false);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				location.getWorld().strikeLightning(loc);

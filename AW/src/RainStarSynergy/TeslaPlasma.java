@@ -339,9 +339,10 @@ public class TeslaPlasma extends Synergy {
 				if (type.isSolid()) {
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
 					if (getGame().getParticipant((Player) shooter).hasEffect(Stun.registration)) {
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) ((damage + (powerEnchant * multiply)) * 1.3), false, false);
+						shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), (float) ((damage + (powerEnchant * multiply)) * 1.3), false, false);
+						//shooter.getWorld().createExplosion(entity.getLocation(), (float) ((damage + (powerEnchant * multiply)) * 1.3), false, false);
 					} else {
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) (damage + (powerEnchant * multiply)), false, false);	
+						//shooter.getWorld().createExplosion(entity.getLocation(), (float) (damage + (powerEnchant * multiply)), false, false);	
 					}
 					for (Player players : LocationUtil.getEntitiesInCircle(Player.class, entity.getLocation(), 6.5, predicate)) {
 						Stun.apply(getGame().getParticipant(players), TimeUnit.TICKS, (int) (stunduration * 20));
