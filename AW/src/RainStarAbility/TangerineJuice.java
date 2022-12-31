@@ -305,7 +305,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
     		arrowParticles.get(e.getEntity()).stop(false);
     		if (e.getHitEntity() != null) juicegauge = Math.min(10, juicegauge + returngauge);
     		ParticleLib.EXPLOSION_LARGE.spawnParticle(e.getEntity().getLocation());
-    		e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(), 1.2f, false, false);
+    		e.getEntity().getWorld().createExplosion(e.getEntity().getLocation().getX(), e.getEntity().getLocation().getY(), e.getEntity().getLocation().getZ(), 1.2f, false, false);
     		new Field(fieldduration, e.getEntity().getLocation()).start();
     	}
     }

@@ -201,14 +201,14 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 	public AbilityRegistration getRandomAbility(Participant target, Rank rank) {
 		final int criterion = rank.ordinal();
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> ability.getAbilityClass().getAnnotation(Beta.class) != null && ability.isAvailable(getGame().getClass()) && !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && (getParticipant().equals(target) || ability.getManifest().rank().ordinal() < criterion)
+				ability -> ability.getAbilityClass().getAnnotation(Beta.class) == null && ability.isAvailable(getGame().getClass()) && !Configuration.Settings.isBlacklisted(ability.getManifest().name()) && (getParticipant().equals(target) || ability.getManifest().rank().ordinal() < criterion)
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
 	
 	public AbilityRegistration getRealRandomAbility(Participant target) {
 		final List<AbilityRegistration> registrations = AbilityList.values().stream().filter(
-				ability -> ability.getAbilityClass().getAnnotation(Beta.class) != null && ability.isAvailable(getGame().getClass()) && !Configuration.Settings.isBlacklisted(ability.getManifest().name())
+				ability -> ability.getAbilityClass().getAnnotation(Beta.class) == null && ability.isAvailable(getGame().getClass()) && !Configuration.Settings.isBlacklisted(ability.getManifest().name())
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}

@@ -100,7 +100,5 @@ public class Encore extends AbilityBase implements ActiveHandler {
 			damageMap.put((LivingEntity) e.getEntity(), e.getDamage());
 		}
     }
-    
-    
 
 }

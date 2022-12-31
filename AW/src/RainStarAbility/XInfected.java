@@ -2,9 +2,13 @@ package RainStarAbility;
 
 import java.text.DecimalFormat;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,14 +24,18 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Infection;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "X-Infected", rank = Rank.S, species = Species.UNDEAD, explain = {
 		"철괴 우클릭 시 $[DURATION]초간 §d10HP§f의 §2좀비§f가 되어 컨트롤이 불가능해집니다. $[COOLDOWN]",
@@ -70,8 +78,8 @@ public class XInfected extends AbilityBase implements ActiveHandler {
         }
     };
     
-	public static final SettingObject<Integer> DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(XInfected.class, "damage-percentage", 115,
+	public static final SettingObject<Integer> ATTACK_DAMAGE = 
+			abilitySettings.new SettingObject<Integer>(XInfected.class, "attack-damage-percentage", 135,
             "# 좀비가 주는 피해량 비율") {
         @Override
         public boolean condition(Integer value) {
@@ -88,8 +96,8 @@ public class XInfected extends AbilityBase implements ActiveHandler {
         }
     };
     
-	public static final SettingObject<Double> INFECT_DURATION = 
-			abilitySettings.new SettingObject<Double>(XInfected.class, "infect-duration", 0.7,
+	public static final SettingObject<Double> INFECTION_DURATION = 
+			abilitySettings.new SettingObject<Double>(XInfected.class, "infection-duration", 0.8,
             "# 감염 부여 시간") {
         @Override
         public boolean condition(Double value) {
@@ -99,9 +107,9 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final int duration = (int) (DURATION.getValue() * 20);
-    private final double damagemultiply = DAMAGE.getValue() * 0.01;
+    private final double damagemultiply = ATTACK_DAMAGE.getValue() * 0.01;
     private final double losehealth = HEALTH_LOSE.getValue() * 0.01;
-    private final int infectduration = (int) (INFECT_DURATION.getValue() * 20);
+    private final int infectduration = (int) (INFECTION_DURATION.getValue() * 20);
     private Zombie zombie;
     private double damage;
     private final DecimalFormat df = new DecimalFormat("0.0");
@@ -113,6 +121,34 @@ public class XInfected extends AbilityBase implements ActiveHandler {
 		}
 		return false;
 	}
+	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler &&
+								((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(
+							entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant)
+							|| (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
     
     private AbilityTimer infected = new AbilityTimer(duration) {
     	
@@ -124,7 +160,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     		zombie = getPlayer().getWorld().spawn(getPlayer().getLocation(), Zombie.class);
 			if (ServerVersion.getVersion() >= 16) zombie.setAdult();
 			else zombie.setBaby(false);
-			zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.45);
+			zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.485);
 			
 			zombie.getEquipment().setItemInMainHand(null);
 			zombie.getEquipment().setArmorContents(getPlayer().getInventory().getArmorContents());
@@ -138,6 +174,8 @@ public class XInfected extends AbilityBase implements ActiveHandler {
 			zombie.setConversionTime(Integer.MAX_VALUE);
 			
 			zombie.setHealth(10);
+			
+			if (LocationUtil.getNearestEntity(LivingEntity.class, getPlayer().getLocation(), predicate) != null) zombie.setTarget(LocationUtil.getNearestEntity(LivingEntity.class, getPlayer().getLocation(), predicate));
 			
 			getPlayer().setSpectatorTarget(zombie);
 			
@@ -169,7 +207,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     	@Override
     	public void onSilentEnd() {
     		onEnd();
-    		getPlayer().setHealth(Math.max(1, getPlayer().getHealth() - getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * losehealth));
+    		Healths.setHealth(getPlayer(), Math.max(1, getPlayer().getHealth() - (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * losehealth)));
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();

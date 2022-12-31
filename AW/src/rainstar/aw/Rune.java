@@ -2,15 +2,21 @@ package rainstar.aw;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
+import daybreak.abilitywar.game.AbstractGame.GameTimer;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
 
@@ -20,6 +26,10 @@ public class Rune implements Listener {
 	}
 	
 	private static MaterialX material = MaterialX.PRISMARINE_SHARD;
+	private static MaterialX rainstar = MaterialX.EMERALD;
+	private static MaterialX cokes = MaterialX.REDSTONE;
+	private static MaterialX daybreak = MaterialX.DIAMOND;
+	private static Set<ItemStack> runes = new HashSet<>();
 	
 	@SuppressWarnings("serial")
 	enum Runes {
@@ -27,11 +37,16 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §5하갈라즈")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o파괴");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
 						add("§75칸 내의 플레이어의 방어구가 하나 파괴됩니다.");
 						add("§7파괴된 방어구는 4초 후 되돌아옵니다.");
+						add("§7");
+						add("§c§l미완성 현재 무효과");
+						add("§c§l미완성 현재 무효과");
+						add("§c§l미완성 현재 무효과");
 					}
 				})
 				.build()),
@@ -39,10 +54,12 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §e제라")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o풍요");
 						add("§7");
 						add("§3[§b영구 효과§3]");
 						add("§7가진 모든 소모성 아이템이 2배가 됩니다.");
+						add("§7이 효과로 제라는 복제할 수 없습니다.");
 					}
 				})
 				.build()),
@@ -50,6 +67,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §7에와즈")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o길");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -62,6 +80,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §b다가즈")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o순수");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -74,6 +93,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §a안수즈")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o시야");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -88,6 +108,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §d페트로")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o변화");
 						add("§7");
 						add("§3[§b영구 효과§3]");
@@ -99,6 +120,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §2베르카노")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o우정");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -111,6 +133,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §f알기즈")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o저항");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -122,6 +145,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §0블랙 룬")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o공허");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -134,6 +158,7 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §f빈 룬")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§b§o운명");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
@@ -141,10 +166,48 @@ public class Rune implements Listener {
 					}
 				})
 				.build()),
+		SOUL_OF_RAINSTAR("레인스타의 영혼", new ItemBuilder(rainstar)
+				.displayName("§3[§b룬§3] §a레인스타의 영혼")
+				.lore(new ArrayList<String>() {
+					{
+						add("§7");
+						add("§a§o유성");
+						add("§7");
+						add("§3[§b영구 효과§3]");
+						add("§7접촉한 적의 체력을 5% 감소시키는");
+						add("§7영구적인 별소나기를 하나 소환합니다.");
+					}
+				})
+				.build()),
+		SOUL_OF_COKES("코크스의 영혼", new ItemBuilder(cokes)
+				.displayName("§3[§b룬§3] §c코크스의 영혼")
+				.lore(new ArrayList<String>() {
+					{
+						add("§7");
+						add("§c§o변칙");
+						add("§7");
+						add("§3[§b영구 효과§3]");
+						add("§750%의 확률로 공격력이 1~30% 증가합니다.");
+					}
+				})
+				.build()),
+		SOUL_OF_DAYBREAK("새벽의 영혼", new ItemBuilder(daybreak)
+				.displayName("§3[§b룬§3] §b새벽의 영혼")
+				.lore(new ArrayList<String>() {
+					{
+						add("§7");
+						add("§b§o창조");
+						add("§7");
+						add("§5[§d즉발 효과§5]");
+						add("§71분간 무작위 능력을 획득합니다.");
+					}
+				})
+				.build()),
 		POWER_RUNE("힘의 룬", new ItemBuilder(material)
 				.displayName("§3[§b룬§3] §c힘의 룬")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§3[§b영구 효과§3]");
 						add("§7공격력이 5% 증가합니다.");
 					}
@@ -154,28 +217,31 @@ public class Rune implements Listener {
 				.displayName("§3[§b룬§3] §d회복의 룬")
 				.lore(new ArrayList<String>() {
 					{
+						add("§7");
 						add("§3[§b영구 효과§3]");
 						add("§7매 초마다 체력을 0.1 회복합니다.");
 					}
 				})
 				.build());
 		
-		private Map<String, Runes> runes = new HashMap<>();
-		
 		Runes(String name, ItemStack item) {
 			item.addEnchantment(Enchantment.MENDING, 1);
-			runes.put(name, this);
+			runes.add(item);
 		}
 	
-		
 	}
-	
-	
 	
 	@EventHandler()
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (e.getMaterial().equals(material.getMaterial())) {
-			
+		if (runes.contains(e.getItem())) {
+			Player player = e.getPlayer();
+			switch(e.getItem().getItemMeta().getDisplayName()) {
+			case "§3[§b룬§3] §5하갈라즈":
+				break;
+			case "§3[§b룬§3] §e제라":
+				
+				break;
+			}
 		}
 	}
 	

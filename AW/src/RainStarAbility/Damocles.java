@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -92,6 +93,7 @@ public class Damocles extends AbilityBase {
 
 	};
 	
+	private boolean fallingstarted = false;
 	private boolean fallen = false;
 	private boolean checked = false;
 	private double damagemultiply = DAMAGE_INCREASE.getValue();
@@ -159,6 +161,7 @@ public class Damocles extends AbilityBase {
 		
 		@Override
 		public void onStart() {
+			fallingstarted = true;
 			getPlayer().sendMessage("§c§o불길한 예감이 듭니다.");
 			SoundLib.AMBIENT_CAVE.playSound(getPlayer(), 1, 0.5f);
 			worldBorder = NMS.createWorldBorder(getPlayer().getWorld().getWorldBorder());
@@ -193,6 +196,7 @@ public class Damocles extends AbilityBase {
                 Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
             }
 			fallen = true;
+			fallingstarted = false;
 			NMS.resetWorldBorder(getPlayer());
 		}
 		
@@ -210,6 +214,26 @@ public class Damocles extends AbilityBase {
 			loc.add(getPlayer().getLocation().getDirection().clone().setY(0).normalize().multiply(0.7));
 			loc.add(VectorUtil.rotateAroundAxisY(getPlayer().getLocation().getDirection().clone().setY(0).normalize().multiply(0.4), 90));
 			armorstand.teleport(loc);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (fallingstarted) {
+			armorstand.setGravity(true);
+			armorstand.setVelocity(new Vector(0, -6, 0));
+			new BukkitRunnable() {		
+				@Override
+				public void run() {
+					armorstand.setGravity(false);
+					armorstand.teleport(armorstand.getLocation().clone().add(0, -0.6, 0));
+				}
+			}.runTaskLater(AbilityWar.getPlugin(), 3L);
+			SoundLib.BLOCK_ANVIL_LAND.playSound(armorstand.getLocation(), 1, 1.4f);
+			getPlayer().damage(Integer.MAX_VALUE);
+			getPlayer().setHealth(0);
+			Bukkit.broadcastMessage("§c잔머리를 꾀한 자, 죽음을 §l절대§c 피하지 못하리라.");
+            Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
 		}
 	}
 	

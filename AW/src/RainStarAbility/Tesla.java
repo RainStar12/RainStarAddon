@@ -525,7 +525,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(player.getLocation());
 					player.getWorld().strikeLightningEffect(player.getLocation());
 					player.damage(15, getPlayer());
-					player.getWorld().createExplosion(player.getLocation(), 1.4f, false, false);
+					player.getWorld().createExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1.4f, false, false);
 					hitPlayer.add(player);
 					new BukkitRunnable() {
 						@Override

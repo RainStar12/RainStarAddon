@@ -513,11 +513,11 @@ public class Alice extends AbilityBase implements ActiveHandler {
 				if (type.isSolid()) {
 					if (suit == 2) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-						shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.1)), false, true);
+						shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), (float) (1 + ((rank + 1) * 0.1)), false, true);
 					}
 					if (suit == 4) {
 						ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-						shooter.getWorld().createExplosion(entity.getLocation(), 2.3f, false, true);
+						shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), 2.3f, false, true);
 					}
 					stop(false);
 					return;
@@ -555,7 +555,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 						}
 						if (suit == 2) {
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.1)), false, true);
+							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), (float) (1 + ((rank + 1) * 0.1)), false, true);
 							stop(false);
 							return;
 						}
@@ -574,7 +574,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, 130, 10);
 							}
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation(), 2.4f, false, true);
+							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), 2.4f, false, true);
 						}
 						if (suit == 5) {
 							if (damageable instanceof Player) {
