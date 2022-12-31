@@ -380,7 +380,7 @@ public class Megalodon extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (getPlayer().getLocation().getBlock().isLiquid() && getPlayer().isSneaking()) {
-			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(0.675));
+			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(0.475));
 			if (isLava(getPlayer().getLocation().getBlock())) ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 10, 0.35, MaterialX.REDSTONE_BLOCK);
 			else ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 10, 0.35, MaterialX.LAPIS_BLOCK);
 		}

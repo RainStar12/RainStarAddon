@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
 
@@ -71,7 +72,7 @@ public class Rune implements Listener {
 						add("§b§o길");
 						add("§7");
 						add("§5[§d즉발 효과§5]");
-						add("§7마지막으로 공격한 대상에게 순간 이동합니다.");
+						add("§7가장 가까운 적에게 순간 이동합니다.");
 						add("§7이동 후, 10초간 신속 2를 획득합니다.");
 					}
 				})
@@ -239,7 +240,9 @@ public class Rune implements Listener {
 			case "§3[§b룬§3] §5하갈라즈":
 				break;
 			case "§3[§b룬§3] §e제라":
-				
+				break;
+			case "§3[§b룬§3] §7에와즈":
+				player.teleport(LocationUtil.getNearestEntity(Player.class, player.getLocation(), null));
 				break;
 			}
 		}
