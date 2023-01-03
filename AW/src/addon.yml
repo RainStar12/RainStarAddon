@@ -1,4 +1,4 @@
 name: RainStarAddon
-version: 1.0.0
-main: rainstar.aw.AddonR
+version: 1.7.0
+main: rainstar.abilitywar.RainStarAddon
 displayName: §a레인스타 애드온
