@@ -222,7 +222,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	    			if (p.getEffects().size() > 0) {
 	    				Collection<Effect> effectlist = new HashSet<>(p.getEffects());
 		    			for (Effect effects : effectlist) {
-		    				if (!effects.getRegistration().equals(Hemophilia.registration)) {
+		    				if (!effects.getRegistration().equals(Hemophilia.registration) && !effects.getRegistration().equals(Bleed.registration)) {
 			    				int duration = (int) (effects.getCount() * effects.getPeriod());
 			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
 			    				Bleed.apply(p, TimeUnit.TICKS, duration);

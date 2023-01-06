@@ -78,7 +78,7 @@ public class KillRewardGUI implements Listener {
         }
         if (!itemstacks.isEmpty()) {
         	for (int a = 0; a < getItems().size(); a++) {
-        		gui.setItem(a + 18, getItems().get(a));
+        		gui.setItem(a + 17, getItems().get(a));
         	}
         }
         player.getPlayer().openInventory(gui);
