@@ -19,6 +19,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
+import rainstar.abilitywar.effect.Moisture;
 
 @AbilityManifest(name = "비구름", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
@@ -177,7 +178,7 @@ public class Raincloud extends AbilityBase {
     		
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, range, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {
-    				
+    				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, 2);
     			}
     		}
     	}
