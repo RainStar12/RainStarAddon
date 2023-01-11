@@ -14,6 +14,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -128,6 +129,19 @@ public class Raincloud extends AbilityBase {
         
     };
     
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Raincloud.class, "cooldown", 90,
+            "# 쿨타임", "# 단위: 초") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        @Override
+        public String toString() {
+            return Formatter.formatCooldown(getValue());
+        }
+    };
+    
     private final double range = RANGE.getValue();
     private final int moisturedur = (int) (MOISTURE_DURATION.getValue() * 20);
     private final double healpercent = HEAL_PERCENTAGE.getValue() * 0.01;
@@ -136,6 +150,7 @@ public class Raincloud extends AbilityBase {
     private final int chance = CHANCE.getValue();
     private final int lightningdelay = (int) (LIGHTNING_DELAY.getValue() * 20);
     private final int stun = (int) (STUN.getValue() * 20);
+    private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     
     private final LimitedPushingList<Location> locations = new LimitedPushingList<>(60);
     private Location cloudlocation = null;
@@ -168,12 +183,16 @@ public class Raincloud extends AbilityBase {
 		}
 	};
     
-    private AbilityTimer cloud = new AbilityTimer() {
+    private final AbilityTimer cloud = new AbilityTimer() {
     	
     	@Override
     	public void run(int count) {
-    		locations.add(getPlayer().getLocation());
-    		cloudlocation = locations.getFirst().add(0, 3.5, 0);
+    		if (skill.isRunning()) {
+        		locations.add(getPlayer().getLocation());
+        		cloudlocation = locations.getFirst().add(0, 3.5, 0);	
+    		} else {
+    			
+    		}
     		ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), range, 0.2, range, (int) (range * 150), 0);
     		
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, range, predicate)) {
@@ -184,6 +203,15 @@ public class Raincloud extends AbilityBase {
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
+    
+    private final Duration skill = new Duration(duration, cooldown) {
+		
+		@Override
+		protected void onDurationProcess(int count) {
+			
+		}
+    	
+    }.setPeriod(TimeUnit.TICKS, 1);
     
     
 }

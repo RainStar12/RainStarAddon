@@ -49,8 +49,8 @@ public class Damocles extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Double> DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(Damocles.class, "damage-increase", 1.5,
+	public static final SettingObject<Double> DAMAGE_MULTIPLY = 
+			abilitySettings.new SettingObject<Double>(Damocles.class, "damage-multiply", 1.4,
 			"# 공격력 배수") {
 
 		@Override
@@ -96,7 +96,7 @@ public class Damocles extends AbilityBase {
 	private boolean fallingstarted = false;
 	private boolean fallen = false;
 	private boolean checked = false;
-	private double damagemultiply = DAMAGE_INCREASE.getValue();
+	private double damagemultiply = DAMAGE_MULTIPLY.getValue();
 	private int nume = CHANCE_NUMERATOR.getValue(), deno = CHANCE_DENOMINATOR.getValue();
     private int time = 0;
     private final double multiply = MULTIPLY.getValue();
