@@ -24,7 +24,7 @@ import rainstar.abilitywar.effect.Moisture;
 
 @AbilityManifest(name = "비구름", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
-		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3습기§f를 $[MOISTURE_DURATION] 받습니다.",
+		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3습기§f를 $[MOISTURE_DURATION]초 받습니다.",
 		" 자신은 §3습기§f 효과를 지속시간 $[HEAL_PERCENTAGE]%의 회복 효과로 대신 받습니다.",
 		"§7철괴 우클릭 §8- §2기후 조작§f: $[DURATION]초간 §b구름§f의 범위가 $[ADD_RANGE]칸 증가합니다.",
 		" 지속시간동안 §b구름§f은 자신이 마지막으로 공격한 적을 추격하고, $[CHANCE]%의 확률로",
@@ -154,11 +154,13 @@ public class Raincloud extends AbilityBase {
     
     private final LimitedPushingList<Location> locations = new LimitedPushingList<>(60);
     private Location cloudlocation = null;
+    private double nowrange = range;
+    private Player target;
     
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
+			if (entity.equals(getPlayer())) return true;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler &&
@@ -198,6 +200,10 @@ public class Raincloud extends AbilityBase {
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, range, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {
     				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, 2);
+    				
+    				if (!getPlayer().equals(player)) {
+    					
+    				}
     			}
     		}
     	}
@@ -206,11 +212,26 @@ public class Raincloud extends AbilityBase {
     
     private final Duration skill = new Duration(duration, cooldown) {
 		
+    	@Override
+    	protected void onDurationStart() {
+    		nowrange = range + addrange;
+    	}
+    	
 		@Override
 		protected void onDurationProcess(int count) {
 			
 		}
     	
+		@Override
+		protected void onDurationEnd() {
+			onDurationSilentEnd();
+		}
+		
+		@Override
+		protected void onDurationSilentEnd() {
+			nowrange = range;
+		}
+		
     }.setPeriod(TimeUnit.TICKS, 1);
     
     

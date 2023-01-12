@@ -94,7 +94,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> HEALTH_GAIN_AMOUNT = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "health-gain-amount", 10.0,
+			abilitySettings.new SettingObject<Double>(MadScientist.class, "health-gain-amount", 6.0,
             "# 도핑으로 획득하는 체력", "# 단위: 반 칸") {
         @Override
         public boolean condition(Double value) {

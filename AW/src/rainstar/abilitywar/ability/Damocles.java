@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -191,6 +192,7 @@ public class Damocles extends AbilityBase {
 			}.runTaskLater(AbilityWar.getPlugin(), 3L);
 			SoundLib.BLOCK_ANVIL_LAND.playSound(armorstand.getLocation(), 1, 1.4f);
 			getPlayer().damage(Integer.MAX_VALUE);
+			getPlayer().getWorld().spawn(getPlayer().getLocation().clone().add(1000, 0, 1000), Zombie.class).damage(Integer.MAX_VALUE, getPlayer());
             if (getPlayer().isDead()) {
                 Bukkit.broadcastMessage("§c운이 없는 자, 힘의 대가를 치르다.");
                 Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");

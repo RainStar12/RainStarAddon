@@ -184,7 +184,13 @@ public class RandomNumberControl extends AbilityBase {
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (!e.isCancelled()) {
-			if (e.getDamager().equals(getPlayer())) {
+			Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (getPlayer().equals(damager) && !e.getEntity().equals(getPlayer())) {
 				if (available) {
 					if (skill.isRunning()) skill.setCount((int) (duration * 20));
 					else skill.start();
@@ -208,51 +214,8 @@ public class RandomNumberControl extends AbilityBase {
 				if (!control) new Holograms(e.getEntity().getLocation(), e.getDamage(), e.getDamage(), over, control, true).start();
 				else new Holograms(e.getEntity().getLocation(), startDamage, e.getDamage(), over, control, true).start();
 			}
-			if (e.getDamager() instanceof Projectile) {
-				Projectile projectile = (Projectile) e.getDamager();
-				if (getPlayer().equals(projectile.getShooter())) {
-					if (available) {
-						if (skill.isRunning()) skill.setCount((int) (duration * 20));
-						else skill.start();
-						available = false;
-						periodtimer.start();
-					}
-					boolean over = false, control = false;
-					double startDamage = 0;
-					if (topDamage < e.getDamage()) {
-						lastTopDamage = topDamage;
-						topDamage = e.getDamage();
-						if (attackActionbarUpdater.isRunning()) attackActionbarUpdater.stop(false);
-				    	attackActionbarUpdater.start();
-					}
-					if (skill.isRunning() && e.getDamage() < topDamage) {
-						startDamage = e.getDamage();
-						e.setDamage(topDamage);
-						control = true;
-					}
-					if (topDamage <= e.getDamage()) over = true;
-					if (!control) new Holograms(e.getEntity().getLocation(), e.getDamage(), e.getDamage(), over, control, true).start();
-					else new Holograms(e.getEntity().getLocation(), startDamage, e.getDamage(), over, control, true).start();
-				} else if (e.getEntity().equals(getPlayer())) {
-					boolean over = false, control = false;
-					double startDamage = 0;
-					if (topDefence > e.getDamage()) {
-						lastTopDefence = topDefence;
-						topDefence = e.getDamage();
-						if (defenceActionbarUpdater.isRunning()) defenceActionbarUpdater.stop(false);
-						defenceActionbarUpdater.start();
-					}
-					if (skill.isRunning() && e.getDamage() > topDefence) {
-						startDamage = e.getDamage();
-						e.setDamage(topDefence);
-						control = true;
-					}
-					if (topDefence >= e.getDamage()) over = true;
-					if (!control) new Holograms(e.getEntity().getLocation(), e.getDamage(), e.getDamage(), over, control, false).start();
-					else new Holograms(e.getEntity().getLocation(), startDamage, e.getDamage(), over, control, false).start();
-				}
-			}
-			if (e.getEntity().equals(getPlayer()) && !e.getDamager().equals(getPlayer()) && !(e.getDamager() instanceof Projectile)) {
+			
+			if (!getPlayer().equals(damager) && e.getEntity().equals(getPlayer())) {
 				boolean over = false, control = false;
 				double startDamage = 0;
 				if (topDefence > e.getDamage()) {
@@ -268,8 +231,8 @@ public class RandomNumberControl extends AbilityBase {
 				}
 				if (topDefence >= e.getDamage()) over = true;
 				if (!control) new Holograms(e.getEntity().getLocation(), e.getDamage(), e.getDamage(), over, control, false).start();
-				else new Holograms(e.getEntity().getLocation(), startDamage, e.getDamage(), over, control, false).start();
-			}	
+				else new Holograms(e.getEntity().getLocation(), startDamage, e.getDamage(), over, control, false).start();	
+			}
 		}
 	}
 	
