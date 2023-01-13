@@ -8,16 +8,19 @@ import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Moisture;
@@ -153,6 +156,8 @@ public class Raincloud extends AbilityBase {
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     
     private final LimitedPushingList<Location> locations = new LimitedPushingList<>(60);
+    private final Random random = new Random();
+    private boolean isDark = false;
     private Location cloudlocation = null;
     private double nowrange = range;
     private Player target;
@@ -189,19 +194,14 @@ public class Raincloud extends AbilityBase {
     	
     	@Override
     	public void run(int count) {
-    		if (skill.isRunning()) {
-        		locations.add(getPlayer().getLocation());
-        		cloudlocation = locations.getFirst().add(0, 3.5, 0);	
-    		} else {
-    			
-    		}
-    		ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), range, 0.2, range, (int) (range * 150), 0);
+    		locations.add(skill.isRunning() ? target.getLocation() : getPlayer().getLocation());
+        	cloudlocation = locations.getFirst().add(0, 3.5, 0);	
+    		ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
     		
-    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, range, predicate)) {
+    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {
     				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, 2);
-    				
-    				if (!getPlayer().equals(player)) {
+       				if (!getPlayer().equals(player)) {
     					
     				}
     			}
@@ -214,7 +214,11 @@ public class Raincloud extends AbilityBase {
 		
     	@Override
     	protected void onDurationStart() {
+    		locations.clear();
     		nowrange = range + addrange;
+    		if (random.nextInt(100) + 1 <= chance) {
+    			isDark = true;
+    		}
     	}
     	
 		@Override
@@ -229,10 +233,18 @@ public class Raincloud extends AbilityBase {
 		
 		@Override
 		protected void onDurationSilentEnd() {
+    		locations.clear();
 			nowrange = range;
 		}
 		
     }.setPeriod(TimeUnit.TICKS, 1);
+    
+	@SubscribeEvent
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
+		if (e.getPlayer().equals(getPlayer()) && e.getEffectType().equals(Moisture.registration)) {
+			e.setCancelled(true);
+		}
+    }
     
     
 }
