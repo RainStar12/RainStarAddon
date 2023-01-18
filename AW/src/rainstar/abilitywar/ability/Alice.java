@@ -60,10 +60,10 @@ import rainstar.abilitywar.effect.Confusion;
 		" §7트럼프 카드§f는 총 54장으로 구성되어 있으며, 한 번 뽑은 §7카드§f는 나오지 않습니다.",
 		" 각 문양별로 특수 효과가 하나씩 존재하며, 1~13의 숫자로 효과 배율이 정해집니다.",
 		" 54장을 전부 사용시 덱을 갈아끼웁니다. $[COOLDOWN_CONFIG]",
-		" §8♠ §7-§f 카드를 발사해 엔티티를 관통하며 닿은 적에게 출혈 피해를 입힙니다.",
+		" §8♠ §7-§f 카드를 발사해 엔티티를 관통하며 닿은 적에게 §c§n출혈 피해§f를 입힙니다.",
 		" §c♥ §7-§f 카드를 발사해 적중 대상과 자신의 체력을 즉시 회복합니다.",
 		" §8♣ §7-§f 카드를 발사해 적중 위치를 폭발시킵니다.",
-		" §c♦ §7-§f 카드를 발사해 적중 대상에게 추가 피해와 혼란 효과를 부여합니다.",
+		" §c♦ §7-§f 카드를 발사해 적중 대상에게 추가 피해와 §6§n혼란 효과§f를 부여합니다.",
 		" §8Joker §7-§f §8♠ §f+ §8♣ §f효과를 최대 출력으로 동시에 사용합니다.",
 		" §cJoker §7-§f §c♥ §f+ §c♦ §f효과를 최대 출력으로 동시에 사용합니다.",
 		},
@@ -526,7 +526,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 					if (!shooter.equals(damageable) && !checkhit.contains(damageable)) {
 						checkhit.add(damageable);
 						if (suit == 0) {
-							Damages.damageArrow(damageable, shooter, (float) (4 + ((rank + 1) * 0.3)));
+							Damages.damageArrow(damageable, shooter, (float) (8 + ((rank + 1) * 0.3)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -560,7 +560,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 							return;
 						}
 						if (suit == 3) {
-							Damages.damageArrow(damageable, shooter, (float) (3 + ((rank + 1) * 0.7)));
+							Damages.damageArrow(damageable, shooter, (float) (6 + ((rank + 1) * 0.7)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Confusion.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -588,7 +588,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								}
 								Confusion.apply(getGame().getParticipant(p), TimeUnit.TICKS, 130, 10);
 							}
-							Damages.damageArrow(damageable, shooter, 12.1f);
+							Damages.damageArrow(damageable, shooter, 17.1f);
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, 6.5, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {

@@ -39,7 +39,7 @@ import rainstar.abilitywar.effect.AncientCurse;
 
 @AbilityManifest(name = "호루스", rank = Rank.S, species = Species.HUMAN, explain = {
 		"$[PERIOD]초마다 지난 $[PERIOD]초간 남들에게 §c최종 피해를 가장 많이 준 적§f에게",
-		"§5고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
+		"§5§n고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
 		"그 적이 $[PERIOD]초간 입힌 최종 피해량의 $[PERCENTAGE]%만큼 자신의 §c공격력§f이 증가합니다.",
 		"§0[§5고대 저주§0]§f 중복 부여 시마다 단계가 상승합니다. 저주 단계 1당",
 		" 공격력 및 받는 피해량이 각각 10%씩 증가합니다."

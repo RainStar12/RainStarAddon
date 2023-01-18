@@ -34,7 +34,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "구미호", rank = Rank.A, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §d수행§f: 매 $[StackTimer]초마다 꼬리 1개를 획득합니다.",
+		"§7패시브 §8- §d수행§f: 매 $[PERIOD]초마다 꼬리 1개를 획득합니다.",
 		" 경험하지 못한 피해 방식으로 피해입었을 때 추가로 1개 더 획득합니다.",
 		" 꼬리를 보유하고 있을 때, 5개 이후부터 주는 대미지가 0.5씩 상승합니다.",
 		" 꼬리는 2개로 시작하여 최대 9개까지 소지 가능합니다.",
@@ -82,8 +82,8 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> StackTimer = abilitySettings.new SettingObject<Integer>(NineTailFox.class,
-			"Stack Timer", 25, "# 꼬리 자동 충전 시간") {
+	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(NineTailFox.class,
+			"period", 25, "# 꼬리 자동 충전 시간", "# 단위: 초") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -94,8 +94,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	
 	private final ActionbarChannel ac = newActionbarChannel();
 	private int stack = 2;	
-	private int timeget = (StackTimer.getValue() * 20);
-	private int timer = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(25) * timeget : timeget);
+	private final int period = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(25) * PERIOD.getValue() * 20 : PERIOD.getValue() * 20);
 	private Set<DamageCause> damagetype = new HashSet<>();
 	private boolean master = false;
 	
@@ -115,8 +114,8 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     	
     	@Override
 		public void run(int count) {
-    		if (timer != 0) {
-        		if (count % timer == 0 && stack < 9) {
+    		if (period != 0) {
+        		if (count % period == 0 && stack < 9) {
         			stack++;
         			ac.update("§b꼬리 수§f: " + stack + "개");
         		}	

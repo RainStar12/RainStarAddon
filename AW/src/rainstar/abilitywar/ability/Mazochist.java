@@ -52,8 +52,8 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
         }
     };
 	
-	public static final SettingObject<Integer> HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal", 60,
+	public static final SettingObject<Integer> HEAL = 
+			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal-amount", 40,
             "# 스택당 매 틱 회복량", "# 단위: 값 / 10000", "# 10 = 0.001", "# 초당 0.02 회복") {
         @Override
         public boolean condition(Integer value) {
@@ -87,7 +87,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final double percentage = PERCENTAGE.getValue() * 0.01;
     private final int duration = DURATION.getValue() * 20;
-    private final double heal = HEAL_AMOUNT.getValue() / 10000.0;
+    private final double heal = HEAL.getValue() / 10000.0;
 	private ActionbarChannel ac = newActionbarChannel();
 	private int stack = 0;
 	

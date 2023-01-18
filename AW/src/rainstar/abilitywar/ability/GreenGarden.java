@@ -15,9 +15,9 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 		"§7철괴 우클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.", 
 		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[RANGE]칸 내 생명체에게 효과를 부여합니다.", 
 		"§a긍정 효과§f라면 아군에게, §c부정 효과§f라면 적에게 적용됩니다.", 
-		"§4양귀비 §c중독§7 | §e민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 증가", 
-		"§b난초 §a신속§7 | §f선애기별꽃 §a저항 및 넉백 제거§7 | §d라일락 §c몽환", 
-		"§6튤립 §a공격력 증가§7 | §c장미 §a피해량 반사§7 | §e해바라기 §c유혹"
+		"§4양귀비 §c§n중독§7 | §e민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 증가", 
+		"§b난초 §a신속§7 | §f선애기별꽃 §a저항 및 넉백 제거§7 | §d라일락 §c§n몽환", 
+		"§6튤립 §a공격력 증가§7 | §c장미 §a피해량 반사§7 | §e해바라기 §c§n유혹"
 		})
 public class GreenGarden extends AbilityBase {
 	

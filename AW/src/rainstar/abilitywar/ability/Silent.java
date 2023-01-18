@@ -1,5 +1,5 @@
 package rainstar.abilitywar.ability;
 
-public class Nemesis {
+public class Silent {
 
 }

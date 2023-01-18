@@ -56,15 +56,15 @@ import rainstar.abilitywar.effect.ElectricShock;
 		" §6도토리§f는 최대 §e22개§f까지 수집 가능합니다. §6도토리§f를 소모하여",
 		" 스킬을 사용 가능하고, 두 스킬은 쿨타임을 공유합니다. $[COOLDOWN]",
 		"§7철괴 우클릭 §8- §a냠냠§f: 비어 있는 체력의 $[HEAL_AMOUNT]%를 회복합니다. $[EAT_CONSUME]",
-		"§7철괴 좌클릭 §8- §b람쥐썬더§f: $[CHANNELING]초간 이동 불가 상태가 되고, 내 현재 위치에서",
-		" 퍼져나가는 번개를 떨어뜨려 적들을 감전시킵니다. $[THUNDER_CONSUME]",
+		"§7철괴 좌클릭 §8- §b람쥐썬더§f: $[CHANNELING]초간 §2§n이동 불가§f 상태가 되고, 내 현재 위치에서",
+		" 퍼져나가는 번개를 떨어뜨려 적들을 §d§n감전§f시킵니다. $[THUNDER_CONSUME]",
 		"§b[§7아이디어 제공자§b] §eLessso"
 		},
 		summarize = {
 		"§6도토리§f가 주변에 생겨나며 주워 먹어서 22개까지 수집 가능합니다.",
 		"철괴를 이용해 쿨타임 공유의 스킬을 §6도토리§f를 소모하여 사용 가능합니다.",
 		"철괴 우클릭으로 비어있는 체력의 일부를 §d회복§f합니다.",
-		"철괴 좌클릭으로 잠시간 이동 불가가 된 후 주변에 §e번개§f를 내리칩니다."
+		"철괴 좌클릭으로 잠시간 §2§n이동 불가§f가 된 후 주변에 §e번개§f를 내리칩니다."
 		})
 
 public class Squirrel extends AbilityBase implements ActiveHandler {

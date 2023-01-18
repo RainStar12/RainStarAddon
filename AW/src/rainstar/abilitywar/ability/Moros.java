@@ -52,8 +52,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		" 대상은 §c§n그 어떠한 방법으로도§f 죽음을 피할 수 없습니다.",
 		"§7패시브 §8- §3운명 개찬§f: $[RANGE]$[RANGE_SPREAD]칸 내의 §a액티브§8 / §6타게팅§f 스킬을 미리 감지하고 직전에",
 		" $[DURATION]$[DURATION_SPREAD]초간 §b타게팅 불가 상태§f가 됩니다. $[PASSIVE_COOLDOWN]$[PASSIVE_COOLDOWN_SPREAD]",
-		"§7철괴 좌클릭 §8- §b변수 제거§f: §c필멸§f을 전부 §c제압§f으로 바꿉니다. $[ACTIVE_COOLDOWN]$[ACTIVE_COOLDOWN_SPREAD]",
-		" §c제압§f된 대상에게는 §c필멸§f 부여 대신 $[DAMAGE_INCREASE]$[DAMAGE_INCREASE_SPREAD]%의 추가 피해를 입힙니다."
+		"§7철괴 좌클릭 §8- §b변수 제거§f: §c필멸§f을 전부 §c§n제압§f으로 바꿉니다. $[ACTIVE_COOLDOWN]$[ACTIVE_COOLDOWN_SPREAD]",
+		" §c§n제압§f된 대상에게는 §c필멸§f 부여 대신 $[DAMAGE_INCREASE]$[DAMAGE_INCREASE_SPREAD]%의 추가 피해를 입힙니다."
 		},
 		summarize = {
 		"게임 시작 시 모든 스킬 효과의 수치들은 오차범위 내에서 재설정됩니다.",

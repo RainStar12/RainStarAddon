@@ -48,8 +48,8 @@ import rainstar.abilitywar.effect.Mute;
 
 @AbilityManifest(name = "선견지명", rank = Rank.S, species = Species.HUMAN, explain = {
 		"검 들고 F키로 바라보고 있는 대상을 $[FORESIGHT_DURATION]초간 지정합니다. $[COOLDOWN]",
-		"대상이 §a액티브 §3/ §6타게팅 §f스킬을 사용할 때 대상을 $[SKILL_DURATION]초간 §3침묵§f시키고,",
-		"§3침묵§f되어있는 동안은 스킬을 자신이 대신 §b사용§f합니다. §8(§7패시브도 획득 가능§8)",
+		"대상이 §a액티브 §3/ §6타게팅 §f스킬을 사용할 때 대상을 $[SKILL_DURATION]초간 §3§n침묵§f시키고,",
+		"§3§n침묵§f되어있는 동안은 스킬을 자신이 대신 §b사용§f합니다. §8(§7패시브도 획득 가능§8)",
 		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		},
 		summarize = {

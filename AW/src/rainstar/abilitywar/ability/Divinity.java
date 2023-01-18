@@ -59,7 +59,6 @@ import daybreak.google.common.base.Predicate;
 		"공중에서 웅크릴 시 한 번 더 점프하고 첫 낙하 피해를 무시합니다."
 		})
 
-@SuppressWarnings("deprecation")
 public class Divinity extends AbilityBase implements ActiveHandler {
 
 	public Divinity(Participant participant) {

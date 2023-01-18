@@ -88,8 +88,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	
-	public static final SettingObject<Double> GOD_DURATION = abilitySettings.new SettingObject<Double>(
-			Nun.class, "god-duration", 30.0, "# 강신 지속시간", "# 단위: 초") {
+	public static final SettingObject<Double> BEING_GOD_DURATION = abilitySettings.new SettingObject<Double>(
+			Nun.class, "being-god-duration", 20.0, "# 강신 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -141,7 +141,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
 	private final int chance = CHANCE.getValue();
 	private final int channelingDur = (int) (CHANNELING_COUNT.getValue() * 20);
-	private final int duration = (int) (GOD_DURATION.getValue() * 20);
+	private final int duration = (int) (BEING_GOD_DURATION.getValue() * 20);
 	private final double decreaseDMG = (GOD_DAMAGE_DECREASE.getValue() * 0.01);
 	private final double undeadDMG = 1 + (UNDEAD_DAMAGE.getValue() * 0.01);
 	private final double rankDMG = (RANK_DAMAGE.getValue() * 0.01);

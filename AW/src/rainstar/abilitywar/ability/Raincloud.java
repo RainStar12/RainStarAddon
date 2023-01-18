@@ -27,11 +27,11 @@ import rainstar.abilitywar.effect.Moisture;
 
 @AbilityManifest(name = "비구름", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
-		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3습기§f를 $[MOISTURE_DURATION]초 받습니다.",
-		" 자신은 §3습기§f 효과를 지속시간 $[HEAL_PERCENTAGE]%의 회복 효과로 대신 받습니다.",
+		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3§n습기§f를 $[MOISTURE_DURATION]초 받습니다.",
+		" 자신은 §3§n습기§f 효과를 지속시간 $[HEAL_PERCENTAGE]%의 회복 효과로 대신 받습니다.",
 		"§7철괴 우클릭 §8- §2기후 조작§f: $[DURATION]초간 §b구름§f의 범위가 $[ADD_RANGE]칸 증가합니다.",
 		" 지속시간동안 §b구름§f은 자신이 마지막으로 공격한 적을 추격하고, $[CHANCE]%의 확률로",
-		" §8먹구름§f이 되어 매 $[LIGHTNING_DELAY]초마다 번개를 내리쳐 $[STUN]초간 §e기절§f시킵니다. $[COOLDOWN]",
+		" §8먹구름§f이 되어 매 $[LIGHTNING_DELAY]초마다 번개를 내리쳐 $[STUN]초간 §e§n기절§f시킵니다. $[COOLDOWN]",
 		"§9[§3습기§9]§f 이동 속도가 25%, 공격력이 15% 감소합니다."
 		},
 		summarize = {

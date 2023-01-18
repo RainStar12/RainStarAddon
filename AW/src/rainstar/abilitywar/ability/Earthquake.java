@@ -143,7 +143,6 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	@SuppressWarnings("deprecation")
 	public class Airborn extends AbilityTimer {
 		
 		private final Player player;

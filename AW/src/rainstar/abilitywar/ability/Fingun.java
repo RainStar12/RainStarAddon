@@ -23,8 +23,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "지건", rank = Rank.A, species = Species.HUMAN, explain = {
-		"3초간 맨 손으로 차징 후 적을 타격하면 $[DURATION]초간 §c출혈§f시킵니다. $[COOLDOWN]",
-		"§c출혈§f 중인 적에게 입히는 피해량이 $[INCREASE]% 증가합니다.",
+		"3초간 맨 손으로 차징 후 적을 타격하면 $[DURATION]초간 §c§n출혈§f시킵니다. $[COOLDOWN]",
+		"§c§n출혈§f 중인 적에게 입히는 피해량이 $[INCREASE]% 증가합니다.",
 		"§b[§7아이디어 제공자§b] §chorn1111"
 		},
 		summarize = {

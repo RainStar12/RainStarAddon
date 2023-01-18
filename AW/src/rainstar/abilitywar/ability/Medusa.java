@@ -29,7 +29,7 @@ import rainstar.abilitywar.effect.Petrification;
 import rainstar.abilitywar.synergy.Mirror;
 
 @AbilityManifest(name = "메두사", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"적이 나를 $[LOOKING_COUNT]초간 쳐다보면, 대상은 $[PETRIFICATION_DURATION]초간 §8석화§f됩니다. $[COOLDOWN]",
+		"적이 나를 $[LOOKING_COUNT]초간 쳐다보면, 대상은 $[PETRIFICATION_DURATION]초간 §8§n석화§f됩니다. $[COOLDOWN]",
 		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
 		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다.",

@@ -25,8 +25,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "도살자", rank = Rank.A, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c블러드러스트§f: 대상에 체력에 따라 많을수록 §a약하게§8(§7최소 0.6배§8)§f,",
-		" 적을수록 §4강하게§8(§7최대 1.6배§8)§f 공격합니다.",
+		"§7패시브 §8- §c블러드러스트§f: 대상에 체력에 따라 많을수록 §a약하게§8(§7최소 0.65배§8)§f,",
+		" 적을수록 §4강하게§8(§7최대 1.65배§8)§f 공격합니다.",
 		"§7킬 §8- §c카니발리즘§f: 대상을 죽였을 경우, 현재 남은 체력만큼 체력을 회복합니다.",
 		" 이때 최대 체력을 넘는 회복량은 §e흡수 체력§f으로 얻습니다."
 		},
@@ -53,7 +53,7 @@ public class Butcher extends AbilityBase {
 		    	final LivingEntity target = (LivingEntity) e.getEntity();
 		    	double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 		    	double nowHealth = target.getHealth();
-		    	double multiply = ((1 - (nowHealth / maxHealth)) + 0.6);
+		    	double multiply = ((1 - (nowHealth / maxHealth)) + 0.65);
 				e.setDamage(e.getDamage() * multiply);
 				if (target.getHealth() >= target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2) {			
 					ParticleLib.REDSTONE.spawnParticle(target.getLocation().add(0, 2.2, 0), MajorityHealth);
@@ -67,7 +67,7 @@ public class Butcher extends AbilityBase {
 			final LivingEntity target = (LivingEntity) e.getEntity();
 	    	double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 	    	double nowHealth = target.getHealth();
-	    	double multiply = ((1 - (nowHealth / maxHealth)) + 0.6);
+	    	double multiply = ((1 - (nowHealth / maxHealth)) + 0.65);
 	    	e.setDamage(e.getDamage() * multiply);
 			if (target.getHealth() >= target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2) {
 				ParticleLib.REDSTONE.spawnParticle(target.getLocation().add(0, 2.2, 0), MajorityHealth);
