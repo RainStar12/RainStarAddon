@@ -32,11 +32,13 @@ import rainstar.abilitywar.effect.BackseatGaming;
 		name = "티배깅", rank = Rank.C, species = Species.HUMAN, explain = {
 		"누군가가 나를 보고 있을 때 웅크리기를 연타할 경우 피해를 줍니다.",
 		"만일 상대가 내 뒷모습을 보고 있을 때는 피해량이 더 강해집니다.",
-		"나를 죽인 대상은 §c훈수§f 상태이상을 받습니다."
+		"나를 죽인 대상은 §c§n훈수§f 상태이상을 받습니다.",
+		"§e[§c훈수§e]§f 플레이어가 특정 행동들을 할 때마다 확률적으로 시야를 봉쇄합니다.",
+		" 이 효과는 자동 영구 지속 효과입니다."
 		},
 		summarize = {
 		"웅크리기 연타 시 나를 바라보는 적은 피해를 입습니다. §8(§7후방 2배§8)",
-		"나를 죽인 대상은 §c훈수§f 상태이상을 받습니다."
+		"나를 죽인 대상은 §c§n훈수§f 상태이상을 받습니다."
 		})
 
 public class Teabagging extends AbilityBase {

@@ -69,7 +69,7 @@ import rainstar.abilitywar.effect.SuperRegen;
 		"§d유도 §7-§f 대상의 방향으로 빠르게 나아가는 §d유도 미사일§f을 발사합니다.",
 		" 미사일은 지형지물 혹은 생명체에 충돌 시 폭발합니다. $[MANA_HOMING]",
 		"§e관통 §7-§f $[PIERCE_RANGE]칸 내의 가장 먼 대상에게 직격하는 특수 투사체를 발사합니다.",
-		" 투사체는 적을 기절시키고 지형지물과 생명체, 방어력을 §e관통§f합니다. $[MANA_PIERCE_SHOT]",
+		" 투사체는 적을 §e§n기절§f시키고 지형지물과 생명체, 방어력을 §e관통§f합니다. $[MANA_PIERCE_SHOT]",
 		"§8은신 §7-§f 신속 및 타게팅 불능 상태가 됩니다. §3소모 §7: §f0",
 		"§b[§7아이디어 제공자§b] §5Phillip_MS"
 		},

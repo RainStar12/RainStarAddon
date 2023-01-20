@@ -50,14 +50,14 @@ import rainstar.abilitywar.effect.Irreparable;
 @AbilityManifest(name = "러시안 룰렛", rank = Rank.S, species = Species.HUMAN, explain = {
 		"탄이 비었을 때 철괴 우클릭 시, 실탄 하나를 넣고 실린더를 돌립니다. $[COOLDOWN]",
 		"이후 철괴 우클릭으로 한 발씩 발사 가능합니다. 실탄을 발사할 경우,",
-		"맞힌 대상에게 §c회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
-		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
+		"맞힌 대상에게 §c§n회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
+		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e§n기절§f합니다."
 		},
 		summarize = {
 		"실린더가 빈 상태에서 §7철괴 우클릭으로§f 10칸 중 한 곳에 실탄을 장전합니다.",
 		"이후 §7철괴 우클릭으로§f 한 발씩 발사하고, 실탄 발사 시",
-		"맞힌 대상에게 §c회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
-		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e기절§f합니다."
+		"맞힌 대상에게 §c§n회복 불능§f $[HEAL_BAN]초와 §b트루 대미지§f $[TRUE_DMG]%를 입힙니다.",
+		"다만 빗맞힐 경우에는 자신이 $[STUN]초간 §e§n기절§f합니다."
 		})
 public class RussianRoulette extends AbilityBase implements ActiveHandler {
 	

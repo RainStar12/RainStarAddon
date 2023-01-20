@@ -68,11 +68,11 @@ import kotlin.ranges.RangesKt;
 		"§a[§e능력 제공자§a] §dspace_kdd"
 		},
 		summarize = {
-		"§b공포§f에 빠진 적에게 주는 피해량이 증가합니다.",
-		"§7검 우클릭§f 시, $[DARKARTS_DURATION]초간 내게 피해를 주는 대상이 §b공포§f에 빠집니다.",
-		"효과 종료 시, §b공포§f를 건 대상의 수에 비례해 체력을 회복합니다.",
+		"§b§n공포§f에 빠진 적에게 주는 피해량이 증가합니다.",
+		"§7검 우클릭§f 시, $[DARKARTS_DURATION]초간 내게 피해를 주는 대상이 §b§n공포§f에 빠집니다.",
+		"효과 종료 시, §b§n공포§f를 건 대상의 수에 비례해 체력을 회복합니다.",
 		"§7철괴 우클릭§f 시, $[SHADOW_DURATION]초간 §3그림자 상태§f로 적을 근접 공격해",
-		"대상의 방향으로 질주하고 주변을 짧은 §b공포§f에 빠뜨립니다.",
+		"대상의 방향으로 질주하고 주변을 짧은 §b§n공포§f에 빠뜨립니다.",
 		"효과 종료 시, 처치한 적의 수만큼 천천히 줄어드는 추가 공격력을 획득합니다."
 		})
 public class Shadow extends AbilityBase implements ActiveHandler {

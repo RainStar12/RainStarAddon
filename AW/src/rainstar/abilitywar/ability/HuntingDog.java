@@ -65,7 +65,7 @@ import daybreak.google.common.base.Predicate;
 		"§7철괴 우클릭 §8- §c사냥개를 풀 시간§f: §6$[DURATION_A] 혹은 $[DURATION_B]초§f간 §e$[COUNT]§f마리의 사냥개를 소환합니다.",
 		" 사냥개는 §c빨간색§f, §a녹색§f, §b하늘색§f 목걸이에 따른 별개의 능력치로",
 		" 적을 사냥하러 나섭니다. $[COOLDOWN]",
-		" 이 사냥개가 물어뜯는 적은 $[DAMAGE]의 피해를 입고 $[STUN]틱간 §e기절§f합니다.",
+		" 이 사냥개가 물어뜯는 적은 $[DAMAGE]의 피해를 입고 $[STUN]틱간 §e§n기절§f합니다.",
 		"§7철괴 좌클릭 §8- §c힘 재기§f: 각 사냥개의 스탯을 볼 수 있는 GUI를 오픈합니다.",
 		"§b[§7아이디어 제공자§b] §6DUCKGAE"
 		},
@@ -485,7 +485,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 			redlore.add("§b속도§7  : §a■■■§8□□");
 			redlore.add("§8====================");
 			redlore.add("§3우선 타게팅 대상§7: §f가장 마지막으로 주인을 공격한 적");
-			redlore.add("§2특수 능력§7: §f적을 피해입힐 때 §c출혈§f효과를 부여함");
+			redlore.add("§2특수 능력§7: §f적을 피해입힐 때 §c§n출혈§f효과를 부여함");
 			redmeta.setLore(redlore);
 			RED.setItemMeta(redmeta);
 			
@@ -507,7 +507,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 			bluelore.add("§b속도§7  : §a■■■■§8□");
 			bluelore.add("§8====================");
 			bluelore.add("§3우선 타게팅 대상§7: §f주인에게 가장 가까이 있는 적");
-			bluelore.add("§2특수 능력§7: §f피해를 입힐 때 적이 §b기절§f하는 시간이 2배 길어짐");
+			bluelore.add("§2특수 능력§7: §f피해를 입힐 때 적이 §b§n기절§f하는 시간이 2배 길어짐");
 			bluemeta.setLore(bluelore);
 			BLUE.setItemMeta(bluemeta);
 		}

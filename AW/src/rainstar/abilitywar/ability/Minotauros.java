@@ -59,7 +59,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		" 돌진 스킬이 쿨타임일 때 피해를 입을 때마다 돌진 쿨타임이 $[COOLDOWN_DECREASE]%씩 감소합니다.",
 		"§7검 우클릭 §8- §c돌진§f: 바라보는 방향으로 돌진합니다. $[RUSH_COOLDOWN]",
 		" 돌진하는 동안은 무적 상태가 되고, 생명체나 지형에 충돌 전까지 2초간 돌진합니다.",
-		" 이후 돌진이 끝난 지점 주변 $[CRASH_RANGE]칸 내에 피해를 입히며 $[STUN_DURATION]초간 기절시킵니다.",
+		" 이후 돌진이 끝난 지점 주변 $[CRASH_RANGE]칸 내에 피해를 입히며 $[STUN_DURATION]초간 §e§n기절§f시킵니다.",
 		"§3[§b종족야생 콜라보 능력§3]"
 		}, summarize = {
 		"근접 공격을 시도할 때 광범위 피해를 입힙니다.",

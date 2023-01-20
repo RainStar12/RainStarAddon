@@ -52,7 +52,6 @@ public abstract class RuneBase {
 	}
 	
 	public static ItemStack createItem() {
-		ItemStack rune = new ItemStack();
 		return null;
 		
 	}

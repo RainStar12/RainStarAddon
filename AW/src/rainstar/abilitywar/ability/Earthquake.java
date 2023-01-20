@@ -45,12 +45,12 @@ import daybreak.google.common.base.Predicate;
 @AbilityManifest(name = "지진", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴 우클릭 시 무작위 §2진도§f의 §6지진§f을 일으켜 $[WAIT]초 후 지진파가 퍼져나갑니다.",
 		"지진파에 닿은 생명체들을 §2진도§f에 비례해 §b띄워올립니다§f.",
-		"이후 대상은 $[STUN]초간 §e기절§f합니다. $[COOLDOWN]",
+		"이후 대상은 $[STUN]초간 §e§n기절§f합니다. $[COOLDOWN]",
 		"§b[§7아이디어 제공자§b] §dspace_kdd"
 		},
 		summarize = {
 		"§7철괴 우클릭 시§f 무작위 범위 내 착지 중인 생명체들을 띄워올리고",
-		"대상들이 다시 발에 땅이 닿으면 $[STUN]초 §e기절§f합니다. $[COOLDOWN]"
+		"대상들이 다시 발에 땅이 닿으면 $[STUN]초 §e§n기절§f합니다. $[COOLDOWN]"
 		})
 
 public class Earthquake extends AbilityBase implements ActiveHandler {

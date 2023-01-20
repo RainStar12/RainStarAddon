@@ -59,7 +59,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"게임 시작 시 모든 스킬 효과의 수치들은 오차범위 내에서 재설정됩니다.",
 		"공격한 적은 §c필멸§f 효과를 받아 치명적인 피해를 입으면 무조건 사망합니다.",
 		"주변에서 능력 사용을 감지하고 잠시간 §3타게팅 불가 상태§f가 됩니다.",
-		"§7철괴 좌클릭§f으로, 모든 §c필멸§f 효과를 §c제압§f으로 바꾸고 §c제압§f 대상 한정 공격력이 증가합니다."
+		"§7철괴 좌클릭§f으로, 모든 §c필멸§f 효과를 §c§n제압§f으로 바꾸고 §c§n제압§f 대상 한정 공격력이 증가합니다."
 		})
 
 public class Moros extends AbilityBase implements ActiveHandler {
