@@ -4,11 +4,13 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -19,6 +21,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -26,6 +29,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -39,7 +43,8 @@ import rainstar.abilitywar.effect.Moisture;
 		"§7철괴 우클릭 §8- §2기후 조작§f: $[DURATION]초간 §b구름§f의 범위가 $[ADD_RANGE]칸 증가합니다.",
 		" 지속시간동안 §b구름§f은 자신이 마지막으로 공격한 적을 추격하고, $[CHANCE]%의 확률로",
 		" §8먹구름§f이 되어 매 $[LIGHTNING_DELAY]초마다 번개를 내리쳐 $[STUN]초간 §e§n기절§f시킵니다. $[COOLDOWN]",
-		"§9[§3습기§9]§f 이동 속도가 25%, 공격력이 15% 감소합니다."
+		"§9[§3습기§9]§f 이동 속도가 25%, 공격력이 15% 감소합니다.",
+        "§a[§e능력 제공자§a] §bSlowRain"
 		},
 		summarize = {
 		""
@@ -208,6 +213,20 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 			return false;
 		}
 	};
+	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			cloud.start();
+		}
+	}
+	
+	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldown.isCooldown()) {
+	    	return skill.start();
+	    }
+	    return false;
+	}
     
     private final AbilityTimer cloud = new AbilityTimer() {
     	
@@ -215,15 +234,23 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     	public void run(int count) {
     		locations.add(skill.isRunning() ? target.getLocation() : getPlayer().getLocation());
         	cloudlocation = locations.getFirst().add(0, 3.5, 0);	
-    		ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
+    		if (isDark) {
+    			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
+    			if (count % lightningdelay == 0) {
+    				cloudlocation.getWorld().strikeLightningEffect(cloudlocation);
+    	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
+    	    			if (!getPlayer().equals(player) && Damages.canDamage(player, DamageCause.LIGHTNING, 3)) {
+    	    				Healths.setHealth(player, Math.min(1, player.getHealth() - 3));
+    	    				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, stun);
+    	    			}
+    	    		}
+    			}
+    		} else ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
+    		ParticleLib.WATER_SPLASH.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 0.7), 0);
     		
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {
     				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, moisturedur);
-       				if (!getPlayer().equals(player)) {
-    					
-       					
-    				}
     			}
     		}
     	}
@@ -255,6 +282,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 		protected void onDurationSilentEnd() {
     		locations.clear();
 			nowrange = range;
+			isDark = false;
 		}
 		
     }.setPeriod(TimeUnit.TICKS, 1);
