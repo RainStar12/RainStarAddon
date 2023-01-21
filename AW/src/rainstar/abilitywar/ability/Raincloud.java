@@ -2,13 +2,19 @@ package rainstar.abilitywar.ability;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -20,6 +26,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
@@ -38,7 +45,7 @@ import rainstar.abilitywar.effect.Moisture;
 		""
 		})
 
-public class Raincloud extends AbilityBase {
+public class Raincloud extends AbilityBase implements ActiveHandler {
 	
 	public Raincloud(Participant participant) {
 		super(participant);
@@ -132,6 +139,17 @@ public class Raincloud extends AbilityBase {
         
     };
     
+	public static final SettingObject<Double> DELAY = 
+			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay", 2.5,
+            "# 자신의 (설정값)초 전의 위치에 구름이 위치합니다.", "# 단위: 초") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+    
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Raincloud.class, "cooldown", 90,
             "# 쿨타임", "# 단위: 초") {
@@ -154,8 +172,9 @@ public class Raincloud extends AbilityBase {
     private final int lightningdelay = (int) (LIGHTNING_DELAY.getValue() * 20);
     private final int stun = (int) (STUN.getValue() * 20);
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+    private final int clouddelay = (int) (DELAY.getValue() * 20);
     
-    private final LimitedPushingList<Location> locations = new LimitedPushingList<>(60);
+    private final LimitedPushingList<Location> locations = new LimitedPushingList<>(clouddelay);
     private final Random random = new Random();
     private boolean isDark = false;
     private Location cloudlocation = null;
@@ -200,9 +219,10 @@ public class Raincloud extends AbilityBase {
     		
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {
-    				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, 2);
+    				Moisture.apply(getGame().getParticipant(player), TimeUnit.TICKS, moisturedur);
        				if (!getPlayer().equals(player)) {
     					
+       					
     				}
     			}
     		}
@@ -243,8 +263,24 @@ public class Raincloud extends AbilityBase {
 	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
 		if (e.getPlayer().equals(getPlayer()) && e.getEffectType().equals(Moisture.registration)) {
 			e.setCancelled(true);
+			double healamount = e.getDuration() * healpercent;
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+			}
 		}
     }
-    
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager) && e.getEntity() instanceof Player) target = (Player) e.getEntity(); 
+	}
     
 }

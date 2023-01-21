@@ -54,7 +54,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
         "§7철괴 우클릭§8(§6힘§8) §8- §e파운딩§f: 높게 떠오른 뒤 바라보는 방향으로 찍어내립니다.",
         " $[RANGE]칸 내 대상에게 피해입히고 $[STUN_DURATION]초간 §e§n기절§f시킵니다.",
         " 피해량은 인벤토리의 차지된 칸에 비례합니다. §8(§7칸당 $[DAMAGE]§8)",
-        "§7철괴 우클릭§8(§3저항§8) §8- §a스테로이드§f: $[CHANNELING]초간 이동 불가 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다.",
+        "§7철괴 우클릭§8(§3저항§8) §8- §a스테로이드§f: $[CHANNELING]초간 §2§n이동 불가§f 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다.",
 		"§a[§e능력 제공자§a] §dhandony"
 		},
 		summarize = {
@@ -62,7 +62,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 		"버프에 따라 사용할 수 있는 스킬이 달라집니다.",
 		"§7철괴 우클릭§8(§6힘§8)§7 시§f 높게 떠오른 뒤 바라보는 방향으로 찍고",
 		"범위 내 대상에게 인벤토리 차지칸에 비례한 피해를 입히고 기절시킵니다.",
-		"§7철괴 우클릭§8(§3저항§8)§7 시§f 잠시간 이동 불가 후 체력을 회복합니다."
+		"§7철괴 우클릭§8(§3저항§8)§7 시§f 잠시간 §2§n이동 불가§f 후 체력을 회복합니다."
 		})
 
 public class Buff extends AbilityBase implements ActiveHandler {

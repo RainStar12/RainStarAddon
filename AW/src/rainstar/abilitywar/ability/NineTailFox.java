@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -28,7 +28,6 @@ import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
@@ -115,20 +114,19 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     	@Override
 		public void run(int count) {
     		if (period != 0) {
-        		if (count % period == 0 && stack < 9) {
-        			stack++;
-        			ac.update("§b꼬리 수§f: " + stack + "개");
-        		}	
-    		} else {
-    			if (stack < 9) {
-        			stack++;
-        			ac.update("§b꼬리 수§f: " + stack + "개");	
-    			}
-    		}
+        		if (count % period == 0) stackup();
+    		} else stackup();
     	}
     	
     }.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();
 	
+    public void stackup() {
+    	if (stack < 9) {
+			stack++;
+			ac.update("§b꼬리 수§f: " + stack + "개");
+    	}
+    }
+    
     @SubscribeEvent
     public void onEntityDamage(EntityDamageEvent e) {
     	if (e.getEntity().equals(getPlayer())) {
@@ -142,12 +140,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 					getPlayer().sendMessage("§8[§7HIDDEN§8] §3산전수전§f을 달성하였습니다.");
 	    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 					master = true;
-				} else {
-		    		if (stack < 9) {
-		    			stack++;
-		    			ac.update("§b꼬리 수§f: " + stack + "개");
-		    		}	
-				}
+				} else stackup();
 			}
 		}
     }
@@ -159,16 +152,13 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		onEntityDamage(e);
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
-			e.setDamage(e.getDamage() + ((stack - 4) * 0.5));
-		}
-		if (NMS.isArrow(e.getDamager())) {
-			Arrow arrow = (Arrow) e.getDamager();
-			if (getPlayer().equals(arrow.getShooter())) {
-				e.setDamage(e.getDamage() + ((stack - 4) * 0.5));
-			}
-		}
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() + ((stack - 4) * 0.5));
 	}
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {

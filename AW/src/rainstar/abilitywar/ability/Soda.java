@@ -52,7 +52,7 @@ import rainstar.abilitywar.effect.Corrosion;
 @AbilityManifest(
 		name = "소다", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§3물 속성§f의 꼬마 정령, 소다.",
-		"§7패시브 §8- §3순수§f: 불 속성의 피해, 모든 상태이상, 모든 포션 효과에 면역 효과를",
+		"§7패시브 §8- §3순수§f: 불 속성의 피해, 모든 §n상태이상§f, 모든 포션 효과에 면역 효과를",
 		" 가집니다. 또한 신발을 신고 물 속에 들어갈 때 물갈퀴 인챈트를 자동 획득합니다.",
 		"§7철괴 좌클릭 §8- §3스플래쉬§f: $[DURATION_CONFIG]초간 물이 되어, 타게팅 불능 및 무적 상태가 됩니다.",
 		" 물이 된 동안 지면에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 물 상태가",
