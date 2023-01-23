@@ -75,6 +75,7 @@ import daybreak.google.common.collect.ImmutableMap;
 import rainstar.abilitywar.ability.*;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
+import rainstar.abilitywar.ability.silent.v1_12_R1.Silent;
 import rainstar.abilitywar.ability.theonering.v1_12_R1.TheOneRing;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
@@ -328,6 +329,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(XInfected.class);		
 		AbilityFactory.registerAbility(Raincloud.class);
 		AbilityList.registerAbility(Raincloud.class);	
+		AbilityFactory.registerAbility(Silent.class);
+		AbilityList.registerAbility(Silent.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

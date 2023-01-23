@@ -33,6 +33,7 @@ import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Moisture;
 
@@ -232,6 +233,9 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void run(int count) {
+    		if (count % 30 == 0) {
+    			SoundLib.WEATHER_RAIN.playSound(cloudlocation, 0.2f, 1.2f);
+    		}
     		locations.add(skill.isRunning() ? target.getLocation() : getPlayer().getLocation());
         	cloudlocation = locations.getFirst().add(0, 3.5, 0);	
     		if (isDark) {
