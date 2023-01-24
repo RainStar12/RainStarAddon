@@ -1,6 +1,8 @@
 package rainstar.abilitywar.effect;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -16,6 +18,7 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @EffectManifest(name = "침묵", displayName = "§3침묵", method = ApplicationMethod.UNIQUE_STACK, type = {
 }, description = {
@@ -31,13 +34,28 @@ public class Mute extends AbstractGame.Effect implements Listener {
 	}
 
 	private final Participant participant;
+	private final ArmorStand hologram;
 
 	public Mute(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
 		setPeriod(TimeUnit.TICKS, 1);
+		final Location location = participant.getPlayer().getLocation();
+		this.hologram = location.getWorld().spawn(location.clone().add(0, 2.2, 0), ArmorStand.class);
+		hologram.setVisible(false);
+		hologram.setGravity(false);
+		hologram.setInvulnerable(true);
+		NMS.removeBoundingBox(hologram);
+		hologram.setCustomName("§c🔇");
+		hologram.setCustomNameVisible(true);
 	}
 
+	@Override
+	protected void run(int count) {
+		hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2, 0));
+		super.run(count);
+	}
+	
 	@Override
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
@@ -70,12 +88,14 @@ public class Mute extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void onEnd() {
+		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onEnd();
 	}
 
 	@Override
 	protected void onSilentEnd() {
+		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onSilentEnd();
 	}

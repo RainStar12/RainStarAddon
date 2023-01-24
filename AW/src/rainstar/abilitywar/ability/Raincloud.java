@@ -38,7 +38,7 @@ import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Moisture;
 
 @AbilityManifest(name = "비구름", rank = Rank.S, species = Species.OTHERS, explain = {
-		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
+		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 반지름 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
 		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3§n습기§f를 $[MOISTURE_DURATION]초 받습니다.",
 		" 자신은 §3§n습기§f 효과를 지속시간 $[HEAL_PERCENTAGE]%의 회복 효과로 대신 받습니다.",
 		"§7철괴 우클릭 §8- §2기후 조작§f: $[DURATION]초간 §b구름§f의 범위가 $[ADD_RANGE]칸 증가합니다.",
@@ -58,7 +58,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "range", 2.0,
+			abilitySettings.new SettingObject<Double>(Raincloud.class, "range", 1.2,
             "# 구름의 범위", "# 단위: 칸") {
 		
         @Override
@@ -146,8 +146,19 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DELAY = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay", 2.5,
+			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay", 1.8,
             "# 자신의 (설정값)초 전의 위치에 구름이 위치합니다.", "# 단위: 초") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+    
+	public static final SettingObject<Double> LIGHTNING_DAMAGE = 
+			abilitySettings.new SettingObject<Double>(Raincloud.class, "lightning-damage", 3.0,
+            "# 번개 피해량", "# 번개의 피해량은 고정 피해량입니다.") {
 		
         @Override
         public boolean condition(Double value) {
@@ -176,6 +187,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     private final double addrange = ADD_RANGE.getValue();
     private final int chance = CHANCE.getValue();
     private final int lightningdelay = (int) (LIGHTNING_DELAY.getValue() * 20);
+    private final double lightningdamage = LIGHTNING_DAMAGE.getValue();
     private final int stun = (int) (STUN.getValue() * 20);
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final int clouddelay = (int) (DELAY.getValue() * 20);
@@ -224,7 +236,8 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldown.isCooldown()) {
-	    	return skill.start();
+	    	if (target == null) getPlayer().sendMessage("§3[§b!§3] §c마지막으로 공격한 플레이어가 없습니다.");
+	    	else return skill.start();
 	    }
 	    return false;
 	}
@@ -237,20 +250,20 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     			SoundLib.WEATHER_RAIN.playSound(cloudlocation, 0.2f, 1.2f);
     		}
     		locations.add(skill.isRunning() ? target.getLocation() : getPlayer().getLocation());
-        	cloudlocation = locations.getFirst().add(0, 3.5, 0);	
+        	cloudlocation = locations.getFirst().clone().add(0, 5.5, 0);	
     		if (isDark) {
-    			ParticleLib.SMOKE_LARGE.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
+    			ParticleLib.SMOKE_LARGE.spawnParticle(cloudlocation, nowrange, 0.223, nowrange, (int) (nowrange * 30), 0);
     			if (count % lightningdelay == 0) {
     				cloudlocation.getWorld().strikeLightningEffect(cloudlocation);
     	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
-    	    			if (!getPlayer().equals(player) && Damages.canDamage(player, DamageCause.LIGHTNING, 3)) {
-    	    				Healths.setHealth(player, Math.min(1, player.getHealth() - 3));
+    	    			if (!getPlayer().equals(player) && Damages.canDamage(player, DamageCause.LIGHTNING, lightningdamage)) {
+    	    				Healths.setHealth(player, Math.min(1, player.getHealth() - lightningdamage));
     	    				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, stun);
     	    			}
     	    		}
     			}
-    		} else ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 150), 0);
-    		ParticleLib.WATER_SPLASH.spawnParticle(getPlayer().getLocation(), nowrange, 0.2, nowrange, (int) (range * 0.7), 0);
+    		} else ParticleLib.CLOUD.spawnParticle(cloudlocation, nowrange, 0.223, nowrange, (int) (nowrange * 30), 0);
+    		ParticleLib.WATER_SPLASH.spawnParticle(cloudlocation, nowrange, 0.223, nowrange, (int) (nowrange * 5), 0);
     		
     		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
     			if (player.getLocation().getY() <= cloudlocation.getY()) {

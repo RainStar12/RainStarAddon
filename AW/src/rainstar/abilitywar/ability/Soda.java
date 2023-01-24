@@ -373,7 +373,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_PLAYER_SWIM.playSound(getPlayer().getLocation(), 1, 1f);
 			SoundLib.ENTITY_PLAYER_SWIM.playSound(getPlayer().getLocation(), 1, 1.2f);
 			SoundLib.ENTITY_PLAYER_SWIM.playSound(getPlayer().getLocation(), 1, 1.4f);
-			getPlayer().teleport(LocationUtil.floorY(getPlayer().getLocation()));
+			if (LocationUtil.floorY(getPlayer().getLocation()).getY() < getPlayer().getLocation().getY() + 3) getPlayer().teleport(LocationUtil.floorY(getPlayer().getLocation()));
 			ParticleLib.WATER_SPLASH.spawnParticle(getPlayer().getLocation().clone().add(0, 0, 0), 1, 0, 1, 500, 1);
 			getPlayer().setGameMode(originalMode);
 			getPlayer().setFlySpeed(flySpeed);

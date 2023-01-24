@@ -1,4 +1,4 @@
-package rainstar.abilitywar.ability.silent.v1_12_R1;
+package rainstar.abilitywar.ability.silent.v1_14_R1;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +8,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,15 +23,15 @@ import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import net.minecraft.server.v1_12_R1.DataWatcherObject;
-import net.minecraft.server.v1_12_R1.DataWatcherRegistry;
-import net.minecraft.server.v1_12_R1.Entity;
-import net.minecraft.server.v1_12_R1.EnumItemSlot;
-import net.minecraft.server.v1_12_R1.ItemStack;
-import net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_12_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_14_R1.DataWatcherObject;
+import net.minecraft.server.v1_14_R1.DataWatcherRegistry;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EnumItemSlot;
+import net.minecraft.server.v1_14_R1.ItemStack;
+import net.minecraft.server.v1_14_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_14_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_14_R1.DataWatcher.Item;
 import rainstar.abilitywar.ability.silent.AbstractSilent;
-import net.minecraft.server.v1_12_R1.DataWatcher.Item;
 
 public class Silent extends AbstractSilent {
 	
@@ -39,7 +39,7 @@ public class Silent extends AbstractSilent {
 
 	static {
 		try {
-			BYTE_DATA_WATCHER_OBJECT = FieldUtil.getStaticValue(Entity.class, "Z");
+			BYTE_DATA_WATCHER_OBJECT = FieldUtil.getStaticValue(Entity.class, "W");
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -92,7 +92,7 @@ public class Silent extends AbstractSilent {
 	protected void hide0(Player player) {
 		affectPlayers.add(player.getUniqueId());
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
-		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
+		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), 0);
 		final PacketPlayOutEntityEquipment[] packets = {
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, ItemStack.a),
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, ItemStack.a),
@@ -138,8 +138,7 @@ public class Silent extends AbstractSilent {
 			if (!pair.getLeft().isValid()) {
 				try {
 					pair.getLeft().getHandle().playerConnection.networkManager.channel.pipeline().remove(pair.getRight());
-				} catch (NoSuchElementException ignored) {
-				}
+				} catch (NoSuchElementException ignored) {}
 			} else return;
 		}
 		final ChannelOutboundHandlerAdapter handler = new ChannelOutboundHandlerAdapter() {

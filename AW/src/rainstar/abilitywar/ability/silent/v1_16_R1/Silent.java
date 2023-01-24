@@ -1,5 +1,6 @@
-package rainstar.abilitywar.ability.silent.v1_12_R1;
+package rainstar.abilitywar.ability.silent.v1_16_R1;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,8 +9,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,23 +24,32 @@ import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import net.minecraft.server.v1_12_R1.DataWatcherObject;
-import net.minecraft.server.v1_12_R1.DataWatcherRegistry;
-import net.minecraft.server.v1_12_R1.Entity;
-import net.minecraft.server.v1_12_R1.EnumItemSlot;
-import net.minecraft.server.v1_12_R1.ItemStack;
-import net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_12_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_16_R1.DataWatcherObject;
+import net.minecraft.server.v1_16_R1.DataWatcherRegistry;
+import net.minecraft.server.v1_16_R1.Entity;
+import net.minecraft.server.v1_16_R1.EnumItemSlot;
+import net.minecraft.server.v1_16_R1.ItemStack;
+import net.minecraft.server.v1_16_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_16_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_16_R1.DataWatcher.Item;
 import rainstar.abilitywar.ability.silent.AbstractSilent;
-import net.minecraft.server.v1_12_R1.DataWatcher.Item;
 
 public class Silent extends AbstractSilent {
-	
+
+
 	private static final DataWatcherObject<Byte> BYTE_DATA_WATCHER_OBJECT;
+	private static final List<com.mojang.datafixers.util.Pair<EnumItemSlot, ItemStack>> NULL_PAIR_LIST = Arrays.asList(
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.MAINHAND, ItemStack.b),
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.OFFHAND, ItemStack.b),
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.HEAD, ItemStack.b),
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.CHEST, ItemStack.b),
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.LEGS, ItemStack.b),
+			com.mojang.datafixers.util.Pair.of(EnumItemSlot.FEET, ItemStack.b)
+	);
 
 	static {
 		try {
-			BYTE_DATA_WATCHER_OBJECT = FieldUtil.getStaticValue(Entity.class, "Z");
+			BYTE_DATA_WATCHER_OBJECT = FieldUtil.getStaticValue(Entity.class, "T");
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -59,16 +69,7 @@ public class Silent extends AbstractSilent {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					for (PacketPlayOutEntityEquipment packet : new PacketPlayOutEntityEquipment[]{
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, ItemStack.a),
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, ItemStack.a),
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, ItemStack.a),
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, ItemStack.a),
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, ItemStack.a),
-							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, ItemStack.a)
-					}) {
-						player.getHandle().playerConnection.sendPacket(packet);
-					}
+					player.getHandle().playerConnection.sendPacket(new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), NULL_PAIR_LIST));
 					injectPlayer(player);
 				}
 			}.runTaskLater(AbilityWar.getPlugin(), 2L);	
@@ -92,41 +93,30 @@ public class Silent extends AbstractSilent {
 	protected void hide0(Player player) {
 		affectPlayers.add(player.getUniqueId());
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
-		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
-		final PacketPlayOutEntityEquipment[] packets = {
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, ItemStack.a),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, ItemStack.a),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, ItemStack.a),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, ItemStack.a),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, ItemStack.a),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, ItemStack.a)
-		};
-		for (PacketPlayOutEntityEquipment packet : packets) {
-			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-		}
+		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), 0);
+		final PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), NULL_PAIR_LIST);
+		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 		injectPlayer((CraftPlayer) player);
 	}
 
 	@Override
 	protected void show0(Player player) {
 		affectPlayers.remove(player.getUniqueId());
-		final PacketPlayOutEntityEquipment[] packets = {
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInMainHand())),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInOffHand())),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(getPlayer().getInventory().getHelmet())),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(getPlayer().getInventory().getChestplate())),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(getPlayer().getInventory().getLeggings())),
-				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, CraftItemStack.asNMSCopy(getPlayer().getInventory().getBoots()))
-		};
+		final PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), Arrays.asList(
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInMainHand())),
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInOffHand())),
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(getPlayer().getInventory().getHelmet())),
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(getPlayer().getInventory().getChestplate())),
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(getPlayer().getInventory().getLeggings())),
+				com.mojang.datafixers.util.Pair.of(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(getPlayer().getInventory().getBoots()))
+		));
 
 		try {
 			((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.get(player.getUniqueId()).getRight());
 		} catch (NoSuchElementException ignored) {
 		}
 		if (((CraftPlayer) player).isValid()) {
-			for (PacketPlayOutEntityEquipment packet : packets) {
-				((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-			}
+			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 			channelHandlers.remove(player.getUniqueId());	
 		}
 	}
@@ -138,8 +128,7 @@ public class Silent extends AbstractSilent {
 			if (!pair.getLeft().isValid()) {
 				try {
 					pair.getLeft().getHandle().playerConnection.networkManager.channel.pipeline().remove(pair.getRight());
-				} catch (NoSuchElementException ignored) {
-				}
+				} catch (NoSuchElementException ignored) {}
 			} else return;
 		}
 		final ChannelOutboundHandlerAdapter handler = new ChannelOutboundHandlerAdapter() {
@@ -147,7 +136,7 @@ public class Silent extends AbstractSilent {
 			public void write(ChannelHandlerContext ctx, Object packet, ChannelPromise promise) throws Exception {
 				if (packet instanceof PacketPlayOutEntityEquipment) {
 					if ((int) FieldUtil.getValue(packet, "a") == getPlayer().getEntityId()) {
-						FieldUtil.setValue(packet, "c", ItemStack.a);
+						FieldUtil.setValue(packet, "b", NULL_PAIR_LIST);
 					}
 				} else if (packet instanceof PacketPlayOutEntityMetadata) {
 					if ((int) FieldUtil.getValue(packet, "a") == getPlayer().getEntityId()) {

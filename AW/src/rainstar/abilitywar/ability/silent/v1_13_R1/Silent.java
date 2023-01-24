@@ -91,7 +91,6 @@ public class Silent extends AbstractSilent {
 	@Override
 	protected void hide0(Player player) {
 		affectPlayers.add(player.getUniqueId());
-		player.hidePlayer(AbilityWar.getPlugin(), getPlayer());
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
 		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
 		final PacketPlayOutEntityEquipment[] packets = {
@@ -111,7 +110,6 @@ public class Silent extends AbstractSilent {
 	@Override
 	protected void show0(Player player) {
 		affectPlayers.remove(player.getUniqueId());
-		player.showPlayer(AbilityWar.getPlugin(), getPlayer());
 		final PacketPlayOutEntityEquipment[] packets = {
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInMainHand())),
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInOffHand())),
