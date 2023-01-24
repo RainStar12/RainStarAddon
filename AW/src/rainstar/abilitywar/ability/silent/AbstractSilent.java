@@ -69,8 +69,13 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 			if (LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate) != null) {
 				Player player = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
-				if (notshow.contains(player)) hide0(player);
-				else show0(player);
+				if (!notshow.contains(player)) {
+					getPlayer().sendMessage(player + "님으로부터 은신합니다.");
+					hide0(player);
+				} else {
+					getPlayer().sendMessage(player + "님에게 은신을 해제합니다.");
+					show0(player);
+				}
 				return true;
 			}
 		}
