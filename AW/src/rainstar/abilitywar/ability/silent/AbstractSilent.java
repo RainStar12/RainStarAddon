@@ -1,5 +1,6 @@
 package rainstar.abilitywar.ability.silent;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Entity;
@@ -16,34 +18,26 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantNewEffectApplyEvent;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 import rainstar.abilitywar.effect.Mute;
@@ -51,7 +45,14 @@ import rainstar.abilitywar.effect.SightLock;
 import rainstar.abilitywar.system.event.MuteRemoveEvent;
 
 @AbilityManifest(name = "사일런트", rank = Rank.L, species = Species.HUMAN, explain = {
-		"???"
+		"§7패시브 §c- §8암습§f: §3§n침묵§f에 걸린 대상에게서 §7은신§f합니다.",
+		" 나를 바라보지 않는 대상에게 주는 피해량이 §c$[NOT_LOOK_DAMAGE_INCREASE]%§f 증가합니다.",
+		"§7근접 공격 §c- §3정적§f: 근접 공격 시마다 대상에게 §e표식§f을 부여합니다. §e표식§f은 대상의 시야를",
+		" 한순간 §5고정§f시키고, $[MAX_STACK]번째 §e표식§f이 쌓이면 초기화되고 대상을 $[PASSIVE_MUTE]초간 §3§n침묵§f시킵니다.",
+		" 대상이 나를 공격한다면 §e표식§f은 초기화됩니다. 초기화 시, $[UNIT_COOLDOWN]",
+		"§7철괴 우클릭 §c- §9억제§f: 주변 $[RANGE]칸 내 모든 플레이어를 $[ACTIVE_MUTE]초간 §3§n침묵§f시킵니다. $[COOLDOWN]",
+		" $[SPEED_DURATION]초간 게임 내 §3§n침묵§f 상태자 수 × §b$[SPEED_PER]%§f만큼 §b이동 속도§f가 증가합니다. §8(§7최대 $[MAX_SPEED]%§8)",
+		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		},
 		summarize = {
 		""
@@ -197,6 +198,8 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 	private final Map<UUID, Long> unitcooldowns = new HashMap<>();
 	private Set<Participant> muted = new HashSet<>();
 	private final Map<Participant, Stack> stackMap = new HashMap<>();
+	private final ActionbarChannel ac = newActionbarChannel();
+	private final DecimalFormat df = new DecimalFormat("0.0");
 	
 	protected abstract void hide0(Player player);
 	protected abstract void show0(Player player);
@@ -225,6 +228,26 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 			return false;
 		}
 	};
+	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			for (Participant p : muted) {
+				hide0(p.getPlayer());
+			}
+		}
+		if (update == Update.RESTRICTION_SET) {
+			for (Participant p : muted) {
+				show0(p.getPlayer());
+			}
+		}
+		if (update == Update.ABILITY_DESTROY) {
+			for (Participant p : muted) {
+				show0(p.getPlayer());
+			}
+			muted.clear();
+		}
+	}
 	
 	@SubscribeEvent
 	public void onMuteRemove(MuteRemoveEvent e) {
@@ -275,29 +298,42 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		}
 	}
 	
-    private final AbilityTimer speedup = new AbilityTimer(speedduration) {
+    private final AbilityTimer speedup = new AbilityTimer(TaskType.REVERSE, speedduration) {
     	
     	private AttributeModifier incmovespeed;
     	
     	@Override
     	public void onStart() {
     		incmovespeed = new AttributeModifier(UUID.randomUUID(), "incmovespeed", Math.min(maxspeed, speedper * muted.size()), Operation.ADD_SCALAR);
+    		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(incmovespeed);
     	}
     	
     	@Override
     	public void run(int count) {
-    		
+    		ac.update("§b이속 증가§7: §f" + df.format(count / 20.0));
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	public void onSilentEnd() {
+    		ac.update(null);
+    		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(incmovespeed);
+    		cooldown.start();
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown() && !speedup.isRunning()) {
 			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
 				Mute.apply(getGame().getParticipant(player), TimeUnit.TICKS, activemute);
 			}
 			
-			speedup.start();
+			return speedup.start();
 		}
 		return false;
 	}
