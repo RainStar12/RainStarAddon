@@ -19,6 +19,7 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import rainstar.abilitywar.system.event.MuteRemoveEvent;
 
 @EffectManifest(name = "침묵", displayName = "§3침묵", method = ApplicationMethod.UNIQUE_STACK, type = {
 }, description = {
@@ -88,6 +89,8 @@ public class Mute extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void onEnd() {
+		final MuteRemoveEvent event = new MuteRemoveEvent(participant);
+		Bukkit.getPluginManager().callEvent(event);
 		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onEnd();
@@ -95,6 +98,8 @@ public class Mute extends AbstractGame.Effect implements Listener {
 
 	@Override
 	protected void onSilentEnd() {
+		final MuteRemoveEvent event = new MuteRemoveEvent(participant);
+		Bukkit.getPluginManager().callEvent(event);
 		hologram.remove();
 		HandlerList.unregisterAll(this);
 		super.onSilentEnd();

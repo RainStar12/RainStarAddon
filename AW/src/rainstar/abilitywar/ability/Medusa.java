@@ -58,7 +58,7 @@ public class Medusa extends AbilityBase {
         
 		@Override
 		public String toString() {
-			return "§c유닛별 쿨타임 §7: §f" + getValue();
+			return "§c유닛별 쿨타임 §7: §f" + getValue() + "초";
         }
     };
 	

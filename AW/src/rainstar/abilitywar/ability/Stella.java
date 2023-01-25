@@ -336,7 +336,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 			} else new Stack((Player) e.getEntity()).start();
 			if (!passivecool.isRunning() && p.hasPotionEffect(PotionEffectType.GLOWING)) {
 				for (Participant participant : getGame().getParticipants()) {
-					if (!participant.equals(getParticipant()) && !participant.equals(p)) {
+					if (!participant.equals(getParticipant()) && !participant.equals(getGame().getParticipant(p))) {
 						if (LocationUtil.isInCircle(e.getEntity().getLocation(), participant.getPlayer().getLocation(), 3)) {
 							if (!glowMap.contains(participant)) {
 								if (duration.isRunning()) {

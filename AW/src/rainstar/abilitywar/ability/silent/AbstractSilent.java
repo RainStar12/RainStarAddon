@@ -1,14 +1,23 @@
 package rainstar.abilitywar.ability.silent;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -17,20 +26,29 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantNewEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
-import rainstar.abilitywar.effect.Moisture;
+import daybreak.google.common.base.Strings;
 import rainstar.abilitywar.effect.Mute;
+import rainstar.abilitywar.effect.SightLock;
+import rainstar.abilitywar.system.event.MuteRemoveEvent;
 
 @AbilityManifest(name = "사일런트", rank = Rank.L, species = Species.HUMAN, explain = {
 		"???"
@@ -45,7 +63,140 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		super(participant);
 	}
 	
+	public static final SettingObject<Integer> NOT_LOOK_DAMAGE_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "not-look-damage-increase", 10,
+            "# 나를 바라보지 않는 대상에게 공격력 증가", "# 단위: %") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Integer> MAX_STACK = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-stack", 4,
+            "# 최대 표식 개수") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 1;
+        }
+
+    };
+    
+	public static final SettingObject<Double> PASSIVE_MUTE = 
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "passive-mute", 2.5,
+            "# 표식 폭발 시 침묵 부여 시간", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Integer> UNIT_COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "unit-cooldown", 20,
+            "# 유닛별 쿨타임", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+		@Override
+		public String toString() {
+			return "§c유닛별 쿨타임 §7: §f" + getValue() + "초";
+        }
+
+    };
+    
+	public static final SettingObject<Double> RANGE = 
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "range", 6.5,
+            "# 액티브 침묵 범위", "# 단위: 칸") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Double> ACTIVE_MUTE = 
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "active-mute", 5.0,
+            "# 액티브 침묵 시간", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "cooldown", 45,
+            "# 액티브 쿨타임", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+        }
+
+    };
+    
+	public static final SettingObject<Double> SPEED_DURATION = 
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "speed-duration", 15.0,
+            "# 액티브 이동 속도 증가 시간", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Integer> SPEED_PER = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "speed-per", 20,
+            "# 침묵 소지자 수 비례 이속 증가치", "# 단위: %") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Integer> MAX_SPEED = 
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-speed", 100,
+            "# 최대 이동 속도 증가치", "# 단위: %") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+
+    };
+    
+	private final double notlookdamageincrease = NOT_LOOK_DAMAGE_INCREASE.getValue() * 0.01;
+	private final int maxstack = MAX_STACK.getValue();
+	private final int passivemute = (int) (PASSIVE_MUTE.getValue() * 20);
+	private final int activemute = (int) (ACTIVE_MUTE.getValue() * 20);
+	private final double range = RANGE.getValue();
+	private final int speedduration = (int) (SPEED_DURATION.getValue() * 20);
+	private final double speedper = SPEED_PER.getValue() * 0.01;
+	private final double maxspeed = MAX_SPEED.getValue() * 0.01;
+	private final int unitCooldown = (int) ((COOLDOWN.getValue() * 1000) * Wreck.calculateDecreasedAmount(25));
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 35);
+    
+	private final Map<UUID, Long> unitcooldowns = new HashMap<>();
 	private Set<Participant> muted = new HashSet<>();
+	private final Map<Participant, Stack> stackMap = new HashMap<>();
 	
 	protected abstract void hide0(Player player);
 	protected abstract void show0(Player player);
@@ -76,33 +227,131 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 	};
 	
 	@SubscribeEvent
-	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
-		if (e.getEffectType().equals(Mute.registration)) {
+	public void onMuteRemove(MuteRemoveEvent e) {
+		if (muted.contains(e.getParticipant())) {
+			muted.remove(e.getParticipant());
+			show0(e.getParticipant().getPlayer());
+		}
+	}
+	
+	@SubscribeEvent
+	public void onParticipantEffectApply(ParticipantNewEffectApplyEvent e) {
+		if (e.getEffect().getRegistration().equals(Mute.registration)) {
 			muted.add(e.getParticipant());
 			hide0(e.getParticipant().getPlayer());
 		}
 	}
 	
-    private final AbilityTimer passive = new AbilityTimer() {
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) {
+			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, (LivingEntity) e.getEntity(), Integer.MAX_VALUE, predicate))) {
+				e.setDamage(e.getDamage() * notlookdamageincrease);
+			}
+			
+			if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof Player && !e.isCancelled()) {
+				Player player = (Player) e.getEntity();
+				if (getGame().isParticipating(player)) {
+					Participant participant = getGame().getParticipant(player);
+					if (stackMap.containsKey(participant)) {
+						if (stackMap.get(participant).addStack()) {
+							//particle
+							Mute.apply(participant, TimeUnit.TICKS, passivemute);
+						} else SightLock.apply(participant, TimeUnit.TICKS, 2);
+					} else if (System.currentTimeMillis() - unitcooldowns.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown) new Stack(participant).start();
+					
+				}
+			}
+		}
+		
+		if (stackMap.containsKey(getGame().getParticipant(damager)) && e.getEntity().equals(getPlayer())) {
+			stackMap.get(getGame().getParticipant(damager)).stop(false);
+		}
+	}
+	
+    private final AbilityTimer speedup = new AbilityTimer(speedduration) {
+    	
+    	private AttributeModifier incmovespeed;
+    	
+    	@Override
+    	public void onStart() {
+    		incmovespeed = new AttributeModifier(UUID.randomUUID(), "incmovespeed", Math.min(maxspeed, speedper * muted.size()), Operation.ADD_SCALAR);
+    	}
     	
     	@Override
     	public void run(int count) {
-    		for (Participant participant : muted) {
-    			if (!participant.hasEffect(Mute.registration)) {
-    				show0(participant.getPlayer());
-    				muted.remove(participant);
-    			}
-    		}
+    		
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+				Mute.apply(getGame().getParticipant(player), TimeUnit.TICKS, activemute);
+			}
 			
+			speedup.start();
 		}
 		return false;
 	}
 	
+	private class Stack extends AbilityTimer {
+		
+		private final Player player;
+		private final IHologram hologram;
+		private int stack = 0;
+		
+		private Stack(Participant participant) {
+			super(20);
+			setPeriod(TimeUnit.TICKS, 4);
+			this.player = participant.getPlayer();
+			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
+					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
+					Strings.repeat("§3/", stack).concat(Strings.repeat("§7/", maxstack - stack)));
+			hologram.display(getPlayer());
+			stackMap.put(getGame().getParticipant(player), this);
+			addStack();
+		}
+
+		@Override
+		protected void run(int count) {
+			hologram.teleport(player.getWorld(), player.getLocation().getX(), 
+					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
+					player.getLocation().getYaw(), 0);
+		}
+
+		private boolean addStack() {
+			setCount(20);
+			stack++;
+			hologram.setText(Strings.repeat("§3/", stack).concat(Strings.repeat("§7/", maxstack - stack)));
+			if (stack >= maxstack) {
+				stop(false);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			final long current = System.currentTimeMillis();
+			unitcooldowns.put(player.getUniqueId(), current);
+			hologram.unregister();
+			stackMap.remove(getGame().getParticipant(player));
+		}
+		
+	}
 	
 }

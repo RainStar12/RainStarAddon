@@ -6,6 +6,7 @@ import rainstar.abilitywar.effect.*;
 public enum RainStarEffectFactory {
 	ADDICTION(Addiction.class),
     AGRO(Agro.class),
+    ANCIENT_CURSE(AncientCurse.class),
     BACKSEAT_GAMING(BackseatGaming.class),
     BINDING_SMOKE(BindingSmoke.class),
     BURN(Burn.class),
@@ -25,9 +26,10 @@ public enum RainStarEffectFactory {
     PARALYSIS(Paralysis.class),
     PETRIFICATION(Petrification.class),
     POISON(Poison.class),
+    SIGHT_LOCK(SightLock.class),
     SNOWFLAKE_MARK(SnowflakeMark.class),
     STIFFEN(Stiffen.class),
-    SUPERREGEN(SuperRegen.class),
+    SUPER_REGEN(SuperRegen.class),
     TIME_DISTORTION(TimeDistortion.class),
     TIME_INTERRUPT(TimeInterrupt.class),
     VAIN_DREAM(VainDream.class);
