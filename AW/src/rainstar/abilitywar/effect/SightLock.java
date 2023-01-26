@@ -15,7 +15,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
-@EffectManifest(name = "시야 고정", displayName = "§c시야 고정", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "시야 고정", displayName = "§5시야 고정", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.SIGHT_RESTRICTION
 }, description = {
 		"상태이상을 받을 때의 시점으로 시야가 고정됩니다."
