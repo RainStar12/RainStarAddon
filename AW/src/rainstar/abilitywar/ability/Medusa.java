@@ -29,7 +29,8 @@ import rainstar.abilitywar.effect.Petrification;
 import rainstar.abilitywar.synergy.Mirror;
 
 @AbilityManifest(name = "메두사", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"적이 나를 $[LOOKING_COUNT]초간 쳐다보면, 대상은 $[PETRIFICATION_DURATION]초간 §8§n석화§f됩니다. $[COOLDOWN]",
+		"적이 나를 $[LOOKING_COUNT]초간 쳐다보면, 대상은 $[PETRIFICATION]초간 §8§n석화§f됩니다. $[COOLDOWN]",
+		"쳐다보지 않는 시간이 $[NOT_LOOK]초를 넘어가면 쳐다본 시간이 초기화됩니다.",
 		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
 		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다.",
@@ -62,9 +63,9 @@ public class Medusa extends AbilityBase {
         }
     };
 	
-	public static final SettingObject<Double> PETRIFICATION_DURATION = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "petrification-duration", 7.5,
-            "# 석화 최대치", "# 단위: 초") {
+	public static final SettingObject<Double> PETRIFICATION = 
+			abilitySettings.new SettingObject<Double>(Medusa.class, "petrification", 9.5,
+            "# 석화 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;
@@ -72,7 +73,16 @@ public class Medusa extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> LOOKING_COUNT = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "looking-count", 2.0,
+			abilitySettings.new SettingObject<Double>(Medusa.class, "looking-count", 3.5,
+            "# 석화를 걸기에 필요한 시간", "# 단위: 초") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Double> NOT_LOOK = 
+			abilitySettings.new SettingObject<Double>(Medusa.class, "not-look", 1.2,
             "# 바라볼 수 있는 시간 최대치", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -124,7 +134,8 @@ public class Medusa extends AbilityBase {
 	};
 	
 	private boolean onetime = true;
-	private final int duration = (int) (PETRIFICATION_DURATION.getValue() * 20);
+	private final int notlookcount = (int) (NOT_LOOK.getValue() * 20);
+	private final int duration = (int) (PETRIFICATION.getValue() * 20);
 	private final int lookcount = (int) (LOOKING_COUNT.getValue() * 20);
 	private Map<Player, LookTimer> looktimers = new HashMap<>();
 	private final int range = RANGE.getValue();

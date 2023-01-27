@@ -154,6 +154,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 			airborned.put(player, this);
 		}
 		
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run(int count) {
 			if (count >= 5 && player.isOnGround()) this.stop(false);

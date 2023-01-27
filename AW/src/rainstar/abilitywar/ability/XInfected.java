@@ -39,9 +39,9 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "X-Infected", rank = Rank.S, species = Species.UNDEAD, explain = {
 		"철괴 우클릭 시 $[DURATION]초간 §d10HP§f의 §2좀비§f가 되어 컨트롤이 불가능해집니다. $[COOLDOWN]",
-		"§2좀비§f는 내 최종 공격력의 §c$[DAMAGE]%§f의 피해를 주고, 이동 속도가 빠릅니다.",
+		"§2좀비§f는 내 최종 공격력의 §c$[ATTACK_DAMAGE]%§f의 피해를 주고, 이동 속도가 빠릅니다.",
 		"§2좀비화§f 도중 §c사망 시§f 지속시간이 즉시 종료되고 $[HEALTH_LOSE]%의 체력을 잃습니다.",
-		"§2좀비§f가 피해를 준 대상은 $[INFECT_DURATION]초간 §5§n감염§f됩니다."
+		"§2좀비§f가 피해를 준 대상은 $[INFECTION_DURATION]초간 §5§n감염§f됩니다."
 		},
 		summarize = {
 		"§7철괴 우클릭 시§f §2좀비화§f하여 공격력과 이동 속도가 증가합니다.",

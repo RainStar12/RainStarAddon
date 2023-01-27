@@ -163,6 +163,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
 	}
     
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	private void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
