@@ -39,12 +39,11 @@ import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Poison;
 
 @AbilityManifest(name = "매드 사이언티스트", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7수치 §8- §a생명력§f: 생명력 수치 이상으로 회복할 수 없습니다.",
-		" 또한 생명력 수치가 곧 수술의 성공률이 됩니다.",
-		"§7철괴 좌클릭 §8- §5도핑§f: 생명력을 $[HEALTHY_DECREASE]% 감소시키고, 수술 쿨타임이 초기화됩니다.",
+		"§7수치 §8- §a생명력§f: 최대 체력의 생명력 수치% 이상으로 회복할 수 없습니다.",
+		" 또한 생명력 수치%가 곧 수술의 성공률이 됩니다.",
+		"§7철괴 좌클릭 §8- §5도핑§f: 생명력을 $[HEALTHY_DECREASE]% 감소시",
 		" $[DURATION]초간 §c공격력§f과 §b이동 속도§f가 §8(§7100 - 생명력§8)§f%만큼 증가합니다.",
-		" 체력을 $[HEALTH_GAIN_AMOUNT]만큼 획득합니다. §5도핑 중§f 재사용 시",
-		" 생명력이 추가 감소하고 지속시간이 연장되며 체력을 회복합니다.",
+		" §d도핑 중§f 재사용 시 효과를 즉시 종료하고 §8",
 		"§7철괴 우클릭 §8- §3수술§f: 10칸 이내의 대상을 바라보고 수술을 진행합니다. $[COOLDOWN]",
 		" §2[§a성공§2] §f대상을 $[HEAL_AMOUNT]만큼 §d회복§f시키고, 자신은 1.5배 더 회복합니다.",
 		" §4[§c실패§4] §f회복 효과가 피해 효과로 바뀌는 §2§n중독§f을 $[POISON]초 부여합니다."

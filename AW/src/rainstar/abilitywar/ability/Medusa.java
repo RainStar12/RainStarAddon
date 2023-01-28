@@ -187,6 +187,7 @@ public class Medusa extends AbilityBase {
 		private final Player player;
 		private final ActionbarChannel ac;
 		private final DecimalFormat df = new DecimalFormat("0.0");
+		private int stack = 0;
 		
 		public LookTimer(Player player) {
 			super(lookcount);
@@ -198,7 +199,10 @@ public class Medusa extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, player, range, predicate))) this.stop(true);
+			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, player, range, predicate))) {
+				stack++;
+				if (stack > notlookcount) this.stop(true);
+			}
 			else ac.update("§c" + df.format(count));
 		}
 		
@@ -212,6 +216,7 @@ public class Medusa extends AbilityBase {
 		
 		@Override
 		public void onSilentEnd() {
+			stack = 0;
 			ac.unregister();
 			looktimers.remove(player);
 		}

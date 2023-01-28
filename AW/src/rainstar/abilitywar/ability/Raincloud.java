@@ -278,6 +278,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 		
     	@Override
     	protected void onDurationStart() {
+    		SoundLib.ENTITY_LIGHTNING_BOLT_THUNDER.playSound(getPlayer().getLocation(), 1, 1.65f);
     		locations.clear();
     		nowrange = range + addrange;
     		if (random.nextInt(100) + 1 <= chance) {
