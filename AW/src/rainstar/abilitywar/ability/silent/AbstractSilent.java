@@ -55,7 +55,11 @@ import rainstar.abilitywar.system.event.MuteRemoveEvent;
 		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		},
 		summarize = {
-		""
+		"§3§n침묵§f 소지자로부터 §7은신§f하고, 나를 보지 않는 적에게 §c추가 피해§f를 가합니다.",
+		"근접 공격 시마다 적의 시야를 한순간 §5§n고정§f시킵니다.",
+		"위 효과를 대상에게 피격받지 않고 4회 발동 시 대상을 잠시 §3§n침묵§f시킵니다.",
+		"§7철괴 우클릭 시§f 주변 적을 전부 §3§n침묵§f시키고 §3§n침묵§f 소지자만큼 §b이속이 증가§f합니다",
+		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		})
 
 public abstract class AbstractSilent extends AbilityBase implements ActiveHandler {

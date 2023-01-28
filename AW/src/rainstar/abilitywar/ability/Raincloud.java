@@ -48,7 +48,11 @@ import rainstar.abilitywar.effect.Moisture;
         "§a[§e능력 제공자§a] §bSlowRain"
 		},
 		summarize = {
-		""
+		"§b§l비§f를 내리는 구름이 자신을 한 발짝 늦게 따라옵니다.",
+		"§b§l비§f에 맞으면 자신은 §d회복§f하고 적은 §3§n습기§f 상태이상을 누적합니다.",
+		"§7철괴 우클릭 시 §f지속시간동안 구름 범위가 증가하고 구름이 적을 따라다니며,",
+		"일정 확률로 §8먹구름§f이 되어 적에게 번개를 내리쳐 §e§n기절§f시킵니다.",
+		"§9[§3습기§9]§f 이동 속도가 25%, 공격력이 15% 감소합니다."
 		})
 
 public class Raincloud extends AbilityBase implements ActiveHandler {
