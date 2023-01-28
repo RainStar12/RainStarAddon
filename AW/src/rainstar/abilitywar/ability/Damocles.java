@@ -35,7 +35,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "다모클레스", rank = Rank.L, species = Species.HUMAN, explain = {
-		"모든 §c공격력§f이 §c$[DAMAGE_INCREASE]§f배가 됩니다.",
+		"모든 §c공격력§f이 §c$[DAMAGE_MULTIPLY]§f배가 됩니다.",
 		"피격 후 매 틱마다 §b$[CHANCE_NUMERATOR]§7/§b$[CHANCE_DENOMINATOR]§f의 확률로 머리 위 §3검§f이 떨어집니다.",
 		"또한 매번 피격 시 받은 최종 피해량의 $[MULTIPLY]배만큼§8(§7최소 1번§8)§f 확률을 추가로 시도합니다.",
 		"§3검§f은 사용자에게 §4치명적인 피해§8(§721억 대미지§8)§f를 입힙니다."

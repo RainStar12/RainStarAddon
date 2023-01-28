@@ -54,7 +54,7 @@ import daybreak.google.common.collect.ImmutableSet;
 import kotlin.ranges.RangesKt;
 
 @AbilityManifest(name = "집행관", rank = Rank.L, species = Species.HUMAN, explain = {
-        "§7패시브 §8- §3심판§f: 다른 생명체에게 해를 가한 대상은 $[DURATION]초간 §3심판 표식§f이 부여됩니다.",
+        "§7패시브 §8- §3심판§f: 다른 생명체에게 해를 가한 대상은 $[STACK_DURATION]초간 §3심판 표식§f이 부여됩니다.",
         " §3심판 표식§f은 갱신될 수 있고, 폭발 시 $[UNIT_COOLDOWN]초간 부여되지 않습니다.",
         "§7검 들고 F §8- §b조율§f: §a유예 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
         " 변경 후 다음 근접 공격은 심판 표식을 터뜨려 효과를 발동시킬 수 있습니다.",

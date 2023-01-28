@@ -41,9 +41,9 @@ import rainstar.abilitywar.effect.Poison;
 @AbilityManifest(name = "매드 사이언티스트", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7수치 §8- §a생명력§f: 최대 체력의 생명력 수치% 이상으로 회복할 수 없습니다.",
 		" 또한 생명력 수치%가 곧 수술의 성공률이 됩니다.",
-		"§7철괴 좌클릭 §8- §5도핑§f: 생명력을 $[HEALTHY_DECREASE]% 감소시",
+		"§7철괴 좌클릭 §8- §5도핑§f: 생명력을 $[HEALTHY_DECREASE]% 감소시키고, 수술 쿨타임을 초기화합니다.",
 		" $[DURATION]초간 §c공격력§f과 §b이동 속도§f가 §8(§7100 - 생명력§8)§f%만큼 증가합니다.",
-		" §d도핑 중§f 재사용 시 효과를 즉시 종료하고 §8",
+		" §5도핑 중§f 재사용 시 효과를 즉시 종료하고 남은 시간에 비례해 체력을 §d회복§f합니다.",
 		"§7철괴 우클릭 §8- §3수술§f: 10칸 이내의 대상을 바라보고 수술을 진행합니다. $[COOLDOWN]",
 		" §2[§a성공§2] §f대상을 $[HEAL_AMOUNT]만큼 §d회복§f시키고, 자신은 1.5배 더 회복합니다.",
 		" §4[§c실패§4] §f회복 효과가 피해 효과로 바뀌는 §2§n중독§f을 $[POISON]초 부여합니다."
@@ -92,9 +92,9 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
         }
     };
     
-	public static final SettingObject<Double> HEALTH_GAIN_AMOUNT = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "health-gain-amount", 6.0,
-            "# 도핑으로 획득하는 체력", "# 단위: 반 칸") {
+	public static final SettingObject<Double> HEAL_PERCENT = 
+			abilitySettings.new SettingObject<Double>(MadScientist.class, "heal-percent", 0.6,
+            "# 남은 시간 비례 회복력", "# 남은 시간의 1초당 해당 값만큼 회복합니다.") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;
@@ -143,7 +143,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	
     private ActionbarChannel ac = newActionbarChannel();
     private ActionbarChannel ac2 = newActionbarChannel();
-    private final double gainhealth = HEALTH_GAIN_AMOUNT.getValue();
+    private final double healmultiply = HEAL_PERCENT.getValue();
     private final double decrease = HEALTHY_DECREASE.getValue() * 0.01;
 	private double healthy = 1.0;
 	private final DecimalFormat df = new DecimalFormat("0");
@@ -206,16 +206,17 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 					healthy = Math.max(0.01, healthy - decrease);
 					if (healthy <= 0.011) healthy = 0.01;
 					ac.update("§d♥§f: §a" + df.format(healthy * 100) + "§2%");
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + gainhealth);
 					if (!doping.isRunning()) {
 						if (cooldown.isRunning()) cooldown.setCount(0);
 						return doping.start();
 					} else {
-						int count = doping.getCount();
-						doping.stop(false);
-						doping.start();
-						doping.setCount(count + duration);
-						return true;
+						double healvalue = ((doping.getCount() / 20.0) * healmultiply);
+						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healvalue, RegainReason.CUSTOM);
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) {
+							Healths.setHealth(getPlayer(), getPlayer().getHealth() + healvalue);	
+						}
+						return doping.stop(false);
 					}
 				}
 			}

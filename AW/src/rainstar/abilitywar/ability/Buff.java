@@ -52,8 +52,8 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 		" §6힘§f일 땐 §e파운딩§f 스킬을, §3저항§f일 땐 §a스테로이드§f 스킬을 사용할 수 있습니다.",
 		" 두 스킬은 §c쿨타임§f을 공유합니다. $[COOLDOWN]",
         "§7철괴 우클릭§8(§6힘§8) §8- §e파운딩§f: 높게 떠오른 뒤 바라보는 방향으로 찍어내립니다.",
-        " $[RANGE]칸 내 대상에게 피해입히고 $[STUN_DURATION]초간 §e§n기절§f시킵니다.",
-        " 피해량은 인벤토리의 차지된 칸에 비례합니다. §8(§7칸당 $[DAMAGE]§8)",
+        " $[RANGE]칸 내 대상에게 피해입히고 $[STUN]초간 §e§n기절§f시킵니다.",
+        " 피해량은 인벤토리의 차지된 칸에 비례합니다. §8(§7칸당 $[INVENTORY_DAMAGE]§8)",
         "§7철괴 우클릭§8(§3저항§8) §8- §a스테로이드§f: $[CHANNELING]초간 §2§n이동 불가§f 후 체력을 $[HEAL_AMOUNT] §d회복§f합니다.",
 		"§a[§e능력 제공자§a] §dhandony"
 		},
@@ -111,8 +111,8 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DAMAGE = abilitySettings.new SettingObject<Double>(
-			Buff.class, "item-damage", 0.3, "# 채워진 칸당 피해량") {
+	public static final SettingObject<Double> INVENTORY_DAMAGE = abilitySettings.new SettingObject<Double>(
+			Buff.class, "item-damage", 0.4, "# 채워진 칸당 피해량") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -131,8 +131,8 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> STUN_DURATION = abilitySettings.new SettingObject<Double>(
-			Buff.class, "stun-duration", 2.5, "# 기절 지속시간") {
+	public static final SettingObject<Double> STUN = abilitySettings.new SettingObject<Double>(
+			Buff.class, "stun", 1.0, "# 기절 지속시간") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -187,13 +187,13 @@ public class Buff extends AbilityBase implements ActiveHandler {
 	};
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
-	private final int stun = (int) (STUN_DURATION.getValue() * 20);
+	private final int stun = (int) (STUN.getValue() * 20);
 	private final int channelingDur = (int) (CHANNELING.getValue() * 20);
 	private final int amplifier = AMPLIFIER.getValue();
 	private final int period = (int) (EFFECT_CHANGE.getValue() * 20);
 	private final double healamount = HEAL_AMOUNT.getValue();
 	private final double range = RANGE.getValue();
-	private final double damage = DAMAGE.getValue();
+	private final double damage = INVENTORY_DAMAGE.getValue();
 	private boolean nofall = false;
 	private boolean str = false;
 	private ActionbarChannel ac = newActionbarChannel();
