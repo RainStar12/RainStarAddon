@@ -1,6 +1,7 @@
 package rainstar.abilitywar.ability;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -8,6 +9,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.google.common.collect.ImmutableMap;
 
 @AbilityManifest(name = "그린 가든", rank = Rank.S, species = Species.OTHERS, explain = {
@@ -70,15 +73,121 @@ public class GreenGarden extends AbilityBase {
         
     };
     
+    private final int maxseed = MAX_SEED.getValue();
+    private final int recharge = RECHARGE.getValue();
+    private final int bloomingwait = (int) (BLOOMING_WAIT.getValue() * 20);
+    
+    
     enum Seed {
-    	POPPY("§4⧫", false);
+    	POPPY("§4⧫", false, Material.POPPY) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	DANDELION("§a⧫", true, Material.DANDELION) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	ALLIUM("§5⧫", false, Material.ALLIUM) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	ORCHID("§b⧫", true, Material.BLUE_ORCHID) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	AZURE_BLUET("§f⧫", true, Material.AZURE_BLUET) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	LILAC("§d⧫", false, Material.LILAC) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	TULIP("§6⧫", true, Material.ORANGE_TULIP) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	ROSE("§c⧫", true, Material.ROSE_BUSH) {
+    		protected void onPlanted(Player owner) {
+    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
+    				
+    				@Override
+    				public void run(int count) {
+    					
+    				}
+    				
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+    		}
+    	},
+    	SUNFLOWER("§e⧫", false, Material.SUNFLOWER);
     	
     	private final String seedcolor;
     	private final boolean positive;
+    	private final Material flower;
     	
-    	Seed(String seedcolor, boolean positive) {
-    		
+    	Seed(String seedcolor, boolean positive, Material flower) {
+    		this.seedcolor = seedcolor;
+    		this.positive = positive;
+    		this.flower = flower;
     	}
+    	
+    	protected abstract void onPlanted(Player owner);
     	
     }
     

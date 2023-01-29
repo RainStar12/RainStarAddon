@@ -91,9 +91,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
         		"내 것으로 만들어, 모든 능력을 카운팅할 수 있습니다.",
         })
 }, weak = {
-		@Description(subject = "타게팅 불가", explain = {
-        		"타게팅 불가인 대상에게 이 능력은 통하지 않습니다."
-        }),
 		@Description(subject = "시간 정지 능력 소유자", explain = {
         		"시간 정지 능력을 보유하고 있는 대상에게",
         		"이 능력은 통하지 않음을 주의하세요."
