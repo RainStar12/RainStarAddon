@@ -37,6 +37,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.TimeInterrupt;
+import rainstar.abilitywar.system.event.ChronosCooldownResetEvent;
 
 @AbilityManifest(name = "크로노스", rank = Rank.S, species = Species.GOD, explain = {
 		"시간의 신 크로노스.",
@@ -189,18 +190,16 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     		if (getPlayer().getWorld().getTime() < 15000) {
     			if (timechanged) {
     				if (getParticipant().hasAbility() && !getParticipant().getAbility().isRestricted()) {
-    					boolean cleared = false;
     					AbilityBase ab = getParticipant().getAbility();
     					for (GameTimer t : ab.getRunningTimers()) {
     						if (t instanceof Cooldown.CooldownTimer) {
     							t.setCount(0);
-    							cleared = true;
     						}
     					}
-    					if (cleared) {
-    						getPlayer().sendMessage("§3[§b!§3] §e하루§f가 지나 모든 능력 §c쿨타임§f이 초기화되었습니다.");
-    						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
-    					}
+    					final ChronosCooldownResetEvent event = new ChronosCooldownResetEvent(getParticipant());
+    					Bukkit.getPluginManager().callEvent(event);
+    					getPlayer().sendMessage("§3[§b!§3] §e하루§f가 지나 모든 능력 §c쿨타임§f이 초기화되었습니다.");
+    					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer());
     				}
     				timechanged = false;
     			}

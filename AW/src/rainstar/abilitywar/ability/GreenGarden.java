@@ -79,102 +79,14 @@ public class GreenGarden extends AbilityBase {
     
     
     enum Seed {
-    	POPPY("§4⧫", false, Material.POPPY) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	DANDELION("§a⧫", true, Material.DANDELION) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	ALLIUM("§5⧫", false, Material.ALLIUM) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	ORCHID("§b⧫", true, Material.BLUE_ORCHID) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	AZURE_BLUET("§f⧫", true, Material.AZURE_BLUET) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	LILAC("§d⧫", false, Material.LILAC) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	TULIP("§6⧫", true, Material.ORANGE_TULIP) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
-    	ROSE("§c⧫", true, Material.ROSE_BUSH) {
-    		protected void onPlanted(Player owner) {
-    			new AbilityTimer(TaskType.REVERSE, (int) (FLOWER_EFFECT_DURATION.getValue() * 20)) {
-    				
-    				@Override
-    				public void run(int count) {
-    					
-    				}
-    				
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-    		}
-    	},
+    	POPPY("§4⧫", false, Material.POPPY),
+    	DANDELION("§a⧫", true, Material.DANDELION),
+    	ALLIUM("§5⧫", false, Material.ALLIUM),
+    	ORCHID("§b⧫", true, Material.BLUE_ORCHID),
+    	AZURE_BLUET("§f⧫", true, Material.AZURE_BLUET),
+    	LILAC("§d⧫", false, Material.LILAC),
+    	TULIP("§6⧫", true, Material.ORANGE_TULIP),
+    	ROSE("§c⧫", true, Material.ROSE_BUSH),
     	SUNFLOWER("§e⧫", false, Material.SUNFLOWER);
     	
     	private final String seedcolor;
@@ -186,8 +98,6 @@ public class GreenGarden extends AbilityBase {
     		this.positive = positive;
     		this.flower = flower;
     	}
-    	
-    	protected abstract void onPlanted(Player owner);
     	
     }
     

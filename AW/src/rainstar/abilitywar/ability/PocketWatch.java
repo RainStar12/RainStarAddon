@@ -40,6 +40,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.event.AbilityCooldownResetEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
@@ -61,6 +62,7 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import rainstar.abilitywar.ability.timestop.TimeStop;
+import rainstar.abilitywar.system.event.ChronosCooldownResetEvent;
 
 @AbilityManifest(name = "회중시계", rank = Rank.L, species = Species.OTHERS, explain = {
         "§7철괴 좌클릭 §8- §b빨리감기§f: §b이동 속도§f, §d회복 속도§f가 증가하는 §b시간 가속§f을 켜고 끕니다.",
@@ -73,7 +75,7 @@ import rainstar.abilitywar.ability.timestop.TimeStop;
         },
         summarize = {
         "§7철괴 좌클릭§f으로 §b이동 속도§f, §d회복 속도§f가 증가하는 §b시간 가속§f을 켜고 끕니다.",
-        "§b시간 가속§f은 연속 유지할수록 효과가 증가하나 해제 시 유지 시간 비례 쿨타임을 가집니다.",
+        "§b시간 가속§f은 연속 유지할수록 효과가 증가하나 해제 시 유지 시간 비례 §c쿨타임§f을 가집니다.",
         "§b가속§f 중 사망 시, 잠시간 주변 적의 시간을 멈추고 이 안에 정지된 적을",
         "처치할 경우 지난 §b가속§f 중 체력이 가장 많던 때로 §a역행§f합니다."
         })
@@ -203,6 +205,20 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	}
 	
 	@SubscribeEvent
+	public void onAbilityCooldownReset(AbilityCooldownResetEvent e) {
+		if (e.getParticipant().equals(getParticipant()) && cooldown >= 1) {
+			cooldown = 0;
+		}
+	}
+	
+	@SubscribeEvent
+	public void onChronosCooldownReset(ChronosCooldownResetEvent e) {
+		if (e.getParticipant().equals(getParticipant()) && cooldown >= 1) {
+			cooldown = 0;
+		}
+	}
+	
+	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (stopped.contains(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
 			rewind.stop(true);
@@ -293,14 +309,12 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     			bossbar.setTitle("§b시간 가속§f: §e" + df.format(usedtime / 20.0) + "§7/§c" + df.format(maxtime / 20.0));
     		} else {
     			if (cooldown == 0) {
-    				if (count % 2 == 0) {
-        				if (effectcount <= 5) {
-        					SoundLib.BELL.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
-        					effectcount++;
-        					bossbar.setColor(effectcount % 2 == 0 ? BarColor.WHITE : BarColor.YELLOW);
-        					bossbar.setTitle("§e사용 가능");
-        				}
-    				}
+        			if (effectcount <= 5) {
+        				if (count % 2 == 0) SoundLib.BELL.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
+        				effectcount++;
+        				bossbar.setColor(effectcount % 2 == 0 ? BarColor.WHITE : BarColor.YELLOW);
+        				bossbar.setTitle("§a사용 가능");
+        			}
     			} else {
     				cooldown--;
     				bossbar.setColor(BarColor.RED);

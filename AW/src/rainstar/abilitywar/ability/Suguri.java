@@ -51,7 +51,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7수치 §8- §6잔열§f: 증가할 때 체력이 감소하고, 감소할 때 체력이 증가합니다.",
 		" §6잔열§f은 최대 체력을 차지해, §6잔열§f만큼의 최대 체력은 채울 수 없습니다.",
 		"§7검 우클릭 §8- §3대시§f: 바라보는 방향으로 지속 대시합니다. §c히트§f 수치가 지속 상승하며,",
-		" 사용 직후엔 §c히트§f, 대시 거리가 추가 증가하고 $[EVADE_DURATION]초간 공격을 회피합니다.",
+		" 사용 직후엔 §c히트§f, 대시 거리가 추가 증가하고 $[EVADE]초간 공격을 회피합니다.",
 		" 회피한 피해량에 비례하여, §6잔열§f은 감소하고, §b액셀러레이터§f가 충전됩니다.",
 		"§7철괴 우클릭 §8- §b액셀러레이터§f: 게이지를 모으면 사용할 수 있습니다.",
 		" $[ACCELERATOR_DURATION]초간 §c히트§f가 §e0§c%§f가 되고, §6잔열§f이 빠르게 감소합니다.",
@@ -71,8 +71,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Double> EVADE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "evade-duration", 1.5,
+	public static final SettingObject<Double> EVADE = 
+			abilitySettings.new SettingObject<Double>(Suguri.class, "evade", 0.8,
 			"# 대시 간 회피 지속시간") {
 
 		@Override
@@ -93,8 +93,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DASH_STARTING_HEAT = 
-			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-starting-heat", 30,
+	public static final SettingObject<Integer> DASH_START_HEAT = 
+			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat", 40,
 			"# 대시 시작 시 추가 히트") {
 
 		@Override
@@ -104,8 +104,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DASH_RUNNING_HEAT = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-running-heat", 10.0,
+	public static final SettingObject<Double> DASH_RUN_HEAT = 
+			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-run-heat", 15.0,
 			"# 대시 유지 시 초당 증가하는 히트량") {
 
 		@Override
@@ -125,10 +125,10 @@ public class Suguri extends AbilityBase implements ActiveHandler {
     }
     
 	private static final Set<Material> swords;
-	private final int evadeduration = (int) (EVADE_DURATION.getValue() * 20);
+	private final int evadeduration = (int) (EVADE.getValue() * 20);
 	private final int duration = (int) (ACCELERATOR_DURATION.getValue() * 20);
-	private final int dashstartheat = DASH_STARTING_HEAT.getValue();
-	private final double dashrunningheat = DASH_RUNNING_HEAT.getValue() / 20.0;
+	private final int dashstartheat = DASH_START_HEAT.getValue();
+	private final double dashrunningheat = DASH_RUN_HEAT.getValue() / 20.0;
 	
 	private RGB rainbow;
 	private int rainbowstack = 0;
@@ -353,9 +353,9 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			if (evade.isRunning()) {
-				longHeatLose(e.getFinalDamage() * (heat * 0.01));
+				longHeatLose(e.getFinalDamage() * (heat * 0.015));
 				if (accelgauge < 1) {
-					accelgauge = accelgauge + (e.getFinalDamage() * 0.1);
+					accelgauge = accelgauge + (e.getFinalDamage() * 0.15);
 					if (accelgauge >= 1) {
 						SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));	
 						getPlayer().sendMessage("§c[§b!§c] §f액셀러레이터를 사용할 수 있습니다.");
@@ -363,7 +363,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 				}
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.7f);
 				e.setCancelled(true);
-			} else if (heat > 100) longHeatGain(e.getFinalDamage() * (heat * 0.0025));
+			} else if (heat > 100) longHeatGain(e.getFinalDamage() * (heat * 0.003));
 		}
 	}
 	

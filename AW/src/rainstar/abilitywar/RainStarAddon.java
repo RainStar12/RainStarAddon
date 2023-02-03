@@ -501,6 +501,14 @@ public class RainStarAddon extends Addon implements Listener {
 			}
 		});
 		
+		getPlugin().getCommands().getMainCommand().addSubCommand("broadcast", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				Bukkit.broadcastMessage("§b[§aAbilityWar§b] §f" + args);
+				return true;
+			}
+		});
+		
 		getPlugin().getCommands().getMainCommand().addSubCommand("win", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
