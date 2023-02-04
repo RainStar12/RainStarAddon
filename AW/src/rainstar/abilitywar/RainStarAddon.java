@@ -76,8 +76,6 @@ import rainstar.abilitywar.ability.*;
 import rainstar.abilitywar.ability.beta.DamageTester;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
-import rainstar.abilitywar.ability.silent.v1_12_R1.Silent;
-import rainstar.abilitywar.ability.theonering.v1_12_R1.TheOneRing;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
 import rainstar.abilitywar.game.SelectMix.Null;
@@ -256,40 +254,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(Medusa.class);
 		AbilityFactory.registerAbility(MadScientist.class);
 		AbilityList.registerAbility(MadScientist.class);
-		
-		if (ServerVersion.getVersion() == 12) {
-    		AbilityFactory.registerAbility(TheOneRing.class);
-    		AbilityList.registerAbility(TheOneRing.class);
-    	} else if (ServerVersion.getVersion() == 13) {
-    		if (ServerVersion.getRelease() == 1) {
-        		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_13_R1.TheOneRing.class);
-        		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_13_R1.TheOneRing.class);	
-    		} else {
-        		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_13_R2.TheOneRing.class);
-        		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_13_R2.TheOneRing.class);
-    		}
-    	} else if (ServerVersion.getVersion() == 14) {
-    		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_14_R1.TheOneRing.class);
-    		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_14_R1.TheOneRing.class);
-    	} else if (ServerVersion.getVersion() == 15) {
-    		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_15_R1.TheOneRing.class);
-    		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_15_R1.TheOneRing.class);
-    	} else if (ServerVersion.getVersion() == 16) {
-    		if (ServerVersion.getRelease() == 1) {
-        		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R1.TheOneRing.class);
-        		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R1.TheOneRing.class);
-    		} else if (ServerVersion.getRelease() == 2) {
-        		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R2.TheOneRing.class);
-        		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R2.TheOneRing.class);
-    		} else {
-        		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R3.TheOneRing.class);
-        		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_16_R3.TheOneRing.class);
-    		}
-    	} else if (ServerVersion.getVersion() == 17) {
-    		AbilityFactory.registerAbility(rainstar.abilitywar.ability.theonering.v1_17_R1.TheOneRing.class);
-    		AbilityList.registerAbility(rainstar.abilitywar.ability.theonering.v1_17_R1.TheOneRing.class);
-    	}
-		//70
+		AbilityFactory.registerAbility("rainstar.abilitywar.ability.theonering." + ServerVersion.getName() + ".TheOneRing");
+		AbilityList.registerAbility("rainstar.abilitywar.ability.theonering." + ServerVersion.getName() + ".TheOneRing"); //70
 		
 		AbilityFactory.registerAbility(Alte.class);
 		AbilityList.registerAbility(Alte.class);
@@ -327,7 +293,13 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityFactory.registerAbility(Foresight.class);
 		AbilityList.registerAbility(Foresight.class);
 		AbilityFactory.registerAbility(XInfected.class);
-		AbilityList.registerAbility(XInfected.class);		
+		AbilityList.registerAbility(XInfected.class);
+		AbilityFactory.registerAbility(Raincloud.class);
+        AbilityList.registerAbility(Raincloud.class);
+		AbilityFactory.registerAbility("rainstar.abilitywar.ability.silent." + ServerVersion.getName() + ".Silent");
+		AbilityList.registerAbility("rainstar.abilitywar.ability.silent." + ServerVersion.getName() + ".Silent"); //90
+		
+		
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
@@ -500,10 +472,10 @@ public class RainStarAddon extends Addon implements Listener {
 			}
 		});
 		
-		getPlugin().getCommands().getMainCommand().addSubCommand("broadcast", new Command(Condition.OP) {
+		getPlugin().getCommands().getMainCommand().addSubCommand("bc", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				Bukkit.broadcastMessage("§b[§aAbilityWar§b] §f" + args);
+				Bukkit.broadcastMessage("§3[§bAbilityWar§3] §a" + args.toString());
 				return true;
 			}
 		});
@@ -563,17 +535,6 @@ public class RainStarAddon extends Addon implements Listener {
 					}
 				}
 				return true;
-			}
-		});
-		
-		getPlugin().getCommands().getMainCommand().addSubCommand("godsemja", new Command(Condition.PLAYER) {
-			@Override
-			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				if (Bukkit.getPlayer("godsemja").isOnline() && sender instanceof Player) {
-					Bukkit.getPlayer("godsemja").damage(2.5, (Player) sender);
-					return true;
-				}
-				return false;
 			}
 		});
 		

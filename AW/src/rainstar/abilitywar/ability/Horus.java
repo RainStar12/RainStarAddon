@@ -37,7 +37,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.AncientCurse;
 
-@AbilityManifest(name = "호루스", rank = Rank.S, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "호루스", rank = Rank.S, species = Species.GOD, explain = {
 		"$[PERIOD]초마다 지난 $[PERIOD]초간 남들에게 §c최종 피해를 가장 많이 준 적§f에게",
 		"§5§n고대 저주§f를 부여하고, §5저주 단계§f만큼 체력을 감소시킵니다.",
 		"그 적이 $[PERIOD]초간 입힌 최종 피해량의 $[PERCENTAGE]%만큼 자신의 §c공격력§f이 증가합니다.",

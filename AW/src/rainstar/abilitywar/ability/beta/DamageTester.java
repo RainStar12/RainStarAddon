@@ -45,78 +45,6 @@ public class DamageTester extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private DamageType damagetype = DamageType.DAMAGES_ARROW;
-	private ActionbarChannel ac = newActionbarChannel();
-	private List<Damageable> damageables = new ArrayList<>();
-	
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
-		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof Teamable) {
-					final Teamable teamGame = (Teamable) getGame();
-					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-				}
-			}
-			return true;
-		}
-
-		@Override
-		public boolean apply(@Nullable Entity arg0) {
-			return false;
-		}
-	};
-
-	@SubscribeEvent(priority = 999999999)
-	public void onEntityDamage(EntityDamageEvent e) {
-		if (damageables.contains(e.getEntity())) {
-			Bukkit.broadcastMessage("피해량 결과: " + e.getFinalDamage());
-			damageables.remove(e.getEntity());
-		}
-	}
-	
-	@SubscribeEvent(priority = 999999999)
-	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-		if (damageables.contains(e.getEntity())) {
-			Bukkit.broadcastMessage("피해량 결과: " + e.getFinalDamage());
-			damageables.remove(e.getEntity());
-		}
-	}
-	
-	@SubscribeEvent(priority = 999999999)
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (damageables.contains(e.getEntity())) {
-			Bukkit.broadcastMessage("피해량 결과: " + e.getFinalDamage());
-			damageables.remove(e.getEntity());
-		}
-	}
-	
-	@SubscribeEvent(onlyRelevant = true)
-	private void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
-		if (LocationUtil.getNearestEntity(Damageable.class, getPlayer().getLocation(), predicate) != null) {
-			Damageable damageable = LocationUtil.getNearestEntity(Damageable.class, getPlayer().getLocation(), predicate);
-			damageables.add(damageable);
-			damagetype.onAttack(getPlayer(), damageable);
-			e.setCancelled(true);
-		}
-	}
-	
-	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.IRON_INGOT && clicktype == ClickType.LEFT_CLICK) {
-			damagetype = damagetype.next();
-			ac.update(damagetype.actionbar());
-			return true;
-		}
-		return false;
-	}
-	
 	enum DamageType {
 		DAMAGES_ARROW("§bDamages.damageArrow()") {
 			protected void onAttack(Player attacker, Damageable damageable) {
@@ -205,6 +133,81 @@ public class DamageTester extends AbilityBase implements ActiveHandler {
 		
 		public abstract DamageType next();
 		
+	}
+	
+	private DamageType damagetype = DamageType.DAMAGES_ARROW;
+	private ActionbarChannel ac = newActionbarChannel();
+	private List<Damageable> damageables = new ArrayList<>();
+	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
+
+	@SubscribeEvent(priority = 999999999)
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (damageables.contains(e.getEntity())) {
+			Bukkit.broadcastMessage("§b피해 타입: " + e.getCause());
+			Bukkit.broadcastMessage("§c피해량 결과: " + e.getFinalDamage());
+			damageables.remove(e.getEntity());
+		}
+	}
+	
+	@SubscribeEvent(priority = 999999999)
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		if (damageables.contains(e.getEntity())) {
+			Bukkit.broadcastMessage("§b피해 타입: " + e.getCause());
+			Bukkit.broadcastMessage("§c피해량 결과: " + e.getFinalDamage());
+			damageables.remove(e.getEntity());
+		}
+	}
+	
+	@SubscribeEvent(priority = 999999999)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (damageables.contains(e.getEntity())) {
+			Bukkit.broadcastMessage("§b피해 타입: " + e.getCause());
+			Bukkit.broadcastMessage("§c피해량 결과: " + e.getFinalDamage());
+			damageables.remove(e.getEntity());
+		}
+	}
+	
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
+		if (LocationUtil.getNearestEntity(Damageable.class, getPlayer().getLocation(), predicate) != null) {
+			Damageable damageable = LocationUtil.getNearestEntity(Damageable.class, getPlayer().getLocation(), predicate);
+			damageables.add(damageable);
+			damagetype.onAttack(getPlayer(), damageable);
+			e.setCancelled(true);
+		}
+	}
+	
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material == Material.IRON_INGOT && clicktype == ClickType.LEFT_CLICK) {
+			damagetype = damagetype.next();
+			ac.update(damagetype.actionbar());
+			return true;
+		}
+		return false;
 	}
 	
 }

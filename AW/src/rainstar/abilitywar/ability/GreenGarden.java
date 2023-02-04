@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.google.common.collect.ImmutableMap;
 
@@ -77,7 +78,6 @@ public class GreenGarden extends AbilityBase {
     private final int recharge = RECHARGE.getValue();
     private final int bloomingwait = (int) (BLOOMING_WAIT.getValue() * 20);
     
-    
     enum Seed {
     	POPPY("§4⧫", false, Material.POPPY),
     	DANDELION("§a⧫", true, Material.DANDELION),
@@ -99,7 +99,13 @@ public class GreenGarden extends AbilityBase {
     		this.flower = flower;
     	}
     	
+		public static Seed getRandomSeed() {
+			final Random random = new Random();
+			return random.pick(values());
+		}
     }
+    
+    
     
 	
 }
