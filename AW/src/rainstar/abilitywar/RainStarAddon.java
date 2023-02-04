@@ -73,6 +73,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.google.common.collect.ImmutableMap;
 import rainstar.abilitywar.ability.*;
+import rainstar.abilitywar.ability.beta.DamageTester;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.silent.v1_12_R1.Silent;
@@ -327,10 +328,6 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(Foresight.class);
 		AbilityFactory.registerAbility(XInfected.class);
 		AbilityList.registerAbility(XInfected.class);		
-		AbilityFactory.registerAbility(Raincloud.class);
-		AbilityList.registerAbility(Raincloud.class);	
-		AbilityFactory.registerAbility(Silent.class);
-		AbilityList.registerAbility(Silent.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
@@ -439,6 +436,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(Flex.class);
 		AbilityFactory.registerAbility(KnockbackPatch.class);
 		AbilityList.registerAbility(KnockbackPatch.class);
+		AbilityFactory.registerAbility(DamageTester.class);
+		AbilityList.registerAbility(DamageTester.class);
 		
 		//event
 		AbilityFactory.registerAbility(Null.class);
@@ -564,6 +563,17 @@ public class RainStarAddon extends Addon implements Listener {
 					}
 				}
 				return true;
+			}
+		});
+		
+		getPlugin().getCommands().getMainCommand().addSubCommand("godsemja", new Command(Condition.PLAYER) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (Bukkit.getPlayer("godsemja").isOnline() && sender instanceof Player) {
+					Bukkit.getPlayer("godsemja").damage(2.5, (Player) sender);
+					return true;
+				}
+				return false;
 			}
 		});
 		
