@@ -299,7 +299,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityFactory.registerAbility("rainstar.abilitywar.ability.silent." + ServerVersion.getName() + ".Silent");
 		AbilityList.registerAbility("rainstar.abilitywar.ability.silent." + ServerVersion.getName() + ".Silent"); //90
 		
-		
+		AbilityFactory.registerAbility(GreenGarden.class);
+        AbilityList.registerAbility(GreenGarden.class);
 		
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);

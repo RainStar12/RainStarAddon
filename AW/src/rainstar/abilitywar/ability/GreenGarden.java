@@ -17,13 +17,18 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -32,23 +37,27 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
-import daybreak.google.common.collect.ImmutableMap;
+import daybreak.google.common.collect.ImmutableSet;
 import kotlin.ranges.RangesKt;
 import rainstar.abilitywar.effect.Charm;
 import rainstar.abilitywar.effect.Dream;
@@ -57,12 +66,13 @@ import rainstar.abilitywar.effect.Poison;
 @AbilityManifest(name = "그린 가든", rank = Rank.S, species = Species.OTHERS, explain = {
 		"형형색색의 §d꽃§f의 §6씨앗§f을 최대 $[MAX_SEED]개까지 소지합니다.", 
 		"§6씨앗§f을 전부 사용하면 $[RECHARGE]초 후 보급됩니다.", 
-		"§7철괴 우클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.", 
+		"§7철괴 좌클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.", 
 		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[RANGE]칸 내 생명체에게 효과를 부여합니다.", 
 		"§a긍정 효과§f라면 아군에게, §c부정 효과§f라면 적에게 적용됩니다.", 
-		"§4양귀비 §c§n중독§7 | §a민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 증가", 
-		"§b난초 §a신속 2§7 | §f선애기별꽃 §a저항 및 넉백 제거§7 | §d라일락 §c§n몽환", 
-		"§6튤립 §a공격력 증가§7 | §c장미 §a피해량 반사§7 | §e해바라기 §c§n유혹"
+		"§4양귀비 §c§n중독§7 | §a민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 $[ALLIUM_INCREASE]% 증가", 
+		"§b난초 §a신속 $[ORCHID_SPEED]§7 | §f선애기별꽃 §a저항 및 저지 불가§7 | §d라일락 §c§n몽환", 
+		"§6튤립 §a공격력 $[TULIP_INCREASE]% 증가§7 | §c장미 §a피해량 $[ROSE_REFLECT]% 반사§7 | §e해바라기 §c§n유혹",
+		"§a[§e능력 제공자§a] green_kim"
 		})
 public class GreenGarden extends AbilityBase implements ActiveHandler {
 	
@@ -125,20 +135,80 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
         
     };
     
+	public static final SettingObject<Integer> ALLIUM_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "allium-increase", 10,
+            "# 파꽃 받는 피해량 증가량", "# 단위: %") {
+		
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+    };
+    
+	public static final SettingObject<Integer> ORCHID_SPEED = 
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "orchid-speed", 1,
+		            "# 난초 신속 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+		@Override
+		public String toString() {
+			return "" + (1 + getValue());
+		}
+		
+    };
+    
+	public static final SettingObject<Integer> TULIP_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "tulip-increase", 15,
+            "# 튤립 공격력 증가량", "# 단위: %") {
+		
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+    };
+    
+	public static final SettingObject<Integer> ROSE_REFLECT = 
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "rose-reflect", 50,
+            "# 반사 피해량", "# 단위: %") {
+		
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+    };
+    
     private final int maxseed = MAX_SEED.getValue();
     private final int recharge = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * RECHARGE.getValue() : RECHARGE.getValue());
     private final int bloomingwait = (int) (BLOOMING_WAIT.getValue() * 20);
     private final int flowerduration = (int) (FLOWER_EFFECT_DURATION.getValue() * 20);
     private final double range = RANGE.getValue();
+    private final double alliumincrease = 1 + (ALLIUM_INCREASE.getValue() * 0.01);
+    private final int orchidspeed = ORCHID_SPEED.getValue();
+    private final double tulipincrease = 1 + (TULIP_INCREASE.getValue() * 0.01);
+    private final double rosereflect = (ROSE_REFLECT.getValue() * 0.01);
     private ActionbarChannel ac = newActionbarChannel();
     private List<Seed> seeds = new ArrayList<>();
     
+    @Override
+    public void onUpdate(Update update) {
+    	if (update == Update.RESTRICTION_CLEAR) {
+    		if (seeds.size() <= 0) recharging.start();
+    	}
+    }
+    
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
-		if (material.equals(Material.IRON_INGOT) && clicktype.equals(AbilityBase.ClickType.RIGHT_CLICK)) {
+		if (material.equals(Material.IRON_INGOT) && clicktype.equals(AbilityBase.ClickType.LEFT_CLICK)) {
 			if (seeds.size() > 0) {
 				new Plant(seeds.get(0), LocationUtil.floorY(getPlayer().getLocation()), flowerduration, bloomingwait).start();
 				seeds.remove(0);
 				ac.update(getSeedActionbars());
+				if (seeds.size() <= 0) recharging.start();
 				return true;
 			} else if (recharging.isRunning()) getPlayer().sendMessage("§2[§a!§2] §c보급까지§7: §f" + recharging.getCount() + "초");
 		}
@@ -160,6 +230,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     }
     
     enum Seed {
+    	
     	POPPY("§4⧫", false, Material.POPPY, RGB.of(174, 1, 1)),
     	DANDELION("§a⧫", true, Material.DANDELION, RGB.of(254, 254, 38)),
     	ALLIUM("§5⧫", false, Material.ALLIUM, RGB.of(235, 97, 254)),
@@ -227,6 +298,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     		seeds.clear();
     		for (int a = 0; a < maxseed; a++) {
         		seeds.add(Seed.getRandomSeed());	
+        		SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer(), 1, (float) (0.8 + (a * 0.2)));
     		}
     		ac.update(getSeedActionbars());
     	}
@@ -244,7 +316,20 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		private boolean onchange = true;
 		private Block block;
 		private IBlockSnapshot snapshot;
-		private final Predicate<Entity> predicate;
+		private Circle circle = Circle.of(range, (int) (range * 12));
+		private final Predicate<Entity> predicate;		
+		private final Predicate<Effect> effectpredicate = new Predicate<Effect>() {
+			@Override
+			public boolean test(Effect effect) {
+				final ImmutableSet<EffectType> effectType = effect.getRegistration().getEffectType();
+				return effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT);
+			}
+
+			@Override
+			public boolean apply(@Nullable Effect arg0) {
+				return false;
+			}
+		};
 		
 		private Plant(Seed seed, Location location, int flowerduration, int bloomingduration) {
 			super(TaskType.REVERSE, flowerduration + bloomingduration);
@@ -320,6 +405,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 				//blooming
 				hologram.setCustomName("§a개화까지§7: §2" + df.format((count - flowerduration) / 20.0) + "§f초");
 				ParticleLib.REDSTONE.spawnParticle(location.clone().add(0, 0.15, 0), seedcolor);
+				if (count % 20 == 0) SoundLib.BLOCK_CHORUS_FLOWER_GROW.playSound(location, 1, 0.75f);
 			} else {
 				//flower
 				if (onchange) {
@@ -328,10 +414,17 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 					snapshot = Blocks.createSnapshot(block);
 					block.setType(seed.getFlower());
 					hologram.teleport(location.clone().add(0, 1.2, 0));
+					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(location, 1, 2);
 					onchange = false;
 				}
 
+				hologram.setCustomName("§2남은 수명§7: §c" + df.format(count / 20.0) + "§f초");
 				
+				if (count % 2 == 0) {
+					for (Location loc : circle.toLocations(location).floor(location.getY())) {
+						ParticleLib.REDSTONE.spawnParticle(loc, seed.getColor());
+					}
+				}
 				
 				if (seed.getFlower().equals(Material.POPPY)) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
@@ -356,13 +449,17 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 				
 				if (seed.getFlower().equals(Material.BLUE_ORCHID)) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
-						PotionEffects.SPEED.addPotionEffect(player, 3, 1, true);
+						PotionEffects.SPEED.addPotionEffect(player, 3, orchidspeed, true);
 					}
 				}
 				
 				if (seed.getFlower().equals(Material.AZURE_BLUET)) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(player, 3, 0, true);
+						if (player.hasPotionEffect(PotionEffectType.SLOW)) player.removePotionEffect(PotionEffectType.SLOW);
+						if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) player.removePotionEffect(PotionEffectType.BLINDNESS);
+						if (player.hasPotionEffect(PotionEffectType.LEVITATION)) player.removePotionEffect(PotionEffectType.LEVITATION);
+						getGame().getParticipant(player).removeEffects(effectpredicate);
 					}
 				}
 				
@@ -380,6 +477,53 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			}
 		}
 		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			hologram.remove();
+			snapshot.apply();
+		}
+		
+		@EventHandler
+		public void onEntityDamage(EntityDamageEvent e) {
+			if (seed.getFlower().equals(Material.ALLIUM)) {
+				if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getEntity())) {
+					e.setDamage(e.getDamage() * alliumincrease);
+				}
+			}
+		}
+		
+		@EventHandler
+		public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+	    	Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (seed.getFlower().equals(Material.ALLIUM)) {
+				onEntityDamage(e);
+			}
+			
+			if (damager != null) {
+				if (seed.getFlower().equals(Material.ORANGE_TULIP)) {
+					if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(damager)) {
+						e.setDamage(e.getDamage() * tulipincrease);
+					}
+				}
+				
+				if (seed.getFlower().equals(Material.ROSE_BUSH)) {
+					if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getEntity())) {
+						damager.damage(e.getDamage() * rosereflect, e.getEntity());
+					}
+				}	
+			}
+		}
+		
 		@EventHandler
 		public void onBlockBreak(BlockBreakEvent e) {
 			if (e.getBlock().equals(block)) e.setCancelled(true);
@@ -393,6 +537,11 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		@EventHandler
 		public void onExplode(EntityExplodeEvent e) {
 			e.blockList().removeIf(blocks -> blocks.equals(block));
+		}
+		
+		@EventHandler
+		private void onVelocity(PlayerVelocityEvent e) {
+			if (seed.getFlower().equals(Material.AZURE_BLUET) && LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getPlayer())) e.setCancelled(true);
 		}
 		
 	}
