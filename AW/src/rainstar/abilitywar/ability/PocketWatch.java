@@ -3,6 +3,7 @@ package rainstar.abilitywar.ability;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -118,7 +119,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DECREASE = abilitySettings.new SettingObject<Integer>(PocketWatch.class,
-			"decrease", 20, "# 받는 피해 감소량", "# 단위: %") {
+			"decrease", 20, "# 정지된 적이 받는 피해 감소량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -220,7 +221,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (stopped.contains(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
+		if (rewind.isRunning() && stopped.contains(e.getEntity()) && getPlayer().equals(e.getEntity().getKiller())) {
 			rewind.stop(true);
 			Healths.setHealth(getPlayer(), rewindHP);
 			getPlayer().teleport(rewindLocation);
@@ -291,6 +292,32 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
+	private final AbilityTimer biggerEffect = new AbilityTimer() {
+		
+		Location center;
+		double currentRadius;
+		
+		@Override
+		protected void onStart() {
+			SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), 1, 1.5f);
+			center = LocationUtil.floorY(getPlayer().getLocation().clone());
+			currentRadius = 0;
+		}
+		
+		@Override
+		protected void run(int count) {
+			double playerY = getPlayer().getLocation().getY();
+			if (currentRadius < range) currentRadius += (range / 10);
+			for (Iterator<Location> iterator = Circle.iteratorOf(center, currentRadius, 100); iterator.hasNext(); ) {
+				Location loc = iterator.next();
+				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
+				ParticleLib.REDSTONE.spawnParticle(loc, RGB.WHITE);
+			}
+			if (currentRadius == range) this.stop(false);
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	private final AbilityTimer bossbarUpdater = new AbilityTimer() {
 		
 		@Override
@@ -342,7 +369,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
-			SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), 1, 1.5f);
+			biggerEffect.start();
 			NMS.sendTitle(getPlayer(), "§c사망 지연", "§e" + df.format(duration / 20.0), 0, 20, 0);
 			timeaccel.stop(true);
 			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {

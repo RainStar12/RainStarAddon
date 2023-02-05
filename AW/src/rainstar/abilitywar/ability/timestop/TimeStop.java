@@ -70,7 +70,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		" 시간이 멈춘 동안 모든 플레이어는 행동 불능이 되어 정지 해제 후 정지된 시간동안",
 		" 받을 피해를 한 번에 1/5로 줄여서 받습니다. 시간이 정지되기 전 지속 중이던",
 		" 능력은 정지가 끝난 이후 연속해서 지속하게 됩니다. $[COOLDOWN_CONFIG]",
-		" §7반전 세계 효과§f: $[EFFECT_CONFIG]",
+		" §7반전 세계 효과§f: $[EFFECT]",
 		"§7패시브 §8- §a타임 플로우§f: 시간 정지의 영향을 받지 않습니다.",
 		"§7패시브 §8- §3타임 디비전§f: 시간 정지 소유자 한 명당 지속시간이 30%씩 감소합니다.",
 		" 줄어든 지속시간의 소수점은 올림 처리되며, 1초 미만으로는 줄지 않습니다.",
@@ -109,7 +109,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	private Set<Player> custominv = new HashSet<>();
 	private Set<Player> timestoppers = new HashSet<>();
 	private final Cooldown timeStop = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
-	private boolean effectboolean = EFFECT_CONFIG.getValue();
+	private boolean effectboolean = EFFECT.getValue();
 	private Duration stopduration = null;
 	private static final Vector zerov = new Vector(0, 0, 0);
 	private ArmorStand hologram;
@@ -137,8 +137,8 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Boolean> EFFECT_CONFIG = abilitySettings.new SettingObject<Boolean>(TimeStop.class,
-			"effect-config", true, "# 이펙트 여부", "# 시간 정지 시 반전 세계 시점을 볼 수 있을지 선택합니다.") {
+	public static final SettingObject<Boolean> EFFECT = abilitySettings.new SettingObject<Boolean>(TimeStop.class,
+			"effect-config", false, "# 이펙트 여부", "# 시간 정지 시 반전 세계 시점을 볼 수 있을지 선택합니다.") {
 		
 		@Override
 		public String toString() {
