@@ -49,6 +49,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -183,6 +184,52 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
         
     };
     
+    enum Seed {  	
+    	POPPY("§4⧫", false, MaterialX.POPPY.getMaterial(), RGB.of(174, 1, 1)),
+    	DANDELION("§a⧫", true, MaterialX.DANDELION.getMaterial(), RGB.of(254, 254, 38)),
+    	ALLIUM("§5⧫", false, MaterialX.ALLIUM.getMaterial(), RGB.of(235, 97, 254)),
+    	ORCHID("§b⧫", true, MaterialX.BLUE_ORCHID.getMaterial(), RGB.of(29, 189, 250)),
+    	AZURE_BLUET("§f⧫", true, MaterialX.AZURE_BLUET.getMaterial(), RGB.of(254, 254, 225)),
+    	LILAC("§d⧫", false, MaterialX.LILAC.getMaterial(), RGB.of(254, 208, 250)),
+    	TULIP("§6⧫", true, MaterialX.ORANGE_TULIP.getMaterial(), RGB.of(254, 157, 91)),
+    	ROSE("§c⧫", true, MaterialX.ROSE_BUSH.getMaterial(), RGB.of(254, 13, 19)),
+    	SUNFLOWER("§e⧫", false, MaterialX.SUNFLOWER.getMaterial(), RGB.of(254, 185, 1));
+    	
+    	private final String seedcolor;
+    	private final boolean positive;
+    	private final Material flower;
+    	private final RGB color;
+    	
+    	Seed(String seedcolor, boolean positive, Material flower, RGB color) {
+    		this.seedcolor = seedcolor;
+    		this.positive = positive;
+    		this.flower = flower;
+    		this.color = color;
+    	}
+    	
+		public static Seed getRandomSeed() {
+			final Random random = new Random();
+			return random.pick(values());
+		}
+		
+		public String getSeedcolor() {
+			return seedcolor;
+		}
+		
+		public boolean isPositive() {
+			return positive;
+		}
+		
+		public Material getFlower() {
+			return flower;
+		}
+		
+		public RGB getColor() {
+			return color;
+		}
+		
+    }
+    
     private final int maxseed = MAX_SEED.getValue();
     private final int recharge = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * RECHARGE.getValue() : RECHARGE.getValue());
     private final int bloomingwait = (int) (BLOOMING_WAIT.getValue() * 20);
@@ -227,53 +274,6 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
         	}
     	}
     	return joiner.toString();
-    }
-    
-    enum Seed {
-    	
-    	POPPY("§4⧫", false, Material.POPPY, RGB.of(174, 1, 1)),
-    	DANDELION("§a⧫", true, Material.DANDELION, RGB.of(254, 254, 38)),
-    	ALLIUM("§5⧫", false, Material.ALLIUM, RGB.of(235, 97, 254)),
-    	ORCHID("§b⧫", true, Material.BLUE_ORCHID, RGB.of(29, 189, 250)),
-    	AZURE_BLUET("§f⧫", true, Material.AZURE_BLUET, RGB.of(254, 254, 225)),
-    	LILAC("§d⧫", false, Material.LILAC, RGB.of(254, 208, 250)),
-    	TULIP("§6⧫", true, Material.ORANGE_TULIP, RGB.of(254, 157, 91)),
-    	ROSE("§c⧫", true, Material.ROSE_BUSH, RGB.of(254, 13, 19)),
-    	SUNFLOWER("§e⧫", false, Material.SUNFLOWER, RGB.of(254, 185, 1));
-    	
-    	private final String seedcolor;
-    	private final boolean positive;
-    	private final Material flower;
-    	private final RGB color;
-    	
-    	Seed(String seedcolor, boolean positive, Material flower, RGB color) {
-    		this.seedcolor = seedcolor;
-    		this.positive = positive;
-    		this.flower = flower;
-    		this.color = color;
-    	}
-    	
-		public static Seed getRandomSeed() {
-			final Random random = new Random();
-			return random.pick(values());
-		}
-		
-		public String getSeedcolor() {
-			return seedcolor;
-		}
-		
-		public boolean isPositive() {
-			return positive;
-		}
-		
-		public Material getFlower() {
-			return flower;
-		}
-		
-		public RGB getColor() {
-			return color;
-		}
-		
     }
     
     public AbilityTimer recharging = new AbilityTimer(TaskType.REVERSE, Math.max(1, recharge)) {
@@ -347,7 +347,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			this.predicate = new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
-					if (seed.positive) {
+					if (seed.isPositive()) {
 						if (entity.equals(getPlayer())) return true;
 						if (entity instanceof Player) {
 							if (!getGame().isParticipating(entity.getUniqueId())
@@ -426,18 +426,18 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.POPPY)) {
+				if (seed.getFlower().equals(MaterialX.POPPY.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						Poison.apply(getGame().getParticipant(player), TimeUnit.TICKS, count);
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.DANDELION)) {
+				if (seed.getFlower().equals(MaterialX.DANDELION.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						if (!player.isDead()) {
 							final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 							if (player.getHealth() < maxHealth) {
-								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .3, RegainReason.CUSTOM);
+								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .015, RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled()) {
 									player.setHealth(RangesKt.coerceIn(player.getHealth() + event.getAmount(), 0, maxHealth));
@@ -447,13 +447,13 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.BLUE_ORCHID)) {
+				if (seed.getFlower().equals(MaterialX.BLUE_ORCHID.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						PotionEffects.SPEED.addPotionEffect(player, 3, orchidspeed, true);
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.AZURE_BLUET)) {
+				if (seed.getFlower().equals(MaterialX.AZURE_BLUET.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(player, 3, 0, true);
 						if (player.hasPotionEffect(PotionEffectType.SLOW)) player.removePotionEffect(PotionEffectType.SLOW);
@@ -463,13 +463,13 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.LILAC)) {
+				if (seed.getFlower().equals(MaterialX.LILAC.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						Dream.apply(getGame().getParticipant(player), TimeUnit.TICKS, count);
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.SUNFLOWER)) {
+				if (seed.getFlower().equals(MaterialX.SUNFLOWER.getMaterial())) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
 						Charm.apply(getGame().getParticipant(player), TimeUnit.TICKS, count, getPlayer(), 30, 20);
 					}
@@ -490,7 +490,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		
 		@EventHandler
 		public void onEntityDamage(EntityDamageEvent e) {
-			if (seed.getFlower().equals(Material.ALLIUM)) {
+			if (seed.getFlower().equals(MaterialX.ALLIUM.getMaterial())) {
 				if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getEntity())) {
 					e.setDamage(e.getDamage() * alliumincrease);
 				}
@@ -505,18 +505,18 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
-			if (seed.getFlower().equals(Material.ALLIUM)) {
+			if (seed.getFlower().equals(MaterialX.ALLIUM.getMaterial())) {
 				onEntityDamage(e);
 			}
 			
 			if (damager != null) {
-				if (seed.getFlower().equals(Material.ORANGE_TULIP)) {
+				if (seed.getFlower().equals(MaterialX.ORANGE_TULIP.getMaterial())) {
 					if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(damager)) {
 						e.setDamage(e.getDamage() * tulipincrease);
 					}
 				}
 				
-				if (seed.getFlower().equals(Material.ROSE_BUSH)) {
+				if (seed.getFlower().equals(MaterialX.ROSE_BUSH.getMaterial())) {
 					if (LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getEntity())) {
 						damager.damage(e.getDamage() * rosereflect, e.getEntity());
 					}
@@ -541,7 +541,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		
 		@EventHandler
 		private void onVelocity(PlayerVelocityEvent e) {
-			if (seed.getFlower().equals(Material.AZURE_BLUET) && LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getPlayer())) e.setCancelled(true);
+			if (seed.getFlower().equals(MaterialX.AZURE_BLUET.getMaterial()) && LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate).contains(e.getPlayer())) e.setCancelled(true);
 		}
 		
 	}

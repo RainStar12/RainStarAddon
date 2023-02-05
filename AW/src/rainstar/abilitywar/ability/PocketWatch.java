@@ -207,15 +207,15 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onAbilityCooldownReset(AbilityCooldownResetEvent e) {
-		if (e.getParticipant().equals(getParticipant()) && cooldown >= 1) {
-			cooldown = 0;
+		if (e.getParticipant().equals(getParticipant()) && cooldown > 1) {
+			cooldown = 1;
 		}
 	}
 	
 	@SubscribeEvent
 	public void onChronosCooldownReset(ChronosCooldownResetEvent e) {
-		if (e.getParticipant().equals(getParticipant()) && cooldown >= 1) {
-			cooldown = 0;
+		if (e.getParticipant().equals(getParticipant()) && cooldown > 1) {
+			cooldown = 1;
 		}
 	}
 	
