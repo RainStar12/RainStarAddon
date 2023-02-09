@@ -19,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -30,6 +31,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -251,6 +253,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     private final double rosereflect = (ROSE_REFLECT.getValue() * 0.01);
     private ActionbarChannel ac = newActionbarChannel();
     private List<Seed> seeds = new ArrayList<>();
+    private List<Location> seedlocations = new ArrayList<>();
     
     @Override
     public void onUpdate(Update update) {
@@ -262,6 +265,12 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(AbilityBase.ClickType.LEFT_CLICK)) {
 			if (seeds.size() > 0) {
+				for (Location loc : seedlocations) {
+					if (loc.distanceSquared(getPlayer().getLocation()) < 4) {
+						getPlayer().sendMessage("§2[§a!§2] §f씨앗이나 꽃의 간격은 최소 2칸 이상이어야 합니다.");
+						return false;
+					}
+				}
 				new Plant(seeds.get(0), LocationUtil.floorY(getPlayer().getLocation()), flowerduration, bloomingwait).start();
 				seeds.remove(0);
 				ac.update(getSeedActionbars());
@@ -344,6 +353,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		private Plant(Seed seed, Location location, int flowerduration, int bloomingduration) {
 			super(TaskType.REVERSE, flowerduration + bloomingduration);
 			setPeriod(TimeUnit.TICKS, 1);
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 			this.seed = seed;
 			this.location = location;
 			this.flowerduration = flowerduration;
@@ -354,6 +364,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			NMS.removeBoundingBox(hologram);
 			hologram.setCustomNameVisible(true);
 			hologram.setCustomName("§a개화까지§7: §2" + df.format(getCount() / 20.0) + "§f초");
+			seedlocations.add(location);
 			this.predicate = new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
@@ -419,8 +430,10 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			} else {
 				//flower
 				if (onchange) {
+					seedlocations.remove(location);
 					this.block = location.clone().add(0, 1, 0).getBlock().getRelative(BlockFace.DOWN);
 					location = block.getLocation().clone().add(0.5, 0, 0.5);
+					seedlocations.add(location);
 					snapshot = Blocks.createSnapshot(block);
 					BlockX.setType(block, seed.getFlower());					
 					hologram.teleport(location.clone().add(0, 1.2, 0));
@@ -481,7 +494,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 				
 				if (seed.getName().equals("PEONY")) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
-						Charm.apply(getGame().getParticipant(player), TimeUnit.TICKS, count, getPlayer(), 30, 20);
+						if (!getGame().getParticipant(player).hasEffect(Charm.registration)) Charm.apply(getGame().getParticipant(player), TimeUnit.TICKS, count, getPlayer(), 30, 20);
 					}
 				}
 			}
@@ -494,6 +507,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onSilentEnd() {
+			HandlerList.unregisterAll(this);
 			hologram.remove();
 			snapshot.apply();
 		}
