@@ -201,7 +201,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     	LILAC("§d⧫", false, MaterialX.LILAC, RGB.of(254, 208, 250)),
     	TULIP("§6⧫", true, MaterialX.ORANGE_TULIP, RGB.of(254, 157, 91)),
     	ROSE("§c⧫", true, MaterialX.ROSE_BUSH, RGB.of(254, 13, 19)),
-    	PEONY("§a⧫", false, MaterialX.PEONY, RGB.of(254, 185, 1));
+    	PEONY("§a⧫", false, MaterialX.PEONY, RGB.of(254, 159, 207));
     	
     	private final String seedcolor;
     	private final boolean positive;
@@ -271,6 +271,9 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 						return false;
 					}
 				}
+				SoundLib.ITEM_CROP_PLANT.playSound(getPlayer().getLocation(), 1, 0.85f);
+				SoundLib.ITEM_CROP_PLANT.playSound(getPlayer().getLocation(), 1, 0.85f);
+				SoundLib.ITEM_CROP_PLANT.playSound(getPlayer().getLocation(), 1, 0.85f);
 				new Plant(seeds.get(0), LocationUtil.floorY(getPlayer().getLocation()), flowerduration, bloomingwait).start();
 				seeds.remove(0);
 				ac.update(getSeedActionbars());
@@ -507,6 +510,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onSilentEnd() {
+			seedlocations.remove(location);
 			HandlerList.unregisterAll(this);
 			hologram.remove();
 			snapshot.apply();

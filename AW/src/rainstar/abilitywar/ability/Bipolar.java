@@ -6,8 +6,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 
-@AbilityManifest(name = "", rank = Rank.S, species = Species.HUMAN, explain = {
-		"",
+@AbilityManifest(name = "조울증", rank = Rank.S, species = Species.HUMAN, explain = {
+		"§7패시브 §8- §c감정 기복§f: ",
 		" "
 		},
 		summarize = {
