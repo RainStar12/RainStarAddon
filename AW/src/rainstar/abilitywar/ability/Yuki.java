@@ -1,60 +1,56 @@
 package rainstar.abilitywar.ability;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.World;
-import org.bukkit.Note.Tone;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowman;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.Materials;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Frost;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.Gradient;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
-import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
@@ -62,55 +58,108 @@ import rainstar.abilitywar.effect.Chill;
 import rainstar.abilitywar.effect.SnowflakeMark;
 
 @AbilityManifest(name = "유키", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§b얼음 속성§f의 눈꽃 마법사, 유키.",
-		"§7지팡이 우클릭 §8- §b프로스트바이트§f: 영창을 시작합니다. 다시 지팡이를 우클릭하면",
-		" 바라보는 방향으로 서리를 내뿜습니다. 서리는 영창한 만큼의 마법 대미지를 입히며",
-		" 적중 대상이 냉기 상태라면 빙결시키고, 아니라면 냉기시킵니다. $[CASTING_COOLDOWN]",
-		" 눈과 얼음 위에서 서리의 대미지 및 사거리가 1씩 증가하며 신속 버프를 받습니다.",
-		" §7적 처치 시 눈사람 소환§f: $[SNOWMAN_SPAWN]",
-		"§7지팡이 좌클릭 §8- §b앱솔루트 제로§f: 주변의 모든 빙결 상태이상을 가진 플레이어를",
-		" 얼음을 깨트려 마법 대미지를 입힙니다. 또한 대상에게 방어력이 2 감소하는",
-		" 눈꽃 표식을 20초간 부여시킵니다. $[BREAK_COOLDOWN]",
-		" 눈꽃 표식은 최대 5번까지 중첩됩니다.",
-		"§7상태이상 §8- §9냉기§f: 이동 속도, 공격 속도가 감속하고 회복력이 줄어듭니다.",
-		" 또한 지속시간과 쿨타임 타이머가 천천히 흐르게 됩니다."
+		"§7패시브 §8- §b만년설§f: §b§n빙결§f 외 §n상태이상§f을 받을 때 지속시간 절반의 §b§n빙결§f로 교체합니다.",
+		"§7지팡이 우클릭 §8- §3아이스 볼트§f: 우클릭을 유지하는 동안 영창하여 이동 속도가 감소합니다.",
+		" 우클릭을 해제할 때 영창한 만큼 강해진 §b냉기탄§f을 발사해 가까이의 적에게 발사됩니다.",
+		" §b냉기탄§f에 맞은 적은 §9§n냉기§f 상태이상을 받고, 이미 §9§n냉기§f라면 §b§n빙결§f시킵니다.",
+		" 영창을 $[MAX_CASTING]초 이상 유지하면 영창이 취소되고 자신이 $[SELF_FROST]초 §b§n빙결§f됩니다.",
+		"§7지팡이 좌클릭 §8- §9블리자드§f: 자신을 포함한 $[RANGE]칸 내 모든 생명체의 §b§n빙결§f을 깨뜨리는 한기를",
+		" 퍼뜨립니다. 자신은 §b§n빙결§f 시간의 $[MULTIPLY]배만큼 §b신속 $[SPEED_AMPLIFIER]§f를 획득하고, 다른 생명체는",
+		" 방어력이 2 감소하는 §b§n눈꽃 표식§f을 최대 3까지 얻습니다. $[COOLDOWN]",
+		"§1[§9냉기§1]§f 이동 속도, 공격 속도, 회복력이 감소합니다.",
+		" 지속시간과 쿨타임 타이머가 천천히 흐릅니다."
 		},
 		summarize = {
-		"§7지팡이 우클릭 시§f 영창을 시작해 영창 중에 다시 우클릭하면 서리를 내뿜어",
-		"적중 대상들을 §9냉기§f시키고, 이미 §9냉기§f 상태라면 §3빙결§f시킵니다. $[CAST_COOLDOWN]",
-		"§7지팡이 좌클릭 시§f 영창 없이 주변의 모든 빙결 상태의 플레이어의 §3빙결§f을",
-		"깨트려 피해를 입히고 방어력이 레벨당 2씩 감소하는 §b눈꽃 표식§f을 부여합니다.",
-		"§9냉기 상태의 적§f은 이동 속도, 공격 속도가 감소하고 회복력이 줄어듭니다."
+		"자신이 받는 모든 상태이상이 지속시간 절반의 §b§n빙결§f이 됩니다.",
+		"§6지팡이 우클릭§f을 유지하여 영창해, 영창한 만큼 강해지는 §b냉기탄§f을 발사합니다.",
+		"냉기탄에 적중한 적은 §9§n냉기§f되고, 이미 §9§n냉기§f였다면 §b§n빙결§f시킵니다.",
+		"영창 게이지를 최대까지 영창해버리면 영창이 취소되고 자신이 §b§n빙결§f됩니다.",
+		"§6지팡이 좌클릭§f으로 자신을 포함한 주변 §b§n빙결§f자들의 §b§n빙결§f을 깨부숩니다.",
+		"이때 자신은 신속을, 적은 방어력이 감소하는 §b§n눈꽃 표식§f을 얻습니다. §8(§73중첩)§8"
 		})
 
-@Materials(materials = {
-		Material.STICK
-	})
-
-public class Yuki extends AbilityBase implements ActiveHandler {
+public class Yuki extends AbilityBase {
 	
 	public Yuki(Participant participant) {
 		super(participant);
 	}
+
+	public static final SettingObject<Double> MAX_CASTING = 
+			abilitySettings.new SettingObject<Double>(Yuki.class, "max-casting", 7.5,
+            "# 최대 영창시간", "# 단위: 초") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+    
+	public static final SettingObject<Double> SELF_FROST = 
+			abilitySettings.new SettingObject<Double>(Yuki.class, "self-frost", 3.0,
+            "# 영창 캔슬 시 자체 빙결", "# 단위: 초") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
 	
-	private boolean given = true;
-	private Random random = new Random();
-	private static final Vector zeroV = new Vector(0, 0, 0);
-	
-	private final Cooldown castcool = new Cooldown(CASTING_COOLDOWN.getValue(), "영창", CooldownDecrease._25);
-	private final Cooldown breakcool = new Cooldown(BREAK_COOLDOWN.getValue(), "파괴");
-	private boolean snowman = SNOWMAN_SPAWN.getValue();
-	
-	@SuppressWarnings("unused")
-	private Bullet bullet = null;
-	private int cast = 0;
-	private int addDamage = 6;
-	private int number = 1;
-	private static final RGB color1 = RGB.of(254, 254, 254), color2 = RGB.of(238, 254, 254), color3 = RGB.of(227, 253, 254),
-			color4 = RGB.of(210, 253, 254), color5 = RGB.of(200, 253, 254), color6 = RGB.of(190, 252, 254),
-			color7 = RGB.of(172, 252, 254), color8 = RGB.of(159, 252, 254), color9 = RGB.of(136, 252, 254),
-			color10 = RGB.of(117, 252, 254), color11 = RGB.of(100, 250, 254), color12 = RGB.of(81, 250, 254);
-	
+	public static final SettingObject<Double> RANGE = 
+			abilitySettings.new SettingObject<Double>(Yuki.class, "range", 8.0,
+            "# 블리자드 범위", "# 단위: 칸") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+
+	public static final SettingObject<Double> MULTIPLY = 
+			abilitySettings.new SettingObject<Double>(Yuki.class, "multiply", 3.0,
+            "# 신속 지속시간", "# 단위: 배") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+    
+	public static final SettingObject<Integer> SPEED_AMPLIFIER = 
+			abilitySettings.new SettingObject<Integer>(Yuki.class, "speed-amplifier", 1,
+            "# 신속 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+		
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+		@Override
+		public String toString() {
+			return "" + (1 + getValue());
+        }
+		
+    };
+    
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Yuki.class, "cooldown", 33,
+            "# 쿨타임") {
+		
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+		
+    };
+    
 	private static final Points LAYER = Points.of(0.12, new boolean[][]{
 		{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false},
 		{false, false, false, false, false, true, false, false, false, true, false, false, false, false, false},
@@ -130,24 +179,51 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		{false, false, false, false, false, true, false, false, false, true, false, false, false, false, false},
 		{false, false, false, false, false, false, false, true, false, false, false, false, false, false, false}
 	});
+    
+    private final int maxcasting = (int) (MAX_CASTING.getValue() * 20);
+    private final int selffrost = (int) (SELF_FROST.getValue() * 20);
+    private final double range = RANGE.getValue();
+    private final double multiply = MULTIPLY.getValue();
+    private final int speed = SPEED_AMPLIFIER.getValue();
+	private long last;
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+	private static final RGB startColor = RGB.of(254, 254, 254), endColor = RGB.of(16, 248, 254);
+	private final List<RGB> gradations = Gradient.createGradient(maxcasting, startColor, endColor);
+	private final Random random = new Random();
+	private Vectors layervectors;
+	private final Circle circle = Circle.of(1.5, 70);
+	private boolean give = false;
+	private int addDamage = 6;
+	private static final Vector zeroV = new Vector(0, 0, 0);
 	
-	private final AbilityTimer buff = new AbilityTimer() {
-
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
-		public void run(int count) {
-			Material m = getPlayer().getLocation().getBlock().getType();
-			Material bm = getPlayer().getLocation().clone().subtract(0, 1, 0).getBlock().getType();
-			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 1, true);
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
 			}
+			return true;
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+		@Override
+		public boolean apply(@javax.annotation.Nullable Entity arg0) {
+			return false;
+		}
+	};
 	
 	private final Predicate<Entity> frostpredicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
 			if (entity instanceof Player) {
 				Participant participants = getGame().getParticipant((Player) entity);
 				if (!getGame().isParticipating(entity.getUniqueId())
@@ -171,49 +247,8 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CASTING_COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(Yuki.class,
-			"casting-cooldown", 5, "# 영창 쿨타임") {
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-	};
-	
-	public static final SettingObject<Integer> BREAK_COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(Yuki.class,
-			"break-cooldown", 20, "# 파괴 쿨타임") {
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-	};
-	
-	public static final SettingObject<Boolean> SNOWMAN_SPAWN 
-	= abilitySettings.new SettingObject<Boolean>(Yuki.class,
-			"snowman-spawn", true, "# 유키가 플레이어를 죽일 때 눈사람을",
-			"# 소환할 지 여부를 정합니다.") {
-		
-		@Override
-		public String toString() {
-			return getValue() ? "§b켜짐" : "§c꺼짐";
-        }
-		
-	};
-	
-	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR && given) {			
+		if (update == Update.RESTRICTION_CLEAR && !give) {			
 			ItemStack stick = new ItemStack(Material.STICK, 1);
 			ItemMeta stickmeta = stick.getItemMeta();	
 			
@@ -228,58 +263,10 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 			stick.setItemMeta(stickmeta);
 			
 			getPlayer().getInventory().addItem(stick);
-			given = false;
-		}
-		if (update == Update.RESTRICTION_CLEAR) {
-			buff.start();
+			give = true;
 		}
 	}
-	
-	@Override
-	public boolean usesMaterial(Material material) {
-		return (material == MaterialX.STICK.getMaterial());
-	}
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.STICK && clicktype == ClickType.RIGHT_CLICK && !castcool.isCooldown()) {
-			if (casting.isRunning()) {
-				casting.stop(false);
-				music.start();
-				Material m = getPlayer().getLocation().getBlock().getType();
-				Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
-				if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-					new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection(), cast + 3).start();
-				} else {
-					new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection(), cast).start();	
-				}
-				cast = 0;
-				return castcool.start();
-			} else if (!casting.isRunning() && getPlayer().isOnGround()) {
-				casting.start();
-			}
-		}
-		if (material == Material.STICK && clicktype == ClickType.LEFT_CLICK && !breakcool.isCooldown() && !breaking.isRunning()) {
-			breaking.start();
-			if (circle.isRunning()) circle.stop(false);
-			circle.start();
-			return true;
-		}
-		return false;
-	}
-	
-	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (snowman) {
-			if (e.getEntity() instanceof Player && getPlayer().equals(e.getEntity().getKiller())) {
-				Snowman snowman = e.getEntity().getWorld().spawn(e.getEntity().getLocation(), Snowman.class);
-				snowman.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
-				snowman.setHealth(50);
-			}	
-		}
-	}
-	
+
 	private final AbilityTimer breaking = new AbilityTimer() {
 		
 		Location mylocation;
@@ -293,27 +280,30 @@ public class Yuki extends AbilityBase implements ActiveHandler {
     	@Override
 		public void run(int count) {
     		Player p = LocationUtil.getNearestEntity(Player.class, mylocation, frostpredicate);
-    		if (p != null) {   
-        		if (LocationUtil.isInCircle(mylocation, p.getLocation(), 10) && getGame().getParticipant(p).hasEffect(Frost.registration)) {
+    		if (p != null) {  
+    			if (p.equals(getPlayer())) {
     				ParticleLib.BLOCK_CRACK.spawnParticle(p.getLocation(), 1, 1, 1, 200, 0.5, MaterialX.ICE);
     				SoundLib.BLOCK_GLASS_BREAK.playSound(p.getLocation(), 1, 1.2f);
-    				getGame().getParticipant(p).removeEffects(Frost.registration);
-    				Damages.damageMagic(p, getPlayer(), false, addDamage);
-    				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration)) {
-    					if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() == 1) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 2);
-    					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 2) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 3);
-    					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 3) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 4);
-    					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 4) {
-    						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 5);
-    					}
-    				} else {
-    					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 1);
-    				}
-    				addDamage += 2;
-        		}	
+    				getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) (getParticipant().getPrimaryEffect(Frost.registration).getCount() * multiply), speed));
+    				getParticipant().removeEffects(Frost.registration);
+    			} else {
+            		if (LocationUtil.isInCircle(mylocation, p.getLocation(), range) && getGame().getParticipant(p).hasEffect(Frost.registration)) {
+        				ParticleLib.BLOCK_CRACK.spawnParticle(p.getLocation(), 1, 1, 1, 200, 0.5, MaterialX.ICE);
+        				SoundLib.BLOCK_GLASS_BREAK.playSound(p.getLocation(), 1, 1.2f);
+        				getGame().getParticipant(p).removeEffects(Frost.registration);
+        				Damages.damageMagic(p, getPlayer(), false, addDamage);
+        				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration)) {
+        					if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() == 1) {
+        						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 60, 2);
+        					} else if (getGame().getParticipant(p).getPrimaryEffect(SnowflakeMark.registration).getLevel() >= 2) {
+        						SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 60, 3);
+        					}
+        				} else {
+        					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 60, 1);
+        				}
+        				addDamage += 2;
+            		}		
+    			}
     		} else {
     			stop(false);
     		}
@@ -326,174 +316,117 @@ public class Yuki extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onSilentEnd() {
-    		breakcool.start();
+    		cooldown.start();
     		addDamage = 6;
     	}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer circle = new AbilityTimer(30) {
+	private AbilityTimer rightclickchecker = new AbilityTimer() {
 		
-		private VectorIterator iterator;
+		Location loc;
+		int randominta, randomintb;
 		
-    	@Override
+		@Override
 		public void onStart() {
-    		this.iterator = Circle.infiniteIteratorOf(10, 100);
-    	}
+			randominta = random.nextInt(70);
+			randomintb = random.nextInt(100);
+		}
 		
-    	@Override
-		public void run(int i) {
-			for (int j = 0; j < 5; j++) {
-				Location loc = getPlayer().getLocation().clone().add(iterator.next());
-				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), getPlayer().getLocation().getY(), loc.getBlockX(), loc.getBlockZ()) + 0.1);
-				ParticleLib.CLOUD.spawnParticle(loc, 0, 0, 0, 1, 0.1);
+		@Override
+		public void run(int count) {
+			if (System.currentTimeMillis() - last >= 250) {
+				if (count > (maxcasting / 20.0)) {
+					Damageable nearest = LocationUtil.getNearestEntity(Damageable.class, getPlayer().getLocation(), predicate);
+					if (nearest != null) {
+						SoundLib.BLOCK_GLASS_BREAK.playSound(loc, 1, 1.5f);
+						SoundLib.ENTITY_ENDER_EYE_DEATH.playSound(loc, 1, 2);
+						new Bullet(getPlayer(), loc, nearest.getLocation().add(0, 1, 0).clone().subtract(loc.clone()).toVector().normalize(), (int) ((count / (double) maxcasting) * 300), (count / (double) maxcasting) * 7, gradations.get(count)).start();
+					}	
+				}
+				this.stop(false);
+			} else if (count >= maxcasting - 1) {
+				Frost.apply(getParticipant(), TimeUnit.TICKS, selffrost);
+				stop(false);
+			} else {
+				NMS.sendTitle(getPlayer(), Strings.repeat("§b§k|", (int) ((count / (double) maxcasting) * 10)).concat(Strings.repeat("§7§k|", 10 - (int) ((count / (double) maxcasting) * 10))), "", 0, 100, 1);
+				layervectors = LAYER.clone().rotateAroundAxisX(90).clone();
+				if (count % 10 == 0) {
+					for (Location location : layervectors.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+						ParticleLib.REDSTONE.spawnParticle(location.clone().add(0, 0, 1), gradations.get(count));
+					}	
+				}
+				loc = circle.toLocations(getPlayer().getLocation()).get(randominta).clone().add(0, (randomintb) * 0.01, 0);
+				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count));
+				ParticleLib.PORTAL.spawnParticle(loc, 0, 0, 0, 5, (count * 0.1));	
 			}
-    	}
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			NMS.clearTitle(getPlayer());
+		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
-	
-	private final AbilityTimer casting = new AbilityTimer() {
-		
-    	@Override
-		public void run(int count) {
-    		if (count % 5 == 0) {
-        		if (cast < 12) {
-        			cast++;
-        		}
-        		final Location eyeLocation = getPlayer().getLocation().clone().add(getPlayer().getLocation().getDirection().add(new Vector(0, 2.5, 0)));
-    			final float yaw = getPlayer().getLocation().getYaw();
-    			for (Location loc : LAYER.rotateAroundAxisY(-yaw).toLocations(eyeLocation)) {
-    				switch(cast) {
-    				case 1: ParticleLib.REDSTONE.spawnParticle(loc, color1);
-    				break;
-    				case 2: ParticleLib.REDSTONE.spawnParticle(loc, color2);
-    				break;
-    				case 3: ParticleLib.REDSTONE.spawnParticle(loc, color3);
-    				break;
-    				case 4: ParticleLib.REDSTONE.spawnParticle(loc, color4);
-    				break;
-    				case 5: ParticleLib.REDSTONE.spawnParticle(loc, color5);
-    				break;
-    				case 6: ParticleLib.REDSTONE.spawnParticle(loc, color6);
-    				break;
-    				case 7: ParticleLib.REDSTONE.spawnParticle(loc, color7);
-    				break;
-    				case 8: ParticleLib.REDSTONE.spawnParticle(loc, color8);
-    				break;
-    				case 9: ParticleLib.REDSTONE.spawnParticle(loc, color9);
-    				break;
-    				case 10: ParticleLib.REDSTONE.spawnParticle(loc, color10);
-    				break;
-    				case 11: ParticleLib.REDSTONE.spawnParticle(loc, color11);
-    				break;
-    				case 12: ParticleLib.REDSTONE.spawnParticle(loc, color12);
-    				break;
-    				}
-    			}
-    			LAYER.rotateAroundAxisY(yaw);
-			}
-    		NMS.sendTitle(getPlayer(), Strings.repeat("§b§k|", cast).concat(Strings.repeat("§7§k|", 12 - cast)), "", 0, 100, 1);	
-    	}
-    	
-    	@Override
-    	public void onEnd() {
-    		onSilentEnd();
-    	}
-    	
-    	@Override
-    	public void onSilentEnd() {
-    		NMS.clearTitle(getPlayer());
-    	}
-		
-	}.setPeriod(TimeUnit.TICKS, 1).register();
-	
-	private final AbilityTimer music = new AbilityTimer() {
-
-    	@Override
-		public void run(int count) {
-    		switch(number) {
-    		case 1:
-    		case 2:
-    			switch(count) {
-    			case 1: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.G));
-						break;
-    			case 3: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
-						break;
-    			case 4: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.sharp(1, Tone.A));
-						break;
-    			case 6:	SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.F));
-    					stop(false);
-    					number++;
-						break;
-    			}
-    		break;
-    		case 3:
-    			switch(count) {
-    			case 1: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.D));
-						break;
-    			case 4:
-    			case 7: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.C));
-						break;
-    			case 6: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(0, Tone.D));
-						break;
-    			case 10: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.sharp(1, Tone.A));
-						 break;
-    			case 12: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.sharp(0, Tone.D));
-				 		 break;
-    			case 13: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.C));
-				 		 stop(false);
-				 		 number++;
-				 		 break;
-    			}
-    		break;
-    		case 4:
-    			switch(count) {
-    			case 1: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.D));
-						break;
-    			case 4:	SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.C));
-				 		break;
-    			case 7: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.sharp(1, Tone.A));
-				 		break;
-    			case 10: SoundLib.CHIME.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
-    					 stop(false);
-    					 number = 1;
-		 				 break;
-    			}
-    		break;
-    		}
-    	}
-		
-	}.setPeriod(TimeUnit.TICKS, 2).register();
-	
+    
 	@SubscribeEvent
-	public void onPlayerMove(PlayerMoveEvent e) {
-		if (casting.isRunning() && e.getPlayer().equals(getPlayer()) && cast < 12) getPlayer().setVelocity(zeroV);
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (e.getPlayer().equals(getPlayer()) && getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
+			if ((e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
+				last = System.currentTimeMillis();
+				if (!rightclickchecker.isRunning()) {
+					rightclickchecker.start();
+				}
+				getPlayer().setVelocity(zeroV);
+			} else if ((e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
+				if (!cooldown.isCooldown() && !breaking.isRunning()) {
+					if (LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, frostpredicate).size() > 0) {
+						getPlayer().sendMessage("§3[§b!§3] §a능력을 사용하였습니다.");
+						breaking.start();	
+					} else getPlayer().sendMessage("§3[§b!§3] §f주변에 빙결된 대상이 없습니다.");
+				}
+			}
+		}
 	}
-
+    
+	@SubscribeEvent(onlyRelevant = true)
+	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
+		if (!e.getEffectType().getManifest().name().equals("빙결")) {
+			e.setCancelled(true);
+			Frost.apply(getParticipant(), TimeUnit.TICKS, e.getDuration() / 2);
+		}
+	}
+    
 	public class Bullet extends AbilityTimer {
-		
+
 		private final LivingEntity shooter;
 		private final CustomEntity entity;
 		private final Vector forward;
 		private final Predicate<Entity> predicate;
-		private final Set<Player> attacked = new HashSet<>();
+		private final int time;
+		private final double damage;
+		private Damageable targeted;
 
-		private int cast;
-		private Location lastLocation;
-		
-		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int cast) {
-			super((int) Math.max(2 + cast / 3, 2));
+		private final RGB color;
+
+		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int time, double damage, RGB color) {
+			super(100);
 			setPeriod(TimeUnit.TICKS, 1);
-			Yuki.this.bullet = this;
-			this.cast = cast;
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-2.5, -2.5, -2.5, 2.5, 2.5, 2.5);
-			this.forward = arrowVelocity.multiply(2.5);
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.forward = arrowVelocity.multiply(damage);
+			this.time = time;
+			this.damage = damage;
+			this.color = color;
 			this.lastLocation = startLocation;
 			this.predicate = new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
-					if (entity instanceof ArmorStand) return false;
 					if (entity.equals(shooter)) return false;
 					if (entity instanceof Player) {
 						if (!getGame().isParticipating(entity.getUniqueId())
@@ -513,18 +446,21 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 				}
 
 				@Override
-				public boolean apply(@Nullable Entity arg0) {
+				public boolean apply(@javax.annotation.Nullable Entity arg0) {
 					return false;
 				}
 			};
 		}
-		
+
+		private Location lastLocation;
+		private Location finalLocation;
+
 		@Override
 		protected void run(int i) {
 			final Location newLocation = lastLocation.clone().add(forward);
 			for (Iterator<Location> iterator = new Iterator<Location>() {
-				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
-				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.35);
+				private final int amount = (int) (vectorBetween.length() / .35);
 				private int cursor = 0;
 
 				@Override
@@ -541,42 +477,67 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 			}; iterator.hasNext(); ) {
 				final Location location = iterator.next();
 				entity.setLocation(location);
+				if (!isRunning()) {
+					return;
+				}
 				final Block block = location.getBlock();
 				final Material type = block.getType();
-				if (type.isSolid() && !type.equals(Material.ICE)) {
+				final double y = location.getY();
+				if (y < 0 || y > 256 || !location.getChunk().isLoaded()) {
 					stop(false);
 					return;
 				}
-				for (Player p : LocationUtil.getConflictingEntities(Player.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
-					if (!shooter.equals(p)) {
-						Damages.damageMagic(p, (Player) shooter, true, cast / 3);
-						if (getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
-							attacked.add(p);
-							Frost.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 4);
-						} else if (!getGame().getParticipant(p).hasEffect(Chill.registration) && !getGame().getParticipant(p).hasEffect(Frost.registration) && !attacked.contains(p) && p != null) {
-							Chill.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 15);
-							attacked.add(p);
-						}
+				if (type.isSolid()) {
+					if (RayTrace.hitsBlock(location.getWorld(), lastLocation.getX(), lastLocation.getY(), lastLocation.getZ(), location.getX(), location.getY(), location.getZ())) {
+						finalLocation = location;
+						stop(false);
+						return;
 					}
 				}
-				ParticleLib.BLOCK_CRACK.spawnParticle(location, 0, 0, 0, 1, MaterialX.ICE);
-				ParticleLib.SNOW_SHOVEL.spawnParticle(location, 0.75, 0.75, 0.75, 3, 0.1f);
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
+					if (!shooter.equals(damageable)) {
+						Damages.damageMagic(damageable, getPlayer(), true, (float) damage);
+						targeted = damageable;
+						if (damageable instanceof Player) {
+							Participant p = getGame().getParticipant((Player) damageable);
+							if (!p.hasEffect(Chill.registration)) Chill.apply(p, TimeUnit.TICKS, time);
+							else {
+								p.removeEffects(Chill.registration);
+								Frost.apply(p, TimeUnit.TICKS, (int) ((time * 2) / 3.0));
+							}
+						}
+						finalLocation = location;
+						stop(false);
+						return;
+					}
+				}
+				ParticleLib.REDSTONE.spawnParticle(location, color);
 			}
 			lastLocation = newLocation;
 		}
-		
+
 		@Override
 		protected void onEnd() {
-			entity.remove();
-			attacked.clear();
-			Yuki.this.bullet = null;
+			onSilentEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			entity.remove();
-			attacked.clear();
-			Yuki.this.bullet = null;
+			if (finalLocation != null) {
+				SoundLib.BLOCK_FIRE_EXTINGUISH.playSound(finalLocation, 1, 1.35f);
+				ParticleLib.CLOUD.spawnParticle(finalLocation, 0, 0, 0, 8, 1.5);
+				for (Player player : LocationUtil.getNearbyEntities(Player.class, finalLocation, 1.5, 1.5, predicate)) {
+					if (!player.equals(targeted)) {
+						Participant p = getGame().getParticipant(player);
+						if (!p.hasEffect(Chill.registration)) Chill.apply(p, TimeUnit.TICKS, time);
+						else {
+							p.removeEffects(Chill.registration);
+							Frost.apply(p, TimeUnit.TICKS, (int) ((time * 2) / 3.0));
+						}	
+					}
+				}	
+			}
 		}
 
 		public class ArrowEntity extends CustomEntity implements Deflectable {
@@ -594,7 +555,7 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
 				final Player deflectedPlayer = deflector.getPlayer();
-				new Bullet(deflectedPlayer, lastLocation, newDirection, 3).start();
+				new Bullet(deflectedPlayer, lastLocation, newDirection, time, damage, color).start();
 			}
 
 			@Override
@@ -604,10 +565,11 @@ public class Yuki extends AbilityBase implements ActiveHandler {
 
 			@Override
 			protected void onRemove() {
+				Bullet.this.stop(false);
 			}
 
 		}
-		
+
 	}
 	
 }
