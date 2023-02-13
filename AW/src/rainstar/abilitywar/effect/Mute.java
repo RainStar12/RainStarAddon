@@ -47,7 +47,7 @@ public class Mute extends AbstractGame.Effect implements Listener {
 		hologram.setGravity(false);
 		hologram.setInvulnerable(true);
 		NMS.removeBoundingBox(hologram);
-		hologram.setCustomName("§c🔇");
+		hologram.setCustomName("§c-");
 		hologram.setCustomNameVisible(true);
 	}
 

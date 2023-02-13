@@ -186,7 +186,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     
     private final double range = RANGE.getValue();
     private final int moisturedur = (int) (MOISTURE_DURATION.getValue() * 20);
-    private final double healpercent = HEAL_PERCENTAGE.getValue() * 0.01;
+    private final double healpercent = HEAL_PERCENTAGE.getValue() * 0.0005;
     private final int duration = DURATION.getValue() * 20;
     private final double addrange = ADD_RANGE.getValue();
     private final int chance = CHANCE.getValue();

@@ -353,7 +353,7 @@ public class Yuki extends AbilityBase {
 				layervectors = LAYER.clone().rotateAroundAxisX(90).clone();
 				if (count % 10 == 0) {
 					for (Location location : layervectors.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-						ParticleLib.REDSTONE.spawnParticle(location.clone().add(0, 0, 1), gradations.get(count));
+						ParticleLib.REDSTONE.spawnParticle(location.clone().add(0, 0, -1), gradations.get(count));
 					}	
 				}
 				loc = circle.toLocations(getPlayer().getLocation()).get(randominta).clone().add(0, (randomintb) * 0.01, 0);

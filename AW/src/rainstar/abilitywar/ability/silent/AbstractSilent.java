@@ -18,7 +18,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -50,7 +52,7 @@ import rainstar.abilitywar.system.event.MuteRemoveEvent;
 		"§7근접 공격 §c- §3정적§f: 대상에게 §e표식§f을 부여합니다. §e표식§f은 대상의 시야를 일시적으로",
 		" §5§n고정§f시키고, $[MAX_STACK]번째 §e표식§f이 쌓이면 초기화되고 대상을 $[PASSIVE_MUTE]초간 §3§n침묵§f시킵니다.",
 		" 대상이 나를 공격한다면 §e표식§f은 초기화됩니다. 초기화 시, $[UNIT_COOLDOWN]",
-		"§7철괴 우클릭 §c- §9억제§f: 주변 $[RANGE]칸 내 모든 적을 $[ACTIVE_MUTE]초간 §3§n침묵§f시킵니다. $[COOLDOWN]",
+		"§7철괴 우클릭 §c- §9고요§f: 주변 $[RANGE]칸 내 모든 적을 $[ACTIVE_MUTE]초간 §3§n침묵§f시킵니다. $[COOLDOWN]",
 		" $[SPEED_DURATION]초간 게임 내 §3§n침묵§f 상태자 수 × §b$[SPEED_PER]%§f만큼 §b이동 속도§f가 증가합니다. §8(§7최대 $[MAX_SPEED]%§8)",
 		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		},
@@ -258,6 +260,14 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		if (muted.contains(e.getParticipant())) {
 			muted.remove(e.getParticipant());
 			show0(e.getParticipant().getPlayer());
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					for (Participant participant : muted) {
+						hide0(participant.getPlayer());
+					}
+				}
+			}.runTaskLater(AbilityWar.getPlugin(), 3L);
 		}
 	}
 	
@@ -278,7 +288,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (getPlayer().equals(damager)) {
-			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, (LivingEntity) e.getEntity(), Integer.MAX_VALUE, predicate))) {
+			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, (LivingEntity) e.getEntity(), 30, predicate))) {
 				e.setDamage(e.getDamage() * notlookdamageincrease);
 			}
 			
@@ -288,7 +298,6 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 					Participant participant = getGame().getParticipant(player);
 					if (stackMap.containsKey(participant)) {
 						if (stackMap.get(participant).addStack()) {
-							//particle
 							Mute.apply(participant, TimeUnit.TICKS, passivemute);
 						} else SightLock.apply(participant, TimeUnit.TICKS, 2);
 					} else if (System.currentTimeMillis() - unitcooldowns.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown) new Stack(participant).start();

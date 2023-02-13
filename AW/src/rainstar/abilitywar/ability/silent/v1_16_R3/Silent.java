@@ -118,6 +118,12 @@ public class Silent extends AbstractSilent {
 			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 			channelHandlers.remove(player.getUniqueId());	
 		}
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				((CraftPlayer) getPlayer()).getHandle().setInvisible(false);
+			}
+		}.runTaskLater(AbilityWar.getPlugin(), 2L);
 	}
 
 	private void injectPlayer(CraftPlayer player) {
