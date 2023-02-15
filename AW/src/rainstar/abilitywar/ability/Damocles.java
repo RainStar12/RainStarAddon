@@ -232,7 +232,6 @@ public class Damocles extends AbilityBase {
 				}
 			}.runTaskLater(AbilityWar.getPlugin(), 3L);
 			SoundLib.BLOCK_ANVIL_LAND.playSound(armorstand.getLocation(), 1, 1.4f);
-			getPlayer().damage(Integer.MAX_VALUE);
 			getPlayer().setHealth(0);
 			Bukkit.broadcastMessage("§c잔머리를 꾀한 자, 죽음을 §l절대§c 피하지 못하리라.");
             Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
