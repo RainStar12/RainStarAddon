@@ -9,6 +9,7 @@ import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -181,6 +182,13 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 		
 		if (e.getEntity().equals(getPlayer())) {
 			e.setDamage(e.getDamage() * defence);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onSwap(PlayerSwapHandItemsEvent e) {
+		if (Material.IRON_INGOT.equals(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
+			
 		}
 	}
     

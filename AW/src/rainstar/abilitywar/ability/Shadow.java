@@ -59,8 +59,8 @@ import kotlin.ranges.RangesKt;
 
 @AbilityManifest(name = "섀도우", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §9가장 오래된 감정§f: §b§n공포 상태§f의 적에게 주는 피해가 $[FEAR_DAMAGE_INCREASE]% 증가합니다.",
-		"§7검 우클릭 §8- §5흑마술§f: $[DARKARTS_DURATION]초간 내게 피해를 주는 대상은 $[DARKARTS_FEAR]초간 §b§n공포 상태§f가 됩니다.",
-		" §5흑마술§f이 끝날 때, §b§n공포§f를 준 대상 수 × §d$[HEAL_AMOUNT]HP§f를 §d회복§f합니다. $[DARKARTS_COOLDOWN]",
+		"§7검 우클릭 §8- §5흑마술§f: $[DARK_ARTS_DURATION]초간 내게 피해를 주는 대상은 $[DARK_ARTS_FEAR]초간 §b§n공포 상태§f가 됩니다.",
+		" §5흑마술§f이 끝날 때, §b§n공포§f를 준 대상 수 × §d$[HEAL]HP§f를 §d회복§f합니다. $[DARK_ARTS_COOLDOWN]",
 		"§7철괴 우클릭 §8- §c그림자 베기§f: $[SHADOW_MODE_DURATION]초간 §3그림자 상태§f가 되어, 적을 근접 공격하면",
 		" 대상의 방향으로 짧게 돌진 이후 $[RANGE]칸 내의 적들을 $[SHADOW_FEAR]초간 §b§n공포§f에 빠뜨립니다.",
 		" 이때 적을 처치하면 §3그림자 상태§f를 $[SHADOW_ADD_DURATION]초 증가시키고, §3그림자 상태§f가 끝날 때",
@@ -92,8 +92,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DARKARTS_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "darkarts-duration", 5.0,
+	public static final SettingObject<Double> DARK_ARTS_DURATION = 
+			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-duration", 4.4,
 			"# 흑마술 지속시간") {
 
 		@Override
@@ -103,8 +103,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DARKARTS_FEAR = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "darkarts-fear", 1.5,
+	public static final SettingObject<Double> DARK_ARTS_FEAR = 
+			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-fear", 1.2,
 			"# 흑마술 공포 지속시간") {
 
 		@Override
@@ -114,8 +114,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "heal-amount", 4.0,
+	public static final SettingObject<Double> HEAL = 
+			abilitySettings.new SettingObject<Double>(Shadow.class, "heal", 2.5,
 			"# 흑마술 종료 시 회복량") {
 
 		@Override
@@ -125,8 +125,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DARKARTS_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "darkarts-cooldown", 70,
+	public static final SettingObject<Integer> DARK_ARTS_COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown", 60,
 			"# 흑마술 쿨타임") {
 
 		@Override
@@ -142,7 +142,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_MODE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-duration", 5.0,
+			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-mode-duration", 5.0,
 			"# 그림자 베기 지속시간") {
 
 		@Override
@@ -197,7 +197,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SHADOW_MODE_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-cooldown", 80,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown", 80,
 			"# 그림자 베기 쿨타임") {
 
 		@Override
@@ -214,14 +214,14 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	
 	private final double feardamageincrease = 1 + (FEAR_DAMAGE_INCREASE.getValue() * 0.01);
 	private final int shadowdamageincrease = SHADOW_DAMAGE_INCREASE.getValue();	
-	private final int darkartsduration = (int) (DARKARTS_DURATION.getValue() * 20);
-	private final int darkartsfear = (int) (DARKARTS_FEAR.getValue() * 20);
+	private final int darkartsduration = (int) (DARK_ARTS_DURATION.getValue() * 20);
+	private final int darkartsfear = (int) (DARK_ARTS_FEAR.getValue() * 20);
 	private final int shadowduration = (int) (SHADOW_MODE_DURATION.getValue() * 20);
 	private final int shadowaddduration = (int) (SHADOW_ADD_DURATION.getValue() * 20);
 	private final int shadowfear = (int) (SHADOW_FEAR.getValue() * 20);	
-	private final double healamount = HEAL_AMOUNT.getValue();
+	private final double healamount = HEAL.getValue();
 	private final double range = RANGE.getValue();
-	private final Cooldown darkartscool = new Cooldown(DARKARTS_COOLDOWN.getValue());
+	private final Cooldown darkartscool = new Cooldown(DARK_ARTS_COOLDOWN.getValue());
 	private final Cooldown shadowcool = new Cooldown(SHADOW_MODE_COOLDOWN.getValue());
 	
 	private final static RGB color = RGB.of(1, 128, 128), startColor = RGB.of(1, 1, 64), endColor = RGB.of(64, 1, 64);
