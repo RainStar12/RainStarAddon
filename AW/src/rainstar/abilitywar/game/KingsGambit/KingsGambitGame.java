@@ -28,9 +28,10 @@ import java.util.List;
 		"§f왕의 심판에서 살아남을 수 있을까요?",
 		"",
 		"§4[§c변경점§4]",
-		"§f모든 공격력이 $[DAMAGE_INCREASE]% 상승합니다.",
-		"§f피격 시, 1/$[NORMAL_DEATH]의 확률로 즉사할 가능성이 생깁니다.",
-		"§f적 처치 시마다 이 확률을 "
+		"§f모든 공격력이 10% 상승합니다.",
+		"§f게임 시작 후, 1/36000의 확률로 즉사할 가능성이 생깁니다.",
+		"§f확률 시도 이후 분모가 매번 1씩 줄어듭니다.",
+		"§f적을 처치할 경우 분모에 3000을 더할 수 있습니다."
 		})
 public class KingsGambitGame extends Game implements DefaultKitHandler {
 

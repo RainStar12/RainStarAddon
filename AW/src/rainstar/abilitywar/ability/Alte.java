@@ -48,7 +48,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 한 줄을 알아낼 수 있습니다. §d믹스 능력자§f에서는 각각 한 줄씩 알아냅니다.",
 		"§7패시브 §8- §c전쟁 병기§f: 모든 피해를 §c$[GET_DAMAGE_INCREASE]배§f로 받습니다.",
 		" 그 대신, 피해를 $[EVADE]% 확률로 §b회피§f합니다.",
-		"§7검 들고 F §8- §3절박한 시도§f: 3초간 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_DAMAGE_INCREASED]배§f로 받습니다.",
+		"§7검 들고 F §8- §3절박한 시도§f: 사용 이후 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_INCREASED_DAMAGE]배§f로 받습니다.",
 		" 이 피해로 사망할 경우 피해량의 2.5배의 체력으로 부활하고, 폭발을 일으킵니다.",
 		" 또한 영구 공격력 §c$[DAMAGE_INCREASE]%§f를 획득합니다. $[COOLDOWN]",
 		" 다만 자폭에 실패할 경우 매번 영구적으로 받는 피해량이 §c§l$[GET_DAMAGE_ADD_INCREASE]%§f 증가합니다."
@@ -78,8 +78,8 @@ public class Alte extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Double> SKILL_GET_DAMAGE_INCREASED = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-damage-increased", 2.5,
+	public static final SettingObject<Double> SKILL_GET_INCREASED_DAMAGE = 
+			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-increased-damage", 2.7,
 			"# 절박한 시도 간 받는 피해량 증가 배율") {
 
 		@Override
@@ -142,7 +142,7 @@ public class Alte extends AbilityBase {
 	private static final Set<Material> swords;
 	private final Random random = new Random();
 	private final double getIncrease = GET_DAMAGE_INCREASE.getValue();
-	private final double skillgetIncrease = SKILL_GET_DAMAGE_INCREASED.getValue();
+	private final double skillgetIncrease = SKILL_GET_INCREASED_DAMAGE.getValue();
 	private final int addIncrease = GET_DAMAGE_ADD_INCREASE.getValue();
 	private final int evade = EVADE.getValue();
 	private final int damageincrease = DAMAGE_INCREASE.getValue();
@@ -193,7 +193,7 @@ public class Alte extends AbilityBase {
 		}
 	}
 	
-	private AbilityTimer skill = new AbilityTimer(60) {
+	private AbilityTimer skill = new AbilityTimer() {
 		
 		@Override
     	public void onStart() {
@@ -201,11 +201,6 @@ public class Alte extends AbilityBase {
     		bossBar.setProgress(1);
     		bossBar.addPlayer(getPlayer());
     		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
-    	}
-    	
-    	@Override
-		public void run(int count) {
-    		bossBar.setProgress(count / 60.0);
     	}
     	
 		@Override

@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -59,6 +58,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
@@ -68,10 +68,10 @@ import rainstar.abilitywar.effect.Dream;
 import rainstar.abilitywar.effect.Poison;
 
 @AbilityManifest(name = "그린 가든", rank = Rank.S, species = Species.OTHERS, explain = {
-		"형형색색의 §d꽃§f의 §6씨앗§f을 최대 $[MAX_SEED]개까지 소지합니다.", 
+		"형형색색의 §d꽃§f의 §6씨앗§f을 최대 $[MAX_SEEDS]개까지 소지합니다.", 
 		"§6씨앗§f을 전부 사용하면 $[RECHARGE]초 후 보급됩니다.", 
 		"§7철괴 좌클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.", 
-		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[RANGE]칸 내 생명체에게 효과를 부여합니다.", 
+		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[FLOWER_RANGE]칸 내 생명체에게 효과를 부여합니다.", 
 		"§a긍정 효과§f라면 아군에게, §c부정 효과§f라면 적에게 적용됩니다.", 
 		"§4양귀비 §c§n중독§7 | §e민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 $[ALLIUM_INCREASE]% 증가", 
 		"§b난초 §a신속 $[ORCHID_SPEED]§7 | §f선애기별꽃 §a저항 및 저지 불가§7 | §d라일락 §c§n몽환", 
@@ -89,8 +89,8 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> MAX_SEED = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "max-seed", 3,
+	public static final SettingObject<Integer> MAX_SEEDS = 
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "max-seeds", 4,
             "# 소지 가능한 최대 씨앗 개수") {
 		
         @Override
@@ -133,8 +133,8 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
         
     };
     
-	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "range", 4.5,
+	public static final SettingObject<Double> FLOWER_RANGE = 
+			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range", 5.5,
             "# 꽃 영향 범위", "# 단위: 칸") {
 		
         @Override
@@ -242,11 +242,11 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		
     }
     
-    private final int maxseed = MAX_SEED.getValue();
+    private final int maxseed = MAX_SEEDS.getValue();
     private final int recharge = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * RECHARGE.getValue() : RECHARGE.getValue());
     private final int bloomingwait = (int) (BLOOMING_WAIT.getValue() * 20);
     private final int flowerduration = (int) (FLOWER_EFFECT_DURATION.getValue() * 20);
-    private final double range = RANGE.getValue();
+    private final double range = FLOWER_RANGE.getValue();
     private final double alliumincrease = 1 + (ALLIUM_INCREASE.getValue() * 0.01);
     private final int orchidspeed = ORCHID_SPEED.getValue();
     private final double tulipincrease = 1 + (TULIP_INCREASE.getValue() * 0.01);
@@ -254,16 +254,25 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     private ActionbarChannel ac = newActionbarChannel();
     private List<Seed> seeds = new ArrayList<>();
     private List<Location> seedlocations = new ArrayList<>();
+    private boolean first = true;
     
     @Override
     public void onUpdate(Update update) {
     	if (update == Update.RESTRICTION_CLEAR) {
+    		if (first) {
+        		seeds.clear();
+        		for (int a = 0; a < maxseed; a++) {
+            		seeds.add(Seed.getRandomSeed());	
+            		SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer(), 1, (float) (0.8 + (a * 0.2)));
+        		}
+        		first = false;
+    		}
     		if (seeds.size() <= 0) recharging.start();
     	}
     }
     
-	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
-		if (material.equals(Material.IRON_INGOT) && clicktype.equals(AbilityBase.ClickType.LEFT_CLICK)) {
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK)) {
 			if (seeds.size() > 0) {
 				for (Location loc : seedlocations) {
 					if (loc.distanceSquared(getPlayer().getLocation()) < 4) {
@@ -333,7 +342,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		private final int flowerduration;
 		private Location location;
 		private final RGB seedcolor = RGB.of(18, 95, 41);
-		private final ArmorStand hologram;
+		private final IHologram hologram;
 		private final DecimalFormat df = new DecimalFormat("0.0");
 		private boolean onchange = true;
 		private Block block;
@@ -360,13 +369,8 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			this.seed = seed;
 			this.location = location;
 			this.flowerduration = flowerduration;
-			this.hologram = location.getWorld().spawn(location.clone().add(0, 0.75, 0), ArmorStand.class);
-			hologram.setVisible(false);
-			hologram.setGravity(false);
-			hologram.setInvulnerable(true);
-			NMS.removeBoundingBox(hologram);
-			hologram.setCustomNameVisible(true);
-			hologram.setCustomName("§a개화까지§7: §2" + df.format(getCount() / 20.0) + "§f초");
+			this.hologram = NMS.newHologram(location.getWorld(), location.getX(), location.getY(), location.getZ(), "§a개화까지§7: §2" + df.format(getCount() / 20.0) + "§f초");
+			hologram.display(getPlayer());
 			seedlocations.add(location);
 			this.predicate = new Predicate<Entity>() {
 				@Override
@@ -427,8 +431,8 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		protected void run(int count) {
 			if (count > flowerduration) {
 				//blooming
-				hologram.setCustomName("§a개화까지§7: §2" + df.format((count - flowerduration) / 20.0) + "§f초");
-				ParticleLib.REDSTONE.spawnParticle(location.clone().add(0, 0.15, 0), seedcolor);
+				hologram.setText("§a개화까지§7: §2" + df.format((count - flowerduration) / 20.0) + "§f초");
+				ParticleLib.REDSTONE.spawnParticle(getPlayer(), location.clone().add(0, 0.15, 0), seedcolor);
 				if (count % 20 == 0) SoundLib.BLOCK_CHORUS_FLOWER_GROW.playSound(location, 1, 0.75f);
 			} else {
 				//flower
@@ -444,7 +448,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 					onchange = false;
 				}
 
-				hologram.setCustomName("§2남은 수명§7: §c" + df.format(count / 20.0) + "§f초");
+				hologram.setText("§2남은 수명§7: §c" + df.format(count / 20.0) + "§f초");
 				
 				if (count % 2 == 0) {
 					for (Location loc : circle.toLocations(location).floor(location.getY())) {
@@ -512,7 +516,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		protected void onSilentEnd() {
 			seedlocations.remove(location);
 			HandlerList.unregisterAll(this);
-			hologram.remove();
+			hologram.unregister();
 			snapshot.apply();
 		}
 		

@@ -24,12 +24,12 @@ import java.util.UUID;
 @ModuleBase(NoDelay.class)
 public final class NoDelay implements ListenerModule {
 
-	public static final AttributeModifier PLUS_FIVE = new AttributeModifier(UUID.fromString("f218c7c4-c879-403e-b16c-df81e8383a63"), "zerotick", 6, Operation.ADD_NUMBER);
+	public static final AttributeModifier PLUS_TEN = new AttributeModifier(UUID.fromString("f218c7c4-c879-403e-b16c-df81e8383a63"), "zerotick", 11, Operation.ADD_NUMBER);
 
 	private final Set<LivingEntity> entities;
 
 	private void addModifier(final Player player) {
-		addModifier0(player, Attribute.GENERIC_ATTACK_SPEED, PLUS_FIVE);
+		addModifier0(player, Attribute.GENERIC_ATTACK_SPEED, PLUS_TEN);
 	}
 
 	private void addModifier0(final Player player, final Attribute attribute, final AttributeModifier modifier) {
@@ -39,7 +39,7 @@ public final class NoDelay implements ListenerModule {
 	}
 
 	private void removeModifier(final LivingEntity livingEntity) {
-		livingEntity.getAttribute(Attribute.GENERIC_ATTACK_SPEED).removeModifier(PLUS_FIVE);
+		livingEntity.getAttribute(Attribute.GENERIC_ATTACK_SPEED).removeModifier(PLUS_TEN);
 	}
 
 	public NoDelay(AbstractGame game) {

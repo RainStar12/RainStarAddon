@@ -445,11 +445,11 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		
     		if (usedtime < maxtime) {
     			usedtime++;
-    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.0003));
-				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.0001, RegainReason.CUSTOM);
+    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.000315));
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.000175, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.00015));
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.000175));
 				}
     		} else stop(false);
     	}
