@@ -710,7 +710,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					arrowcool.start();
 				}	
 			}
-			if (constellation == 8) {
+			if (constellation == 8 && getPlayer().equals(e.getEntity().getShooter())) {
 				new AbilityTimer(100) {
 
 					@Override

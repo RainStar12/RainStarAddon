@@ -1,29 +1,39 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "호조사", rank = Rank.S, species = Species.GOD, explain = {
 		"§7철괴 §8- §b여의주§f: 철괴를 이용하여 자신이 원하는 스탯을 $[STAT_BOOST]초간 $[BOOST_PERCENTAGE]% §6강화§f합니다.",
@@ -104,17 +114,44 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
         
     };
     
+	@Override
+	protected void onUpdate(AbilityBase.Update update) {
+	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
+	    	attackCooldownChecker.start();
+	    }
+	}
+    
     private final int duration = (int) (STAT_BOOST.getValue() * 20);
     private final int boostpercent = BOOST_PERCENTAGE.getValue();
     private final int weaken = STAT_WEAKEN.getValue();
     private final int tailper = TAIL_PER_BOOST.getValue();
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private AttributeModifier movespeed;
-    private double attack = 1;
-    private double defence = 1;
-    private double speed = 0;
-    private int type = 0;
-    private int tail = 0;
+    private double attack = 1, defence = 1, speed = 0;
+    private int type = 0, tail = 0;
+    private final ActionbarChannel ac1 = newActionbarChannel(), ac2 = newActionbarChannel();
+    private final DecimalFormat df = new DecimalFormat("0.0");
+	
+    private boolean attackCooldown = false;
+	
+	private final AbilityTimer attackCooldownChecker = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			if (NMS.getAttackCooldown(getPlayer()) > 0.848 && attackCooldown) attackCooldown = false;
+			else if (NMS.getAttackCooldown(getPlayer()) <= 0.848 && !attackCooldown) attackCooldown = true;
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	@SuppressWarnings("deprecation")
+	public static boolean isCriticalHit(Player p, boolean attackcool) {
+		return (!p.isOnGround() && p.getFallDistance() > 0.0F && 
+	      !p.getLocation().getBlock().isLiquid() &&
+	      attackcool == false &&
+	      !p.isInsideVehicle() && !p.isSprinting() && p
+	      .getActivePotionEffects().stream().noneMatch(pe -> (pe.getType() == PotionEffectType.BLINDNESS)));
+	}
     
     private void skip(int selecttype) {
     	if (type == selecttype && buff.getCount() >= (duration / 2.0)) {
@@ -136,26 +173,52 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 	
-    private final AbilityTimer buff = new AbilityTimer() {
+    private final AbilityTimer buff = new AbilityTimer(duration) {
     	
+		private VectorIterator iterator;
+    	private String typename;
+		
     	@Override
     	public void onStart() {
-    		attack = (type == 0 ? 1 + ((tail * tailper) + boostpercent * 0.01) : 1 - (weaken * 0.01));
+    		attack = (type == 0 ? 1 + (((tail * tailper) + boostpercent) * 0.01) : 1 - (weaken * 0.01));
     		defence = (type == 1 ? Math.max(0.01, 1 - (((tail * tailper) + boostpercent) * 0.01)) : 1 + (weaken * 0.01));
     		speed = (type == 2 ? ((tail * tailper) + boostpercent) * 0.01 : weaken * -0.01);
     		
+    		switch(type) {
+    		case 0:
+    			typename = "§c공격력";
+    			break;
+    		case 1:
+    			typename = "§3방어력";
+    			break;
+    		case 2:
+    			typename = "§b이동 속도";
+    			break;
+    		}
+    		
     		movespeed = new AttributeModifier(UUID.randomUUID(), "movespeed", speed, Operation.ADD_SCALAR);
     		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(movespeed);
+    		
+    		SoundLib.ENTITY_EVOKER_PREPARE_SUMMON.playSound(getPlayer().getLocation(), 1, 2);
+    		this.iterator = Circle.infiniteIteratorOf(2, 50);
+    		
+    		tail = 0;
+    		ac2.update("§6꼬리§7: §f" + tail);
     	}
     	
     	@Override
     	public void run(int count) {
-    		
+    		for (int j = 0; j < 5; j++) {
+    			Location loc = getPlayer().getLocation().clone().add(iterator.next());
+    			loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), getPlayer().getLocation().getY(), loc.getBlockX(), loc.getBlockZ()) + 0.1);
+    			ParticleLib.SPELL_WITCH.spawnParticle(loc, 0, 0, 0, 1, 0);	
+    		}
+    		ac1.update(typename + " §e강화§7: " + (count > duration / 2.0 ? "§a" : "§7") + df.format(count / 20.0) + "§f초");
     	}
     	
     	@Override
     	public void onEnd() {
-    		
+    		onSilentEnd();
     	}
     	
     	@Override
@@ -164,6 +227,8 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     		defence = 1;
     		speed = 0;
     		getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(movespeed);
+    		ac1.update(null);
+    		cooldown.start();
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -178,6 +243,17 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 		
 		if (getPlayer().equals(damager)) {
 			e.setDamage(e.getDamage() * attack);
+			
+			boolean isCrit = false;
+			
+			if (getPlayer().equals(e.getDamager()) && isCriticalHit(getPlayer(), attackCooldown)) isCrit = true;
+			if (NMS.isArrow(e.getDamager()) && ((Arrow) e.getDamager()).isCritical()) isCrit = true;
+			
+			if (isCrit && tail < 9) {
+				tail++;
+				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 2);
+				ParticleLib.SPELL_WITCH.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 20, 0.6f);
+			}
 		}
 		
 		if (e.getEntity().equals(getPlayer())) {
@@ -188,7 +264,18 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onSwap(PlayerSwapHandItemsEvent e) {
 		if (Material.IRON_INGOT.equals(e.getOffHandItem().getType()) && e.getPlayer().equals(getPlayer())) {
-			
+			if (!cooldown.isCooldown()) {
+				if (buff.isRunning()) skip(2);
+				else {
+					type = 2;
+					final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getOffHandItem().getType(), null);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+						buff.start();	
+					}
+				}
+			}
+			e.setCancelled(true);
 		}
 	}
     

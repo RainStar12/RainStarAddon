@@ -2,16 +2,19 @@ package rainstar.abilitywar.ability;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -20,11 +23,16 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -101,6 +109,8 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	public static final AttributeModifier PLUS_TEN = new AttributeModifier(UUID.fromString("24aff76f-ff3c-44ea-98c8-62fbde439b07"), "soymilk", 11, Operation.ADD_NUMBER);
 	private final ActionbarChannel ac = newActionbarChannel();
+	private final Crescent crescent = Crescent.of(0.85, 20);
+	private int particleSide = 15;
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
@@ -121,12 +131,12 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     	public void run(int count) {
 			if (ServerVersion.getVersion() >= 13) {
 				BlockData powder = Material.SAND.createBlockData();
-	    		ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.8, 2, 0.8, 2, 0, powder);	
+	    		ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.6, 1, 0.6, 1, 0, powder);	
 			} else {
 				ItemStack powder = new ItemStack(Material.SAND);
-				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.8, 2, 0.8, 2, 0, powder.getData());
+				ParticleLib.FALLING_DUST.spawnParticle(getPlayer().getLocation(), 0.6, 1, 0.6, 1, 0, powder.getData());
 			}
-    		Healths.setHealth(getPlayer(), getPlayer().getHealth() + 0.0167);
+    		if (getPlayer().getHealth() > 0) Healths.setHealth(getPlayer(), getPlayer().getHealth() + 0.0167);
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -156,6 +166,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     		getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).removeModifier(PLUS_TEN);
     		cooldown.start();
     		passive.resume();
+    		ac.update(null);
     	}
     	
     }.setPeriod(TimeUnit.SECONDS, 1).register();
@@ -177,9 +188,41 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
 					}
 				}.runTaskLater(AbilityWar.getPlugin(), 1L);
 			}
-			e.getEntity().setVelocity(getPlayer().getLocation().toVector().subtract(e.getEntity().getLocation().toVector()).multiply(0.1).setY(0));
+			e.getEntity().setVelocity(getPlayer().getLocation().toVector().subtract(e.getEntity().getLocation().toVector()).multiply(0.225).setY(0));
+			new CutParticle(getPlayer(), particleSide).start();
+			particleSide *= -1;
 		}
     }
     
+	private class CutParticle extends AbilityTimer {
+
+		private final Vector axis;
+		private final Vector vector;
+		private final Vectors crescentVectors;
+		private RGB color = RGB.of(254, 235, 138);
+		private final Entity entity;
+
+		private CutParticle(Entity entity, double angle) {
+			super(1);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.entity = entity;
+			this.axis = VectorUtil.rotateAroundAxis(VectorUtil.rotateAroundAxisY(entity.getLocation().getDirection().setY(0).normalize(), 90), entity.getLocation().getDirection().setY(0).normalize(), angle);
+			this.vector = entity.getLocation().getDirection().setY(0).normalize().multiply(0.5);
+			this.crescentVectors = crescent.clone()
+					.rotateAroundAxisY(-entity.getLocation().getYaw())
+					.rotateAroundAxis(entity.getLocation().getDirection().setY(0).normalize(), (180 - angle) % 180)
+					.rotateAroundAxis(axis, -15);
+		}
+		
+		@Override
+		protected void run(int count) {
+			Location baseLoc = entity.getLocation().clone().add(vector).add(0, 0.45, 0);
+			for (Location loc : crescentVectors.toLocations(baseLoc)) {
+				ParticleLib.REDSTONE.spawnParticle(loc, color);
+			}
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(baseLoc, 0.75f, 0.5f);
+		}
+
+	}
 
 }
