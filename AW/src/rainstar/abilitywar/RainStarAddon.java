@@ -303,6 +303,9 @@ public class RainStarAddon extends Addon implements Listener {
         AbilityList.registerAbility(GreenGarden.class);
 		AbilityFactory.registerAbility(SoyMilk.class);
         AbilityList.registerAbility(SoyMilk.class);
+		AbilityFactory.registerAbility(Hozosa.class);
+        AbilityList.registerAbility(Hozosa.class);
+        
         
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
