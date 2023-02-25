@@ -40,7 +40,7 @@ import rainstar.abilitywar.effect.Moisture;
 @AbilityManifest(name = "비구름", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §b비구름§f: 자신을 한 발짝 늦게 따라오는 §b구름§f이 반지름 $[RANGE]칸 내에 §3§l비§f를 내립니다.",
 		" §3§l비§f에 맞은 적은 시간이 점점 쌓이는 상태이상 §3§n습기§f를 $[MOISTURE_DURATION]초 받습니다.",
-		" 자신은 §3§n습기§f 효과를 지속시간 $[HEAL_PERCENTAGE]%의 회복 효과로 대신 받습니다.",
+		" 자신은 §3§n습기§f 효과를 지속시간 $[HEAL_PERCENT]%의 회복 효과로 대신 받습니다.",
 		"§7철괴 우클릭 §8- §2기후 조작§f: $[DURATION]초간 §b구름§f의 범위가 $[ADD_RANGE]칸 증가합니다.",
 		" 지속시간동안 §b구름§f은 자신이 마지막으로 공격한 적을 추격하고, $[CHANCE]%의 확률로",
 		" §8먹구름§f이 되어 매 $[LIGHTNING_DELAY]초마다 번개를 내리쳐 $[STUN]초간 §e§n기절§f시킵니다. $[COOLDOWN]",
@@ -83,9 +83,9 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
         
     };
     
-	public static final SettingObject<Integer> HEAL_PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Raincloud.class, "heal-percentage", 25,
-            "# 회복 치환율", "# 단위: %", "# 25%라면, 1초에 0.25의 체력을 회복합니다.") {
+	public static final SettingObject<Integer> HEAL_PERCENT = 
+			abilitySettings.new SettingObject<Integer>(Raincloud.class, "heal-percent", 40,
+            "# 회복 치환율", "# 단위: %", "# 40%라면, 1초에 0.40의 체력을 회복합니다.") {
 		
         @Override
         public boolean condition(Integer value) {
@@ -186,7 +186,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     
     private final double range = RANGE.getValue();
     private final int moisturedur = (int) (MOISTURE_DURATION.getValue() * 20);
-    private final double healpercent = HEAL_PERCENTAGE.getValue() * 0.0005;
+    private final double healpercent = HEAL_PERCENT.getValue() * 0.0005;
     private final int duration = DURATION.getValue() * 20;
     private final double addrange = ADD_RANGE.getValue();
     private final int chance = CHANCE.getValue();
@@ -261,7 +261,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     				cloudlocation.getWorld().strikeLightningEffect(cloudlocation);
     	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, cloudlocation, nowrange, predicate)) {
     	    			if (!getPlayer().equals(player) && Damages.canDamage(player, DamageCause.LIGHTNING, lightningdamage)) {
-    	    				Healths.setHealth(player, Math.min(1, player.getHealth() - lightningdamage));
+    	    				Healths.setHealth(player, Math.max(1, player.getHealth() - lightningdamage));
     	    				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, stun);
     	    			}
     	    		}
