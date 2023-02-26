@@ -213,7 +213,7 @@ public class RandomGame extends Game {
 				gamemodes.put("§6시너지", SynergyGame.class);
 				gamemodes.put("§e트리플 믹스", TripleMixGame.class);
 				
-				wrecks.put("§cW§6R§eE§aC§bK §70§f%", "null");
+				wrecks.put("§cW§6R§eE§aC§bK §70§f%", null);
 				wrecks.put("§cW§6R§eE§aC§bK §725§f%", "_25");
 				wrecks.put("§cW§6R§eE§aC§bK §750§f%", "_50");
 				wrecks.put("§cW§6R§eE§aC§bK §775§f%", "_75");
@@ -307,6 +307,13 @@ public class RandomGame extends Game {
 				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
 			}
 			break;
+		case 110:
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.sendTitle(player, "§f[" + gameresult + "§f]", "", 0, 100, 0);
+				SoundLib.PIANO.playInstrument(player, Note.natural(1, Tone.A));
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
+			}
+			break;
 			
 		case 122:
 		case 123:
@@ -329,7 +336,7 @@ public class RandomGame extends Game {
 		case 200:
 			String wreckname = random.pick(wrecks.keySet().toArray(new String[0]));
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				NMS.sendTitle(player, gameresult, wreckname, 0, 100, 0);
+				NMS.sendTitle(player, "§f[" + gameresult + "§f]", wreckname, 0, 100, 0);
 				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.C));
 				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
 			}
@@ -337,16 +344,27 @@ public class RandomGame extends Game {
 		case 220:
 			wreckresult = random.pick(wreckresults);
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				NMS.sendTitle(player, gameresult, wreckresult, 0, 100, 0);
+				NMS.sendTitle(player, "§f[" + gameresult + "§f]", wreckresult, 0, 100, 0);
 				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.C));
 				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
 			}
 			break;
-		case 280:
+		case 230:
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.sendTitle(player, "§f[" + gameresult + "§f]", "§f[" + wreckresult + "§f]", 0, 100, 0);
+				SoundLib.PIANO.playInstrument(player, Note.natural(1, Tone.A));
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
+			}
+			break;
+		case 300:
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				NMS.clearTitle(player);
 			}
-			Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, wrecks.get(wreckresult));
+			if (wreckresult.equals(null)) Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, false);
+			else {
+				Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, true);
+				Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, wrecks.get(wreckresult));
+			}
 			GameManager.stopGame();
 			GameManager.startGame(gamemodes.get(gameresult), null);
 			break;
