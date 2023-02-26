@@ -78,6 +78,7 @@ import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
+import rainstar.abilitywar.game.RandomGame;
 import rainstar.abilitywar.game.SelectMix.Null;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 import rainstar.abilitywar.synergy.*;
@@ -377,6 +378,7 @@ public class RainStarAddon extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 	    
 	    GameFactory.registerMode(SelectMixGame.class);
+	    GameFactory.registerMode(RandomGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
 		Bukkit.broadcastMessage("§e능력 §f91개 §7/ §d시너지 §f43개 적용 완료.");

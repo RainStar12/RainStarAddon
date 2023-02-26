@@ -5,26 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Note;
-import org.bukkit.World;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
 
-import com.google.common.base.Strings;
-
-import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.mix.MixGame;
@@ -33,14 +26,8 @@ import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.list.mix.synergy.game.SynergyGame;
 import daybreak.abilitywar.game.list.mix.triplemix.TripleMixGame;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
-import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
-import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.module.InfiniteDurability;
-import daybreak.abilitywar.game.script.manager.ScriptManager;
-import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.Seasons;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -188,16 +175,20 @@ public class RandomGame extends Game {
 	public RandomGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
+		setPeriod(TimeUnit.TICKS, 1);
 	}
 	
 	private final Random random = new Random();
 	private final Map<String, Class<? extends AbstractGame>> gamemodes = new HashMap<>();
+	private final Map<String, String> wrecks = new HashMap<>();
 	private final List<String> gamemoderesults = new ArrayList<>();
+	private final List<String> wreckresults = new ArrayList<>();
+	private String gameresult;
+	private String wreckresult;
 	
-
 	@Override
-	protected void progressGame(int seconds) {
-		switch (seconds) {
+	protected void progressGame(int count) {
+		switch (count) {
 		case 1:
 			if (NORMAL_CHANCE.getValue() + BLIND_CHANCE.getValue() + BLIND_MIX_CHANCE.getValue() + ONEABILITY_CHANCE.getValue() + 
 					CHANGE_CHANCE.getValue() + CHANGE_MIX_CHANCE.getValue() + MIX_CHANCE.getValue() + SELECT_MIX_CHANCE.getValue() +
@@ -221,6 +212,13 @@ public class RandomGame extends Game {
 				gamemodes.put("§a셀렉트 믹스", SelectMixGame.class);
 				gamemodes.put("§6시너지", SynergyGame.class);
 				gamemodes.put("§e트리플 믹스", TripleMixGame.class);
+				
+				wrecks.put("§cW§6R§eE§aC§bK §70§f%", "null");
+				wrecks.put("§cW§6R§eE§aC§bK §725§f%", "_25");
+				wrecks.put("§cW§6R§eE§aC§bK §750§f%", "_50");
+				wrecks.put("§cW§6R§eE§aC§bK §775§f%", "_75");
+				wrecks.put("§cW§6R§eE§aC§bK §790§f%", "_90");
+				wrecks.put("§cW§6R§eE§aC§bK §7100§f%", "_100");
 				
 				for (int a = 0; a < NORMAL_CHANCE.getValue(); a++) {
 					gamemoderesults.add("§b일반");
@@ -253,19 +251,39 @@ public class RandomGame extends Game {
 					gamemoderesults.add("§e트리플 믹스");
 				}
 				
-				
+				for (int a = 0; a < WRECK_0_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §70§f%");
+				}
+				for (int a = 0; a < WRECK_25_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §725§f%");
+				}
+				for (int a = 0; a < WRECK_50_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §750§f%");
+				}
+				for (int a = 0; a < WRECK_75_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §775§f%");
+				}
+				for (int a = 0; a < WRECK_90_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §790§f%");
+				}
+				for (int a = 0; a < WRECK_100_CHANCE.getValue(); a++) {
+					wreckresults.add("§cW§6R§eE§aC§bK §7100§f%");
+				}
 				
 				break;
 			}
 		case 2:
+		case 3:
 		case 4:
+		case 5:	
 		case 6:
 		case 8:
-		case 11:
+		case 10:
+		case 12:
 		case 14:
 		case 17:
 		case 20:
-		case 24:
+		case 24:	
 		case 28:
 		case 33:
 		case 38:
@@ -282,10 +300,57 @@ public class RandomGame extends Game {
 			break;
 			
 		case 100:
-			
+			gameresult = random.pick(gamemoderesults);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.sendTitle(player, gameresult, "", 0, 100, 0);
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.C));
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
+			}
 			break;
-		}
 			
+		case 122:
+		case 123:
+		case 124:
+		case 125:
+		case 126:
+		case 128:
+		case 130:
+		case 132:
+		case 134:
+		case 137:
+		case 140:
+		case 144:
+		case 148:
+		case 153:
+		case 158:
+		case 165:
+		case 175:
+		case 185:
+		case 200:
+			String wreckname = random.pick(wrecks.keySet().toArray(new String[0]));
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.sendTitle(player, gameresult, wreckname, 0, 100, 0);
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.C));
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
+			}
+			break;
+		case 220:
+			wreckresult = random.pick(wreckresults);
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.sendTitle(player, gameresult, wreckresult, 0, 100, 0);
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.C));
+				SoundLib.PIANO.playInstrument(player, Note.natural(0, Tone.E));
+			}
+			break;
+		case 280:
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				NMS.clearTitle(player);
+			}
+			Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, wrecks.get(wreckresult));
+			GameManager.stopGame();
+			GameManager.startGame(gamemodes.get(gameresult), null);
+			break;
+		}			
 	}
 
 }
