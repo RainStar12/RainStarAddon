@@ -47,48 +47,36 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> STRENGTH = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-amplifier", 0,
-            "# 힘 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-amplifier", 1,
+            "# 힘 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
-        }
-		@Override
-		public String toString() {
-			return "" + (1 + getValue());
         }
     };
     
 	public static final SettingObject<Integer> SPEED = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-amplifier", 0,
-            "# 신속 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-amplifier", 1,
+            "# 신속 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
-        }
-		@Override
-		public String toString() {
-			return "" + (1 + getValue());
         }
     };
     
 	public static final SettingObject<Integer> RESISTANCE = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-amplifier", 0,
-            "# 저항 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-amplifier", 1,
+            "# 저항 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
         }
-		@Override
-		public String toString() {
-			return "" + (1 + getValue());
-        }
     };
     
     private ActionbarChannel ac = newActionbarChannel();
-    private int strength = STRENGTH.getValue();
-    private int speed = SPEED.getValue();
-    private int resistance = RESISTANCE.getValue();
+    private int strength = STRENGTH.getValue() - 1;
+    private int speed = SPEED.getValue() - 1;
+    private int resistance = RESISTANCE.getValue() - 1;
     private final List<Integer> pumplistA = new ArrayList<Integer>(Arrays.asList(1300, 1200, 1100, 1000, 950, 900, 850, 810, 770, 730, 700, 670, 640, 610, 
     		580, 550, 530, 510, 490, 470, 450, 430, 410, 395, 380, 365, 350, 335, 320, 305, 290, 275, 260, 248, 236, 224, 212, 200, 188, 176, 164, 152, 140,
     		130, 120, 110, 100, 90, 82, 74, 66, 58, 50, 44, 38, 32, 26, 20, 16, 12, 8, 6, 4, 2));   
@@ -105,9 +93,9 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void run(int count) {
-    		PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 999999, strength, true);
-    		PotionEffects.SPEED.addPotionEffect(getPlayer(), 999999, speed, true);
-    		PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 999999, resistance, true);
+    		if (strength >= 0) PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 999999, strength, true);
+    		if (speed >= 0) PotionEffects.SPEED.addPotionEffect(getPlayer(), 999999, speed, true);
+    		if (resistance >= 0) PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 999999, resistance, true);
     		
     		if (pumplistA.contains(count)) SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.A));
     		if (pumplistE.contains(count)) SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.E));

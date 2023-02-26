@@ -538,7 +538,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(p, ((rank + 1) * 0.3), RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled()) {
-									Healths.setHealth(p, p.getHealth() + ((rank + 1) * 0.3));
+									Healths.setHealth(p, p.getHealth() + event.getAmount());
 									SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p, 1, 1.2f);
 									ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 								}
@@ -546,7 +546,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, ((rank + 1) * 0.5), RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
-								Healths.setHealth((Player) shooter, shooter.getHealth() + ((rank + 1) * 0.5));
+								Healths.setHealth((Player) shooter, shooter.getHealth() + event.getAmount());
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound((Player) shooter, 1, 1.2f);
 								ParticleLib.HEART.spawnParticle(shooter.getLocation(), 0.5, 1, 0.5, 10, 1);
 							}
@@ -582,7 +582,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(p, 3.9, RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled()) {
-									Healths.setHealth(p, p.getHealth() + 3.9);
+									Healths.setHealth(p, p.getHealth() + event.getAmount());
 									SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p, 1, 1.2f);
 									ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 								}
