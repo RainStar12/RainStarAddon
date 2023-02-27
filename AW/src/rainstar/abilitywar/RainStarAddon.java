@@ -32,6 +32,7 @@ import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Berserker;
 import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.Demigod;
+import daybreak.abilitywar.ability.list.Developer;
 import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.DiceGod;
 import daybreak.abilitywar.ability.list.Emperor;
@@ -343,13 +344,13 @@ public class RainStarAddon extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Protagonist.class, SurvivalInstinct.class, Cliche.class);
 		SynergyFactory.registerSynergy(Flector.class, Stop.class, HumanBaseball.class);
 		SynergyFactory.registerSynergy(HeadtoHead.class, Loki.class, CowardlyMatch.class);
-		SynergyFactory.registerSynergy(Empty.class, Empty.class, Abyss.class);
-		
+		SynergyFactory.registerSynergy(Empty.class, Empty.class, Abyss.class);	
 		SynergyFactory.registerSynergy(Vampire.class, Executioner.class, VampireCount.class);
 		SynergyFactory.registerSynergy(King.class, Emperor.class, Crown.class);
 		SynergyFactory.registerSynergy(ForbiddenFruit.class, Muse.class, Eden.class);
 		SynergyFactory.registerSynergy(Lunar.class, Stella.class, StarryNight.class);
 		SynergyFactory.registerSynergy(Reverse.class, Mazochist.class, Sadism.class);
+		SynergyFactory.registerSynergy(Developer.class, Null.class, BugFix.class);
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -379,7 +380,7 @@ public class RainStarAddon extends Addon implements Listener {
 	    GameFactory.registerMode(SelectMixGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f91개 §7/ §d시너지 §f43개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f91개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -713,7 +714,7 @@ public class RainStarAddon extends Addon implements Listener {
 	public void onGameCredit(GameCreditEvent e) {
 		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f91개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
-			e.addCredit("§d시너지 §f43개 적용 완료.");
+			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}
 		e.addCredit("§a레인스타 애드온 §f개발자 : RainStar_ [§9디스코드 §f: RainStar§7#0846§f]");
 	}

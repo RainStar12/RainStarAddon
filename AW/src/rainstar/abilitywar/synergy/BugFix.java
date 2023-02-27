@@ -12,6 +12,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.effect.Rooted;
 import daybreak.abilitywar.game.manager.object.AbilitySelect.AbilityCollector;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -28,6 +29,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -47,8 +49,10 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Predicate;
 
 @AbilityManifest(
@@ -67,6 +71,21 @@ import java.util.function.Predicate;
 
 public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 
+    @SuppressWarnings("unused")
+	private final Object explain = new Object() {
+        @Override
+        public String toString() {
+            if (!abilities.isEmpty()) {
+                final StringJoiner joiner = new StringJoiner("\n");
+                joiner.add("§b" + abilities.get(0).getName() + (abilities.size() > 1 ? "§7×2" : "") + " §f[" + (abilities.get(0).isRestricted() ? "§7능력 비활성화됨" : "§a능력 활성화됨") + "§f] " + abilities.get(0).getRank().getRankName() + " " + abilities.get(0).getSpecies().getSpeciesName());
+                for (final Iterator<String> iterator = abilities.get(0).getExplanation(); iterator.hasNext(); ) {
+                    joiner.add(ChatColor.RESET + iterator.next());
+                }
+                return joiner.toString();
+            } else return "능력이 없습니다.";
+        }
+    };
+	
     private final Predicate<Entity> predicate = new Predicate<Entity>() {
         @Override
         public boolean test(Entity entity) {
@@ -315,8 +334,11 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
         public void setAbility(final Class<? extends AbilityBase> clazz) throws ReflectiveOperationException {
             removeAbility();
             final AbilityBase newability = create(clazz, getParticipant());
-            abilities.add(newability);
-            abilities.add(newability);
+            if (SynergyFactory.getSynergy(clazz, clazz) != null) abilities.add(create(SynergyFactory.getSynergy(clazz, clazz), getParticipant()));
+            else {
+                abilities.add(newability);
+                abilities.add(newability);	
+            }
 			for (AbilityBase ability : abilities) {
 				ability.setRestricted(false);
 			}
