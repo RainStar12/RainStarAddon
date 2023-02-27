@@ -13,6 +13,7 @@ import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.AbstractMix.MixParticipant;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -220,7 +221,7 @@ public class SelectMixGUI implements Listener {
     		break;
     	case 1:
         	try {
-        		mix.setAbility(abilities[selected.getFirst()].getAbilityClass(), Null.class);
+        		mix.setAbility(abilities[selected.getFirst()].getAbilityClass(), NullAbility.class);
     		} catch (ReflectiveOperationException e1) {
     			e1.printStackTrace();
     		}
@@ -233,7 +234,7 @@ public class SelectMixGUI implements Listener {
     		}
     		break;
     	}
-    	if (mix.hasSynergy()) player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getSynergy().getDisplayName() + "§f입니다.");
+    	if (mix.hasSynergy()) player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getSynergy().getDisplayName() + "§e(" + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getLeft() + " + " + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getRight() + "§e)§f입니다.");
     	else player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getFirst().getDisplayName() + " §7+ §b" + mix.getSecond().getDisplayName() + "§f입니다.");
     }
     

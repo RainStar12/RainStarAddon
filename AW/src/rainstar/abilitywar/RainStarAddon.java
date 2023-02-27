@@ -79,7 +79,7 @@ import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
-import rainstar.abilitywar.game.SelectMix.Null;
+import rainstar.abilitywar.game.SelectMix.NullAbility;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 import rainstar.abilitywar.synergy.*;
 import rainstar.abilitywar.synergy.chance.Chance;
@@ -308,6 +308,19 @@ public class RainStarAddon extends Addon implements Listener {
         AbilityList.registerAbility(Hozosa.class);
         
         
+        
+    	//beta
+		AbilityFactory.registerAbility(Flex.class);
+		AbilityList.registerAbility(Flex.class);
+		AbilityFactory.registerAbility(KnockbackPatch.class);
+		AbilityList.registerAbility(KnockbackPatch.class);
+		AbilityFactory.registerAbility(DamageTester.class);
+		AbilityList.registerAbility(DamageTester.class);
+		
+		//event
+		AbilityFactory.registerAbility(NullAbility.class);
+        
+        
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
 		SynergyFactory.registerSynergy(AntiGravity.class, AntiGravity.class, Gravity.class);
@@ -350,7 +363,9 @@ public class RainStarAddon extends Addon implements Listener {
 		SynergyFactory.registerSynergy(ForbiddenFruit.class, Muse.class, Eden.class);
 		SynergyFactory.registerSynergy(Lunar.class, Stella.class, StarryNight.class);
 		SynergyFactory.registerSynergy(Reverse.class, Mazochist.class, Sadism.class);
-		SynergyFactory.registerSynergy(Developer.class, Null.class, BugFix.class);
+		SynergyFactory.registerSynergy(Developer.class, NullAbility.class, BugFix.class);
+		
+		Bukkit.broadcastMessage("버그픽스 등록됨? : " + SynergyFactory.isRegistered("버그 픽스"));
 		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
@@ -409,17 +424,6 @@ public class RainStarAddon extends Addon implements Listener {
     	} else if (ServerVersion.getVersion() == 17) {
     		SynergyFactory.registerSynergy(daybreak.abilitywar.ability.list.clown.v1_17_R1.Clown.class, Alice.class, Joker.class);
     	}
-    	
-    	//beta
-		AbilityFactory.registerAbility(Flex.class);
-		AbilityList.registerAbility(Flex.class);
-		AbilityFactory.registerAbility(KnockbackPatch.class);
-		AbilityList.registerAbility(KnockbackPatch.class);
-		AbilityFactory.registerAbility(DamageTester.class);
-		AbilityList.registerAbility(DamageTester.class);
-		
-		//event
-		AbilityFactory.registerAbility(Null.class);
 		
 		if (hy.exists()) {
 			for (Player player : Bukkit.getOnlinePlayers()) {

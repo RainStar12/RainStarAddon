@@ -71,6 +71,10 @@ import java.util.function.Predicate;
 
 public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 
+    public BugFix(Participant participant) {
+        super(participant);
+    }
+	
     @SuppressWarnings("unused")
 	private final Object explain = new Object() {
         @Override
@@ -161,19 +165,15 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 
 	};
 	
-    private final Random random = new Random();
-    private final Circle rootCircle = Circle.of(1, 15), circle = Circle.of(10, 100);
-	private List<AbilityBase> abilities = new ArrayList<>();
-    private final AbilityChanger abilityChanger = new AbilityChanger();
-    
     private final double range = RANGE.getValue();
     private final int rooted = (int) (ROOTED.getValue() * 20);
     private final double heal = HEAL.getValue();
     private final double addheal = ADD_HEAL.getValue();
-
-    public BugFix(Participant participant) {
-        super(participant);
-    }
+	
+    private final Random random = new Random();
+    private final Circle rootCircle = Circle.of(1, 15), circle = Circle.of(range, (int) (range * 10));
+	private List<AbilityBase> abilities = new ArrayList<>();
+    private final AbilityChanger abilityChanger = new AbilityChanger();
 
 	@Override
 	public boolean usesMaterial(Material material) {
@@ -239,6 +239,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 					ability.setRestricted(false);
 				}
 			}
+			abilityChanger.start();
 		} else if (update == Update.RESTRICTION_SET) {
 			if (!abilities.isEmpty()) {
 				for (AbilityBase ability : abilities) {

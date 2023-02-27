@@ -15,9 +15,9 @@ import daybreak.abilitywar.utils.base.random.Random;
 		summarize = {
 		"NullPointerException"
 		})
-public class Null extends AbilityBase {
+public class NullAbility extends AbilityBase {
 	
-	public Null(Participant participant) {
+	public NullAbility(Participant participant) {
 		super(participant);
 	}
 	
