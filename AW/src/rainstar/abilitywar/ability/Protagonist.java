@@ -276,12 +276,6 @@ public class Protagonist extends AbilityBase {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
     	if (getPlayer().equals(e.getEntity())) {
     		switch(bufflevel) {
-    		case 0:
-    			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
-    				e.setCancelled(true);
-    				Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25);
-    			}
-    			break;
     		case 2:
     		case 3:
     			e.setDamage(e.getDamage() * 0.85);
@@ -292,6 +286,13 @@ public class Protagonist extends AbilityBase {
     		case 5:
     			e.setDamage(e.getDamage() * 0.7);
     			break;
+    		}
+    		
+    		if (bufflevel < 3) {
+    			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+    				e.setCancelled(true);
+    				Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25);
+    			}
     		}
     	}
     	if (getPlayer().equals(e.getDamager())) {

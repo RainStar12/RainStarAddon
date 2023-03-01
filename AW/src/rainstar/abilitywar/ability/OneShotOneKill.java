@@ -21,10 +21,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "일격필살", rank = Rank.A, species = Species.HUMAN, explain = {
-		"적에게 입히는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."
+		"적마다 가하는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."
 		},
 		summarize = {
-		"적에게 입히는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."		
+		"적마다 가하는 첫 §3근접 §c치명타 피해§f가 §c$[MULTIPLY]%§f의 대미지를 입힙니다."		
 		})
 
 public class OneShotOneKill extends AbilityBase {
@@ -45,7 +45,7 @@ public class OneShotOneKill extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> MULTIPLY = abilitySettings.new SettingObject<Integer>(OneShotOneKill.class,
-			"damage-multiply", 235, "# 추가 대미지 배율") {
+			"multiply", 275, "# 추가 대미지 배율") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

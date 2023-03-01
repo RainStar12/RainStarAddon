@@ -103,7 +103,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer()) && !e.isCancelled()) {
 			if (damages.contains(e.getDamage())) {
 				damages.remove(e.getDamage());
-			} else if (skill.isRunning()) {
+			} else if (skill.isRunning() && !e.getDamager().equals(getPlayer())) {
 				e.setDamage(e.getDamage() * percentage);
 				damages.add(e.getDamage());
 				new BukkitRunnable() {

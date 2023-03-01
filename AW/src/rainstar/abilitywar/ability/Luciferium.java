@@ -32,7 +32,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"복용 시 영구적인 §6힘 $[STRENGTH]§f, §b신속 $[SPEED]§f, §8저항 $[RESISTANCE]§f 버프를 획득합니다.",
 		"그러나 복용 이후에는 §c66.6§f초 내로 약을 다시 복용해야만 합니다. §8(§7실패 시 §c사망§8)",
 		"복용까지 걸린 시간의 §c66.6§f%로 다음 복용 시간이 줄어듭니다.",
-		"적 처치 시 재사용 전까지 약의 효능과 부작용을 전부 제거합니다."
+		"적 처치 시 약의 효능과 부작용을 제거하나, 재사용 전까지 §2독§f에 걸립니다."
 		},
 		summarize = {
 		"§7웅크린 채 철괴 좌클릭§f시 약을 먹어 §6힘§7 / §b신속§7 / §8저항§f 버프를 얻습니다.",
@@ -125,6 +125,21 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	public AbilityTimer debuff = new AbilityTimer() {
+		
+    	@Override
+    	public void run(int count) {	
+    		PotionEffects.POISON.addPotionEffect(getPlayer(), 100, 0, true);
+    		if (nextpill.isRunning()) stop(false);
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		getPlayer().removePotionEffect(PotionEffectType.POISON);
+    	}
+		
+	}.setPeriod(TimeUnit.TICKS, 50).register();
 	
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {

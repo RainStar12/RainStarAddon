@@ -42,7 +42,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
         " 빠르게 획득해, §a총 3초에 체력 1을 획득§f합니다. §8(§7틱당 0.0167§8)",
         "§7철괴 우클릭 §8- §6두유 러버§f: 체력을 $[HEALTH_GAIN] 획득하고, $[DURATION]초간 §e꿀꺽꿀꺽§f이 봉인됩니다.",
         " 지속시간동안 근접 공격 쿨타임이 사라지며 근접 공격력이 §c$[DAMAGE_DECREASE]%§f 감소합니다.",
-        " 이떼 근접 공격을 피격당한 적은 다음 기본 무적 시간이 초기화됩니다. $[COOLDOWN]",
+        " 이때 근접 공격을 피격당한 적은 다음 기본 무적 시간이 초기화됩니다. $[COOLDOWN]",
 		"§a[§e능력 제공자§a] §bduyu_999"
         },
         summarize = {
@@ -55,7 +55,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> HEALTH_GAIN = 
-			abilitySettings.new SettingObject<Double>(SoyMilk.class, "health-gain", 6.0,
+			abilitySettings.new SettingObject<Double>(SoyMilk.class, "health-gain", 7.0,
             "# 체력 획득량") {
 		
         @Override
