@@ -43,7 +43,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -53,7 +52,6 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
@@ -61,8 +59,7 @@ import daybreak.google.common.collect.ImmutableSet;
 @AbilityManifest(name = "주인공", rank = Rank.S, species = Species.HUMAN, explain = {
 		"당신은 이 능력자 전쟁의 §e주인공§f입니다.",
 		"체력이 적어 §c위기 상태§f가 될 때 다양한 §a주인공 버프§f를 받습니다.",
-		"또한 적을 처치할 때마다 매번 §d성장§f합니다.",
-		"§8[§7HIDDEN§8] §c이야기 쟁탈§f: 자, 이제 누가 주인공이지?"
+		"또한 적을 처치할 때마다 매번 §d성장§f합니다."
 		},
 		summarize = {
 		"체력이 적을수록 §a주인공 버프§f를 얻어 강해집니다.",
@@ -205,31 +202,9 @@ public class Protagonist extends AbilityBase {
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (e.getEntity().getKiller() != null) {
 			if (e.getEntity().getKiller().equals(getPlayer())) {
-				Player player = e.getEntity();
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + (firstMaxHealth * 0.1));
 				nowMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				AbilityBase ab = getGame().getParticipant(player).getAbility();
-				if (bufflevel >= 3) {
-					if (ab.getClass().equals(Mix.class)) {
-						Mix mix = (Mix) ab;
-						if (mix.hasAbility() && !mix.hasSynergy()) {
-							if (mix.getFirst().getClass().equals(Protagonist.class) || mix.getSecond().getClass().equals(Protagonist.class)) {
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f당신과는 다른 이야기의 주인공을 만나 §a주인공 버프§f를 받고 승리하였습니다.");
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c이야기 쟁탈§f을 달성하였습니다.");
-				    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-				    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));
-							}
-						}
-					} else if (ab.getClass().equals(Protagonist.class)) {
-						getPlayer().sendMessage("§8[§7HIDDEN§8] §f당신과는 다른 이야기의 주인공을 만나 §a주인공 버프§f를 받고 승리하였습니다.");
-		    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c이야기 쟁탈§f을 달성하였습니다.");
-		    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-		    			double targetMaxHealth = e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-		    			getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + ((targetMaxHealth + (firstMaxHealth * 0.1)) - firstMaxHealth));
-					}	
-				}
 			}	
 		}
 	}

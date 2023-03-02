@@ -37,7 +37,6 @@ import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -171,39 +170,9 @@ public class Crystal extends AbilityBase implements ActiveHandler {
 	    			} else if (dist < 1600) {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 80, 0, true);
 	    				e.setDamage(e.getDamage() * 1.3);
-	    			} else if (dist < 10000) {
+	    			} else {
 	    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 100, 0, true);
 	    				e.setDamage(e.getDamage() * 1.4);
-	    			} else if (dist >= 10000) {
-	    				AbilityBase ab = getParticipant().getAbility();
-	    				if (ab.getClass().equals(Mix.class)) {
-	    					Mix mix = (Mix) ab;
-	    					if (!mix.getFirst().getClass().equals(PrecisionAiming.class) && !mix.getSecond().getClass().equals(PrecisionAiming.class)) {
-			    				if (checktarget.contains(target)) {
-				    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 200, 1, true);
-				    				e.setDamage(e.getDamage() * 2);
-					    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f100m 밖의 적을 2연속으로 맞히셨습니다.");
-					    			getPlayer().sendMessage("§8[§7HIDDEN§8] §5마탄의 사수§f를 달성하였습니다.");
-					    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());	
-					    			checktarget.clear();
-			    				} else {
-			    					checktarget.clear();
-			    					checktarget.add(target);
-			    				}
-	    					}
-	    				} else {
-		    				if (checktarget.contains(target)) {
-			    				PotionEffects.SLOW.addPotionEffect(target.getPlayer(), 200, 1, true);
-			    				e.setDamage(e.getDamage() * 2);
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f100m 밖의 적을 2연속으로 맞히셨습니다.");
-				    			getPlayer().sendMessage("§8[§7HIDDEN§8] §5마탄의 사수§f를 달성하였습니다.");
-				    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-				    			checktarget.clear();
-		    				} else {
-		    					checktarget.clear();
-		    					checktarget.add(target);
-		    				}	
-	    				}
 	    			}
     			}	
     		} else {

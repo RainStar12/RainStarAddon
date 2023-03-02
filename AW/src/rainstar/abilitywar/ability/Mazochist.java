@@ -128,7 +128,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 				Healths.setHealth(getPlayer(), getPlayer().getHealth() + (stack * heal));
 			}
 			
-			if (getPlayer().getHealth() == getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) stack = 0;
+			if (getPlayer().getHealth() >= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.1) stack = 0;
 			ac.update("§c피격§f: §b" + stack + "§f회");
 		}
 	

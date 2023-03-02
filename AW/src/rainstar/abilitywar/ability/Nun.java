@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -34,7 +33,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
@@ -137,7 +135,6 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			.put(Rank.SPECIAL, "§c")
 			.build();
 	
-	private boolean risky = false;
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
 	private final int chance = CHANCE.getValue();
 	private final int channelingDur = (int) (CHANNELING_COUNT.getValue() * 20);
@@ -232,13 +229,10 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		@Override
 		public void onStart() {
 			getPlayer().sendMessage("§7§o기도합시다.");
-			double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-			if (getPlayer().getHealth() <= maxHP * 0.15) risky = true;
 		}
 		
 		@Override
 		public void onEnd() {
-			risky = false;
 			beingGod.start();
 		}
 		
@@ -326,16 +320,6 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				e.setCancelled(true);
 				getPlayer().setHealth(1);
 				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
-			}
-			if (channeling.isRunning() && risky) {
-				e.setCancelled(true);
-				getPlayer().setHealth(1);
-				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 60, 1, false);
-				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
-				getPlayer().sendMessage("§8[§7HIDDEN§8] §7§o예수께서 이르시되 나는 부활이요 생명이니 나를 믿는 자는 죽어도 살겠고");
-				getPlayer().sendMessage("§8[§7HIDDEN§8] §f위험한 상황에서도 기도하였고, 믿음을 보답받았습니다.");
-				getPlayer().sendMessage("§8[§7HIDDEN§8] §b믿음의 보답§f을 달성하였습니다.");
-				SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
 			}
 		}
 	}

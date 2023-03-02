@@ -39,8 +39,7 @@ import daybreak.google.common.collect.ImmutableMap;
 		" 꼬리는 2개로 시작하여 최대 9개까지 소지 가능합니다.",
 		"§7철괴 좌클릭 §8- §b기록§f: 피해입은 방식에 대한 기록이 나타납니다.",
 		"§7철괴 우클릭 §8- §d둔갑§f: 꼬리가 9개일 때 사용할 수 있습니다.",
-		" 사용 시 둔갑하여 §e구미호(둔갑)§f 능력이 되고 모든 꼬리를 잃습니다.",
-		"§8[§7HIDDEN§8] §3산전수전§f: §o수행의 끝에 도달할 수 있을까요?"
+		" 사용 시 둔갑하여 §e구미호(둔갑)§f 능력이 되고 모든 꼬리를 잃습니다."
 		},
 		summarize = {
 		"미경험 피해 방법으로 피해입을 때마다 꼬리 1개를 즉시 획득합니다.",
@@ -95,7 +94,6 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	private int stack = 2;	
 	private final int period = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(25) * PERIOD.getValue() * 20 : PERIOD.getValue() * 20);
 	private Set<DamageCause> damagetype = new HashSet<>();
-	private boolean master = false;
 	
 	@Override
 	protected void onUpdate(Update update) {
@@ -135,12 +133,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 				getPlayer().sendMessage("[§c!§f] §c" + damageCauses.get(e.getCause()) + "§f" + KoreanUtil.getJosa(damageCauses.get(e.getCause()), Josa.을를) + " 통하여 수행을 성공했습니다.");
 				SoundLib.BLOCK_ENCHANTMENT_TABLE_USE.playSound(getPlayer(), 1, 1.4f);
 				ParticleLib.ENCHANTMENT_TABLE.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 200, 1);
-				if (damagetype.size() == 24) {
-					getPlayer().sendMessage("§8[§7HIDDEN§8] 모든 피해 방식을 경험하여 당신은 완벽히 둔갑할 수 있게 되었습니다.");
-					getPlayer().sendMessage("§8[§7HIDDEN§8] §3산전수전§f을 달성하였습니다.");
-	    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-					master = true;
-				} else stackup();
+				stackup();
 			}
 		}
     }
@@ -163,60 +156,31 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && stack == 9) {
-	    	if (master) {
-	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("§5[§d!§5] §e완전 둔갑에 성공하셨습니다. §7/aw check");
-		    	AbilityBase ab = getParticipant().getAbility();
-		    	if (ab.getClass().equals(Mix.class)) {
-		    		final Mix mix = (Mix) ab;
-					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-					if (this.equals(first)) {
-						try {
-							mix.setAbility(NineTailFoxCP.class, second.getClass());
-						} catch (ReflectiveOperationException e) {
-							e.printStackTrace();
-						}
-					} else if (this.equals(second)) {
-						try {
-							mix.setAbility(first.getClass(), NineTailFoxCP.class);
-						} catch (ReflectiveOperationException e) {
-							e.printStackTrace();
-						}
-					}
-		    	} else {
-			    	try {
-						getParticipant().setAbility(NineTailFoxCP.class);
-					} catch (UnsupportedOperationException | ReflectiveOperationException e) {
+    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
+	    	getPlayer().sendMessage("§5[§d!§5] §e둔갑에 성공하셨습니다. §7/aw check");
+	    	AbilityBase ab = getParticipant().getAbility();
+	    	if (ab.getClass().equals(Mix.class)) {
+	    		final Mix mix = (Mix) ab;
+				final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+				if (this.equals(first)) {
+					try {
+						mix.setAbility(NineTailFoxC.class, second.getClass());
+					} catch (ReflectiveOperationException e) {
 						e.printStackTrace();
-					}	
-		    	}	
+					}
+				} else if (this.equals(second)) {
+					try {
+						mix.setAbility(first.getClass(), NineTailFoxC.class);
+					} catch (ReflectiveOperationException e) {
+						e.printStackTrace();
+					}
+				}
 	    	} else {
-	    		SoundLib.ITEM_ARMOR_EQUIP_LEATHER.playSound(getPlayer());
-		    	getPlayer().sendMessage("§5[§d!§5] §e둔갑에 성공하셨습니다. §7/aw check");
-		    	AbilityBase ab = getParticipant().getAbility();
-		    	if (ab.getClass().equals(Mix.class)) {
-		    		final Mix mix = (Mix) ab;
-					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-					if (this.equals(first)) {
-						try {
-							mix.setAbility(NineTailFoxC.class, second.getClass());
-						} catch (ReflectiveOperationException e) {
-							e.printStackTrace();
-						}
-					} else if (this.equals(second)) {
-						try {
-							mix.setAbility(first.getClass(), NineTailFoxC.class);
-						} catch (ReflectiveOperationException e) {
-							e.printStackTrace();
-						}
-					}
-		    	} else {
-			    	try {
-						getParticipant().setAbility(NineTailFoxC.class);
-					} catch (UnsupportedOperationException | ReflectiveOperationException e) {
-						e.printStackTrace();
-					}	
-		    	}
+		    	try {
+					getParticipant().setAbility(NineTailFoxC.class);
+				} catch (UnsupportedOperationException | ReflectiveOperationException e) {
+					e.printStackTrace();
+				}
 	    	}
 	    	return true;
 	    }

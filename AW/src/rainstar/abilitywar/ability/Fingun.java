@@ -29,7 +29,7 @@ import daybreak.google.common.base.Strings;
 		},
 		summarize = {
 		"맨 손 상태를 일정 시간 유지하면 지건이 충전됩니다. 이때 근접 공격 시",
-		"대상에게 §c출혈 피해§f를 입힙니다. §c출혈§f 중인 적에게 가하는 피해가 증가합니다."
+		"대상에게 §c§n출혈 피해§f를 입힙니다. §c§n출혈§f 중인 적에게 가하는 피해가 증가합니다."
 		})
 public class Fingun extends AbilityBase {
 

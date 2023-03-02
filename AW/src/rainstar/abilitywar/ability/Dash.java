@@ -41,7 +41,6 @@ import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Bleed;
@@ -70,8 +69,7 @@ import rainstar.abilitywar.effect.Confusion;
 		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
 		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. $[DASH_STAMINA_HEAL]",
 		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 2초간",
-		" §c§n출혈§f 및 무작위 방향으로 튕겨나가는 §6§n혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]",
-		"§8[§7HIDDEN§8] §b속도 경쟁§f: 과연 누가 더 빠를려나?"
+		" §c§n출혈§f 및 무작위 방향으로 튕겨나가는 §6§n혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]"
 		},
 		summarize = {
 		"§7검 들고 F키§f를 눌러 스태미나를 소모해 §b대시§f합니다.",
@@ -198,10 +196,8 @@ public class Dash extends AbilityBase {
 	
 	private Location startLocation;
 	private Participant target;
-	private boolean onetime = true;
 	private static final Vector zerov = new Vector(0, 0, 0);
 	private double timer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(75) * 3 : 3);
-	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 200, 2, true, false);
 	private PotionEffect normalspeed = new PotionEffect(PotionEffectType.SPEED, 100, 1, true, false);
 	private PotionEffect invisible = new PotionEffect(PotionEffectType.INVISIBILITY, 3, 0, true, false);
 	private ItemStack[] armors;
@@ -360,32 +356,7 @@ public class Dash extends AbilityBase {
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			if (target != null) {
 		    	if (attacked.isRunning() && !target.hasEffect(Confusion.registration)) {
-					if (onetime == true && target.hasAbility()) {
-						AbilityBase ab = target.getAbility();
-						if (ab.getClass().equals(LightningCounter.class)) {
-			    			target.getPlayer().addPotionEffect(speed);
-			    			getPlayer().addPotionEffect(speed);
-			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f우연히 고속의 상대를 만나 경쟁을 하여 매우 빨라졌습니다.");
-			    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c속도 경쟁§f을 달성하였습니다.");
-			    			staminaGain(10);
-			    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-			    			onetime = false;
-						} else if (ab.getClass().equals(Mix.class)) {
-							Mix mix = (Mix) ab;
-							if (mix.hasAbility() && !mix.hasSynergy()) {
-								if (mix.getFirst().getClass().equals(LightningCounter.class)
-										|| mix.getSecond().getClass().equals(LightningCounter.class)) {
-						    			target.getPlayer().addPotionEffect(speed);
-						    			getPlayer().addPotionEffect(speed);
-						    			getPlayer().sendMessage("§8[§7HIDDEN§8] §f우연히 고속의 상대를 만나 경쟁을 하여 매우 빨라졌습니다.");
-						    			getPlayer().sendMessage("§8[§7HIDDEN§8] §c속도 경쟁§f을 달성하였습니다.");
-						    			staminaGain(10);
-						    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-						    			onetime = false;
-									} else lightspeed();
-							} else lightspeed();
-						} else lightspeed();
-					} else if (onetime == false || !target.hasAbility()) lightspeed();
+					lightspeed();
 		   		}	
 			}
 	   	}

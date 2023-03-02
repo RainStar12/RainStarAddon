@@ -1,6 +1,5 @@
 package rainstar.abilitywar.synergy;
 
-import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -39,7 +38,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -48,8 +46,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -74,8 +70,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §8- §a해치웠나?§f: 치명적 피해를 입을 때, §a불사의 토템 효과§f가 발동합니다.",
 		" §a불사의 토템§f은 $[PERIOD]초마다 재충전됩니다.",
 		" §a불사의 토템§f이 재충전되기 전까지, §b주인공 버프§f를 얻을 수 없습니다.",
-		"§7패시브 §8- §c일당백§f: $[RANGE]칸 내 적의 수에 비례해 해치웠나? 효과가 더 빨리 발동합니다.",
-		"§8[§7HIDDEN§8] §e금의환향§f: 이걸로 이야기 끝!"
+		"§7패시브 §8- §c일당백§f: $[RANGE]칸 내 적의 수에 비례해 해치웠나? 효과가 더 빨리 발동합니다."
 		})
 
 public class Cliche extends Synergy {
@@ -92,9 +87,6 @@ public class Cliche extends Synergy {
 	private double nowMaxHealth = 0;
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * PERIOD.getValue() : PERIOD.getValue());
 	private final int range = RANGE.getValue();
-	private final int invduration = INV_DURATION.getValue();
-	private ActionbarChannel ac = newActionbarChannel();
-	private final DecimalFormat df = new DecimalFormat("0.00");
 	
 	private static final Set<Material> swords;
 	
@@ -118,16 +110,6 @@ public class Cliche extends Synergy {
 	
 	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Cliche.class,
 			"range", 13, "# 일당백 효과 사거리") {
-		
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-		
-	};
-	
-	public static final SettingObject<Integer> INV_DURATION = synergySettings.new SettingObject<Integer>(Cliche.class,
-			"inv-duration", 100, "# 금의환향 무적 지속시간") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -195,35 +177,6 @@ public class Cliche extends Synergy {
 			return false;
 		}
 	};
-	
-    private final AbilityTimer invtimer = new AbilityTimer(invduration * 20) {
-    	
-    	@Override
-    	public void onStart() {
-    		SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
-    		SoundLib.ENTITY_FIREWORK_ROCKET_LARGE_BLAST.broadcastSound();
-    		SoundLib.ENTITY_FIREWORK_ROCKET_TWINKLE.broadcastSound();
-    		Bukkit.broadcastMessage("§8[§7HIDDEN§8] §b주인공 §e" + getPlayer().getName() + "§f님에 의해 마왕이 쓰러졌습니다.");
-    		Bukkit.broadcastMessage("§8[§7HIDDEN§8] §b" + invduration + "§f초간 주인공이 선제 공격하기 전까지 주인공을 공격하지 못합니다.");
-    		getPlayer().sendMessage("§8[§7HIDDEN§8] §e금의환향§f을 달성하였습니다.");
-    	}
-    	
-    	@Override
-		public void run(int count) {
-    		ac.update("§d무적§7: §f" + df.format(invtimer.getCount() * 0.05) + "초");
-    	}
-    	
-    	@Override
-    	public void onEnd() {
-    		onSilentEnd();
-    	}
-    	
-    	@Override
-    	public void onSilentEnd() {
-    		ac.update(null);
-    	}
-    	
-    }.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 1).register();
 	
     private final AbilityTimer periodtimer = new AbilityTimer(period * 20) {
     	
@@ -326,14 +279,6 @@ public class Cliche extends Synergy {
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (e.getEntity().getKiller() != null) {
 			if (e.getEntity().getKiller().equals(getPlayer())) {
-				Player player = e.getEntity();
-				AbilityBase ab = getGame().getParticipant(player).getAbility();
-				if (ab.getClass().equals(Mix.class)) {
-					Mix mix = (Mix) ab;
-					if (mix.hasAbility() && mix.hasSynergy()) {
-						if (mix.getSynergy().getClass().equals(DemonLord.class)) invtimer.start();
-					}
-				}
 				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth + (firstMaxHealth * 0.1));
 				nowMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
@@ -382,7 +327,6 @@ public class Cliche extends Synergy {
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
     	if (getPlayer().equals(e.getEntity())) {
-    		if (invtimer.isRunning()) e.setCancelled(true);
     		switch(bufflevel) {
     		case 0:
     			if (!periodtimer.isRunning()) {
@@ -405,7 +349,6 @@ public class Cliche extends Synergy {
     		}
     	}
     	if (getPlayer().equals(e.getDamager())) {
-    		if (invtimer.isRunning()) invtimer.stop(false);
     		switch(bufflevel) {
     		case 0:
     			e.setDamage(e.getDamage() * 1.05);
@@ -423,10 +366,6 @@ public class Cliche extends Synergy {
     			e.setDamage(e.getDamage() * 1.25);
     			break;
     		}
-    	}
-    	if (e.getDamager() instanceof Projectile) {
-    		Projectile p = (Projectile) e.getDamager();
-    		if (getPlayer().equals(p.getShooter()) && invtimer.isRunning()) invtimer.stop(false);
     	}
     }
     

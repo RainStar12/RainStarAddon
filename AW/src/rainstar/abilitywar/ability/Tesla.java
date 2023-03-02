@@ -22,8 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -60,7 +58,6 @@ import daybreak.google.common.base.Strings;
 import daybreak.google.common.collect.ImmutableSet;
 import daybreak.google.common.collect.Iterables;
 import rainstar.abilitywar.effect.ElectricShock;
-import rainstar.abilitywar.effect.SnowflakeMark;
 
 @AbilityManifest(
 		name = "테슬라", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -74,8 +71,7 @@ import rainstar.abilitywar.effect.SnowflakeMark;
 		"§7철괴 우클릭 §8- §e레일건§f: 다음 활 발사 시 초고속의 유도 탄환을 발사해 적중 대상에게",
 		" 근접 피해를 주고, 플라즈마 폭발을 일으키고 대상의 위치로 순간 이동합니다. $[RIGHT_COOLDOWN]",
 		"§b[§d감전§b]§f 매 2초마다 0.5초간 §e§n기절§f합니다. §d§n감전§f 도중에 §e§n기절§f 효과가 새로이",
-		" 들어올 때마다 획득한 §e§n기절§f의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다.",
-		"§8[§7HIDDEN§8] §b초전도§f: 원소 반응."
+		" 들어올 때마다 획득한 §e§n기절§f의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다."
 		},
 		summarize = {
 		"자신이 주는 모든 §c근접 피해 외 피해§f는 피해량에 비례한 §e기절 부여§f로 대체됩니다.",
@@ -131,11 +127,9 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 	
 	private final ActionbarChannel ac = newActionbarChannel();
 	private boolean charged = false;
-	private boolean onetime = true;
 	private int chargestack = 0;
 	private static final Set<Material> nocheck;
 	private Location targetblock;
-	private PotionEffect levitation = new PotionEffect(PotionEffectType.LEVITATION, 80, 4, true, false);
 	private static final Circle circle = Circle.of(7, 120);
 	private static final Circle explosioncircle = Circle.of(2.5, 7);
 	private static final RGB color = new RGB(107, 102, 254);
@@ -407,17 +401,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 				location.getWorld().strikeLightning(loc);
 			}
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, location, 6, 6, predicate)) {
-				if (getGame().getParticipant(p).hasEffect(SnowflakeMark.registration) && onetime) {
-					ElectricShock.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20);
-					SnowflakeMark.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 20, 3);
-	    			getPlayer().sendMessage("§8[§7HIDDEN§8] §b절대 영도§f에 도달한 플레이어를 감전시켰습니다.");
-	    			getPlayer().sendMessage("§8[§7HIDDEN§8] §b초전도§f를 달성하였습니다.");
-	    			p.addPotionEffect(levitation);
-	    			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer());
-	    			onetime = false;
-				} else {
-					ElectricShock.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 14);	
-				}
+				ElectricShock.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 14);	
 			}
 		}
 		

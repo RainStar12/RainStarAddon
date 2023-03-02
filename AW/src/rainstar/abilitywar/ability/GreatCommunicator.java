@@ -193,6 +193,7 @@ public class GreatCommunicator extends AbilityBase {
         		cooldown.start();
     			SoundLib.BLOCK_ANVIL_LAND.playSound(player.getLocation(), 1, 0.7f);
         		ParticleLib.CRIT.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
+        		if (isCriticalHit(getPlayer(), attackCooldown)) ParticleLib.CRIT_MAGIC.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
     		}
     	}
     }
