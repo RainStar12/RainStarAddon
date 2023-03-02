@@ -115,7 +115,7 @@ public class Fingun extends AbilityBase {
 			chargestack = 0;
 			ac.update("§7||||||||||");
 			Bleed.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (duration * 20));
-			SoundLib.BLOCK_ANVIL_LAND.playSound(player.getLocation(), 1, 0.7f);
+			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(player.getLocation(), 1, 1.2f);
 			cooldown.start();
 		}
 		
