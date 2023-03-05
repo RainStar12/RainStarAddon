@@ -164,7 +164,7 @@ public class RandomGame extends Game {
 		}
 	};
 	
-	public static final Setting<Integer> WRECK_100_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "wreck-0", 2, 
+	public static final Setting<Integer> WRECK_100_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "wreck-100", 2, 
 			"# WRECK 100% 등장확률", "# WRECK 확률의 총합은 정확히 100이어야 합니다.") {
 		@Override
 		public boolean condition(Integer value) {
