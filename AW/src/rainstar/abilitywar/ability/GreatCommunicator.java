@@ -120,7 +120,7 @@ public class GreatCommunicator extends AbilityBase {
 	private final int maxfear = (int) (MAX_FEAR.getValue() * 20);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final Random random = new Random();
-	private double speed = 0.005 + (random.nextInt(70) * 0.001);
+	private double speed = 0.01 + (random.nextInt(61) * 0.001);
 	private BossBar bossBar = null;
 	private double nowcharge = 0;
 	private boolean reverse = false;
@@ -189,7 +189,7 @@ public class GreatCommunicator extends AbilityBase {
     		if (Damages.canDamage(player, DamageCause.ENTITY_ATTACK, damage)) {
     			Healths.setHealth(player, Math.max(1, player.getHealth() - damage));
     			Fear.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (maxfear * nowcharge  * (isCriticalHit(getPlayer(), attackCooldown) ? 1.5 : 1)), getPlayer());
-    			speed = 0.01 + (random.nextInt(50) * 0.01);
+    			speed = 0.01 + (random.nextInt(61) * 0.001);
         		cooldown.start();
     			SoundLib.BLOCK_ANVIL_LAND.playSound(player.getLocation(), 1, 0.7f);
         		ParticleLib.CRIT.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);

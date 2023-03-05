@@ -28,7 +28,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Strings;
 
-@AbilityManifest(name = "꼬마", rank = Rank.S, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "아이", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §a보호본능§f: 자신을 공격한 적에게 §b망설임§f을 1 부여합니다.",
 		" §b망설임§f × $[CHANCE]%의 확률로 대상은 시야가 뒤틀리고, §b망설임§f이 초기화됩니다.",
 		"§7철괴 우클릭 §8- §c방범벨§f: 적들을 §b망설임§f × $[STUN]초간 §e기절§f시킵니다. $[COOLDOWN]",
@@ -141,7 +141,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
 					Strings.repeat("§b;", stack));
 			hologram.display(getPlayer());
-			stackMap.put(getGame().getParticipant(player), this);
+			stackMap.put(participant, this);
 			addStack();
 		}
 
@@ -153,6 +153,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 		}
 
 		private void addStack() {
+			stack++;
 			hologram.setText(Strings.repeat("§b;", stack));
 			if (random.nextInt(100) < stack * chanceper) {
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(participant.getPlayer().getLocation(), 1, 1.632f);
