@@ -308,6 +308,8 @@ public class RainStarAddon extends Addon implements Listener {
         AbilityList.registerAbility(Hozosa.class);
 		AbilityFactory.registerAbility(GreatCommunicator.class);
         AbilityList.registerAbility(GreatCommunicator.class);
+		AbilityFactory.registerAbility(Kid.class);
+        AbilityList.registerAbility(Kid.class);
         
         
     	//beta

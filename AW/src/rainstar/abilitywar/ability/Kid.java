@@ -4,12 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
@@ -18,6 +25,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "꼬마", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -29,7 +37,7 @@ import daybreak.google.common.base.Strings;
 		summarize = {
 		""
 		})
-public class Kid extends AbilityBase {
+public class Kid extends AbilityBase implements ActiveHandler {
 	
 	public Kid(Participant participant) {
 		super(participant);
@@ -78,6 +86,44 @@ public class Kid extends AbilityBase {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private Map<Participant, Stack> stackMap = new HashMap<>();
 	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (getPlayer().equals(e.getEntity())) {
+			Player damager = null;
+			if (e.getDamager() instanceof Projectile) {
+				Projectile projectile = (Projectile) e.getDamager();
+				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+			
+			if (damager != null && getGame().isParticipating(damager)) {
+				Participant participant = getGame().getParticipant(damager);
+				if (stackMap.containsKey(participant)) stackMap.get(participant).addStack();
+				else new Stack(participant).start();
+			}
+		}
+	}
+	
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
+			if (stackMap.size() > 0) {
+				new AbilityTimer(10) {
+					
+					@Override
+					public void run(int count) {
+						SoundLib.BELL.playInstrument(getPlayer().getLocation(), Note.natural(1, Tone.A));
+					}
+					
+				}.setPeriod(TimeUnit.TICKS, 2).start();
+				
+				for (Stack stack : stackMap.values()) {
+					stack.stunApply();
+				}
+				return cooldown.start();
+			} else getPlayer().sendMessage("§4[§c!§4] §f망설이는 적이 없습니다.");
+		}
+		return false;
+	}
+	
 	private class Stack extends AbilityTimer {
 		
 		private final Player player;
@@ -109,7 +155,8 @@ public class Kid extends AbilityBase {
 		private void addStack() {
 			hologram.setText(Strings.repeat("§b;", stack));
 			if (random.nextInt(100) < stack * chanceper) {
-				float yaw = random.nextInt(361) - 180, pitch = random.nextInt(361) - 180;
+				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(participant.getPlayer().getLocation(), 1, 1.632f);
+				float yaw = random.nextInt(361) - 180, pitch = random.nextInt(181) - 90;
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					NMS.rotateHead(players, player, yaw, pitch);	
 				}
