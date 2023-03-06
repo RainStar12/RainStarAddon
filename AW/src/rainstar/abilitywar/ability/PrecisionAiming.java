@@ -41,7 +41,7 @@ import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "정밀 조준", rank = Rank.A, species = Species.HUMAN, explain = {
-		"$[RELOAD]초마다 다음 $[AMMO_SIZE]발의 화살을 정밀하게 조준합니다.",
+		"$[RELOAD]초마다 다음 $[AMMO_SIZE]발의 화살을 정밀하게 조준하여,",
 		"화살로부터 $[RANGE]칸 내 가장 가까운 플레이어에게 §5유도§f됩니다."
 		},
 		summarize = {

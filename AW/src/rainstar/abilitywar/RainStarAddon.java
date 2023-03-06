@@ -138,7 +138,6 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityFactory.registerAbility(NineTailFox.class);
 		AbilityList.registerAbility(NineTailFox.class);
 		AbilityFactory.registerAbility(NineTailFoxC.class);
-		AbilityFactory.registerAbility(NineTailFoxCP.class);
 		AbilityFactory.registerAbility(Echo.class);
 		AbilityList.registerAbility(Echo.class);
 		AbilityFactory.registerAbility(Dash.class);

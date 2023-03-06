@@ -305,7 +305,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 											try {
 												Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
 												if (clazz != Empty.class) {
-													if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
+													if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
 													if (clazz == Kuro.class) clazz = KuroEye.class;
 													this.ability = AbilityBase.create(clazz, getParticipant());
 													this.ability.setRestricted(false);
@@ -325,7 +325,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 									try {
 										Class<? extends AbilityBase> clazz = targetAbility.getClass();
 										if (clazz != Empty.class) {
-											if (clazz == NineTailFoxC.class || clazz == NineTailFoxCP.class) clazz = NineTailFox.class; 
+											if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
 											if (clazz == Kuro.class) clazz = KuroEye.class;
 											this.ability = AbilityBase.create(clazz, getParticipant());
 											this.ability.setRestricted(false);

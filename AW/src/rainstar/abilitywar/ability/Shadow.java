@@ -127,7 +127,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DARK_ARTS_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown-", 60,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown-", 50,
 			"# 흑마술 쿨타임") {
 
 		@Override
@@ -198,7 +198,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SHADOW_MODE_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown", 80,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown-", 70,
 			"# 그림자 베기 쿨타임") {
 
 		@Override
