@@ -101,4 +101,10 @@ public class Pyromaniac extends AbilityBase {
 
 	};
 	
+	private final Cooldown tntcooldown = new Cooldown(TNT_CANNON_COOLDOWN.getValue()), revengecooldown = new Cooldown(REVENGE_BOOM_COOLDOWN.getValue());
+	private final int revengeduration = (int) (REVENGE_BOOM_DURATION.getValue() * 20);
+	private final int decrease = (int) (1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01));
+	private final int critcount = CRIT_COUNT.getValue();
+	private final double explosivedamage = EXPLOSIVE_DAMAGE.getValue();
+	
 }
