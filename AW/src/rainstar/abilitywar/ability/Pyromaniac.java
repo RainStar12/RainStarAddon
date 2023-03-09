@@ -1,19 +1,28 @@
 package rainstar.abilitywar.ability;
 
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.potion.PotionEffectType;
+
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "파이로매니악", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7철괴 좌클릭 §8- §cTNT 캐논§f: 바라보는 방향으로 §cTNT§f를 날립니다. $[TNT_CANNON_COOLDOWN]",
 		"§7철괴 우클릭 §8- §3리벤지 붐§f: $[REVENGE_BOOM_DURATION]초간 공격을 할 수 없고, 받는 피해량이 $[REVENGE_BOOM_DECREASE]% 감소합니다.",
 		" 종료 시 피해를 준 대상들에게 준 피해량만큼 폭발 피해를 입힙니다. $[REVENGE_BOOM_COOLDOWN]",
 		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 절반만큼 §d회복§f합니다.",
-		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 고정 피해 §c$[EXPLOSIVE_DAMAGE]§f의 폭발을 일으킵니다.",
+		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE_DAMAGE]§f의 폭발을 일으킵니다.",
 		"§a[§e능력 제공자§a] §3Dire5778"
 		},
 		summarize = {
@@ -106,5 +115,47 @@ public class Pyromaniac extends AbilityBase {
 	private final int decrease = (int) (1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01));
 	private final int critcount = CRIT_COUNT.getValue();
 	private final double explosivedamage = EXPLOSIVE_DAMAGE.getValue();
+	private int count = 0;
+	
+    private boolean attackCooldown = false;
+	
+	private final AbilityTimer attackCooldownChecker = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			if (NMS.getAttackCooldown(getPlayer()) > 0.848 && attackCooldown) attackCooldown = false;
+			else if (NMS.getAttackCooldown(getPlayer()) <= 0.848 && !attackCooldown) attackCooldown = true;
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	private final AbilityTimer skill = new AbilityTimer(revengeduration) {
+		
+		@Override
+		public void run(int count) {
+			
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	@SuppressWarnings("deprecation")
+	public static boolean isCriticalHit(Player p, boolean attackcool) {
+		return (!p.isOnGround() && p.getFallDistance() > 0.0F && 
+	      !p.getLocation().getBlock().isLiquid() &&
+	      attackcool == false &&
+	      !p.isInsideVehicle() && !p.isSprinting() && p
+	      .getActivePotionEffects().stream().noneMatch(pe -> (pe.getType() == PotionEffectType.BLINDNESS)));
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (getPlayer().equals(e.getDamager()) && isCriticalHit(getPlayer(), attackCooldown)) {
+			count++;
+			if (count >= critcount) {
+				getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), (float) explosivedamage, false, false);
+				count = 0;
+			}
+		}
+	}
 	
 }

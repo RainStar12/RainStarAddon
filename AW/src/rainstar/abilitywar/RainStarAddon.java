@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -79,6 +80,7 @@ import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
+import rainstar.abilitywar.game.RandomGame;
 import rainstar.abilitywar.game.SelectMix.NullAbility;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 import rainstar.abilitywar.synergy.*;
@@ -367,8 +369,6 @@ public class RainStarAddon extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Reverse.class, Mazochist.class, Sadism.class);
 		SynergyFactory.registerSynergy(Developer.class, NullAbility.class, BugFix.class);
 		
-		Bukkit.broadcastMessage("버그픽스 등록됨? : " + SynergyFactory.isRegistered("버그 픽스"));
-		
 		new BukkitRunnable() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -395,9 +395,10 @@ public class RainStarAddon extends Addon implements Listener {
 	    }.runTaskLater(AbilityWar.getPlugin(), 10L);
 	    
 	    GameFactory.registerMode(SelectMixGame.class);
+	    GameFactory.registerMode(RandomGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f91개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f95개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -488,7 +489,11 @@ public class RainStarAddon extends Addon implements Listener {
 		getPlugin().getCommands().getMainCommand().addSubCommand("bc", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				Bukkit.broadcastMessage("§3[§bAbilityWar§3] §a" + args.toString());
+				final StringJoiner joiner = new StringJoiner("");
+				for (String arg : args) {
+					joiner.add(arg);
+				}
+				Bukkit.broadcastMessage("§3[§bAbilityWar§3] §a" + joiner.toString());
 				return true;
 			}
 		});
@@ -718,7 +723,7 @@ public class RainStarAddon extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f91개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f95개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}
