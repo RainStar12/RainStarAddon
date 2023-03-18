@@ -1,7 +1,12 @@
 package rainstar.abilitywar.ability;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -123,6 +128,7 @@ public class Pyromaniac extends AbilityBase {
 	private final int critcount = CRIT_COUNT.getValue();
 	private final double explosive = EXPLOSIVE.getValue();
 	private int count = 0;
+	private Map<UUID, Double> damageMap = new HashMap<>();
 	
     private boolean attackCooldown = false;
 	
@@ -141,6 +147,19 @@ public class Pyromaniac extends AbilityBase {
 		@Override
 		public void run(int count) {
 			
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			for (UUID uuid : damageMap.keySet()) {
+				Player player = Bukkit.getPlayer(uuid);
+				Damages.damageExplosion(player, getPlayer(), Double.valueOf(damageMap.get(uuid)).floatValue());
+			}
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -174,16 +193,27 @@ public class Pyromaniac extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
-		if (getPlayer().equals(e.getDamager()) && isCriticalHit(getPlayer(), attackCooldown)) {
+		
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (skill.isRunning()) {
+			if (getPlayer().equals(damager)) e.setCancelled(true);
+			else if (e.getEntity().equals(getPlayer()) && damager != null) {
+				e.setDamage(e.getDamage() * decrease);
+				damageMap.put(damager.getUniqueId(), damageMap.getOrDefault(damager.getUniqueId(), 0.0) + e.getFinalDamage());	
+			}
+		}
+		
+		if (getPlayer().equals(e.getDamager()) && isCriticalHit(getPlayer(), attackCooldown) && !e.isCancelled()) {
 			count++;
 			if (count >= critcount) {
 				getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), (float) explosive, false, false);
 				count = 0;
 			}
-		}
-		
-		if (skill.isRunning() && e.getEntity().equals(getPlayer())) {
-			
 		}
 	}
 	
