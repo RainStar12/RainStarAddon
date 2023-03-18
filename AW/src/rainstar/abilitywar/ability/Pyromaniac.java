@@ -1,7 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -15,6 +21,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 
 @AbilityManifest(name = "파이로매니악", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -22,7 +29,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 		"§7철괴 우클릭 §8- §3리벤지 붐§f: $[REVENGE_BOOM_DURATION]초간 공격을 할 수 없고, 받는 피해량이 $[REVENGE_BOOM_DECREASE]% 감소합니다.",
 		" 종료 시 피해를 준 대상들에게 준 피해량만큼 폭발 피해를 입힙니다. $[REVENGE_BOOM_COOLDOWN]",
 		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 절반만큼 §d회복§f합니다.",
-		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE_DAMAGE]§f의 폭발을 일으킵니다.",
+		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE]§f의 폭발을 일으킵니다.",
 		"§a[§e능력 제공자§a] §3Dire5778"
 		},
 		summarize = {
@@ -99,9 +106,9 @@ public class Pyromaniac extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Double> EXPLOSIVE_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Pyromaniac.class, "explosive-damage", 2.5,
-			"# 고정 피해 폭발 대미지") {
+	public static final SettingObject<Double> EXPLOSIVE = 
+			abilitySettings.new SettingObject<Double>(Pyromaniac.class, "explosive", 1.6,
+			"# 고정 피해 폭발력") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -114,7 +121,7 @@ public class Pyromaniac extends AbilityBase {
 	private final int revengeduration = (int) (REVENGE_BOOM_DURATION.getValue() * 20);
 	private final int decrease = (int) (1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01));
 	private final int critcount = CRIT_COUNT.getValue();
-	private final double explosivedamage = EXPLOSIVE_DAMAGE.getValue();
+	private final double explosive = EXPLOSIVE.getValue();
 	private int count = 0;
 	
     private boolean attackCooldown = false;
@@ -147,14 +154,36 @@ public class Pyromaniac extends AbilityBase {
 	      .getActivePotionEffects().stream().noneMatch(pe -> (pe.getType() == PotionEffectType.BLINDNESS)));
 	}
 	
+	@SubscribeEvent(onlyRelevant = true)
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			e.setCancelled(true);
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() * 0.5), RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
 		if (getPlayer().equals(e.getDamager()) && isCriticalHit(getPlayer(), attackCooldown)) {
 			count++;
 			if (count >= critcount) {
-				getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), (float) explosivedamage, false, false);
+				getPlayer().getWorld().createExplosion(getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), (float) explosive, false, false);
 				count = 0;
 			}
+		}
+		
+		if (skill.isRunning() && e.getEntity().equals(getPlayer())) {
+			
 		}
 	}
 	
