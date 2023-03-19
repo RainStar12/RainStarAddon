@@ -126,6 +126,7 @@ public class ASAP extends Synergy {
 			}
 			if (e.getEntity().equals(getPlayer()) && arrow.getShooter() instanceof Player) {
 				if (predicate.test((Player) arrow.getShooter())) {
+					e.setDamage(0);
 					if (deathMap.containsKey(arrow.getShooter())) {
 						if (deathMap.get(arrow.getShooter()).addMyStack()) {
 							e.setCancelled(true);

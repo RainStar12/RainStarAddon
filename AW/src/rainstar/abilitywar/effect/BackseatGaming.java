@@ -37,7 +37,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 }, description = {
 		"플레이어가 특정 행동들을 할 때마다 확률적으로 훈수를 둡니다.",
 		"훈수를 받으면 시야가 잠깐 봉인됩니다.",
-		"이 효과는 자동 영구 지속 효과입니다."
+		"이 효과는 영구 지속이나, 훈수 발동 시마다 5%의 확률로 제거됩니다."
 })
 public class BackseatGaming extends AbstractGame.Effect implements Listener {
 
@@ -54,6 +54,12 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.player = participant.getPlayer();
 		setPeriod(TimeUnit.TICKS, 1);
+	}
+	
+	public void stopchance() {
+		if (random.nextInt(20) == 0) {
+			stop(false);
+		}
 	}
 
 	@Override
@@ -74,6 +80,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 싸움 그렇게 하는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -85,6 +92,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 활 그렇게 쏘는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -96,6 +104,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 템 그렇게 떨구는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -107,6 +116,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 스왑 그렇게 하는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -118,6 +128,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 블록 그렇게 부수는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -129,6 +140,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 블록 그렇게 설치하는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -140,6 +152,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 그렇게 타는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -151,6 +164,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 능력 그렇게 쓰는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -180,6 +194,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 무빙 그렇게 치는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -191,6 +206,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 파밍 그렇게 하는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}
@@ -202,6 +218,7 @@ public class BackseatGaming extends AbstractGame.Effect implements Listener {
 				PotionEffects.BLINDNESS.addPotionEffect(player, 40, 0, true);
 				SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
 				player.sendMessage("§3[§b능력§3] §c아~ 회복 그렇게 하는 거 아닌데~");
+				stopchance();
 			}
 		}
 	}

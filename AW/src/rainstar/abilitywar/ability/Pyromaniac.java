@@ -1,10 +1,12 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -18,11 +20,14 @@ import org.bukkit.potion.PotionEffectType;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
+import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
@@ -40,7 +45,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 		summarize = {
 		""
 		})
-public class Pyromaniac extends AbilityBase {
+public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	
 	public Pyromaniac(Participant participant) {
 		super(participant);
@@ -129,9 +134,18 @@ public class Pyromaniac extends AbilityBase {
 	private final double explosive = EXPLOSIVE.getValue();
 	private int count = 0;
 	private Map<UUID, Double> damageMap = new HashMap<>();
+	private ActionbarChannel ac = newActionbarChannel();
+	private final DecimalFormat df = new DecimalFormat();
 	
     private boolean attackCooldown = false;
 	
+    @Override
+    public void onUpdate(Update update) {
+    	if (update == Update.RESTRICTION_CLEAR) {
+    		attackCooldownChecker.start();
+    	}
+    }
+    
 	private final AbilityTimer attackCooldownChecker = new AbilityTimer() {
 		
 		@Override
@@ -146,7 +160,7 @@ public class Pyromaniac extends AbilityBase {
 		
 		@Override
 		public void run(int count) {
-			
+			ac.update("§c리벤지 붐§7: §3" + df.format(count / 20.0) + "§f초");
 		}
 		
 		@Override
@@ -156,13 +170,29 @@ public class Pyromaniac extends AbilityBase {
 		
 		@Override
 		public void onSilentEnd() {
+			ac.update(null);
 			for (UUID uuid : damageMap.keySet()) {
 				Player player = Bukkit.getPlayer(uuid);
 				Damages.damageExplosion(player, getPlayer(), Double.valueOf(damageMap.get(uuid)).floatValue());
 			}
+			revengecooldown.start();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material.equals(Material.IRON_INGOT)) {
+			if (clicktype.equals(ClickType.LEFT_CLICK)) {
+				
+			} else {
+				if (!revengecooldown.isCooldown() && !skill.isRunning()) {
+					return skill.start();
+				}
+			}
+		}
+		return false;
+	}
 	
 	@SuppressWarnings("deprecation")
 	public static boolean isCriticalHit(Player p, boolean attackcool) {

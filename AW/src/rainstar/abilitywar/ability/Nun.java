@@ -5,13 +5,17 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -30,7 +34,7 @@ import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -40,9 +44,10 @@ import daybreak.google.common.collect.ImmutableMap;
 		"§7패시브 §8- §b십자가§f: §c언데드§f 종족에게 가하는 피해가 $[UNDEAD_DAMAGE]% 증가합니다.",
 		" §b신§f 종족에게 받는 피해가 $[GOD_DAMAGE_DECREASE]% 감소합니다.",
 		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING_COUNT]초간 간절히 기도합니다. $[COOLDOWN]",
-		" 기도가 끝나면 무작위 §b신§f이 $[GOD_DURATION]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
-		" 강신 도중엔 사망하지 않으며, §b신§f의 등급당 $[RANK_DAMAGE]%의 §c추가 피해§f를 입힙니다.",
-		"§8[§7HIDDEN§8] §b11:25§f: 예수께서 이르시되 나는 부활이요 생명이니",
+		" 기도가 끝나면 무작위 §b신§f이 $[BEING_GOD]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
+		" §b신§f의 등급당 $[RANK_DAMAGE_UP]%의 §c추가 피해§f를 입힙니다. 만일 강신 도중 치명적인",
+		" 피해를 입으면, 피해를 막고 지속시간을 최종 피해량 × $[DURATION_DECRASE]초 줄입니다.",
+		" 피해를 한 번이라도 막아냈다면 강신 종료 시 $[HEALTH_GAIN]%만큼 체력을 회복합니다.",
 		"§e---------------------------------",
 		"$(EXPLAIN)",
 		"§e---------------------------------"
@@ -86,16 +91,16 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	
-	public static final SettingObject<Double> BEING_GOD_DURATION = abilitySettings.new SettingObject<Double>(
-			Nun.class, "being-god-duration", 20.0, "# 강신 지속시간", "# 단위: 초") {
+	public static final SettingObject<Double> BEING_GOD = abilitySettings.new SettingObject<Double>(
+			Nun.class, "being-god", 30.0, "# 강신 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> RANK_DAMAGE = abilitySettings.new SettingObject<Integer>(
-			Nun.class, "rank-damage", 7, "# 랭크당 공격력 증가 수치", "# 단위: %") {
+	public static final SettingObject<Integer> RANK_DAMAGE_UP = abilitySettings.new SettingObject<Integer>(
+			Nun.class, "rank-damage-up", 5, "# 랭크당 공격력 증가 수치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -112,6 +117,22 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	public static final SettingObject<Integer> GOD_DAMAGE_DECREASE = abilitySettings.new SettingObject<Integer>(
 			Nun.class, "god-damage-decrease", 20, "# 신 종족에게 받는 대미지 감소", "# 단위: %") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Double> DURATION_DECREASE = abilitySettings.new SettingObject<Double>(
+			Nun.class, "duration-decrease", 1.5, "# 최종 피해량당 줄어드는 지속시간", "# 단위: 초") {
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> HEALTH_GAIN = abilitySettings.new SettingObject<Integer>(
+			Nun.class, "heal-amount", 15, "# 체력 회복량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -138,10 +159,13 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
 	private final int chance = CHANCE.getValue();
 	private final int channelingDur = (int) (CHANNELING_COUNT.getValue() * 20);
-	private final int duration = (int) (BEING_GOD_DURATION.getValue() * 20);
+	private final int duration = (int) (BEING_GOD.getValue() * 20);
+	private final int decreaseduration = (int) (DURATION_DECREASE.getValue() * 20);
 	private final double decreaseDMG = (GOD_DAMAGE_DECREASE.getValue() * 0.01);
 	private final double undeadDMG = 1 + (UNDEAD_DAMAGE.getValue() * 0.01);
-	private final double rankDMG = (RANK_DAMAGE.getValue() * 0.01);
+	private final double rankDMG = (RANK_DAMAGE_UP.getValue() * 0.01);
+	private final double healthgain = HEALTH_GAIN.getValue() * 0.01;
+	private boolean heal = false;
 	private AbilityBase godability;
 	
 	@SuppressWarnings("unused")
@@ -282,6 +306,14 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				Nun.this.godability.destroy();
 			}
 			Nun.this.godability = null;
+			if (heal) {
+				double healamount = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * healthgain;
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
+				}
+			}
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -304,22 +336,13 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	}
 	
 	@SubscribeEvent(priority = 1000)
-	private void onPlayerSetHealth(PlayerSetHealthEvent e) {
-		if (e.getPlayer().equals(getPlayer()) && beingGod.isRunning()) {
-			if (e.getHealth() <= 0.0) {
-				e.setHealth(1);
-				e.setCancelled(true);
-			}	
-		}
-	}
-	
-	@SubscribeEvent(priority = 1000)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (getPlayer().equals(e.getEntity()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 			if (beingGod.isRunning()) {
 				e.setCancelled(true);
-				getPlayer().setHealth(1);
 				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+				beingGod.setCount(beingGod.getCount() - decreaseduration);
+				heal = true;
 			}
 		}
 	}
