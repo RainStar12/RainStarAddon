@@ -73,7 +73,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Double> EVADE = 
 			abilitySettings.new SettingObject<Double>(Suguri.class, "evade", 0.8,
-			"# 대시 간 회피 지속시간") {
+			"# 대시 직후 회피 지속시간") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -93,8 +93,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DASH_START_HEAT = 
-			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat", 40,
+	public static final SettingObject<Integer> DASH_START_HEAT_UP = 
+			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat-up", 50,
 			"# 대시 시작 시 추가 히트") {
 
 		@Override
@@ -104,8 +104,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DASH_RUN_HEAT = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-run-heat", 15.0,
+	public static final SettingObject<Double> DASH_RUN_HEAT_UP = 
+			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-run-heat-up", 20.0,
 			"# 대시 유지 시 초당 증가하는 히트량") {
 
 		@Override
@@ -127,8 +127,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	private static final Set<Material> swords;
 	private final int evadeduration = (int) (EVADE.getValue() * 20);
 	private final int duration = (int) (ACCELERATOR_DURATION.getValue() * 20);
-	private final int dashstartheat = DASH_START_HEAT.getValue();
-	private final double dashrunningheat = DASH_RUN_HEAT.getValue() / 20.0;
+	private final int dashstartheat = DASH_START_HEAT_UP.getValue();
+	private final double dashrunningheat = DASH_RUN_HEAT_UP.getValue() / 20.0;
 	
 	private RGB rainbow;
 	private int rainbowstack = 0;
