@@ -2,10 +2,12 @@ package rainstar.abilitywar.ability;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
@@ -33,10 +35,14 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.Gradient;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
@@ -167,6 +173,9 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	private final double healthgain = HEALTH_GAIN.getValue() * 0.01;
 	private boolean heal = false;
 	private AbilityBase godability;
+	private final Circle circle = Circle.of(0.5, 17);
+	private final List<RGB> gradations = Gradient.createGradient(30, RGB.of(223, 1, 1), RGB.of(1, 177, 222));
+	private int stack = 0;
 	
 	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
@@ -290,6 +299,12 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		public void run(int count) {
 			if (count == duration - 30) NMS.clearTitle(getPlayer());
 			getPlayer().setGlowing(true);
+			stack = stack < 30 ? stack + 1 : 0;
+			for (Location loc : circle.toLocations(getPlayer().getLocation())) {
+				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(Math.max(0, stack - 1)));
+			}
+			ParticleLib.TOTEM.spawnParticle(getPlayer().getEyeLocation().add(0, 0.5, 0), 0, 0, 0, 1, 0.88);
+			ParticleLib.TOTEM.spawnParticle(getPlayer().getEyeLocation().add(0, 0.5, 0), 0, 0, 0, 1, 0);
 		}
 		
 		@Override

@@ -283,7 +283,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		heat = 0;
-    		longHeatLose(0.1);
+    		longHeatLose(0.04);
     	}
     	
     	@Override

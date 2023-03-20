@@ -283,7 +283,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 						stack++;
 						ac.update("§b기회를 준 횟수§7: §e" + stack);
 						return true;
-					} else if (ab.getClass().equals(Mix.class)) {
+					} else if (ab instanceof Mix) {
 						final Mix mix = (Mix) ab;
 						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
 						

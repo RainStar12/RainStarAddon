@@ -266,6 +266,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
             		SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer(), 1, (float) (0.8 + (a * 0.2)));
         		}
         		first = false;
+        		ac.update(getSeedActionbars());
     		}
     		if (seeds.size() <= 0) recharging.start();
     	}

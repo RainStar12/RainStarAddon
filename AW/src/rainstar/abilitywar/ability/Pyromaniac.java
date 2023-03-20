@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -16,11 +17,10 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.AbilityBase.AbilityTimer;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
@@ -38,12 +38,16 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 		"§7철괴 좌클릭 §8- §cTNT 캐논§f: 바라보는 방향으로 §cTNT§f를 날립니다. $[TNT_CANNON_COOLDOWN]",
 		"§7철괴 우클릭 §8- §3리벤지 붐§f: $[REVENGE_BOOM_DURATION]초간 공격을 할 수 없고, 받는 피해량이 $[REVENGE_BOOM_DECREASE]% 감소합니다.",
 		" 종료 시 피해를 준 대상들에게 준 피해량만큼 폭발 피해를 입힙니다. $[REVENGE_BOOM_COOLDOWN]",
-		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 절반만큼 §d회복§f합니다.",
+		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 1/3만큼 §d회복§f합니다.",
 		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE]§f의 폭발을 일으킵니다.",
 		"§a[§e능력 제공자§a] §3Dire5778"
 		},
 		summarize = {
-		""
+		"§7철괴 좌클릭 시§f 바라보는 방향으로 §cTNT§f를 날립니다.",
+		"§7철괴 우클릭 시§f 잠시간 공격이 불가능하고, 받는 피해량이 감소하며, 종료될 때",
+		"자신을 공격한 대상들에게 폭발 피해를 입힙니다.",
+		"기본적으로 모든 폭발 피해량을 받지 않고 그 절반만큼 §d회복§f합니다.",
+		"근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE]§f의 폭발을 일으킵니다."
 		})
 public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	
@@ -129,7 +133,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	
 	private final Cooldown tntcooldown = new Cooldown(TNT_CANNON_COOLDOWN.getValue()), revengecooldown = new Cooldown(REVENGE_BOOM_COOLDOWN.getValue());
 	private final int revengeduration = (int) (REVENGE_BOOM_DURATION.getValue() * 20);
-	private final int decrease = (int) (1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01));
+	private final double decrease = 1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01);
 	private final int critcount = CRIT_COUNT.getValue();
 	private final double explosive = EXPLOSIVE.getValue();
 	private int count = 0;
@@ -184,7 +188,13 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT)) {
 			if (clicktype.equals(ClickType.LEFT_CLICK)) {
-				
+				if (!tntcooldown.isCooldown()) {
+					TNTPrimed tntprimed = getPlayer().getWorld().spawn(getPlayer().getEyeLocation(), TNTPrimed.class);
+					tntprimed.setFuseTicks(30);
+					final Vector direction = getPlayer().getLocation().getDirection().multiply(1.75);
+					tntprimed.setVelocity(direction.setY(Math.min(0.45, direction.getY())));
+					return tntcooldown.start();
+				}
 			} else {
 				if (!revengecooldown.isCooldown() && !skill.isRunning()) {
 					return skill.start();
@@ -207,7 +217,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 			e.setCancelled(true);
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() * 0.5), RegainReason.CUSTOM);
+			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() / 3.0), RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
 				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	

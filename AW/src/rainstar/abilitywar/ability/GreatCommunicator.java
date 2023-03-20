@@ -42,7 +42,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§a[§e능력 제공자§a] §cDdun_kim"
 		},
 		summarize = {
-		""
+		"§6벽돌§f을 들고 있는 동안 게이지바가 나타나, 효과의 세기가 조절됩니다.",
+		"§6벽돌§f로 타격 시 세기에 따라 고정 피해와 §b§n공포§f를 겁니다. §8(§4치명타§7 적용§8)"
 		})
 public class GreatCommunicator extends AbilityBase {
 

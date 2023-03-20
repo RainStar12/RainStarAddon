@@ -311,6 +311,10 @@ public class RainStarAddon extends Addon implements Listener {
         AbilityList.registerAbility(GreatCommunicator.class);
 		AbilityFactory.registerAbility(Kid.class);
         AbilityList.registerAbility(Kid.class);
+		AbilityFactory.registerAbility(Pyromaniac.class);
+        AbilityList.registerAbility(Pyromaniac.class);
+		AbilityFactory.registerAbility(BullsEye.class);
+        AbilityList.registerAbility(BullsEye.class);
         
         
     	//beta
@@ -398,7 +402,7 @@ public class RainStarAddon extends Addon implements Listener {
 	    GameFactory.registerMode(RandomGame.class);
 		
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f95개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f97개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -493,7 +497,8 @@ public class RainStarAddon extends Addon implements Listener {
 				for (String arg : args) {
 					joiner.add(arg);
 				}
-				Bukkit.broadcastMessage("§3[§bAbilityWar§3] §a" + joiner.toString());
+				String message = "§3[§bAbilityWar§3] §a" + joiner.toString();
+				Bukkit.broadcastMessage(message);
 				return true;
 			}
 		});
@@ -723,7 +728,7 @@ public class RainStarAddon extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f95개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f97개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}

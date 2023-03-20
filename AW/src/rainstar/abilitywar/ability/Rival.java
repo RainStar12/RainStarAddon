@@ -255,7 +255,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 						if (getGame().getParticipant(rival).hasAbility()) {
 							AbilityBase ab = getGame().getParticipant(rival).getAbility();
 							AbilityBase myab = null;
-							if (ab.getClass().equals(Mix.class)) {
+							if (ab instanceof Mix) {
 								Mix mix = (Mix) ab;
 								Mix myMix = (Mix) getParticipant().getAbility();
 								if (mix.hasSynergy()) {

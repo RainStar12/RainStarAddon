@@ -47,7 +47,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§a[§e능력 제공자§a] §5Rodpog"
 		},
 		summarize = {
-		""
+		"철괴를 이용하여 자신이 원하는 스탯을 일시적으로 §6강화§f할 수 있습니다.",
+		"§6강화§f 중이 아닌 다른 두 스탯은 소폭 §7약화§f됩니다.",
+		"§c공격력§8(§7좌클릭§8) §a/ §3방어력§8(§7우클릭§8) §a/ §b이동 속도§8(§7F키§8)",
+		"지속시간이 절반 이상 남았을 때 동일한 키입력으로 즉시 종료 및 §c쿨타임§f이 줄어듭니다.",
+		"적에게 치명타 피해를 입히면 §6꼬리§f를 획득해 다음 §6강화§f 수치를 증폭시킵니다.",
+		"§6꼬리§f 19개 소진 시마다 다음 §6강화§f 시 §7약화§f 효과들도 같이 강화됩니다."
 		})
 public class Hozosa extends AbilityBase implements ActiveHandler {
 	

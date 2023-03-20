@@ -46,7 +46,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§a[§e능력 제공자§a] §bduyu_999"
         },
         summarize = {
-        ""
+        "§d회복§f 효과를 받을 수 없는 대신, 기본적으로 체력을 빠르게 §a획득§f합니다.",
+        "§7철괴 우클릭 시§f 위 효과를 $[DURATION]초간 비활성화하고 $[HEALTH_GAIN]의 체력을 즉시 §a획득§f합니다.",
+        "지속시간동안 근접 공격 쿨타임이 사라지고 적을 기본 무적 없이 공격 가능하나,",
+        "근접 공격력이 §c$[DAMAGE_DECREASE]%§f 감소합니다."
         })
 public class SoyMilk extends AbilityBase implements ActiveHandler {
 	
