@@ -24,7 +24,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "이걸 사네", rank = Rank.A, species = Species.HUMAN, explain = {
-		"피해받고 나서 체력이 §a5%§f 이하일 경우 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
+		"피해받고 나서 체력 §a8%§f 이하로 생존 시 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
 		"$[COOLDOWN] §3/§f 체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
 		"§b[§7아이디어 제공자§b] §5railohd"
 		},
@@ -106,7 +106,7 @@ public class LuckSurvive extends AbilityBase {
 				e.setDamage(e.getDamage() * decrease);
 			}
 			
-			if (getPlayer().getHealth() - e.getFinalDamage() <= maxHP * 0.05 && !cooldown.isRunning()) {
+			if (getPlayer().getHealth() - e.getFinalDamage() > 0 && getPlayer().getHealth() - e.getFinalDamage() <= maxHP * 0.08 && !cooldown.isRunning()) {
 				ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 100, 1);
 				SoundLib.ITEM_TOTEM_USE.playSound(getPlayer().getLocation(), 1, 1.25f);
 				inv.start();
