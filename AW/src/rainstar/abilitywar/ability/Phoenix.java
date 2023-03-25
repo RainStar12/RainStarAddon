@@ -311,7 +311,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 			}
 		}
 		if (update == Update.ABILITY_DESTROY) {
-			if (parrot != null) parrot.setHealth(0);
+			if (!parrot.isDead()) parrot.setHealth(0);
 		}
 	}
 	
@@ -627,7 +627,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healAmount, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
-								Healths.setHealth(getPlayer(), getPlayer().getHealth() + healAmount);
+								Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 							}
 							break;
 						case 1:

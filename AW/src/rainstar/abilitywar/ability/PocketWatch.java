@@ -449,7 +449,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.000175, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + (usedtime * 0.000175));
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 				}
     		} else stop(false);
     	}

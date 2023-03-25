@@ -139,7 +139,7 @@ public class HealthFreak extends AbilityBase {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (addDamage * 0.004), RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-	        		Healths.setHealth(getPlayer(), (getPlayer().getHealth() + (addDamage * 0.004)));	
+	        		Healths.setHealth(getPlayer(), (getPlayer().getHealth() + event.getAmount()));	
 				}
 				longsneak = Math.min(maxDamage, longsneak + 0.032);
 				if (count % 10 == 0 && addDamage < maxDamage) {

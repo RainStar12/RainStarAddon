@@ -125,7 +125,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), stack * heal, RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + (stack * heal));
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 			}
 			
 			if (getPlayer().getHealth() >= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.1) stack = 0;

@@ -93,11 +93,11 @@ public class Butcher extends AbilityBase {
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
 						double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-						if (getPlayer().getHealth() * 2 > maxHealth) {
-							double yellowHeart = (getPlayer().getHealth() * 2) - maxHealth;
+						if (getPlayer().getHealth() + event.getAmount() > maxHealth) {
+							double yellowHeart = (getPlayer().getHealth() + event.getAmount()) - maxHealth;
 							Healths.setHealth(getPlayer(), maxHealth);
 							NMS.setAbsorptionHearts(getPlayer(), NMS.getAbsorptionHearts(getPlayer()) + (float) yellowHeart);
-						} else Healths.setHealth(getPlayer(), getPlayer().getHealth() * 2);
+						} else Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 					}
 					SoundLib.ENTITY_ZOMBIE_VILLAGER_CURE.playSound(getPlayer().getLocation(), 1, 0.5f);	
 				}

@@ -386,12 +386,14 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			if (!getPlayer().equals(player)) {
 				boolean isUndead = false;
 				Participant participant = getGame().getParticipant(player);
-				if (participant.getAbility().getClass().equals(Mix.class)) {
-					final Mix mix = (Mix) getParticipant().getAbility();
-					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-					if (first.getSpecies() == Species.UNDEAD || second.getSpecies() == Species.UNDEAD) isUndead = true;
-				} else {
-					if (participant.getAbility().getSpecies() == Species.UNDEAD) isUndead = true;
+				if (participant.hasAbility()) {
+					if (participant.getAbility().getClass().equals(Mix.class)) {
+						final Mix mix = (Mix) getParticipant().getAbility();
+						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+						if (first.getSpecies() == Species.UNDEAD || second.getSpecies() == Species.UNDEAD) isUndead = true;
+					} else {
+						if (participant.getAbility().getSpecies() == Species.UNDEAD) isUndead = true;
+					}	
 				}
 				
 				if (getPlayer().equals(damager) && isUndead) {

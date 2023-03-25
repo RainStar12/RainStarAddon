@@ -152,21 +152,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> ARROW_COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			RainStar.class, "arrow-cooldown", 17, "# 화살 쿨타임") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-
-	};
-
 	public static final SettingObject<Integer> FIELD_DURATION = abilitySettings.new SettingObject<Integer>(
 			RainStar.class, "field-duration", 12, "# 필드 지속시간") {
 
@@ -192,7 +177,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue(), "일주", CooldownDecrease._50);
 	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue(), "은하수");
-	private final Cooldown arrowcool = new Cooldown(ARROW_COOLDOWN.getValue(), "혜성", CooldownDecrease._50);
 
 	private AttributeModifier movespeed;
 	private Circle circle = Circle.of(7, 120);
@@ -699,7 +683,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (NMS.isArrow(e.getEntity())) {
 			Arrow arrow = (Arrow) e.getEntity();
 			if (constellation == 8 || constellation == 11) {
-				if (getPlayer().equals(arrow.getShooter()) && !arrowcool.isRunning()) {
+				if (getPlayer().equals(arrow.getShooter()) && !skillperiod.isRunning()) {
 					if (bows.contains(getPlayer().getInventory().getItemInMainHand().getType())) {
 						final ItemStack mainhand = getPlayer().getInventory().getItemInMainHand();
 						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(10, mainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
@@ -707,7 +691,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						final ItemStack offhand = getPlayer().getInventory().getItemInOffHand();
 						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(10, offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
 					}
-					arrowcool.start();
+					skillperiod.start();
 				}	
 			}
 			if (constellation == 8 && getPlayer().equals(e.getEntity().getShooter())) {

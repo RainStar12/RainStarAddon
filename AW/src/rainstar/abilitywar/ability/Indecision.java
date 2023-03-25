@@ -173,7 +173,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(target, heal, RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						target.setHealth(Math.min(target.getHealth() + heal, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						target.setHealth(Math.min(target.getHealth() + event.getAmount(), target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 					}
 					e.setCancelled(true);
 					(arrow).remove();
@@ -225,7 +225,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(target, heal, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					target.setHealth(Math.min(target.getHealth() + heal, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+					target.setHealth(Math.min(target.getHealth() + event.getAmount(), target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 				}
 				
 				e.setCancelled(true);

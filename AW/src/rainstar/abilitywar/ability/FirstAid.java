@@ -139,10 +139,10 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), damages.get(0), RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + damages.get(0));
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.8f);
 					ParticleLib.HEART.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
-					new Holograms(getPlayer().getLocation(), damages.get(0));
+					new Holograms(getPlayer().getLocation(), event.getAmount());
 				}
 				damages.remove(0);
 	    		double sum = damages.stream().limit(inbattle.isRunning() ? count - (healcount - dechealcount) : count).mapToDouble(Double::doubleValue).sum();

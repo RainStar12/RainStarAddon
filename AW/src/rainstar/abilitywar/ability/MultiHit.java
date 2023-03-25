@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(name = "다단히트", rank = Rank.A, species = Species.HUMAN, explain = {
 		"근접 공격 피해를 입힐 때 $[DAMAGE_CONFIG]%의 피해로 $[COUNT_CONFIG]번 공격합니다.",
 		"다단히트 효과 발동 중에는 효과를 중복 발동할 수 없습니다.",
-		"또한 피해를 입을 때마다 $[INV_CONFIG]초간 무적 상태가 됩니다."
+		"또한 생명체에게 피해를 입을 때마다 $[INV_CONFIG]초간 무적 상태가 됩니다."
 		},
 		summarize = {
 		"근접 공격 시 공격력이 감소한 채로 $[COUNT_CONFIG]번 때립니다.",

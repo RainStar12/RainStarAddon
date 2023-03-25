@@ -592,7 +592,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, 6.5, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
-								Healths.setHealth((Player) shooter, shooter.getHealth() + 6.5);
+								Healths.setHealth((Player) shooter, shooter.getHealth() + event.getAmount());
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound((Player) shooter, 1, 1.2f);
 								ParticleLib.HEART.spawnParticle(shooter.getLocation(), 0.5, 1, 0.5, 10, 1);
 							}

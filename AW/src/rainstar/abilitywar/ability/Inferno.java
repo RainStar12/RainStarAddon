@@ -213,7 +213,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getDamage() * 0.5, RegainReason.CUSTOM);
     					Bukkit.getPluginManager().callEvent(event);
     					if (!event.isCancelled()) {
-    						Healths.setHealth(getPlayer(), getPlayer().getHealth() + (e.getDamage() * 0.5));
+    						Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
     					}
     					e.setDamage(0);
     				}

@@ -33,7 +33,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "메아리", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §c카운터§f: 다른 플레이어에게 근접 피해를 받을 때",
-		" 대상에게 0.75초 내로 근접 피해를 입힐 시 피해량만큼 회복하고",
+		" 대상에게 0.75초 내로 근접 피해를 입힐 시 피해량을 복구하고,",
 		" 대상이 준 피해량을 되돌려줍니다. $[COOLDOWN]",
 		" 이때 반격까지 걸린 시간에 반비례해 반격 피해가 1.5배에서 0.1배까지 변동됩니다.",
 		"§7쿨타임 패시브 §8- §c리플렉스§f: 쿨타임 도중 카운터 조건을 충족할 시,",

@@ -238,7 +238,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), stealamount, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + stealamount);	
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
 				}
 				SoundLib.ENTITY_VEX_DEATH.playSound(encroachtarget.getLocation(), 1, 0.75f);
                 
@@ -309,7 +309,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getAmount(), RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + e.getAmount());
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 			}
 			e.setCancelled(true);
 		}

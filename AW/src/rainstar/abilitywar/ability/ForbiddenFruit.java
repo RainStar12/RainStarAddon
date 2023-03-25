@@ -187,8 +187,8 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(p, maxHP, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					decreasestack = (int) (maxHP - p.getHealth());
-					Healths.setHealth(p, maxHP);
+					decreasestack = (int) (event.getAmount() - p.getHealth());
+					Healths.setHealth(p, event.getAmount());
 		            ParticleLib.CLOUD.spawnParticle(p.getLocation(), 0.25, 0, 0.25, 50, 0.4);
 		            ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 					SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p.getLocation(), 1, 1);

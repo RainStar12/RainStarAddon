@@ -178,7 +178,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, healamount, RegainReason.CUSTOM);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) {
-							Healths.setHealth(player, player.getHealth() + healamount);
+							Healths.setHealth(player, player.getHealth() + event.getAmount());
 							ParticleLib.HEART.spawnParticle(player.getLocation(), 0.5, 1, 0.5, 10, 1);
 							SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player.getLocation(), 1, 1);
 						}
@@ -187,7 +187,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 						Bukkit.getPluginManager().callEvent(event2);
 						if (!event2.isCancelled()) {
 							double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-							Healths.setHealth(player, Math.min((maxHP * healthy), player.getHealth() + (healamount * 1.5)));
+							Healths.setHealth(player, Math.min((maxHP * healthy), player.getHealth() + event.getAmount()));
 							ParticleLib.HEART.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
 							SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 1);
 						}
@@ -214,7 +214,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healvalue, RegainReason.CUSTOM);
 						Bukkit.getPluginManager().callEvent(event);
 						if (!event.isCancelled()) {
-							Healths.setHealth(getPlayer(), getPlayer().getHealth() + healvalue);	
+							Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
 						}
 						return doping.stop(false);
 					}

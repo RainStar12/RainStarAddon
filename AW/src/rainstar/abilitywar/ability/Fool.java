@@ -161,7 +161,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), damage, RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + damage);
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 				if (Math.random() <= chance) {
 					final Location location = getPlayer().getLocation();
 					float yaw = location.getYaw() + random.nextInt(180) - 90;

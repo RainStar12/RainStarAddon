@@ -179,7 +179,7 @@ public class Executioner extends AbilityBase {
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
-					Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 				}	
 			}
 		}

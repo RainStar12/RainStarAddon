@@ -449,7 +449,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getFinalDamage() * 0.5, RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						Healths.setHealth(getPlayer(), getPlayer().getHealth() + e.getFinalDamage() * 0.5);
+						Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 					}
 					Stun.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, stunduration);
 					rgb = RGB.of(1, 113, 1);

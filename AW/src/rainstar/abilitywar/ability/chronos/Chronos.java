@@ -231,7 +231,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
     			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.05, RegainReason.CUSTOM);
     			Bukkit.getPluginManager().callEvent(event);
     			if (!event.isCancelled()) {
-    				Healths.setHealth(getPlayer(), getPlayer().getHealth() + 0.05);
+    				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
     			}	
     		}
     	}

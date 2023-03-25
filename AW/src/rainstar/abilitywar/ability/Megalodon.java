@@ -342,7 +342,7 @@ public class Megalodon extends AbilityBase {
 					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.01, RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						if (!getPlayer().isDead()) Healths.setHealth(getPlayer(), getPlayer().getHealth() + 0.01);
+						if (!getPlayer().isDead()) Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 					}
 				}	
 			} else {

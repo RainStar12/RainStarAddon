@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "글리치드 크라운", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
+@AbilityManifest(name = "글리치드 크라운", rank = Rank.L, species = Species.OTHERS, explain = {
         "§7철괴 좌클릭 §8- §c?????§f: 최대 15개까지, 무작위 능력을 배열에 집어넣습니다.",
         " 배열에 능력이 많을수록 순환 속도는 점점 더 빨라집니다.",
         "§7철괴 우클릭 §8- §7§k?????§f: 빠르게 순환하고 있는 능력들 중, 우클릭한 타이밍의",
