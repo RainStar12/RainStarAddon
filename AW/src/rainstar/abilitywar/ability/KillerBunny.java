@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 
 @AbilityManifest(name = "살인마 토끼", rank = Rank.L, species = Species.ANIMAL, explain = {
@@ -25,6 +26,15 @@ public class KillerBunny extends AbilityBase {
 		super(participant);
 	}
 	
-	
+	public static final SettingObject<Double> MURDER_GAIN = 
+			abilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-gain", 2.5,
+			"# 살의 획득량") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
 	
 }

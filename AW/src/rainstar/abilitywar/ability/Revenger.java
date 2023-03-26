@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -15,11 +16,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -34,7 +38,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"살해당할 경우, $[WAIT]초간 §b유령 상태§f가 되어 돌아다니다 최대 체력으로 §a부활§f합니다.",
 		"§a부활§f 이후 §c복수귀§f가 되어 체력이 $[HEALTH_LOSE]초에 걸쳐 빠르게 줄어듭니다.",
 		"§c복수귀§f 모드간 자신을 죽인 사람하고만 피해를 주고받을 수 있습니다.",
-		"이때 나를 죽이기 전까지 대상이 내게 줬던 최종 피해량의 $[PERCENTAGE]%만큼 공격력이 증가합니다.",
+		"이때 나를 죽이기 전까지 대상이 내게 줬던 피해량의 $[PERCENTAGE]%만큼 공격력이 증가합니다.",
 		"철괴 우클릭 시, 체력 $[TELEPORT_COST]%를 소모해 복수 대상에게 순간 이동합니다.",
 		"대상을 내 손으로 처치할 경우, §c복수귀§f 모드가 종료됩니다."
 		},
@@ -45,7 +49,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"공격력이 증가합니다. 대상 처치 시, §c복수귀§f 모드만 종료됩니다."
 		})
 
-public class Revenger extends AbilityBase {
+public class Revenger extends AbilityBase implements ActiveHandler {
 	
 	public Revenger(Participant participant) {
 		super(participant);
@@ -67,10 +71,10 @@ public class Revenger extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> PERCENTAGE = abilitySettings.new SettingObject<Integer>(Revenger.class,
-			"percentage", 10, "# 증가할 공격력 배율", "# 단위: %") {
+	public static final SettingObject<Double> PERCENTAGE = abilitySettings.new SettingObject<Double>(Revenger.class,
+			"percentage", 1.0, "# 증가할 공격력 배율", "# 단위: %") {
 		@Override
-		public boolean condition(Integer value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 	};
@@ -94,6 +98,28 @@ public class Revenger extends AbilityBase {
 	private final double percentage = PERCENTAGE.getValue() * 0.01;
 	private final double teleportcost = TELEPORT_COST.getValue() * 0.01;
 	private PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, duration * 20, 1, true, false);
+	
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK) {
+			if (revenger) {
+				double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() - (maxHP * teleportcost));
+				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer().getLocation(), 1, 1.5f);
+				SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(killer.getLocation(), 1, 1.5f);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 50, 0);
+				ParticleLib.DRAGON_BREATH.spawnParticle(killer.getLocation(), 1, 1, 1, 50, 0);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						getPlayer().teleport(killer);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 1L);	
+				return true;
+			} else getPlayer().sendMessage("§4[§c!§4] §f현재 복수귀 모드가 아닙니다.");
+		}
+		return false;
+	}
 	
 	public AbilityTimer ghost = new AbilityTimer(wait) {
 		
@@ -156,7 +182,7 @@ public class Revenger extends AbilityBase {
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
 			if (damager != null) {
-				damageCounter.put(damager.getUniqueId(), damageCounter.getOrDefault(damager.getUniqueId(), 0.0) + e.getFinalDamage());
+				damageCounter.put(damager.getUniqueId(), damageCounter.getOrDefault(damager.getUniqueId(), 0.0) + e.getDamage());
 			}
 			
 			if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && getPlayer().getKiller() != null) {
