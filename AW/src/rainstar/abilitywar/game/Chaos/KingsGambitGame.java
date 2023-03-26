@@ -1,14 +1,17 @@
-package rainstar.abilitywar.game.KingsGambit;
+package rainstar.abilitywar.game.Chaos;
 
 import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
@@ -16,28 +19,32 @@ import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerQuitEvent;
 
+import javax.annotation.Nonnull;
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
 
-
-@GameManifest(name = "킹즈 갬빗", description = {
-		"§f일반 능력자 전쟁입니다... 다만, 검이 머리 위에 달려있죠.",
-		"§f왕의 심판에서 살아남을 수 있을까요?",
+@GameManifest(name = "카오스 - 킹즈 갬빗", description = {
+		"§c킹즈 갬빗",
 		"",
-		"§4[§c변경점§4]",
-		"§f모든 공격력이 10% 상승합니다.",
-		"§f게임 시작 후, 1/36000의 확률로 즉사할 가능성이 생깁니다.",
-		"§f확률 시도 이후 분모가 매번 1씩 줄어듭니다.",
-		"§f적을 처치할 경우 분모에 3000을 더할 수 있습니다."
+		"§f모든 플레이어의 머리 위에, 검이 생성됩니다.",
+		"§f검은 매 틱마다 1/10000 확률로 떨어질 수 있습니다.",
+		"§f검이 떨어진다면 대상은 치명적인 피해를 입습니다."
 		})
-public class KingsGambitGame extends Game implements DefaultKitHandler {
+public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable, Observer {
 
 	public KingsGambitGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
+		attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	@Override
@@ -57,9 +64,9 @@ public class KingsGambitGame extends Game implements DefaultKitHandler {
 					Bukkit.broadcastMessage(line);
 				}
 
-				if (getParticipants().size() < 1) {
+				if (getParticipants().size() < 2) {
 					stop();
-					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§71명§8)");
+					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§72명§8)");
 				}
 				break;
 			case 3:
@@ -160,7 +167,9 @@ public class KingsGambitGame extends Game implements DefaultKitHandler {
 				}
 
 				if (Settings.getClearWeather()) {
-					for (World world : Bukkit.getWorlds()) world.setStorm(false);
+					for (World w : Bukkit.getWorlds()) {
+						w.setStorm(false);
+					}
 				}
 
 				if (isRestricted()) {
@@ -174,6 +183,64 @@ public class KingsGambitGame extends Game implements DefaultKitHandler {
 
 				startGame();
 				break;
+		}
+	}
+
+	@EventHandler
+	private void onPlayerQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+		if (isParticipating(player)) {
+			Participant quitParticipant = getParticipant(player);
+			getDeathManager().Operation(quitParticipant);
+			Player winner = null;
+			for (Participant participant : getParticipants()) {
+				if (!getDeathManager().isExcluded(player)) {
+					if (winner == null) {
+						winner = player;
+					} else {
+						return;
+					}
+				}
+			}
+			if (winner != null) Win(getParticipant(winner));
+		}
+	}
+
+	@Override
+	protected @Nonnull DeathManager newDeathManager() {
+		return new DeathManager(this) {
+			public void Operation(Participant victim) {
+				switch (DeathSettings.getOperation()) {
+					case 탈락:
+						eliminate(victim);
+						excludedPlayers.add(victim.getPlayer().getUniqueId());
+						break;
+					case 관전모드:
+					case 없음:
+						victim.getPlayer().setGameMode(GameMode.SPECTATOR);
+						excludedPlayers.add(victim.getPlayer().getUniqueId());
+						break;
+				}
+				Player winner = null;
+				for (Participant participant : getParticipants()) {
+					Player player = participant.getPlayer();
+					if (!isExcluded(player)) {
+						if (winner == null) {
+							winner = player;
+						} else {
+							return;
+						}
+					}
+				}
+				if (winner != null) Win(getParticipant(winner));
+			}
+		};
+	}
+
+	@Override
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
+			HandlerList.unregisterAll(this);
 		}
 	}
 

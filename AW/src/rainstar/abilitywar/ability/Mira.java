@@ -48,7 +48,7 @@ import rainstar.abilitywar.effect.BindingSmoke;
 		name = "미라", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7화살 적중 §8- §b도약 표식§f: 웅크린 채로 활 발사 시 적중한 위치에 도약 표식을 만들어",
 		" $[FIELD_RANGE]칸의 범위 내에 §9§n속박의 연막§f 효과를 받는 필드를 만듭니다. $[ARROW_COOL]", 
-		" 도약 표식은 새로 만들어질 때마다 갱신되고 공간 도약을 3초간 사용하지 못합니다.",
+		" 도약 표식은 새로 만들어질 때마다 갱신되고 공간 도약을 1.5초간 사용하지 못합니다.",
 		"§7철괴 좌클릭 §8- §3공간 도약§f: 도약 표식이 있는 곳으로 순간이동합니다. $[COOLDOWN]",
 		" 이때 기존에 자신이 있던 위치로부터 $[TELEPORT_RANGE]칸 이내의 모든 플레이어를 함께",
 		" 이동시킨 뒤 순간이동한 위치에서 폭발을 일으키고 0.2초 §e§n기절§f시킵니다.",
@@ -252,7 +252,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer activecool = new AbilityTimer(60) {
+	private final AbilityTimer activecool = new AbilityTimer(30) {
 		
 		@Override
 		public void run(int count) {
