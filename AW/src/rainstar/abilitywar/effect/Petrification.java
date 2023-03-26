@@ -12,6 +12,10 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -99,19 +103,27 @@ public class Petrification extends AbstractGame.Effect implements Listener {
 
 	@EventHandler
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(participant.getPlayer())) {
+		if (e.getEntity().equals(participant.getPlayer()) && !e.isCancelled()) {
 			stack++;
-			e.setDamage(stack <= 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
-			if (stack >= 7) this.stop(false);
+			e.setDamage(stack < 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
+			if (stack >= 7) {
+				SoundLib.ENTITY_PLAYER_ATTACK_STRONG.playSound(participant.getPlayer().getLocation(), 1, 1.15f);
+				ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.STONE);
+				this.stop(false);
+			}
 		}
 	}
 	
 	@EventHandler
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getEntity().equals(participant.getPlayer())) {
+		if (e.getEntity().equals(participant.getPlayer()) && !e.isCancelled()) {
 			stack++;
-			e.setDamage(stack <= 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
-			if (stack >= 7) this.stop(false);
+			e.setDamage(stack < 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
+			if (stack >= 7) {
+				SoundLib.ENTITY_PLAYER_ATTACK_STRONG.playSound(participant.getPlayer().getLocation(), 1, 1.15f);
+				ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.STONE);
+				this.stop(false);
+			}
 		}
 	}
 	

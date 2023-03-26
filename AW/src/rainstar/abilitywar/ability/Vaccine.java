@@ -69,7 +69,7 @@ public class Vaccine extends AbilityBase {
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);	
+				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
 			}
 			e.setCancelled(true);
 		}
@@ -95,7 +95,7 @@ public class Vaccine extends AbilityBase {
     			final EntityRegainHealthEvent healevent = new EntityRegainHealthEvent(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
     			Bukkit.getPluginManager().callEvent(healevent);
     			if (!healevent.isCancelled()) {
-    				Healths.setHealth(getPlayer(), maxHealth);	
+    				Healths.setHealth(getPlayer(), healevent.getAmount());	
     			}
         		getParticipant().removeEffects();
         	}	

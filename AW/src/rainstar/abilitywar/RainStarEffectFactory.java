@@ -7,6 +7,7 @@ public enum RainStarEffectFactory {
 	ADDICTION(Addiction.class),
     AGRO(Agro.class),
     ANCIENT_CURSE(AncientCurse.class),
+    APPARENT_DEATH(ApparentDeath.class),
     BACKSEAT_GAMING(BackseatGaming.class),
     BINDING_SMOKE(BindingSmoke.class),
     BURN(Burn.class),

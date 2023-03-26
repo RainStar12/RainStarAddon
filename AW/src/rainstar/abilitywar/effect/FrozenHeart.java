@@ -26,7 +26,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "프로즌 하트", displayName = "§3프로즌 하트", method = ApplicationMethod.UNIQUE_LONGEST, type = {
-		EffectType.COMBAT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.HEALING_BAN
+		EffectType.COMBAT_RESTRICTION, EffectType.HEALING_REDUCTION, EffectType.MOVEMENT_INTERRUPT, EffectType.HEALING_BAN
 }, description = {
 		"모든 회복 효과를 받을 수 없습니다.",
 		"슬롯을 변경할 때마다 2.5초를 대기해야 하고,", 

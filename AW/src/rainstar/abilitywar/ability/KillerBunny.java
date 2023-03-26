@@ -13,7 +13,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 		" 만약 체력이 33%를 넘는다면 §c살의§f의 효과가 $[MULTIPLY]배가 되나 매번 §c살의§f를 $[MURDER_LOSE] 소모합니다.",
 		"§7철괴 우클릭 §8- §4물어뜯기§f: 다음 근접 공격을 강화합니다. $[COOLDOWN]",
 		" 강화된 공격은 §c살의§f 효과를 $[SKILL_MULTIPLY]배로 증폭시키고, 대상을 $[APPARENTDEATH_DURATION]초간 §7§n가사§f 상태로 만듭니다.",
-		"§8[§7가사§8] §f체력이 33% 이하라면 체력이 고정되고, 공격 및 이동이 불가능해집니다."
+		"§8[§7가사§8] §f체력이 33% 이하라면 체력이 고정되고, 공격 및 이동이 불가능해집니다.",
+		" 체력이 33%를 초과한다면 받는 피해량이 25% 증가합니다."
 		},
 		summarize = {
 		""
