@@ -10,7 +10,6 @@ import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -20,6 +19,7 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -31,14 +31,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -51,14 +50,15 @@ import java.util.List;
 import java.util.Random;
 
 @GameManifest(name = "카오스 - 킹즈 갬빗", description = {
-		"§5§ka§c킹즈 갬빗§5§ka",
+		"§5§kaaa§c킹즈 갬빗§5§kaaa",
 		"",
 		"§f모든 플레이어의 머리 위에, 검이 생성됩니다.",
-		"§f검은 매 틱마다 $[CHANCE_NUMERATOR]/$[CHANCE_DENOMINATOR] 확률로 떨어질 수 있습니다.",
-		"§f검이 떨어진다면 대상은 치명적인 피해를 입습니다."
+		"§f검은 매 틱마다 매우 낮은 확률로 떨어질 수 있습니다.",
+		"§f검이 떨어진다면 대상은 치명적인 피해를 입습니다.",
+		"§f누군가의 검이 떨어질 때마다 공격력이 10%씩 증가합니다."
 		})
 @GameAliases({"킹즈 갬빗", "킹즈갬빗", "다모클"})
-public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable, Observer {
+public class KingsGambitGame extends Game implements DefaultKitHandler, Observer {
 
 	public static final Setting<Integer> CHANCE_NUMERATOR = 
 			gameSettings.new Setting<Integer>(KingsGambitGame.class, "chance-numerator", 1,
@@ -243,26 +243,6 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable
 		}
 	}
 
-	@EventHandler
-	private void onPlayerQuit(PlayerQuitEvent e) {
-		Player player = e.getPlayer();
-		if (isParticipating(player)) {
-			Participant quitParticipant = getParticipant(player);
-			getDeathManager().Operation(quitParticipant);
-			Player winner = null;
-			for (Participant participant : getParticipants()) {
-				if (!getDeathManager().isExcluded(player)) {
-					if (winner == null) {
-						winner = player;
-					} else {
-						return;
-					}
-				}
-			}
-			if (winner != null) Win(getParticipant(winner));
-		}
-	}
-
 	@Override
 	protected @Nonnull DeathManager newDeathManager() {
 		return new DeathManager(this) {
@@ -278,18 +258,6 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 				}
-				Player winner = null;
-				for (Participant participant : getParticipants()) {
-					Player player = participant.getPlayer();
-					if (!isExcluded(player)) {
-						if (winner == null) {
-							winner = player;
-						} else {
-							return;
-						}
-					}
-				}
-				if (winner != null) Win(getParticipant(winner));
 			}
 		};
 	}
@@ -358,8 +326,9 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable
 					SoundLib.BLOCK_ANVIL_LAND.playSound(armorstand.getLocation(), 1, 1.4f);
 					participant.getPlayer().damage(Integer.MAX_VALUE);
 					participant.getPlayer().getWorld().spawn(participant.getPlayer().getLocation().clone().add(1000, 0, 1000), Zombie.class).damage(Integer.MAX_VALUE, participant.getPlayer());
-		            if (participant.getPlayer().isDead()) Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
+		            if (participant.getPlayer().isDead()) Bukkit.broadcastMessage("§3[§b다모클레스§3] §a" + participant.getPlayer().getName() + "§f님이 §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
 					NMS.resetWorldBorder(participant.getPlayer());
+					this.stop(false);
 				}
 				fallingtime--;
 			} else {
@@ -399,7 +368,17 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Winnable
 				SoundLib.BLOCK_ANVIL_LAND.playSound(armorstand.getLocation(), 1, 1.4f);
 				participant.getPlayer().setHealth(0);
 				Bukkit.broadcastMessage("§c잔머리를 꾀한 자, 죽음을 §l절대§c 피하지 못하리라.");
-	            Bukkit.broadcastMessage("§3[§b다모클레스§3] §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
+	            Bukkit.broadcastMessage("§3[§b다모클레스§3] §a" + participant.getPlayer().getName() + "§f님이 §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
+			}
+		}
+		
+		@EventHandler
+		public void onPlayerMove(PlayerMoveEvent e) {
+			if (e.getPlayer().equals(participant.getPlayer())) {
+				Location loc = participant.getPlayer().getLocation().clone().add(0, 3, 0);
+				loc.add(participant.getPlayer().getLocation().getDirection().clone().setY(0).normalize().multiply(0.7));
+				loc.add(VectorUtil.rotateAroundAxisY(participant.getPlayer().getLocation().getDirection().clone().setY(0).normalize().multiply(0.4), 90));
+				armorstand.teleport(loc);	
 			}
 		}
 		

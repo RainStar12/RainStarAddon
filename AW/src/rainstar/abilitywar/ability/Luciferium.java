@@ -51,7 +51,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> STRENGTH = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-amplifier", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength", 1,
             "# 힘 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -60,7 +60,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> SPEED = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-amplifier", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed", 1,
             "# 신속 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -69,7 +69,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RESISTANCE = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-amplifier", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance", 1,
             "# 저항 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -160,7 +160,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	}
 	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material == Material.IRON_INGOT && clicktype == ClickType.LEFT_CLICK && getPlayer().isSneaking()) {
+		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK) {
 			if (!nextpill.isRunning()) {
 				SoundLib.ENTITY_GENERIC_DRINK.playSound(getPlayer().getLocation(), 1, 0.5f);
 				SoundLib.ENTITY_GENERIC_DRINK.playSound(getPlayer().getLocation(), 1, 0.75f);

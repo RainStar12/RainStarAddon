@@ -81,6 +81,8 @@ import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
 import rainstar.abilitywar.game.RandomGame;
+import rainstar.abilitywar.game.Chaos.KingsGambitGame;
+import rainstar.abilitywar.game.Chaos.RockbottomGame;
 import rainstar.abilitywar.game.SelectMix.NullAbility;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 import rainstar.abilitywar.synergy.*;
@@ -400,7 +402,9 @@ public class RainStarAddon extends Addon implements Listener {
 	    
 	    GameFactory.registerMode(SelectMixGame.class);
 	    GameFactory.registerMode(RandomGame.class);
-		
+	    GameFactory.registerMode(KingsGambitGame.class);
+	    GameFactory.registerMode(RockbottomGame.class);
+	    
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
 		Bukkit.broadcastMessage("§e능력 §f97개 §7/ §d시너지 §f44개 적용 완료.");
 		

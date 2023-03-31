@@ -1,6 +1,8 @@
 package rainstar.abilitywar.game.Chaos;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.naming.OperationNotSupportedException;
@@ -12,9 +14,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.google.common.base.Strings;
 
@@ -24,11 +26,8 @@ import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
-import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -37,12 +36,14 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @GameManifest(name = "카오스 - 최저점", description = {
-		"§5§ka§2최저점§5§ka",
+		"§5§kaaa§2최저점§5§kaaa",
 		"",
-		"§f자신의 공격력이 갱신한 최대치 이하로 떨어지지 않습니다."
+		"§f자신의 공격력이 갱신한 최대치 이하로 떨어지지 않습니다.",
+		"§f기본적으로 공격력이 10%~50% 사이로 무작위 감소합니다."
 		})
 @GameAliases({"최저점", "락바텀"})
 public class RockbottomGame  extends Game implements DefaultKitHandler, Observer {
@@ -54,6 +55,9 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
+	private final Map<Participant, Double> damageMap = new HashMap<>();
+	private final Random random = new Random();
+	
 	@Override
 	protected void progressGame(int seconds) {
 		switch (seconds) {
@@ -113,7 +117,7 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 				}
 				break;
 			case 8:
-				Bukkit.broadcastMessage("§a평준화 작업을 완료했습니다.");
+				Bukkit.broadcastMessage("§a게임의 특정 난수를 조작하였습니다.");
 				Bukkit.broadcastMessage("§e잠시 후 게임이 시작됩니다.");
 				break;
 			case 10:
@@ -194,7 +198,7 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 		}
 	}
 	
-	@EventHandler()
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (!e.isCancelled()) {
 			Player damager = null;
@@ -203,8 +207,12 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
-			if (!e.getEntity().equals(damager)) {
-				
+			if (damager != null && getParticipants().contains(getParticipant(damager)) && !e.getEntity().equals(damager)) {
+				e.setDamage(e.getDamage() * (1 - ((random.nextInt(41) + 10) * 0.01)));
+				if (damageMap.containsKey(getParticipant(damager))) {
+					if (e.getDamage() > damageMap.get(getParticipant(damager))) damageMap.put(getParticipant(damager), e.getDamage());
+					else e.setDamage(damageMap.get(getParticipant(damager)));
+				} else damageMap.put(getParticipant(damager), e.getDamage());
 			}
 			
 		}
