@@ -4,6 +4,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -23,11 +24,11 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(name = "다단히트", rank = Rank.A, species = Species.HUMAN, explain = {
 		"근접 공격 피해를 입힐 때 $[DAMAGE_CONFIG]%의 피해로 $[COUNT_CONFIG]번 공격합니다.",
 		"다단히트 효과 발동 중에는 효과를 중복 발동할 수 없습니다.",
-		"또한 생명체에게 피해를 입을 때마다 $[INV_CONFIG]초간 무적 상태가 됩니다."
+		"또한 생명체나 발사체에게 피해를 입을 때마다 $[INV_CONFIG]초간 무적 상태가 됩니다."
 		},
 		summarize = {
 		"근접 공격 시 공격력이 감소한 채로 $[COUNT_CONFIG]번 때립니다.",
-		"피해를 입을 때마다 순간 무적 상태가 됩니다."
+		"생명체나 발사체에게 피해를 입을 때마다 순간 무적 상태가 됩니다."
 		})
 
 @Tips(tip = {
@@ -122,7 +123,7 @@ public class MultiHit extends AbilityBase {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && !e.isCancelled()) {
 			if (!inv.isRunning()) {
-				inv.start();
+				if (e.getCause().equals(DamageCause.PROJECTILE) || e.getCause().equals(DamageCause.ENTITY_ATTACK) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) inv.start();
 			} else {
 				SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer().getLocation(), 1, 1.2f);
 				e.setCancelled(true);
@@ -145,4 +146,5 @@ public class MultiHit extends AbilityBase {
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
+	
 }

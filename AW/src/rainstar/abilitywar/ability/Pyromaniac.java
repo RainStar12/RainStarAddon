@@ -213,15 +213,17 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	      .getActivePotionEffects().stream().noneMatch(pe -> (pe.getType() == PotionEffectType.BLINDNESS)));
 	}
 	
-	@SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-			e.setCancelled(true);
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() / 3.0), RegainReason.CUSTOM);
-			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
-			}
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+				e.setCancelled(true);
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() / 3.0), RegainReason.CUSTOM);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
+				}
+			}	
 		}
 	}
 	

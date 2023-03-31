@@ -80,7 +80,7 @@ public class AncientCurse extends AbstractGame.Effect implements Listener {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (damager.equals(participant.getPlayer())) e.setDamage(e.getDamage() * (1 + (level * 0.1)));
+		if (participant.getPlayer().equals(damager)) e.setDamage(e.getDamage() * (1 + (level * 0.1)));
 	}
 	
 	public int getLevel() {

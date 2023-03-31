@@ -389,8 +389,12 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (participant.hasAbility()) {
 					if (participant.getAbility().getClass().equals(Mix.class)) {
 						final Mix mix = (Mix) getParticipant().getAbility();
-						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-						if (first.getSpecies() == Species.UNDEAD || second.getSpecies() == Species.UNDEAD) isUndead = true;
+						if (mix.hasSynergy()) {
+							if (mix.getSynergy().getSpecies() == Species.UNDEAD) isUndead = true;
+						} else {
+							final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+							if (first.getSpecies() == Species.UNDEAD || second.getSpecies() == Species.UNDEAD) isUndead = true;	
+						}
 					} else {
 						if (participant.getAbility().getSpecies() == Species.UNDEAD) isUndead = true;
 					}	
@@ -409,9 +413,14 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 				Participant participant = getGame().getParticipant(player);
 				if (participant.getAbility().getClass().equals(Mix.class)) {
 					final Mix mix = (Mix) getParticipant().getAbility();
-					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-					if (first.getSpecies() == Species.GOD || second.getSpecies() == Species.GOD) isGod = true;
-					else if (first.getSpecies() == Species.DEMIGOD || second.getSpecies() == Species.DEMIGOD) isDemiGod = true;
+					if (mix.hasSynergy()) {
+						if (mix.getSynergy().getSpecies() == Species.GOD) isGod = true;
+						else if (mix.getSynergy().getSpecies() == Species.DEMIGOD) isDemiGod = true;	
+					} else {
+						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+						if (first.getSpecies() == Species.GOD || second.getSpecies() == Species.GOD) isGod = true;
+						else if (first.getSpecies() == Species.DEMIGOD || second.getSpecies() == Species.DEMIGOD) isDemiGod = true;	
+					}
 				} else {
 					if (participant.getAbility().getSpecies() == Species.GOD) isGod = true;
 					else if (participant.getAbility().getSpecies() == Species.DEMIGOD) isDemiGod = true;

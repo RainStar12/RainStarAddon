@@ -219,7 +219,7 @@ public class Damocles extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		if (fallingstarted) {
 			armorstand.setGravity(true);

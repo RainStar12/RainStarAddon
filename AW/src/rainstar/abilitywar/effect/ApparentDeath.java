@@ -7,6 +7,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -135,6 +136,7 @@ public class ApparentDeath extends AbstractGame.Effect implements Listener {
 
 	@Override
 	protected void onSilentEnd() {
+		HandlerList.unregisterAll(this);
 		hologram.remove();
 		super.onSilentEnd();
 	}

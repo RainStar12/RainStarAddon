@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -16,9 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.util.Vector;
 
@@ -106,7 +103,6 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	private static final Sphere sphere = Sphere.of(6, 12);
 	private boolean morejump = false;
 	private boolean fallcancel = false;
-	private BossBar bossBar = null;
 	private final int decrease = ATTACK_DAMAGE_DECREASE.getValue();
 	private final int duration = (int) (ALTER_DURATION.getValue() * 20);
 	private final int durationdec = (int) (DURATION_DECREASE.getValue() * 20);
@@ -147,20 +143,6 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 	    	}
 		}
 		return false;
-	}
-	
-	@SubscribeEvent
-	private void onPlayerJoin(final PlayerJoinEvent e) {
-		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
-		}
-	}
-
-	@SubscribeEvent
-	private void onPlayerQuit(final PlayerQuitEvent e) {
-		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
-		}
 	}
     
 	@SuppressWarnings("deprecation")
