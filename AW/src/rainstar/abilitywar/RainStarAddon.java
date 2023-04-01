@@ -28,7 +28,6 @@ import daybreak.abilitywar.Command.Condition;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Berserker;
 import daybreak.abilitywar.ability.list.Curse;
@@ -73,7 +72,6 @@ import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import daybreak.google.common.collect.ImmutableMap;
 import rainstar.abilitywar.ability.*;
 import rainstar.abilitywar.ability.beta.DamageTester;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
@@ -84,12 +82,15 @@ import rainstar.abilitywar.game.RandomGame;
 import rainstar.abilitywar.game.Chaos.GachaGame;
 import rainstar.abilitywar.game.Chaos.KingsGambitGame;
 import rainstar.abilitywar.game.Chaos.RockbottomGame;
+import rainstar.abilitywar.game.Chaos.Overlap.Overlap;
+import rainstar.abilitywar.game.Chaos.Overlap.OverlapGame;
 import rainstar.abilitywar.game.SelectMix.NullAbility;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 import rainstar.abilitywar.synergy.*;
 import rainstar.abilitywar.synergy.chance.Chance;
 import rainstar.abilitywar.system.killreward.KillRewardGUI;
 import rainstar.abilitywar.system.killreward.KillRewardSelectGUI;
+import rainstar.abilitywar.utils.RankColor;
 
 public class RainStarAddon extends Addon implements Listener {
 	
@@ -101,15 +102,6 @@ public class RainStarAddon extends Addon implements Listener {
 	
 	private Map<UUID, Integer> nowkillcount = new HashMap<>();
 	private Random random = new Random();
-	
-	private static final ImmutableMap<Rank, String> rankcolor = ImmutableMap.<Rank, String>builder()
-			.put(Rank.C, "§e")
-			.put(Rank.B, "§b")
-			.put(Rank.A, "§a")
-			.put(Rank.S, "§d")
-			.put(Rank.L, "§6")
-			.put(Rank.SPECIAL, "§c")
-			.build();
 	
 	@Override
 	public void onEnable() {
@@ -330,7 +322,8 @@ public class RainStarAddon extends Addon implements Listener {
 		
 		//event
 		AbilityFactory.registerAbility(NullAbility.class);
-        
+        AbilityFactory.registerAbility(Overlap.class);
+		
         
 		
 		SynergyFactory.registerSynergy(PrecisionAiming.class, Sniper.class, HawkEye.class);
@@ -403,9 +396,12 @@ public class RainStarAddon extends Addon implements Listener {
 	    
 	    GameFactory.registerMode(SelectMixGame.class);
 	    GameFactory.registerMode(RandomGame.class);
+	    
+	    //Chaos Game
 	    GameFactory.registerMode(KingsGambitGame.class);
 	    GameFactory.registerMode(RockbottomGame.class);
 	    GameFactory.registerMode(GachaGame.class);
+	    GameFactory.registerMode(OverlapGame.class);
 	    
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
 		Bukkit.broadcastMessage("§e능력 §f97개 §7/ §d시너지 §f44개 적용 완료.");
@@ -669,12 +665,12 @@ public class RainStarAddon extends Addon implements Listener {
 							if (mix.hasSynergy()) {
 								Synergy synergy = mix.getSynergy();
 								Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-								killerabilityname = rankcolor.get(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
+								killerabilityname = RankColor.getColor(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
 							} else {
-								killerabilityname = rankcolor.get(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + rankcolor.get(mix.getSecond().getRank()) + mix.getSecond().getName();
+								killerabilityname = RankColor.getColor(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + RankColor.getColor(mix.getSecond().getRank()) + mix.getSecond().getName();
 							}
 						} else killerabilityname = "§7능력 없음";
-					} else killerabilityname = rankcolor.get(ab.getRank()) + ab.getDisplayName();
+					} else killerabilityname = RankColor.getColor(ab.getRank()) + ab.getDisplayName();
 				} else killerabilityname = "§7능력 없음";
 			}
 			
@@ -686,12 +682,12 @@ public class RainStarAddon extends Addon implements Listener {
 						if (mix.hasSynergy()) {
 							Synergy synergy = mix.getSynergy();
 							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-							deathabilityname = rankcolor.get(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
+							deathabilityname = RankColor.getColor(synergy.getRank()) + synergy.getName() + "§8(§7" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + "§8)";
 						} else {
-							deathabilityname = rankcolor.get(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + rankcolor.get(mix.getSecond().getRank()) + mix.getSecond().getName();
+							deathabilityname = RankColor.getColor(mix.getFirst().getRank()) + mix.getFirst().getName() + " §f+ " + RankColor.getColor(mix.getSecond().getRank()) + mix.getSecond().getName();
 						}
 					} else deathabilityname = "§7능력 없음";
-				} else deathabilityname = rankcolor.get(ab.getRank()) + ab.getDisplayName();
+				} else deathabilityname = RankColor.getColor(ab.getRank()) + ab.getDisplayName();
 			} else deathabilityname = "§7능력 없음";
 			
 			if (e.getPlayer().getKiller() != null) {
