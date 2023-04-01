@@ -31,10 +31,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -79,6 +82,7 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Observer
 	};
 	
 	private final int nume = CHANCE_NUMERATOR.getValue(), deno = CHANCE_DENOMINATOR.getValue();
+	private int stack;
 	
 	public KingsGambitGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
@@ -147,26 +151,26 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Observer
 				break;
 			case 8:
 				Bukkit.broadcastMessage("§c검이 준비되었습니다.");
-				Bukkit.broadcastMessage("§e잠시 후 게임이 시작됩니다.");
+				Bukkit.broadcastMessage("§c잠시 후 게임이 시작됩니다.");
 				break;
 			case 10:
-				Bukkit.broadcastMessage("§e게임이 §c5§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§c게임이 §c5§c초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 11:
-				Bukkit.broadcastMessage("§e게임이 §c4§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§c게임이 §c4§c초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 12:
-				Bukkit.broadcastMessage("§e게임이 §c3§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§c게임이 §c3§c초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 13:
-				Bukkit.broadcastMessage("§e게임이 §c2§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§c게임이 §c2§c초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 14:
-				Bukkit.broadcastMessage("§e게임이 §c1§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§c게임이 §c1§c초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 15:
@@ -269,6 +273,19 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Observer
 		}
 	}
 	
+	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (damager != null && getParticipants().contains(getParticipant(damager))) {
+			e.setDamage(e.getDamage() * (1 + (stack * 0.1)));
+		}
+	}
+	
 	public class KingsDamocles extends GameTimer implements Listener {
 		
 		private final Random random = new Random();
@@ -329,6 +346,7 @@ public class KingsGambitGame extends Game implements DefaultKitHandler, Observer
 		            if (participant.getPlayer().isDead()) Bukkit.broadcastMessage("§3[§b다모클레스§3] §a" + participant.getPlayer().getName() + "§f님이 §b" + nume + "§7/§b" + deno + "§f의 확률로 §e" + (time / 20.0) + "§f초를 버티고 사망하셨습니다.");
 					NMS.resetWorldBorder(participant.getPlayer());
 					this.stop(false);
+					stack++;
 				}
 				fallingtime--;
 			} else {

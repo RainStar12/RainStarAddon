@@ -15,6 +15,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.AbstractGame;
@@ -41,6 +42,7 @@ import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 		"§f게임모드별 전용 확률이 존재하고, WRECK도 같이 정해집니다.",
 		"§f확률은 /aw config games를 통해 세부 조정 가능합니다."
 		})
+@GameAliases({"무작위", "random"})
 public class RandomGame extends Game {
 
 	public static final Setting<Integer> NORMAL_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-normal-chance", 15, 

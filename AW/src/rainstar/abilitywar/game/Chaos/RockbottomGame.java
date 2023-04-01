@@ -1,5 +1,6 @@
 package rainstar.abilitywar.game.Chaos;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,10 @@ import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 
@@ -46,7 +50,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§f기본적으로 공격력이 10%~50% 사이로 무작위 감소합니다."
 		})
 @GameAliases({"최저점", "락바텀"})
-public class RockbottomGame  extends Game implements DefaultKitHandler, Observer {
+public class RockbottomGame extends Game implements DefaultKitHandler, Observer {
 	
 	public RockbottomGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
@@ -118,26 +122,26 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 				break;
 			case 8:
 				Bukkit.broadcastMessage("§a게임의 특정 난수를 조작하였습니다.");
-				Bukkit.broadcastMessage("§e잠시 후 게임이 시작됩니다.");
+				Bukkit.broadcastMessage("§2잠시 후 게임이 시작됩니다.");
 				break;
 			case 10:
-				Bukkit.broadcastMessage("§e게임이 §c5§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§2게임이 §c5§2초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 11:
-				Bukkit.broadcastMessage("§e게임이 §c4§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§2게임이 §c4§2초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 12:
-				Bukkit.broadcastMessage("§e게임이 §c3§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§2게임이 §c3§2초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 13:
-				Bukkit.broadcastMessage("§e게임이 §c2§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§2게임이 §c2§2초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 14:
-				Bukkit.broadcastMessage("§e게임이 §c1§e초 후에 시작됩니다.");
+				Bukkit.broadcastMessage("§2게임이 §c1§2초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 15:
@@ -210,11 +214,18 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 			if (damager != null && getParticipants().contains(getParticipant(damager)) && !e.getEntity().equals(damager)) {
 				e.setDamage(e.getDamage() * (1 - ((random.nextInt(41) + 10) * 0.01)));
 				if (damageMap.containsKey(getParticipant(damager))) {
-					if (e.getDamage() > damageMap.get(getParticipant(damager))) damageMap.put(getParticipant(damager), e.getDamage());
-					else e.setDamage(damageMap.get(getParticipant(damager)));
-				} else damageMap.put(getParticipant(damager), e.getDamage());
+					if (e.getDamage() > damageMap.get(getParticipant(damager))) {
+						damageMap.put(getParticipant(damager), e.getDamage());
+						new Holograms(getParticipant(damager), e.getEntity().getLocation(), e.getDamage(), e.getDamage(), true, false, true).start();
+					} else {
+						new Holograms(getParticipant(damager), e.getEntity().getLocation(), e.getDamage(), damageMap.get(getParticipant(damager)), false, true, true).start();
+						e.setDamage(damageMap.get(getParticipant(damager)));
+					}
+				} else {
+					damageMap.put(getParticipant(damager), e.getDamage());
+					new Holograms(getParticipant(damager), e.getEntity().getLocation(), e.getDamage(), e.getDamage(), false, false, true).start();
+				}
 			}
-			
 		}
 	}
 
@@ -242,6 +253,65 @@ public class RockbottomGame  extends Game implements DefaultKitHandler, Observer
 		if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 		}
+	}
+	
+	private class Holograms extends GameTimer {
+		
+		private final IHologram hologram;
+		private Random random = new Random();
+		private final DecimalFormat damageDF = new DecimalFormat("0.00");
+		private boolean control;
+		private double damages;
+		private double damage;
+		private double controldamage;
+		
+		private Holograms(Participant participant, Location hitLoc, double damage, double controldamage, boolean over, boolean control, boolean showWho) {
+			super(TaskType.REVERSE, 30);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.hologram = NMS.newHologram(hitLoc.getWorld(), 
+					hitLoc.getX() + (((random.nextDouble() * 2) - 1) * 0.5),
+					hitLoc.getY() + 1.25 + (((random.nextDouble() * 2) - 1) * 0.25), 
+					hitLoc.getZ() + (((random.nextDouble() * 2) - 1) * 0.5), 
+					over ? "§b§l" + damageDF.format(damage) : "§c§l" + damageDF.format(damage));
+			this.damage = damage;
+			this.control = control;
+			this.controldamage = controldamage;
+			if (showWho) {
+				hologram.display(participant.getPlayer());
+			} else {
+				for (Player player : participant.getPlayer().getWorld().getPlayers()) {
+					hologram.display(player);
+				}	
+			}
+		}
+		
+		@Override
+		protected void run(int count) {
+			if (control) {
+				if (count > 20) {
+					if (damage > controldamage) {
+						damages = damage - (((damage - controldamage) * (31 - count)) / 10);	
+					} else if (damage < controldamage) {
+						damages = damage + (((controldamage - damage) * (31 - count)) / 10);
+					} else if (damage == controldamage) {
+						damages = damage;
+					}
+					hologram.setText("§a§l" + damageDF.format(damages));
+				}	
+			}
+			hologram.teleport(hologram.getLocation().add(0, 0.03, 0));
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			hologram.unregister();
+		}
+		
 	}
 
 }

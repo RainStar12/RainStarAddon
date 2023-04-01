@@ -89,7 +89,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		575, 545, 525, 505, 485, 465, 445, 425, 405, 390, 375, 360, 345, 330, 315, 300, 285, 270, 255, 243, 231, 219, 207, 195, 183, 171, 159, 147, 135,
     		125, 115, 105,  95, 85, 77, 69, 61, 53, 46, 40, 34, 30, 24, 18, 14, 10, 7, 5, 3, 1));
     
-    public AbilityTimer nextpill = new AbilityTimer(TaskType.REVERSE, 120 + (killstack * 80)) {
+    public AbilityTimer nextpill = new AbilityTimer(TaskType.REVERSE, 120) {
     	
     	int startcount;
     	
@@ -115,6 +115,9 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		if (count <= startcount / 10.0) {
     			bossBar.setColor(BarColor.PURPLE);
     			bossBar.setTitle("§4§l루시페륨을 복용해야 합니다!");
+    		} else {
+    			bossBar.setColor(BarColor.RED);
+    			bossBar.setTitle("§c루시페륨을 복용해야 합니다!");
     		}
     	}
     	
@@ -169,6 +172,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 				SoundLib.ENTITY_GENERIC_DRINK.playSound(getPlayer().getLocation(), 1, 2);
 				SoundLib.ENTITY_VEX_CHARGE.playSound(getPlayer(), 1, 0.65f);
 				nextpill.start();
+				nextpill.setCount(120 + (killstack * 80));
 				return true;
 			} else {
 				SoundLib.ENTITY_GENERIC_DRINK.playSound(getPlayer().getLocation(), 1, 0.5f);
