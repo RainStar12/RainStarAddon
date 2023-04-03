@@ -64,7 +64,6 @@ public class GachaGame extends Game implements DefaultKitHandler, Observer {
 	}
 	
 	private static final Logger logger = Logger.getLogger(Game.class);
-	private final AbilitySelect abilitySelect = newAbilitySelect();
 	
 	@Override
 	protected void progressGame(int seconds) {
@@ -253,14 +252,6 @@ public class GachaGame extends Game implements DefaultKitHandler, Observer {
 		if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 		}
-	}
-	
-	@Override
-	public void startAbilitySelect() throws OperationNotSupportedException {
-		if (abilitySelect == null) {
-			throw new OperationNotSupportedException("AbilitySelect is null");
-		}
-		abilitySelect.start();
 	}
 	
 	@Override

@@ -35,7 +35,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "호조사", rank = Rank.S, species = Species.GOD, explain = {
+@AbilityManifest(name = "호조사", rank = Rank.L, species = Species.GOD, explain = {
 		"§7철괴 §8- §b여의주§f: 철괴를 이용하여 자신이 원하는 스탯을 $[STAT_BOOST]초간 $[BOOST_PERCENTAGE]% §6강화§f합니다.",
 		" §c공격력§8(§7좌클릭§8) §a/ §3방어력§8(§7우클릭§8) §a/ §b이동 속도§8(§7F키§8)",
 		" §6강화§f된 스탯이 아닌 스탯은 $[STAT_WEAKEN]% §7약화§f됩니다. $[COOLDOWN]",

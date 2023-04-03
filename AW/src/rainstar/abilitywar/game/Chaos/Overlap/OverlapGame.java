@@ -63,7 +63,7 @@ public class OverlapGame extends AbstractOverlap implements DefaultKitHandler, O
 	}
 
 	private static final Logger logger = Logger.getLogger(Game.class);
-	private final AbilitySelect abilitySelect = newAbilitySelect();
+
 	@SuppressWarnings("serial")
 	private List<String> NOT_CONTAINS = new ArrayList<String>() {
 		{
@@ -261,14 +261,6 @@ public class OverlapGame extends AbstractOverlap implements DefaultKitHandler, O
 			}
 			participant.getPlayer().sendMessage("§5[§d!§5] " + joiner.toString() + "§f을 흡수하였습니다.");
 		}
-	}
-	
-	@Override
-	public void startAbilitySelect() throws OperationNotSupportedException {
-		if (abilitySelect == null) {
-			throw new OperationNotSupportedException("AbilitySelect is null");
-		}
-		abilitySelect.start();
 	}
 	
 	@Override

@@ -326,7 +326,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	private final AbilityTimer field = new AbilityTimer(100) {
+	private final AbilityTimer field = new AbilityTimer(DURATION.getValue() * 20) {
 		
 		@Override
 		public void onStart() {
