@@ -171,7 +171,6 @@ public class XInfected extends AbilityBase implements ActiveHandler {
 			zombie.getEquipment().setLeggingsDropChance(0);
 			zombie.setCustomName("§2" + getPlayer().getName());
 			zombie.setCustomNameVisible(true);
-			zombie.setConversionTime(Integer.MAX_VALUE);
 			
 			zombie.setHealth(10);
 			

@@ -94,6 +94,7 @@ public class KillerBunny extends AbilityBase {
     private final int apparentdeath = (int) (APPARENTDEATH_DURATION.getValue() * 20);
     
     private double murder = 0;
+    private boolean upgrade = false;
     
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -107,11 +108,14 @@ public class KillerBunny extends AbilityBase {
 			Player player = (Player) e.getEntity();
 			double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double power = (murder / 100);
+			if (upgrade) power *= skillmultiply;
 			if (player.getHealth() <= maxHP / 3.0) {
 				e.setDamage(e.getDamage() * (1 + power));
 			} else {
 				e.setDamage(e.getDamage() * (1 + (power * multiply)));
+				murder = Math.max(0, murder - murderloss);
 			}
+			upgrade = false;
 		}
     }
     
