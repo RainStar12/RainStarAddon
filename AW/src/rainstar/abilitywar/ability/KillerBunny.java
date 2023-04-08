@@ -117,6 +117,8 @@ public class KillerBunny extends AbilityBase {
 			}
 			upgrade = false;
 		}
+		
+		
     }
     
     
