@@ -1,17 +1,25 @@
 package rainstar.abilitywar.ability;
 
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import rainstar.abilitywar.effect.ApparentDeath;
 
 @AbilityManifest(name = "살인마 토끼", rank = Rank.L, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §c살의§f: 근접 공격력이 §c살의§f%만큼 증가합니다.",
@@ -26,7 +34,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 		summarize = {
 		""
 		})
-public class KillerBunny extends AbilityBase {
+public class KillerBunny extends AbilityBase implements ActiveHandler {
 	
 	public KillerBunny(Participant participant) {
 		super(participant);
@@ -65,6 +73,19 @@ public class KillerBunny extends AbilityBase {
 
     };
     
+	public static final SettingObject<Integer> COOLDOWN = 
+			abilitySettings.new SettingObject<Integer>(KillerBunny.class, "cooldown", 15,
+            "# 철괴 우클릭 쿨타임", "# 단위: 초") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+        @Override
+        public String toString() {
+            return Formatter.formatCooldown(getValue());
+        }
+    };
+    
     public static final SettingObject<Double> SKILL_MULTIPLY = 
             abilitySettings.new SettingObject<Double>(KillerBunny.class, "skill-multiply", 2.0,
             "# 스킬 살의 효과 배수") {
@@ -92,34 +113,46 @@ public class KillerBunny extends AbilityBase {
     private final double multiply = MULTIPLY.getValue();
     private final double skillmultiply = SKILL_MULTIPLY.getValue();
     private final int apparentdeath = (int) (APPARENTDEATH_DURATION.getValue() * 20);
+    private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     
     private double murder = 0;
     private boolean upgrade = false;
     
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (getPlayer().equals(damager) && e.getEntity() instanceof Player) {
+		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
 			double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 			double power = (murder / 100);
-			if (upgrade) power *= skillmultiply;
+			if (upgrade) {
+				power *= skillmultiply;
+				upgrade = false;
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						ApparentDeath.apply(getGame().getParticipant(player), TimeUnit.TICKS, apparentdeath);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 10L);	
+			}
 			if (player.getHealth() <= maxHP / 3.0) {
 				e.setDamage(e.getDamage() * (1 + power));
 			} else {
 				e.setDamage(e.getDamage() * (1 + (power * multiply)));
 				murder = Math.max(0, murder - murderloss);
 			}
-			upgrade = false;
 		}
-		
-		
     }
+    
+	public boolean ActiveSkill(Material material, ClickType clicktype) {
+		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
+			if (upgrade) getPlayer().sendMessage("§4[§c!§4]§f 다음 공격이 이미 §b강화§f 상태입니다.");
+			else {
+				upgrade = true;
+				return cooldown.start();
+			}
+		}
+		return false;
+	}
     
     
 }

@@ -12,9 +12,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 		""
 		},
 		summarize = {
-		"$[MAX_SEED]개의 §d꽃§f 씨앗을 지니고 시작하며 전부 사용하면 $[RECHARGE]초 후 보급됩니다.",
-		"§7철괴 좌클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.",
-		"§d꽃§f 종류에 따라 존재하는 효과를 주변 대상에게 부여합니다. §8(§a긍정 §7- §a아군§7, §c부정 §7- §c적군§7§8)"
+		""
 		})
 public class Chaser extends AbilityBase {
 	
