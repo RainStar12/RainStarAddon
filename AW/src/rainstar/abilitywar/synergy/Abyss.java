@@ -24,13 +24,16 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -225,7 +228,8 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 						SoundLib.BLOCK_LAVA_EXTINGUISH.playSound(getPlayer().getLocation(), 1, 0.5f);
 						SoundLib.BLOCK_ANVIL_DESTROY.playSound(getPlayer().getLocation(), 1, 0.75f);
 					} else getParticipant().getPlayer().sendMessage("§3[§b!§3] §b능력을 삭제하였습니다.");
-					cooldown.setCount((int) (COOLDOWN.getValue() * coolmultiply));
+					int nowcool = (int) (Wreck.isEnabled(GameManager.getGame()) ? (((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * cooldown.getCount() * coolmultiply) : cooldown.getCount() * coolmultiply);
+					cooldown.setCount(nowcool);
 				}
 			}
 		}

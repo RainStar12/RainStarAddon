@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
+
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -17,16 +19,17 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import rainstar.abilitywar.effect.ApparentDeath;
 
 @AbilityManifest(name = "살인마 토끼", rank = Rank.L, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §c살의§f: 근접 공격력이 §c살의§f%만큼 증가합니다.",
+		"§7패시브 §8- §c살의§f: §a근접 공격력§f이 §c살의§fe만§f큼 증가합니다.",
 		"§7패시브 §8- §5피의 향§f: 모든 플레이어의 현재 체력 비율을 볼 수 있습니다.",
-		" 근접 공격 시 대상의 체력이 33% 이하라면 §c살의§f를 $[MURDER_GAIN]만큼 획득합니다.",
+		" §a근접 공격§f 시 대상의 체력이 33% 이하라면 §c살의§f를 $[MURDER_GAIN]만큼 획득합니다.",
 		" 만약 체력이 33%를 넘는다면 §c살의§f의 효과가 $[MULTIPLY]배가 되나 매번 §c살의§f를 $[MURDER_LOSS] 소모합니다.",
-		"§7철괴 우클릭 §8- §4물어뜯기§f: 다음 근접 공격을 강화합니다. $[COOLDOWN]",
+		"§7철괴 우클릭 §8- §4물어뜯기§f: 다음 §a근접 공격§f을 강화합니다. $[COOLDOWN]",
 		" 강화된 공격은 §c살의§f 효과를 $[SKILL_MULTIPLY]배로 증폭시키고, 대상을 $[APPARENTDEATH_DURATION]초간 §7§n가사§f 상태로 만듭니다.",
 		"§8[§7가사§8] §f체력이 33% 이하라면 체력이 고정되고, 공격 및 이동이 불가능해집니다.",
 		" 체력이 33%를 초과한다면 받는 피해량이 25% 증가합니다."
@@ -74,7 +77,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(KillerBunny.class, "cooldown", 15,
+			abilitySettings.new SettingObject<Integer>(KillerBunny.class, "cooldown", 85,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -117,6 +120,21 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     
     private double murder = 0;
     private boolean upgrade = false;
+    private ActionbarChannel ac = newActionbarChannel();
+    private DecimalFormat df = new DecimalFormat("0.0");
+    
+    public void murderfluct(double value) {
+    	murder = Math.max(0, murder + value);
+    	String color = "§c";
+    	if (murder < 25) color = "§c";
+    	else if (murder < 50) color = "§5";
+    	else if (murder < 100) color = "§4";
+    	else color = "§c§l";
+    	
+    	ac.update("§c살의§7: " + color + df.format(murder) + "§e%");
+    }
+    
+    
     
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -136,9 +154,10 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 			}
 			if (player.getHealth() <= maxHP / 3.0) {
 				e.setDamage(e.getDamage() * (1 + power));
+				if (!e.isCancelled()) murderfluct(murdergain);
 			} else {
 				e.setDamage(e.getDamage() * (1 + (power * multiply)));
-				murder = Math.max(0, murder - murderloss);
+				murderfluct(murderloss);
 			}
 		}
     }
