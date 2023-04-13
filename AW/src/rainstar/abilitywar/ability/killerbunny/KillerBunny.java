@@ -1,12 +1,13 @@
-package rainstar.abilitywar.ability;
+package rainstar.abilitywar.ability.killerbunny;
 
 import java.text.DecimalFormat;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import daybreak.abilitywar.AbilityWar;
@@ -16,16 +17,21 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
 import rainstar.abilitywar.effect.ApparentDeath;
 
 @AbilityManifest(name = "살인마 토끼", rank = Rank.L, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §c살의§f: §a근접 공격력§f이 §c살의§fe만§f큼 증가합니다.",
+		"§7패시브 §8- §c살의§f: §a근접 공격력§f이 §c살의§e%§f만큼 증가합니다.",
+		" 적 처치 시 §c살의§f $[TRANS]%당 §e흡수 체력§f 반 칸으로 치환합니다.",
 		"§7패시브 §8- §5피의 향§f: 모든 플레이어의 현재 체력 비율을 볼 수 있습니다.",
 		" §a근접 공격§f 시 대상의 체력이 33% 이하라면 §c살의§f를 $[MURDER_GAIN]만큼 획득합니다.",
 		" 만약 체력이 33%를 넘는다면 §c살의§f의 효과가 $[MULTIPLY]배가 되나 매번 §c살의§f를 $[MURDER_LOSS] 소모합니다.",
@@ -41,7 +47,21 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	
 	public KillerBunny(Participant participant) {
 		super(participant);
+		if (!getGame().hasModule(HealthBar.class)) {
+			getGame().addModule(new HealthBar(getGame()));
+		}
 	}
+	
+	public static final SettingObject<Double> TRANS = 
+			abilitySettings.new SettingObject<Double>(KillerBunny.class, "trans", 5.0,
+			"# 살의 치환 비율", "# 설정값% 당 흡수 체력 반 칸입니다.") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
 	
 	public static final SettingObject<Double> MURDER_GAIN = 
 			abilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-gain", 2.5,
@@ -56,7 +76,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	
 	public static final SettingObject<Double> MURDER_LOSS = 
             abilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-loss", 1.0,
-            "# 살의 획득량") {
+            "# 살의 소모량") {
 
         @Override
         public boolean condition(Double value) {
@@ -122,6 +142,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     private boolean upgrade = false;
     private ActionbarChannel ac = newActionbarChannel();
     private DecimalFormat df = new DecimalFormat("0.0");
+    private final RGB redwine = RGB.of(179, 1, 81);
     
     public void murderfluct(double value) {
     	murder = Math.max(0, murder + value);
@@ -134,7 +155,22 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     	ac.update("§c살의§7: " + color + df.format(murder) + "§e%");
     }
     
+    @Override
+    public void onUpdate(Update update) {
+    	if (update == Update.RESTRICTION_CLEAR) {
+    		getGame().getModule(HealthBar.class).addPlayer(getPlayer());
+    		murderfluct(0);
+    	}
+    }
     
+	@SubscribeEvent
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (e.getEntity().getKiller() != null && e.getEntity().getKiller().equals(getPlayer())) {
+			
+			murderfluct(-murder);
+			
+		}
+	}
     
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -153,17 +189,22 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 				}.runTaskLater(AbilityWar.getPlugin(), 10L);	
 			}
 			if (player.getHealth() <= maxHP / 3.0) {
+				for (Location loc : Line.between(getPlayer().getLocation().clone().add(0, 1, 0), player.getLocation().clone().add(0, 1, 0), 100).toLocations(getPlayer().getLocation().clone().add(0, 1, 0))) {
+					ParticleLib.REDSTONE.spawnParticle(loc, redwine);
+				}
 				e.setDamage(e.getDamage() * (1 + power));
 				if (!e.isCancelled()) murderfluct(murdergain);
 			} else {
+				SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 1, 1.25f);
+				ParticleLib.BLOCK_CRACK.spawnParticle(player.getLocation(), 0.25, 1, 0.25, 5, 1, MaterialX.NETHER_WART_BLOCK);
 				e.setDamage(e.getDamage() * (1 + (power * multiply)));
-				murderfluct(murderloss);
+				murderfluct(-murderloss);
 			}
 		}
     }
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
+		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 			if (upgrade) getPlayer().sendMessage("§4[§c!§4]§f 다음 공격이 이미 §b강화§f 상태입니다.");
 			else {
 				upgrade = true;
