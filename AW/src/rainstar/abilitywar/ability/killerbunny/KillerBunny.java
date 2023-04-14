@@ -24,6 +24,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -53,7 +54,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> TRANS = 
-			abilitySettings.new SettingObject<Double>(KillerBunny.class, "trans", 5.0,
+			abilitySettings.new SettingObject<Double>(KillerBunny.class, "trans", 2.5,
 			"# 살의 치환 비율", "# 설정값% 당 흡수 체력 반 칸입니다.") {
 
 		@Override
@@ -131,6 +132,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 
     };
 	
+    private final double transper = TRANS.getValue();
     private final double murdergain = MURDER_GAIN.getValue();
     private final double murderloss = MURDER_LOSS.getValue();
     private final double multiply = MULTIPLY.getValue();
@@ -166,9 +168,8 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		if (e.getEntity().getKiller() != null && e.getEntity().getKiller().equals(getPlayer())) {
-			
+			NMS.setAbsorptionHearts(getPlayer(), NMS.getAbsorptionHearts(getPlayer()) + (int) (murder / transper));
 			murderfluct(-murder);
-			
 		}
 	}
     
@@ -207,6 +208,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 			if (upgrade) getPlayer().sendMessage("§4[§c!§4]§f 다음 공격이 이미 §b강화§f 상태입니다.");
 			else {
+				
 				upgrade = true;
 				return cooldown.start();
 			}
