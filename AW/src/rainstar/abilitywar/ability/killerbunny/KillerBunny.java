@@ -39,7 +39,8 @@ import rainstar.abilitywar.effect.ApparentDeath;
 		"§7철괴 우클릭 §8- §4물어뜯기§f: 다음 §a근접 공격§f을 강화합니다. $[COOLDOWN]",
 		" 강화된 공격은 §c살의§f 효과를 $[SKILL_MULTIPLY]배로 증폭시키고, 대상을 $[APPARENTDEATH_DURATION]초간 §7§n가사§f 상태로 만듭니다.",
 		"§8[§7가사§8] §f체력이 33% 이하라면 체력이 고정되고, 공격 및 이동이 불가능해집니다.",
-		" 체력이 33%를 초과한다면 받는 피해량이 25% 증가합니다."
+		" 체력이 33%를 초과한다면 받는 피해량이 25% 증가합니다.",
+		"§b[§7아이디어 제공자§b] §dspace_kdd"
 		},
 		summarize = {
 		""
@@ -208,7 +209,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 			if (upgrade) getPlayer().sendMessage("§4[§c!§4]§f 다음 공격이 이미 §b강화§f 상태입니다.");
 			else {
-				
+				SoundLib.ENTITY_ZOMBIE_AMBIENT.playSound(getPlayer().getLocation(), 1f, 1.85f);
 				upgrade = true;
 				return cooldown.start();
 			}
