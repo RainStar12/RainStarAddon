@@ -101,7 +101,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RECHARGE = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "recharge-time", 45,
+			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "recharge-time-", 55,
             "# 씨앗 보급까지 걸리는 시간", "# 단위: 초") {
 		
         @Override
@@ -123,7 +123,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> FLOWER_EFFECT_DURATION =
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-effect-duration", 6.3,
+			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-effect-duration-", 9.3,
             "# 효과 지속시간", "# 단위: 초") {
 		
         @Override
@@ -134,7 +134,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> FLOWER_RANGE = 
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range", 5.5,
+			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range-", 7.5,
             "# 꽃 영향 범위", "# 단위: 칸") {
 		
         @Override
@@ -502,7 +502,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 				
 				if (seed.getName().equals("PEONY")) {
 					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, range, predicate)) {
-						if (!getGame().getParticipant(player).hasEffect(Charm.registration)) Charm.apply(getGame().getParticipant(player), TimeUnit.TICKS, count, getPlayer(), 30, 20);
+						if (!getGame().getParticipant(player).hasEffect(Charm.registration)) Charm.apply(getGame().getParticipant(player), TimeUnit.TICKS, count, getPlayer(), 30, 40);
 					}
 				}
 			}

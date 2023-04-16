@@ -27,10 +27,12 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Strings;
+import rainstar.abilitywar.effect.SightLock;
 
 @AbilityManifest(name = "꼬마", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §a보호본능§f: 자신을 공격한 적에게 §b망설임§f을 1 부여합니다.",
 		" §b망설임§f × $[CHANCE]%의 확률로 대상은 시야가 뒤틀리고, §b망설임§f이 초기화됩니다.",
+		" 시야를 뒤틀고 나면 대상에게 $[SIGHT_LOCK]초간 §5§n시야 고정§f 상태이상을 부여합니다.",
 		"§7철괴 우클릭 §8- §c방범벨§f: 적들을 §b망설임§f × $[STUN]초간 §e§n기절§f시킵니다. $[COOLDOWN]",
 		"§a[§e능력 제공자§a] §6Ddang_67"
 		},
@@ -66,6 +68,17 @@ public class Kid extends AbilityBase implements ActiveHandler {
 
 	};
 	
+	public static final SettingObject<Double> SIGHT_LOCK = 
+			abilitySettings.new SettingObject<Double>(Kid.class, "sight-lock-duration", 0.3,
+			"# 시야 고정 지속시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(Kid.class, "cooldown", 60,
 			"# 쿨타임") {
@@ -84,6 +97,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	
 	private final int chanceper = CHANCE.getValue();
 	private final int stunper = (int) (STUN.getValue() * 20);
+	private final int sightlock = (int) (SIGHT_LOCK.getValue() * 20);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private Map<Participant, Stack> stackMap = new HashMap<>();
 	
@@ -162,6 +176,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 				for (Player players : Bukkit.getOnlinePlayers()) {
 					NMS.rotateHead(players, player, yaw, pitch);	
 				}
+				SightLock.apply(participant, TimeUnit.TICKS, sightlock);
 				stop(false);
 			}
 		}

@@ -629,6 +629,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (!getPlayer().equals(damager)) {
 			if (constellation == 0 && !skillperiod.isRunning()) {
 				NMS.setAbsorptionHearts(getPlayer(), (float) ((firstDamage - e.getFinalDamage()) * 0.25) + NMS.getAbsorptionHearts(getPlayer()));
+				skillperiod.start();
 			}
 		}
 	}

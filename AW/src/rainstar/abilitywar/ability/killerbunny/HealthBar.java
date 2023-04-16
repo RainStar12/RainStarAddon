@@ -8,10 +8,12 @@ import java.util.Set;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.module.Module;
 import daybreak.abilitywar.game.module.ModuleBase;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -51,6 +53,14 @@ public class HealthBar extends GameTimer implements Module {
 		}
 	}
 	
+	@EventHandler()
+	public void onParticipantDeath(ParticipantDeathEvent e) {
+		if (holograms.keySet().contains(e.getParticipant())) {
+			holograms.get(e.getParticipant()).unregister();
+			holograms.remove(e.getParticipant());
+		}
+	}
+	
 	public void addPlayer(Player player) {
 		viewers.add(player);
 	}
@@ -62,6 +72,10 @@ public class HealthBar extends GameTimer implements Module {
 
 	@Override
 	public void unregister() {
+		for (IHologram hologram : holograms.values()) {
+			hologram.unregister();
+		}
+		holograms.clear();
 	}
 
 }

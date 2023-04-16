@@ -76,6 +76,7 @@ import rainstar.abilitywar.ability.*;
 import rainstar.abilitywar.ability.beta.DamageTester;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
 import rainstar.abilitywar.ability.chronos.Chronos;
+import rainstar.abilitywar.ability.killerbunny.KillerBunny;
 import rainstar.abilitywar.ability.timestop.TimeStop;
 import rainstar.abilitywar.game.NoDelay;
 import rainstar.abilitywar.game.RandomGame;
@@ -310,6 +311,9 @@ public class RainStarAddon extends Addon implements Listener {
         AbilityList.registerAbility(Pyromaniac.class);
 		AbilityFactory.registerAbility(BullsEye.class);
         AbilityList.registerAbility(BullsEye.class);
+		AbilityFactory.registerAbility(KillerBunny.class);
+        AbilityList.registerAbility(KillerBunny.class);
+        
         
         
     	//beta

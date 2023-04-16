@@ -150,9 +150,9 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     public void murderfluct(double value) {
     	murder = Math.max(0, murder + value);
     	String color = "§c";
-    	if (murder < 25) color = "§c";
-    	else if (murder < 50) color = "§5";
-    	else if (murder < 100) color = "§4";
+    	if (murder < 10) color = "§c";
+    	else if (murder < 22.5) color = "§5";
+    	else if (murder < 40) color = "§4";
     	else color = "§c§l";
     	
     	ac.update("§c살의§7: " + color + df.format(murder) + "§e%");
