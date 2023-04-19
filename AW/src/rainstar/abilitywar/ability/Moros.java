@@ -177,7 +177,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	});
 	
 	public static final SettingObject<Integer> MORTAL_DURATION = abilitySettings.new SettingObject<Integer>(Moros.class,
-			"mortal-duration", 5, "# 필멸 지속시간") {
+			"mortal-duration-", 7, "# 필멸 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;

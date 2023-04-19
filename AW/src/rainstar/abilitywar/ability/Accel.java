@@ -1,9 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import org.bukkit.Material;
+
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -16,7 +20,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 		summarize = {
 		""
 		})
-public class Accel extends AbilityBase {
+public class Accel extends AbilityBase implements ActiveHandler {
 	
 	public Accel(Participant participant) {
 		super(participant);
@@ -69,6 +73,24 @@ public class Accel extends AbilityBase {
 	
 	private int accel = 0;
 	
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+			
+			accel++;
+			
+		}
+		return false;
+	}
 	
+	public AbilityTimer skill = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			
+		}
+		
+		
+	}.register();
 	
 }

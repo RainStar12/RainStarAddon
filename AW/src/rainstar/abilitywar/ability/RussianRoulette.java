@@ -88,7 +88,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(RussianRoulette.class, "stun", 5.0,
+			abilitySettings.new SettingObject<Double>(RussianRoulette.class, "stun-duration", 2.5,
             "# 기절 지속 시간") {
         @Override
         public boolean condition(Double value) {

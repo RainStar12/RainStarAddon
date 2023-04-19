@@ -49,7 +49,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> DAMAGE_DECREASE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Tekkai.class, "damage-decrease-duration", 2.0,
+			abilitySettings.new SettingObject<Double>(Tekkai.class, "damage-decrease-duration-", 1.5,
             "# 피해 경감 효과 지속시간") {
         @Override
         public boolean condition(Double value) {
@@ -58,7 +58,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> INV_DURATION = 
-			abilitySettings.new SettingObject<Double>(Tekkai.class, "inv-duration", 3.0,
+			abilitySettings.new SettingObject<Double>(Tekkai.class, "inv-duration-", 2.2,
             "# 무적 효과 지속시간") {
         @Override
         public boolean condition(Double value) {
