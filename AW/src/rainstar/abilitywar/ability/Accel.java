@@ -1,6 +1,11 @@
 package rainstar.abilitywar.ability;
 
+import java.util.UUID;
+
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -10,6 +15,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 
 @AbilityManifest(name = "순간 가속", rank = Rank.L, species = Species.HUMAN, explain = {
@@ -72,24 +78,51 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	
 	private int accel = 0;
+	private ActionbarChannel ac = newActionbarChannel();
 	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
-			
-			accel++;
-			
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
+			if (skill.isRunning()) getPlayer().sendMessage("§3[§b!§3] §f가속 효과가 진행중입니다.");
+			else {
+				accel++;
+				return skill.start();
+			}
 		}
 		return false;
 	}
 	
-	public AbilityTimer skill = new AbilityTimer() {
+	public AbilityTimer skill = new AbilityTimer(duration) {
+		
+		private AttributeModifier modifier;
+		
+		@Override
+		public void onStart() {
+			modifier = new AttributeModifier(UUID.randomUUID(), "addspeed", (accel * speedup), Operation.ADD_SCALAR);
+			try {
+				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(modifier);
+			} catch (IllegalArgumentException ignored) {
+			}
+		}
 		
 		@Override
 		public void run(int count) {
 			
 		}
 		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			if (accel >= maxstack) {
+				accel = 0;
+				cooldown.start();
+			}
+			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier);
+		}
 		
 	}.register();
 	

@@ -134,7 +134,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> FLOWER_RANGE = 
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range-", 7.5,
+			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range-", 8.0,
             "# 꽃 영향 범위", "# 단위: 칸") {
 		
         @Override
