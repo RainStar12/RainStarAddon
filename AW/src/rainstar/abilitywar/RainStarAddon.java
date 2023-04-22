@@ -75,6 +75,7 @@ import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import rainstar.abilitywar.ability.*;
 import rainstar.abilitywar.ability.beta.DamageTester;
 import rainstar.abilitywar.ability.beta.KnockbackPatch;
+import rainstar.abilitywar.ability.beta.SpeedTester;
 import rainstar.abilitywar.ability.chronos.Chronos;
 import rainstar.abilitywar.ability.killerbunny.KillerBunny;
 import rainstar.abilitywar.ability.timestop.TimeStop;
@@ -323,6 +324,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(KnockbackPatch.class);
 		AbilityFactory.registerAbility(DamageTester.class);
 		AbilityList.registerAbility(DamageTester.class);
+		AbilityFactory.registerAbility(SpeedTester.class);
+		AbilityList.registerAbility(SpeedTester.class);
 		
 		//event
 		AbilityFactory.registerAbility(NullAbility.class);

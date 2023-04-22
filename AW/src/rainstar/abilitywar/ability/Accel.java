@@ -95,8 +95,8 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer())) {
 			double speed = getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
-			e.setDamage(e.getDamage() * (1 + ((speed - 0.15) * 2)));
-			new Holograms(e.getEntity().getLocation(), (1 + ((speed - 0.15) * 2))).start();
+			e.setDamage(e.getDamage() * (1 + ((speed - 0.10000000149011612) * 2.5)));
+			new Holograms(e.getEntity().getLocation(), (1 + ((speed - 0.10000000149011612) * 2.5))).start();
 		}
 	}
 	
