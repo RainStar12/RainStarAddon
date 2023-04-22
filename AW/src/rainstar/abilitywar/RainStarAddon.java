@@ -124,8 +124,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(TimeStop.class);
 		AbilityFactory.registerAbility(AntiGravity.class);
 		AbilityList.registerAbility(AntiGravity.class);
-		AbilityFactory.registerAbility(LightningCounter.class);
-		AbilityList.registerAbility(LightningCounter.class); //10
+		AbilityFactory.registerAbility(Accel.class);
+		AbilityList.registerAbility(Accel.class); //10
 		
 		AbilityFactory.registerAbility(Chronos.class);
 		AbilityList.registerAbility(Chronos.class);
