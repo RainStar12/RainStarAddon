@@ -1,6 +1,7 @@
 package rainstar.abilitywar.ability;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -12,54 +13,51 @@ import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
-import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
+import rainstar.abilitywar.utils.RankColor;
 
-import java.text.DecimalFormat;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 @AbilityManifest(name = "[ ]", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§a---------------------------------",
 		"$(EXPLAIN)",
 		"§a---------------------------------",
-		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 복제합니다.",
-		"웅크린 채 철괴 좌클릭으로 복제를 해제할 수 있습니다. $[MIN_COOLDOWN]",
-		"이때 복제 중이던 능력이 쿨타임일 경우 절반의 쿨타임을 더합니다.",
-		"능력을 복제한 후 $[MAX_WAIT]초 이내에 복제 해제를 시도하면 해제하지 않고 대신",
-		"능력을 분해하여 영구적인 공격력 $[INCREASE]%를 획득 가능합니다.",
-		"대신 능력의 원 주인으로부터 다시는 능력을 복제하지 못합니다."
+		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
+		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f갖고 있던 쿨타임 / 2",
+		"능력당 한 번, §2복제§f 시 해당 §b능력이 담긴 책§f을 획득합니다.",
+		"§2복제§f된 능력이 없을 때 §b능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
 		},
 		summarize = {
 		"§a---------------------------------",
 		"$(SUM_EXPLAIN)",
 		"§a---------------------------------",
-		"§7철괴로 대상을 30칸 내에서 우클릭하여§F 능력을 복제합니다.",
-		"복제된 능력은 웅크린 채 §7철괴 좌클릭§f으로 §7해제§f가 가능하며,",
-		"복제 후 빠르게 해제했다면 분해하여 영구 공격력으로 바꿉니다.",
-		"분해 시, 능력의 원 주인으로부터 다시는 능력을 복제하지 못합니다."
+		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
+		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f갖고 있던 쿨타임",
+		"능력당 한 번, §2복제§f 시 해당 §b능력이 담긴 종이§f를 획득합니다.",
+		"§2복제§f된 능력이 없을 때 §b능력이 담긴 종이§f를 우클릭하여 해당 능력을 §2복제§f합니다."
 		})
 
 @Tips(tip = {
@@ -89,12 +87,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
                 "게임 참가자 수가 적으면 결과적으로 이 능력의 최대 강점인",
                 "유동성을 해치는 꼴이 됩니다. 되도록 플레이어가 많은 게임을",
                 "진행하는 편이 좋습니다."
-        }),
-        @Description(subject = "짧은 지속시간", explain = {
-                "복제한 능력을 사용 가능한 시간은 30초밖에 채 되지 않아,",
-                "대부분의 액티브 능력은 기껏해야 한 번 사용할 수 있습니다.",
-                "또한 복제한 능력의 쿨타임을 절반 가지므로",
-                "빠르고 신중한 판단력을 요합니다."
         })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TEN), difficulty = Difficulty.NORMAL)
 
@@ -104,41 +96,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> MIN_COOLDOWN = abilitySettings.new SettingObject<Integer>(Empty.class, 
-			"cooldown", 30, "# 최소 쿨타임") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue()) + " + n";
-		}
-
-	};
-	
-	public static final SettingObject<Integer> MAX_WAIT = abilitySettings.new SettingObject<Integer>(Empty.class,
-			"dismantle-available", 10, "# 능력 분해가 가능한 최대 시간") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-		
-	};
-	
-	public static final SettingObject<Integer> INCREASE = abilitySettings.new SettingObject<Integer>(Empty.class, 
-			"damage-increase", 10, "# 영구 공격력 증가 (단위: %)") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-		
-	};
-
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -159,32 +116,21 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	private double increase = 1;
-	private final DecimalFormat df = new DecimalFormat("0.0");
 	private AbilityBase ability;
-	private ActionbarChannel ac = newActionbarChannel();
-	private final int maxwait = MAX_WAIT.getValue() * 20;
-	private final int minCooldown = MIN_COOLDOWN.getValue();
-	private final Cooldown cooldown = new Cooldown(MIN_COOLDOWN.getValue(), "공백");
-	private Set<Player> dismantled = new HashSet<>();
-	private Player abilityowner;
+	private final Cooldown cooldown = new Cooldown(1, "공백");
+	private Map<String, AbilityRegistration> abilityMap = new HashMap<>();
+	
+	private AbilityTimer clickcool = new AbilityTimer(10) {
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
 		@Override
 		public String toString() {
 			final StringJoiner joiner = new StringJoiner("\n");
-			if (ability == null) {
-				if (increase > 1) {
-					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
-					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
-				}
-				joiner.add("능력을 복제할 수 있습니다.");
-			} else {
-				if (increase > 1) {
-					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
-					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
-				}
+			if (ability == null) joiner.add("능력을 복제할 수 있습니다.");
+			else {
 				joiner.add("§a복제한 능력 §f| §7[§b" + ability.getName() + "§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getExplanation(); iterator.hasNext();) {
 					joiner.add("§f" + iterator.next());
@@ -199,17 +145,8 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 		@Override
 		public String toString() {
 			final StringJoiner joiner = new StringJoiner("\n");
-			if (ability == null) {
-				if (increase > 1) {
-					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
-					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
-				}
-				joiner.add("능력을 복제할 수 있습니다.");
-			} else {
-				if (increase > 1) {
-					joiner.add("§c분해 횟수§7: §b" + (int) (((increase - 1) / (INCREASE.getValue() * 0.01)) + 1) + "§f회");
-					joiner.add("§c현재 공격력§7: §e" + df.format(increase) + "§f배");
-				}
+			if (ability == null) joiner.add("능력을 복제할 수 있습니다.");
+			else {
 				joiner.add("§a복제한 능력 §f| §7[§b" + ability.getName() + "§7] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getSummarize(); iterator.hasNext();) {
 					joiner.add("§f" + iterator.next());
@@ -223,26 +160,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	public String getDisplayName() {
 		return "[" + (ability != null ? (ability.getName() + "]") : " ]");
 	}
-
-	private AbilityTimer dismantle = new AbilityTimer(maxwait) {
-		
-		@Override
-		public void run(int count) {
-			ac.update("§b분해 가능§7: §e" + df.format(count / (double) 20) + "§f초");
-		}
-		
-		@Override
-		public void onEnd() {
-			onSilentEnd();
-		}
-		
-		@Override
-		public void onSilentEnd() {
-			ac.update(null);
-		}
-		
-		
-	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
@@ -259,16 +176,8 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				}
 				Empty.this.ability = null;
 				getParticipant().getPlayer().sendMessage("§3[§b!§3] §b당신의 능력이 §f[  ]§b으로 되돌아왔습니다.");
-				cooldown.setCooldown((int) (minCooldown + (cooltimeSum / 2)));
-				if (dismantle.isRunning()) {
-					increase += (INCREASE.getValue() * 0.01);
-					dismantle.stop(false);
-					getParticipant().getPlayer().sendMessage("§4[§c!§4] §c능력을 분해하여 공격력이 상시 상승합니다.");
-					SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 0.8f, 0.5f);
-					SoundLib.BLOCK_LAVA_EXTINGUISH.playSound(getPlayer().getLocation(), 1, 0.5f);
-					SoundLib.BLOCK_ANVIL_DESTROY.playSound(getPlayer().getLocation(), 1, 0.75f);
-					dismantled.add(abilityowner);
-				}
+				cooldown.start();
+				cooldown.setCooldown((int) (cooltimeSum / 2.0));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -280,63 +189,89 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (!cooldown.isCooldown()) {
 					Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 30, predicate);
 					if (player != null) {
-						if (dismantled.contains(player)) {
-							getPlayer().sendMessage("§4[§c!§4] §c대상의 능력을 분해한 적이 있습니다.");
-						} else {
-							final Participant target = getGame().getParticipant(player);
-							if (target.hasAbility() && !target.getAbility().isRestricted()) {
-								final AbilityBase targetAbility = target.getAbility();
-								if (getGame() instanceof AbstractMix) {
-									final Mix targetMix = (Mix) targetAbility;
-									if (targetMix.hasAbility()) {
-										if (targetMix.hasSynergy()) {
-											try {
-												this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
+						final Participant target = getGame().getParticipant(player);
+						if (target.hasAbility() && !target.getAbility().isRestricted()) {
+							final AbilityBase targetAbility = target.getAbility();
+							if (getGame() instanceof AbstractMix) {
+								final Mix targetMix = (Mix) targetAbility;
+								if (targetMix.hasAbility()) {
+									if (targetMix.hasSynergy()) {
+										try {
+											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
+											this.ability.setRestricted(false);
+											getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+											if (!abilityMap.containsKey("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】")) {
+												abilityMap.put("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】", ability.getRegistration());
+												ItemStack book = new ItemStack(Material.BOOK, 1);
+												ItemMeta bookmeta = book.getItemMeta();
+												bookmeta.setDisplayName("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】");
+												bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+												bookmeta.addEnchant(Enchantment.MENDING, 1, true);
+												bookmeta.getLore().add("§b> §7이 책을 우클릭해서 능력을 복제하세요.");
+												book.setItemMeta(bookmeta);
+												getPlayer().getInventory().addItem(book);
+											}
+										} catch (ReflectiveOperationException e) {
+											e.printStackTrace();
+										}
+									} else {
+										final Mix myMix = (Mix) getParticipant().getAbility();
+										final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
+										
+										try {
+											Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
+											if (clazz != Empty.class) {
+												if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
+												if (clazz == Kuro.class) clazz = KuroEye.class;
+												this.ability = AbilityBase.create(clazz, getParticipant());
 												this.ability.setRestricted(false);
 												getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-												abilityowner = player;
-											} catch (ReflectiveOperationException e) {
-												e.printStackTrace();
-											}
-										} else {
-											final Mix myMix = (Mix) getParticipant().getAbility();
-											final AbilityBase myFirst = myMix.getFirst(), first = targetMix.getFirst(), second = targetMix.getSecond();
-											
-											try {
-												Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
-												if (clazz != Empty.class) {
-													if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
-													if (clazz == Kuro.class) clazz = KuroEye.class;
-													this.ability = AbilityBase.create(clazz, getParticipant());
-													this.ability.setRestricted(false);
-													getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
-													abilityowner = player;
-												} else {
-													getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
+												if (!abilityMap.containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
+													abilityMap.put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
+													ItemStack book = new ItemStack(Material.BOOK, 1);
+													ItemMeta bookmeta = book.getItemMeta();
+													bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
+													bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+													bookmeta.addEnchant(Enchantment.MENDING, 1, true);
+													bookmeta.getLore().add("§b> §7이 책을 우클릭해서 능력을 복제하세요.");
+													book.setItemMeta(bookmeta);
+													getPlayer().getInventory().addItem(book);
 												}
-											} catch (ReflectiveOperationException e) {
-												e.printStackTrace();
+											} else {
+												getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
 											}
+										} catch (ReflectiveOperationException e) {
+											e.printStackTrace();
 										}
-
 									}
 
-								} else {
-									try {
-										Class<? extends AbilityBase> clazz = targetAbility.getClass();
-										if (clazz != Empty.class) {
-											if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
-											if (clazz == Kuro.class) clazz = KuroEye.class;
-											this.ability = AbilityBase.create(clazz, getParticipant());
-											this.ability.setRestricted(false);
-											getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
-											abilityowner = player;
-										} else {
-											getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
+								}
+
+							} else {
+								try {
+									Class<? extends AbilityBase> clazz = targetAbility.getClass();
+									if (clazz != Empty.class) {
+										if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
+										if (clazz == Kuro.class) clazz = KuroEye.class;
+										this.ability = AbilityBase.create(clazz, getParticipant());
+										this.ability.setRestricted(false);
+										getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + targetAbility.getName() + "§b 입니다.");
+										if (!abilityMap.containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
+											abilityMap.put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
+											ItemStack book = new ItemStack(Material.BOOK, 1);
+											ItemMeta bookmeta = book.getItemMeta();
+											bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
+											bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+											bookmeta.addEnchant(Enchantment.MENDING, 1, true);
+											bookmeta.getLore().add("§b> §7이 책을 우클릭해서 능력을 복제하세요.");
+											book.setItemMeta(bookmeta);
+											getPlayer().getInventory().addItem(book);
 										}
-									} catch (ReflectiveOperationException e) {
-										e.printStackTrace();
+									} else {
+										getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
 									}
+								} catch (ReflectiveOperationException e) {
+									e.printStackTrace();
 								}
 							}
 						}
@@ -355,22 +290,24 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() != null) {
-				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();	
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (getPlayer().equals(e.getPlayer()) && e.getItem().getType().equals(Material.BOOK) && abilityMap.containsKey(e.getItem().getItemMeta().getDisplayName()) && !clickcool.isRunning()) {
+			if (ability != null) getPlayer().sendMessage("§c[§f!§c] §2복제§f된 능력이 존재하고 있어 §2복제§f할 수 없습니다.");
+			else {
+				try {
+					this.ability = AbilityBase.create(abilityMap.get(e.getItem().getItemMeta().getDisplayName()), getParticipant());
+					this.ability.setRestricted(false);
+					getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 §e" + ability.getName() + "§b 입니다.");
+				} catch (ReflectiveOperationException e1) {
+					e1.printStackTrace();
+				}
 			}
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (getPlayer().equals(damager)) {
-			e.setDamage(e.getDamage() * increase);
+			clickcool.start();
 		}
 	}
-
+	
 	@Override
 	public Set<GameTimer> getTimers() {
 		return ability != null ? SetUnion.union(super.getTimers(), ability.getTimers()) : super.getTimers();

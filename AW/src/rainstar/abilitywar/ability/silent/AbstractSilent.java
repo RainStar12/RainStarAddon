@@ -71,7 +71,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 	}
 	
 	public static final SettingObject<Integer> NOT_LOOK_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "not-look-damage-increase", 10,
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "not-look-damage-increase-", 15,
             "# 나를 바라보지 않는 대상에게 공격력 증가", "# 단위: %") {
 
         @Override
@@ -82,7 +82,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> MAX_STACK = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-stack", 4,
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-stack-", 6,
             "# 최대 표식 개수") {
 
         @Override
@@ -93,7 +93,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> PASSIVE_MUTE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "passive-mute", 2.5,
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "passive-mute-", 3.3,
             "# 표식 폭발 시 침묵 부여 시간", "# 단위: 초") {
 
         @Override
@@ -120,7 +120,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "range", 6.5,
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "range-", 8.0,
             "# 액티브 침묵 범위", "# 단위: 칸") {
 
         @Override
@@ -131,7 +131,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> ACTIVE_MUTE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "active-mute", 5.0,
+			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "active-mute-", 7.0,
             "# 액티브 침묵 시간", "# 단위: 초") {
 
         @Override
@@ -169,7 +169,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> SPEED_PER = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "speed-per", 20,
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "speed-per-", 25,
             "# 침묵 소지자 수 비례 이속 증가치", "# 단위: %") {
 
         @Override
@@ -180,7 +180,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> MAX_SPEED = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-speed", 100,
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-speed-", 200,
             "# 최대 이동 속도 증가치", "# 단위: %") {
 
         @Override
@@ -299,7 +299,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 					if (stackMap.containsKey(participant)) {
 						if (stackMap.get(participant).addStack()) {
 							Mute.apply(participant, TimeUnit.TICKS, passivemute);
-						} else SightLock.apply(participant, TimeUnit.TICKS, 2);
+						} else SightLock.apply(participant, TimeUnit.TICKS, 3);
 					} else if (System.currentTimeMillis() - unitcooldowns.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown) new Stack(participant).start();
 					
 				}

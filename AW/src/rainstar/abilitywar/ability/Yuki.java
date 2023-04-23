@@ -254,6 +254,8 @@ public class Yuki extends AbilityBase {
 			
 			if (random.nextInt(100) == 0) {
 				stickmeta.setDisplayName("§6딱총나무 지팡이");
+				stickmeta.getLore().add("§7어디 마법학교에서 훔쳐왔나요?");
+				stickmeta.addEnchant(Enchantment.DAMAGE_ALL, 10, true);
 			} else {
 				stickmeta.setDisplayName("§b설한의 지팡이");
 			}		
