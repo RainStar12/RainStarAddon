@@ -129,7 +129,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 				noY.setY(0);
 				noYcenter.setY(0);
 				double distance = Math.sqrt(Math.abs(noY.distanceSquared(noYcenter)));
-				player.sendMessage("§4[§c!§4] §d" + df.format(distance) + "m§f 밖에서 진도 §b" + df.format(richter) + "§f의 지진이 일어났습니다!");
+				player.sendMessage("§4[§c!§4] §d" + df.format(distance) + "m§f 밖에서 진도 " + (richter > 9.0 ? "§c§l" : "§b") + df.format(richter) + "§f의 지진이 일어났습니다!");
 			}
 			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), (float) (richter / 3), 1);
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 1, 1);

@@ -9,11 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Effect;
@@ -41,8 +43,9 @@ import rainstar.abilitywar.effect.Poison;
 
 @AbilityManifest(name = "서큐버스", rank = Rank.S, species = Species.UNDEAD, explain = {
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d§n유혹§f합니다.",
-        " 이 스킬은 $[COUNT]번 사용 후 쿨타임을 가집니다. $[COOLDOWN]",
-        "§7철괴 좌클릭 §8- §c아찔하게§f: $[RANGE]칸 내의 자신 외 모든 적의 §3상태이상§f을",
+        " 이 스킬은 $[COUNT]번 사용 후 §c쿨타임§f을 가집니다. $[COOLDOWN]",
+        " 자신 외 게임 참가자가 체력을 회복할 때마다 §c쿨타임§f이 회복량 × $[COOLDECREASE_MULTIPLY]초 줄어듭니다.",
+        "§7철괴 좌클릭 §8- §c아찔하게§f: $[RANGE]칸 내의 자신 외 모든 적의 §3§n상태이상§f을",
         " §4§n혈사병§f을 제외하고 전부 §c§n출혈 효과§f로 변경합니다. 이 스킬은 §c쿨타임§f이 없습니다."
         },
         summarize = {
@@ -89,7 +92,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-decrease", 35,
+			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-decrease-", 15,
             "# 유혹 도중 대미지 감소율 (단위: %)") {
 
         @Override
@@ -100,7 +103,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-heal", 55,
+			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-heal-", 25,
             "# 유혹된 대상 타격시 회복률 (단위: %)") {
 
         @Override
@@ -110,8 +113,19 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 
     };
     
+	public static final SettingObject<Double> COOLDECREASE_MULTIPLY = 
+			abilitySettings.new SettingObject<Double>(Succubus.class, "cooldown-decrease-multiply", 3.3,
+            "# 회복량 비례 쿨타임 감소율") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "cooldown", 115,
+			abilitySettings.new SettingObject<Integer>(Succubus.class, "cooldown-", 444,
             "# 쿨타임") {
 
         @Override
@@ -154,7 +168,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	private static final ImmutableMap<EffectRegistration<?>, Double> multiplyEffects = ImmutableMap.<EffectRegistration<?>, Double>builder()
 			.put(Stun.registration, 4.0)
 			.put(Fear.registration, 4.0)
-			.put(Charm.registration, 1.5)
+			.put(Charm.registration, 3.5)
 			.put(Poison.registration, 1.2)
 			.put(Rooted.registration, 2.5)
 			.put(Oppress.registration, 3.0)
@@ -166,10 +180,30 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     private final int duration = (int) (CHARM_DURATION.getValue() * 20);
     private final int decrease = CHARM_DECREASE.getValue();
     private final int heal = CHARM_HEAL.getValue();
+    private final double multiply = COOLDECREASE_MULTIPLY.getValue();
     private int stack = 1;
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final Circle circle = Circle.of(range, (int) Math.min(range * 12.5, 200));
 	private static final RGB color = RGB.of(251, 43, 136);
+	
+	private final Predicate<Entity> healpredicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))) {
+					return false;
+				}
+			} else return false;
+			return true;
+		}
+
+		@Override
+		public boolean apply(@Nullable Entity arg0) {
+			return false;
+		}
+	};
     
     @Override
     public void onUpdate(Update update) {
@@ -191,6 +225,13 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 2).register();
+	
+	@SubscribeEvent
+	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
+		if (healpredicate.test(e.getEntity()) && cooldown.isCooldown()) {
+			cooldown.setCount((int) (cooldown.getCount() - e.getAmount() * multiply));
+		}
+	}
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {

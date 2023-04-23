@@ -58,15 +58,12 @@ import rainstar.abilitywar.effect.Charm;
 		"§7패시브 §8- §c둔갑§f: 회복 효과를 받을 수 없습니다.",
 		" 체력을 전부 소모할 때 전체 체력의 40%만 남고 구미호로 돌아갑니다.",
 		"§7공격 §8- §c사랑의 매질§f: 다른 플레이어를 공격할 때 $[STACK_COOL]초마다 표식을 쌓고,",
-		" 표식이 $[STACK_MAX]개가 될 때 대상을 $[CHARM_DURATION]초간 유혹합니다. 유혹 도중엔 표식을 쌓지 못합니다.",
-		"§7철괴 좌클릭 §8- §c집착§f: 바라보는 방향에 10초간 원 파티클이 생기고,",
-		" 다시 좌클릭 시 끈을 던져 범위의 중심에 가장 가까운 대상에게 돌진합니다.",
-		" 이때 범위 내 모든 대상에게 방어 무시 대미지를 입힙니다. 만약 범위 내 대상 중",
-		" 유혹 중인 대상이 있다면 유혹을 풀고 남은 시간에 반비례하여 피해를 입힙니다.",
-		" $[COOLDOWN]",
-		"§7상태이상 §8- §d유혹§f: 대상이 강제로 나를 바라보게 되고,",
-		" 대상이 내게 주는 피해량이 $[CHARM_DECREASE]% 감소합니다. 대상을 공격할 때마다",
-		" 준 최종 대미지의 $[CHARM_HEAL]%만큼 체력을 얻습니다."
+		" 표식이 $[STACK_MAX]개가 될 때 대상을 $[CHARM_DURATION]초간 §d§n유혹§f합니다. §d§n유혹§f 도중엔 표식을 쌓지 못합니다.",
+		"§7철괴 우클릭 §8- §c집착§f: 마지막으로 §d§n유혹§f한 대상에게 돌진합니다.",
+		" 이후 $[DEADLINE]초 내로 가하는 다음 근접 공격이 §d§n유혹§f을 제거하고",
+		" §d§n유혹§f의 남은 시간당 $[DAMAGE_INCREASE]%의 추가 피해를 가합니다. $[COOLDOWN]",
+		"§c[§d유혹§c] 대상이 강제로 나를 바라보게 되고, 내게 주는 피해량이 $[CHARM_DECREASE]% 감소합니다.",
+		" 대상을 공격할 때마다 준 최종 대미지의 $[CHARM_HEAL]%만큼 체력을 얻습니다."
 		},
 		summarize = {
 		"§d유혹 상태§f인 적을 타격해 회복하는 것 외엔 회복 효과를 받을 수 없습니다.",
@@ -143,7 +140,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-heal", 55,
+			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-heal-", 40,
             "# 유혹된 대상 타격시 회복률 (단위: %)") {
 
         @Override
@@ -153,9 +150,9 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 
     };
     
-	public static final SettingObject<Integer> DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage", 4,
-            "# 철괴 좌클릭 피해량") {
+	public static final SettingObject<Integer> DAMAGE_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage-increase", 20,
+            "# 철괴 좌클릭 공격력 증가 배율", "# 단위: %") {
 
         @Override
         public boolean condition(Integer value) {
@@ -195,28 +192,13 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int charmduration = CHARM_DURATION.getValue();
 	private final int charmdecrease = CHARM_DECREASE.getValue();
 	private final int charmheal = CHARM_HEAL.getValue();
-	private final int damage = DAMAGE.getValue();
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
-	private static final Set<Material> nocheck;
 	private Participant target = null;
-	private static final Circle circle = Circle.of(5, 70);
-	private static final Circle heart = Circle.of(5, 40);
-	private static final RGB color = new RGB(243, 97, 166);
-	private static final RGB color2 = new RGB(99, 58, 1);
-	private Location targetblock;
-	
-	static { nocheck = ImmutableSet.of(MaterialX.AIR.getMaterial(), MaterialX.GRASS.getMaterial(), MaterialX.WATER.getMaterial(),
-			MaterialX.LAVA.getMaterial()); }
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.LEFT_CLICK) && !cool.isCooldown()) {
-	    	if (!skill.isRunning()) {
-	    		skill.start();
-	    	} else {
-	    		skill.stop(false);
-		    	return true;
-	    	}
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cool.isCooldown() && !skill.isRunning()) {
+	    	return skill.start();
 	    }
 		return false;
 	}
@@ -318,22 +300,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int count) {
-			targetblock = getPlayer().getTargetBlock(nocheck, 30).getLocation();
-			if (count % 2 == 0) {
-				for (Location loc : circle.toLocations(targetblock).floor(targetblock.getY())) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
-				}	
-			}
-			for (Player p : getPlayer().getWorld().getPlayers()) {
-				if (LocationUtil.isInCircle(targetblock, p.getLocation(), 5) && predicate.test(p)) {
-					if (!p.hasPotionEffect(PotionEffectType.GLOWING)) {
-						SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
-						PotionEffects.GLOWING.addPotionEffect(p, 9999, 0, true, false, false);	
-					}
-				} else {
-					p.removePotionEffect(PotionEffectType.GLOWING);
-				}
-			}
+
 		}
 		
 		@Override
@@ -343,65 +310,10 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onDurationSilentEnd() {
-			for (Player p : LocationUtil.getEntitiesInCircle(Player.class, targetblock, 5, predicate)) {
-				if (p != null) {
-					p.removePotionEffect(PotionEffectType.GLOWING);
-					Player nearest = LocationUtil.getNearestEntity(Player.class, targetblock, predicate);
-					new Rush(nearest).start();
-				} else {
-					cool.setCount(cool.getCount() / 4);
-				}
-			}
+			
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
-	
-	private class Rush extends AbilityTimer {
-		
-		private Player player;
-		
-		private Rush(Player player) {
-			setPeriod(TimeUnit.TICKS, 1);
-			this.player = player;
-		}
-		
-		@Override
-		protected void run(int count) {
-			if (player != null) {
-				if (getPlayer().getLocation().distanceSquared(player.getLocation()) >= 4) {
-					for (Location loc : Line.between(player.getLocation(), getPlayer().getLocation(), 1).toLocations(getPlayer().getLocation())) {
-						ParticleLib.REDSTONE.spawnParticle(loc, color2);
-					}
-					getPlayer().setVelocity(VectorUtil.validateVector(player.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(3)));	
-				} else {
-					getPlayer().setVelocity(new Vector(0, 0, 0));
-					stop(false);
-				}
-			}
-		}
-		
-		@Override
-		protected void onEnd() {
-			onSilentEnd();
-		}
-		
-		@Override
-		protected void onSilentEnd() {
-			for (Player p : LocationUtil.getEntitiesInCircle(Player.class, targetblock, 5, predicate)) {
-				if (getGame().getParticipant(p).hasEffect(Charm.registration)) {
-					int charmcount = getGame().getParticipant(p).getPrimaryEffect(Charm.registration).getDuration();
-					Damages.damageFixed(p, getPlayer(), Math.max(damage, damage * (2 - (charmcount / charmduration))));
-					getGame().getParticipant(p).removeEffects(Charm.registration);
-				} else {
-					Damages.damageFixed(p, getPlayer(), damage);
-				}
-			}
-			for (Location loc : heart.toLocations(targetblock).floor(targetblock.getY())) {
-				ParticleLib.HEART.spawnParticle(loc, 0, 0, 0, 1, 1);
-			}
-		}
-		
-	}
 	
 	private class Stack extends AbilityTimer {
 		

@@ -35,7 +35,7 @@ import daybreak.google.common.collect.ImmutableMap;
 @AbilityManifest(name = "구미호", rank = Rank.A, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §d수행§f: 매 $[PERIOD]초마다 꼬리 1개를 획득합니다.",
 		" 경험하지 못한 피해 방식으로 피해입었을 때 추가로 1개 더 획득합니다.",
-		" 꼬리를 보유하고 있을 때, 5개 이후부터 주는 대미지가 0.5씩 상승합니다.",
+		" 꼬리를 보유하고 있을 때, 공격력이 꼬리당 $[DAMAGE_INCREASE]% 상승합니다.",
 		" 꼬리는 2개로 시작하여 최대 9개까지 소지 가능합니다.",
 		"§7철괴 좌클릭 §8- §b기록§f: 피해입은 방식에 대한 기록이 나타납니다.",
 		"§7철괴 우클릭 §8- §d둔갑§f: 꼬리가 9개일 때 사용할 수 있습니다.",
@@ -80,6 +80,16 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
+	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(NineTailFox.class,
+			"damage-increase", 1.5, "# 꼬리 자동 충전 시간", "# 단위: 초") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+	
 	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(NineTailFox.class,
 			"period", 25, "# 꼬리 자동 충전 시간", "# 단위: 초") {
 
@@ -90,6 +100,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 
 	};
 	
+	private final double increasep = DAMAGE_INCREASE.getValue() * 0.01;
 	private final ActionbarChannel ac = newActionbarChannel();
 	private int stack = 2;	
 	private final int period = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(25) * PERIOD.getValue() * 20 : PERIOD.getValue() * 20);
@@ -151,7 +162,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() + ((stack - 4) * 0.5));
+		if (getPlayer().equals(damager)) e.setDamage(e.getDamage() * (1 + (stack * increasep)));
 	}
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {

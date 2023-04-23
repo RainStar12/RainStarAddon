@@ -44,7 +44,7 @@ import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "간파", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7검 들고 F §8- §2수 읽기§f: 검을 들고 대상을 3칸 내에서 바라본 채 F를 누를 시",
-		" 대상의 수를 $[DURATION]초간 §2간파§f합니다. $[COOLDOWN]",
+		" 대상의 수를 $[DURATION]초간 §2간파§f합니다. $[SKILL_COOLDOWN]",
 		" 수를 §2간파§f당한 대상의 근접 공격을 전부 회피합니다.",
 		" §7광역 간파§f: $[CHANGE]",
 		"§7패시브 §8- §2두 번은 안 통하지§f: 동일 대상을 간파할 때마다 대상에게서의",
