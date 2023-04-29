@@ -14,6 +14,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -176,7 +177,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
 					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
 				}
-			}
+			} else return false;
 			return true;
 		}
 
@@ -192,9 +193,9 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int charmduration = CHARM_DURATION.getValue();
 	private final int charmdecrease = CHARM_DECREASE.getValue();
 	private final int charmheal = CHARM_HEAL.getValue();
+	private Participant lastcharmed;
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
-	private Participant target = null;
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cool.isCooldown() && !skill.isRunning()) {
@@ -253,33 +254,24 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player
-				&& !e.isCancelled() && predicate.test(e.getEntity())) {
-			target = getGame().getParticipant((Player) e.getEntity());
+		
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager) && !e.isCancelled() && predicate.test(e.getEntity())) {
+			Participant target = getGame().getParticipant((Player) e.getEntity());
 			if (!target.hasEffect(Charm.registration)) {
 				if (stackMap.containsKey(e.getEntity())) {
 					if (stackMap.get(e.getEntity()).getCount() < (120 - (stackcool * 20))) {
 						if (stackMap.get(e.getEntity()).addStack()) {
 							Charm.apply(target, TimeUnit.SECONDS, charmduration, getPlayer(), charmheal, charmdecrease);
+							lastcharmed = target;
 						}	
 					}
 				} else new Stack((Player) e.getEntity()).start();
-			}
-		}
-		if (NMS.isArrow(e.getDamager()) && e.getEntity() instanceof Player
-				&& !e.isCancelled() && predicate.test(e.getEntity())) {
-			Arrow arrow = (Arrow) e.getDamager();
-			if (getPlayer().equals(arrow.getShooter())) {
-				target = getGame().getParticipant((Player) e.getEntity());
-				if (!target.hasEffect(Charm.registration)) {
-					if (stackMap.containsKey(e.getEntity())) {
-						if (stackMap.get(e.getEntity()).getCount() < (120 - (stackcool * 20))) {
-							if (stackMap.get(e.getEntity()).addStack()) {
-								Charm.apply(target, TimeUnit.SECONDS, charmduration, getPlayer(), charmheal, charmdecrease);
-							}	
-						}
-					} else new Stack((Player) e.getEntity()).start();
-				}
 			}
 		}
 	}
