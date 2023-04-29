@@ -18,6 +18,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -78,7 +79,7 @@ public class ASAP extends Synergy {
 		}
 		if (e.getEntity() instanceof Player && !e.getEntity().equals(getPlayer()) && !e.isCancelled() && e.getDamager().equals(getPlayer())) {
 			Player p = (Player) e.getEntity();	
-			if (getGame().getParticipant(p).hasAbility()) {
+			if (getGame().getParticipant(p).hasAbility() && getGame().getParticipant(p).getAbility() instanceof Mix) {
 				AbilityBase ab = getGame().getParticipant(p).getAbility();
 				final Mix mix = (Mix) ab;
 				if (mix.hasSynergy()) {
@@ -90,7 +91,6 @@ public class ASAP extends Synergy {
 						if (!getPlayer().isDead()) getPlayer().setHealth(0);
 					}
 				}
-
 			}
 		}
 		if (!e.isCancelled() && e.getDamager() instanceof Player && e.getEntity() instanceof Player) {

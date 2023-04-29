@@ -151,9 +151,20 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 
     };
     
+	public static final SettingObject<Double> DEADLINE = 
+			abilitySettings.new SettingObject<Double>(NineTailFoxC.class, "deadline", 3.0,
+            "# 근접 공격 강화 유효시간") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
 			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage-increase", 20,
-            "# 철괴 좌클릭 공격력 증가 배율", "# 단위: %") {
+            "# 철괴 우클릭 공격력 증가 배율", "# 단위: %") {
 
         @Override
         public boolean condition(Integer value) {
@@ -193,6 +204,8 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int charmduration = CHARM_DURATION.getValue();
 	private final int charmdecrease = CHARM_DECREASE.getValue();
 	private final int charmheal = CHARM_HEAL.getValue();
+	private final int deadline = (int) (DEADLINE.getValue() * 20);
+	private final int dmginc = DAMAGE_INCREASE.getValue();
 	private Participant lastcharmed;
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
