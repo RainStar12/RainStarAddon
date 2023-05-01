@@ -1,17 +1,12 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import javax.annotation.Nullable;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -21,8 +16,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -33,26 +26,18 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.VectorUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.math.geometry.Line;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
-import daybreak.google.common.collect.ImmutableSet;
 import rainstar.abilitywar.effect.Charm;
 
 @AbilityManifest(name = "구미호(둔갑)", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -205,8 +190,10 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int charmdecrease = CHARM_DECREASE.getValue();
 	private final int charmheal = CHARM_HEAL.getValue();
 	private final int deadline = (int) (DEADLINE.getValue() * 20);
-	private final int dmginc = DAMAGE_INCREASE.getValue();
+	private final double dmginc = DAMAGE_INCREASE.getValue() / 2000.0;
 	private Participant lastcharmed;
+	private ActionbarChannel ac = newActionbarChannel();
+	private DecimalFormat df = new DecimalFormat("0.0");
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
     
@@ -285,6 +272,18 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 						}	
 					}
 				} else new Stack((Player) e.getEntity()).start();
+			} else if (skill.isRunning()) {
+				int durations = 0;
+				for (Charm charm : target.getEffects(Charm.registration)) {
+					if (charm.getApplier().equals(getPlayer())) {
+						durations += charm.getDuration();
+						charm.stop(false);
+					}
+				}
+				e.setDamage(e.getDamage() * (1 + (durations * dmginc)));
+				skill.stop(false);
+				SoundLib.ENTITY_PLAYER_ATTACK_CRIT.playSound(target.getPlayer().getLocation(), 1, 1.3f);
+				ParticleLib.DAMAGE_INDICATOR.spawnParticle(target.getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
 			}
 		}
 	}
@@ -301,21 +300,27 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	private final Duration skill = new Duration(200, cool) {
+	private final AbilityTimer skill = new AbilityTimer(deadline) {
 
 		@Override
-		protected void onDurationProcess(int count) {
-
+		protected void onStart() {
+			getPlayer().setVelocity(lastcharmed.getPlayer().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.1).setY(0));
 		}
 		
 		@Override
-		protected void onDurationEnd() {
-			onDurationSilentEnd();
+		protected void run(int count) {
+			ac.update("§c집착§f: §c" + df.format(count / 20.0) + "§f초");
 		}
 		
 		@Override
-		protected void onDurationSilentEnd() {
-			
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			ac.update(null);
+			cool.start();
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);

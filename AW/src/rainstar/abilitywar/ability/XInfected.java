@@ -38,10 +38,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "X-Infected", rank = Rank.S, species = Species.UNDEAD, explain = {
-		"철괴 우클릭 시 $[DURATION]초간 §d10HP§f의 §2좀비§f가 되어 컨트롤이 불가능해집니다. $[COOLDOWN]",
-		"§2좀비§f는 내 최종 공격력의 §c$[ATTACK_DAMAGE]%§f의 피해를 주고, 이동 속도가 빠릅니다.",
-		"§2좀비화§f 도중 §c사망 시§f 지속시간이 즉시 종료되고 $[HEALTH_LOSE]%의 체력을 잃습니다.",
-		"§2좀비§f가 피해를 준 대상은 $[INFECTION_DURATION]초간 §5§n감염§f됩니다."
+		"§7패시브 §8- §a면역체계§f: §5§n감염§f이나 §2§n좀비화§f 상태이상을 받지 않고,",
+		" 받았을 지속시간만큼 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
+		"§7철괴 우클릭 §8- §4통제불가§f: $[DURATION]초간 §d$[ZOMBIE_HP]HP§f의 §2좀비§f로 변합니다. $[COOLDOWN]",
+		"§2좀비§f가 적을 공격하거나 사망 시 폭발하며 주변에 살점을 뿌립니다.",
+		"이 살점에 휘말린 대상은 $[ZOMBIFIED_DURATION]초간 §2§n좀비화§f 상태에 빠집니다.",
+		"§3[§2좀비화§3] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
+		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
 		},
 		summarize = {
 		"§7철괴 우클릭 시§f §2좀비화§f하여 공격력과 이동 속도가 증가합니다.",
