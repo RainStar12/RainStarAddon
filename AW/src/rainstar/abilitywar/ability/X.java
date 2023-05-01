@@ -37,7 +37,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "X-Infected", rank = Rank.S, species = Species.UNDEAD, explain = {
+@AbilityManifest(name = "X", rank = Rank.S, species = Species.UNDEAD, explain = {
 		"§7패시브 §8- §a면역체계§f: §5§n감염§f이나 §2§n좀비화§f 상태이상을 받지 않고,",
 		" 받았을 지속시간만큼 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
 		"§7철괴 우클릭 §8- §4통제불가§f: $[DURATION]초간 §d$[ZOMBIE_HP]HP§f의 §2좀비§f로 변합니다. $[COOLDOWN]",
@@ -52,14 +52,14 @@ import daybreak.google.common.base.Predicate;
 		"§2좀비화§f 중 사망 시 지속시간이 즉시 종료되고 체력을 일부 잃습니다.",
 		"§2좀비§f가 피해를 준 대상은 짧게 §5§n감염§f됩니다."
 		})
-public class XInfected extends AbilityBase implements ActiveHandler {
+public class X extends AbilityBase implements ActiveHandler {
 	
-	public XInfected(Participant participant) {
+	public X(Participant participant) {
 		super(participant);
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(XInfected.class, "cooldown", 85,
+			abilitySettings.new SettingObject<Integer>(X.class, "cooldown", 85,
             "# 좀비화 지속 시간") {
         @Override
         public boolean condition(Integer value) {
@@ -73,7 +73,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(XInfected.class, "zombie-duration", 13.0,
+			abilitySettings.new SettingObject<Double>(X.class, "zombie-duration", 13.0,
             "# 좀비화 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -82,7 +82,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ATTACK_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(XInfected.class, "attack-damage-percentage", 135,
+			abilitySettings.new SettingObject<Integer>(X.class, "attack-damage-percentage", 135,
             "# 좀비가 주는 피해량 비율") {
         @Override
         public boolean condition(Integer value) {
@@ -91,7 +91,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEALTH_LOSE = 
-			abilitySettings.new SettingObject<Integer>(XInfected.class, "health-lose", 25,
+			abilitySettings.new SettingObject<Integer>(X.class, "health-lose", 25,
             "# 좀비화 간 사망 시 잃는 체력", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -100,7 +100,7 @@ public class XInfected extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> INFECTION_DURATION = 
-			abilitySettings.new SettingObject<Double>(XInfected.class, "infection-duration", 0.8,
+			abilitySettings.new SettingObject<Double>(X.class, "infection-duration", 0.8,
             "# 감염 부여 시간") {
         @Override
         public boolean condition(Double value) {

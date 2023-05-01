@@ -291,8 +291,8 @@ public class RainStarAddon extends Addon implements Listener {
 		AbilityList.registerAbility(Shadow.class);
 		AbilityFactory.registerAbility(Foresight.class);
 		AbilityList.registerAbility(Foresight.class);
-		AbilityFactory.registerAbility(XInfected.class);
-		AbilityList.registerAbility(XInfected.class);
+		AbilityFactory.registerAbility(X.class);
+		AbilityList.registerAbility(X.class);
 		AbilityFactory.registerAbility(Raincloud.class);
         AbilityList.registerAbility(Raincloud.class);
 		AbilityFactory.registerAbility("rainstar.abilitywar.ability.silent." + ServerVersion.getName() + ".Silent");
