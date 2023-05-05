@@ -38,19 +38,16 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "X", rank = Rank.S, species = Species.UNDEAD, explain = {
-		"§7패시브 §8- §a면역체계§f: §5§n감염§f이나 §2§n좀비화§f 상태이상을 받지 않고,",
+		"§7패시브 §8- §a면역체계§f: §5§n감염§f이나 §2§n침식§f 상태이상을 받지 않고,",
 		" 받았을 지속시간만큼 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
 		"§7철괴 우클릭 §8- §4통제불가§f: $[DURATION]초간 §d$[ZOMBIE_HP]HP§f의 §2좀비§f로 변합니다. $[COOLDOWN]",
 		"§2좀비§f가 적을 공격하거나 사망 시 폭발하며 주변에 살점을 뿌립니다.",
-		"이 살점에 휘말린 대상은 $[ZOMBIFIED_DURATION]초간 §2§n좀비화§f 상태에 빠집니다.",
-		"§3[§2좀비화§3] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
+		"이 살점에 휘말린 대상은 $[EROSION_DURATION]초간 §2§n침식§f 상태에 빠집니다.",
+		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
 		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
 		},
 		summarize = {
-		"§7철괴 우클릭 시§f §2좀비화§f하여 공격력과 이동 속도가 증가합니다.",
-		"§2좀비화§f 중에는 자신이 이동을 컨트롤 불가능하며, §2좀비§f AI가 대체합니다.",
-		"§2좀비화§f 중 사망 시 지속시간이 즉시 종료되고 체력을 일부 잃습니다.",
-		"§2좀비§f가 피해를 준 대상은 짧게 §5§n감염§f됩니다."
+		""
 		})
 public class X extends AbilityBase implements ActiveHandler {
 	
@@ -59,8 +56,8 @@ public class X extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(X.class, "cooldown", 85,
-            "# 좀비화 지속 시간") {
+			abilitySettings.new SettingObject<Integer>(X.class, "cooldown-", 100,
+            "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -73,7 +70,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(X.class, "zombie-duration", 13.0,
+			abilitySettings.new SettingObject<Double>(X.class, "zombie-duration-", 10.0,
             "# 좀비화 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -81,27 +78,27 @@ public class X extends AbilityBase implements ActiveHandler {
         }
     };
     
-	public static final SettingObject<Integer> ATTACK_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(X.class, "attack-damage-percentage", 135,
-            "# 좀비가 주는 피해량 비율") {
+	public static final SettingObject<Double> ZOMBIE_HP = 
+			abilitySettings.new SettingObject<Double>(X.class, "zombie-hp", 4.0,
+            "# 좀비 체력") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Integer> DAMAGE_INCREASE = 
+			abilitySettings.new SettingObject<Integer>(X.class, "damage-increase", 20,
+            "# 공격력 증가치") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
         }
     };
     
-	public static final SettingObject<Integer> HEALTH_LOSE = 
-			abilitySettings.new SettingObject<Integer>(X.class, "health-lose", 25,
-            "# 좀비화 간 사망 시 잃는 체력", "# 단위: %") {
-        @Override
-        public boolean condition(Integer value) {
-            return value >= 0;
-        }
-    };
-    
-	public static final SettingObject<Double> INFECTION_DURATION = 
-			abilitySettings.new SettingObject<Double>(X.class, "infection-duration", 0.8,
-            "# 감염 부여 시간") {
+	public static final SettingObject<Double> EROSION_DURATION = 
+			abilitySettings.new SettingObject<Double>(X.class, "erosion-duration", 6.0,
+            "# 침식 부여 시간") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;
@@ -110,13 +107,12 @@ public class X extends AbilityBase implements ActiveHandler {
     
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final int duration = (int) (DURATION.getValue() * 20);
-    private final double damagemultiply = ATTACK_DAMAGE.getValue() * 0.01;
-    private final double losehealth = HEALTH_LOSE.getValue() * 0.01;
-    private final int infectduration = (int) (INFECTION_DURATION.getValue() * 20);
+    private final double damagemultiply = 1 + (DAMAGE_INCREASE.getValue() * 0.01);
+    private final int erosionduration = (int) (EROSION_DURATION.getValue() * 20);
+    private final double hp = ZOMBIE_HP.getValue();
     private Zombie zombie;
-    private double damage;
     private final DecimalFormat df = new DecimalFormat("0.0");
-    private ActionbarChannel ac = newActionbarChannel();
+    private ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material == Material.IRON_INGOT && clicktype.equals(ClickType.RIGHT_CLICK) && !infected.isRunning() && !cooldown.isCooldown()) {
@@ -152,6 +148,25 @@ public class X extends AbilityBase implements ActiveHandler {
 			return false;
 		}
 	};
+	
+    private AbilityTimer dmgInc = new AbilityTimer() {
+    	
+    	@Override
+    	public void run(int count) {
+    		
+    	}
+    	
+    	@Override
+    	public void onEnd() {
+    		onSilentEnd();
+    	}
+    	
+    	@Override
+    	public void onSilentEnd() {
+    		
+    	}
+    	
+    }.setPeriod(TimeUnit.TICKS, 1).register();
     
     private AbilityTimer infected = new AbilityTimer(duration) {
     	
@@ -163,7 +178,7 @@ public class X extends AbilityBase implements ActiveHandler {
     		zombie = getPlayer().getWorld().spawn(getPlayer().getLocation(), Zombie.class);
 			if (ServerVersion.getVersion() >= 16) zombie.setAdult();
 			else zombie.setBaby(false);
-			zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.485);
+			zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
 			
 			zombie.getEquipment().setItemInMainHand(null);
 			zombie.getEquipment().setArmorContents(getPlayer().getInventory().getArmorContents());
@@ -175,7 +190,7 @@ public class X extends AbilityBase implements ActiveHandler {
 			zombie.setCustomName("§2" + getPlayer().getName());
 			zombie.setCustomNameVisible(true);
 			
-			zombie.setHealth(10);
+			zombie.setHealth(hp);
 			
 			if (LocationUtil.getNearestEntity(LivingEntity.class, getPlayer().getLocation(), predicate) != null) zombie.setTarget(LocationUtil.getNearestEntity(LivingEntity.class, getPlayer().getLocation(), predicate));
 			
@@ -209,18 +224,16 @@ public class X extends AbilityBase implements ActiveHandler {
     	@Override
     	public void onSilentEnd() {
     		onEnd();
-    		Healths.setHealth(getPlayer(), Math.max(1, getPlayer().getHealth() - (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * losehealth)));
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(zombie)) {
-			e.setDamage(damage * damagemultiply);
-			if (e.getEntity() instanceof Player) {
-				Player player = (Player) e.getEntity();
-				if (getGame().isParticipating(player)) Infection.apply(getGame().getParticipant(player), TimeUnit.TICKS, infectduration);
+		if (e.getDamager().equals(zombie) && e.getEntity() instanceof Player) {
+			Player player = (Player) e.getEntity();
+			if (getGame().isParticipating(player)) {
+				infected.stop(false);
 			}
 		}
 	}
