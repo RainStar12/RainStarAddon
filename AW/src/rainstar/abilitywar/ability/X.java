@@ -10,9 +10,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -24,24 +24,24 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Infection;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
+import rainstar.abilitywar.effect.Erosion;
 
 @AbilityManifest(name = "X", rank = Rank.S, species = Species.UNDEAD, explain = {
 		"§7패시브 §8- §a면역체계§f: §5§n감염§f이나 §2§n침식§f 상태이상을 받지 않고,",
 		" 받았을 지속시간만큼 공격력이 $[DAMAGE_INCREASE]% 증가합니다.",
 		"§7철괴 우클릭 §8- §4통제불가§f: $[DURATION]초간 §d$[ZOMBIE_HP]HP§f의 §2좀비§f로 변합니다. $[COOLDOWN]",
-		"§2좀비§f가 적을 공격하거나 사망 시 폭발하며 주변에 살점을 뿌립니다.",
+		"§2좀비§f가 적을 공격하거나 사망 시 폭발하며 $[RANGE]칸 내에 살점을 뿌립니다.",
 		"이 살점에 휘말린 대상은 $[EROSION_DURATION]초간 §2§n침식§f 상태에 빠집니다.",
 		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
 		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
@@ -87,6 +87,15 @@ public class X extends AbilityBase implements ActiveHandler {
         }
     };
     
+	public static final SettingObject<Double> RANGE = 
+			abilitySettings.new SettingObject<Double>(X.class, "range", 5.0,
+            "# 폭발 범위") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
 			abilitySettings.new SettingObject<Integer>(X.class, "damage-increase", 20,
             "# 공격력 증가치") {
@@ -108,6 +117,7 @@ public class X extends AbilityBase implements ActiveHandler {
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
     private final int duration = (int) (DURATION.getValue() * 20);
     private final double damagemultiply = 1 + (DAMAGE_INCREASE.getValue() * 0.01);
+    private final double range = RANGE.getValue();
     private final int erosionduration = (int) (EROSION_DURATION.getValue() * 20);
     private final double hp = ZOMBIE_HP.getValue();
     private Zombie zombie;
@@ -149,11 +159,11 @@ public class X extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-    private AbilityTimer dmgInc = new AbilityTimer() {
+    private AbilityTimer dmgInc = new AbilityTimer(1) {
     	
     	@Override
     	public void run(int count) {
-    		
+    		ac2.update("§c공격력 증가§f: §e" + df.format(count / 20.0) + "§f초");
     	}
     	
     	@Override
@@ -163,7 +173,7 @@ public class X extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onSilentEnd() {
-    		
+    		ac2.update(null);
     	}
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
@@ -204,12 +214,7 @@ public class X extends AbilityBase implements ActiveHandler {
     	public void run(int count) {
     		ac.update("§2좀비화§f: " + df.format(count / 20.0));
     		if (zombie.isDead()) this.stop(true);
-    		else {
-    			getPlayer().setSpectatorTarget(zombie);
-    			Vector direction = zombie.getLocation().getDirection();
-    			float yaw = LocationUtil.getYaw(direction), pitch = LocationUtil.getPitch(direction);
-    			NMS.rotateHead(getPlayer(), getPlayer(), yaw, pitch);
-    		}
+    		else getPlayer().setSpectatorTarget(zombie);
     	}
     	
     	@Override
@@ -223,17 +228,41 @@ public class X extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onSilentEnd() {
+    		SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1.15f);
+    		ParticleLib.ITEM_CRACK.spawnParticle(zombie.getLocation(), range, range, range, 200, 0.15, MaterialX.SLIME_BLOCK);
+    		for (Player player : LocationUtil.getNearbyEntities(Player.class, zombie.getLocation(), range, range, predicate)) {
+    			Erosion.apply(getGame().getParticipant(player), TimeUnit.TICKS, erosionduration);
+    		}
     		onEnd();
     	}
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
+	public void onEffect(ParticipantPreEffectApplyEvent e) {
+		if (getPlayer().equals(e.getPlayer()) && (e.getEffectType().equals(Infection.registration) || e.getEffectType().equals(Erosion.registration))) {
+			if (!dmgInc.isRunning()) dmgInc.start(); 
+			dmgInc.setCount(dmgInc.getCount() + e.getDuration());
+			e.setCancelled(true);
+		}
+	}
+	
+	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager) && dmgInc.isRunning()) {
+			e.setDamage(e.getDamage() * damagemultiply);
+		}
+		
 		if (e.getDamager().equals(zombie) && e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
 			if (getGame().isParticipating(player)) {
-				infected.stop(false);
+				infected.stop(true);
 			}
 		}
 	}

@@ -304,7 +304,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onStart() {
-			getPlayer().setVelocity(lastcharmed.getPlayer().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.1).setY(0));
+			getPlayer().setVelocity(lastcharmed.getPlayer().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.23).setY(0));
 		}
 		
 		@Override

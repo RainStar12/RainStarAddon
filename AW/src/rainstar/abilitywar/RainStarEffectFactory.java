@@ -19,6 +19,7 @@ public enum RainStarEffectFactory {
     DIMENSION_DISTORTION(DimensionDistortion.class),
     DREAM(Dream.class),
     ELECTRIC_SHOCK(ElectricShock.class),
+    EROSION(Erosion.class),
     FROZEN_HEART(FrozenHeart.class),
     IRREPARABLE(Irreparable.class),
     MADNESS(Madness.class),

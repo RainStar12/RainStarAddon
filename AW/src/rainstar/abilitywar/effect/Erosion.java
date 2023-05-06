@@ -1,6 +1,7 @@
 package rainstar.abilitywar.effect;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -8,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
@@ -46,6 +46,7 @@ public class Erosion extends AbstractGame.Effect implements Listener {
 	public Erosion(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
+		participant.getPlayer().setGameMode(GameMode.SPECTATOR);
 		this.zombie = participant.getPlayer().getWorld().spawn(participant.getPlayer().getLocation(), Zombie.class);
 		
 		if (ServerVersion.getVersion() >= 16) zombie.setAdult();
@@ -91,26 +92,10 @@ public class Erosion extends AbstractGame.Effect implements Listener {
 
 	@Override
 	protected void onSilentEnd() {
-		if (zombie.isDead()) participant.getPlayer().damage(Integer.MAX_VALUE);
-		else participant.getPlayer().setHealth(zombie.getHealth());
-		HandlerList.unregisterAll(this);
-		super.onSilentEnd();
-	}
-	
-	@EventHandler()
-	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(zombie) && e.getEntity() instanceof Player) {
-			if (getGame().getParticipant((Player) e.getEntity()) != null) {
-				Participant p = getGame().getParticipant((Player) e.getEntity());
-				Infection.apply(p, TimeUnit.TICKS, 30);
-			}
-		}
-	}
-	
-	@EventHandler()
-	private void onEntityDeath(EntityDeathEvent e) {
-		if (e.getEntity().equals(zombie) && e.getEntity().getKiller() instanceof Player) {
-			final Participant killerParticipant = GameManager.getGame().getParticipant(e.getEntity().getKiller());
+		participant.getPlayer().setGameMode(GameMode.SURVIVAL);
+		if (zombie.isDead()) {
+			participant.getPlayer().damage(Integer.MAX_VALUE);
+			final Participant killerParticipant = GameManager.getGame().getParticipant(zombie.getKiller());
 			if (killerParticipant != null && participant.getAbility() != null) {
 				if (getGame() instanceof AbstractMix) {
 					Mix mix = (Mix) participant.getAbility();
@@ -123,6 +108,19 @@ public class Erosion extends AbstractGame.Effect implements Listener {
 						killerParticipant.setAbility(participant.getAbility().getRegistration());
 					} catch (ReflectiveOperationException ignored) {}
 				}
+			}
+		}
+		else participant.getPlayer().setHealth(zombie.getHealth());
+		HandlerList.unregisterAll(this);
+		super.onSilentEnd();
+	}
+	
+	@EventHandler()
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager().equals(zombie) && e.getEntity() instanceof Player) {
+			if (getGame().getParticipant((Player) e.getEntity()) != null) {
+				Participant p = getGame().getParticipant((Player) e.getEntity());
+				Infection.apply(p, TimeUnit.TICKS, 30);
 			}
 		}
 	}
