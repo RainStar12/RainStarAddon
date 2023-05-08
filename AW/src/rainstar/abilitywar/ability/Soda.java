@@ -1,10 +1,16 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AreaEffectCloud;
@@ -36,6 +42,7 @@ import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -52,11 +59,13 @@ import rainstar.abilitywar.effect.Corrosion;
 @AbilityManifest(
 		name = "소다", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§3물 속성§f의 꼬마 정령, 소다.",
-		"§7패시브 §8- §3순수§f: 불 속성의 피해, 모든 §n상태이상§f, 모든 포션 효과에 면역 효과를",
+		"§7패시브 §8- §3순수§f: 불 속성의 피해, 모든 §5§n상태이상§f, 모든 포션 효과에 §b면역 효과§f를",
 		" 가집니다. 또한 신발을 신고 물 속에 들어갈 때 물갈퀴 인챈트를 자동 획득합니다.",
-		"§7철괴 좌클릭 §8- §3스플래쉬§f: $[DURATION_CONFIG]초간 물이 되어, 타게팅 불능 및 무적 상태가 됩니다.",
-		" 물이 된 동안 지면에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 물 상태가",
+		"§7철괴 좌클릭 §8- §3스플래쉬§f: $[DURATION_CONFIG]초간 §b물§f이 되어, 타게팅 불능 및 무적 상태가 됩니다.",
+		" §b물§f이 된 동안 지면에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 §b물§f 상태가",
 		" 해제되고 주변 $[RANGE_CONFIG]칸 내 적에게 $[EFFECT_DURATION]초간 §7§n부식§f 상태이상을 겁니다. $[COOLDOWN_CONFIG]",
+		"§7연계 패시브 §8- §b버블§f: §3스플래쉬§f 사용 후 $[BUBBLE]초 안에 §3순수§f로 §5§n상태이상§f이나 포션 효과를",
+		" 정화하면 남은 시간동안 §e흡수 체력§f을 $[ABSORTION_GAIN]HP 획득하고 이동 속도가 $[SPEED_INCREASE]% 증가합니다.",
 		"§8[§7부식§8]§f 철 광물을 사용하는 모든 아이템을 사용할 수 없습니다.",
 		" 또한 갑옷의 방어력이 착용 광물에 비례해 희귀성이 낮을수록 더 많이 감소합니다."
 		},
@@ -73,8 +82,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> DURATION_CONFIG 
-	= abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
 			"duration", 7, "# 물 상태 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -83,8 +91,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> EFFECT_DURATION 
-	= abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> EFFECT_DURATION = abilitySettings.new SettingObject<Integer>(Soda.class,
 			"effect-duration", 5, "# 부식 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -93,8 +100,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE_CONFIG 
-	= abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> RANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
 			"range", 5, "# 부식 범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -103,8 +109,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG 
-	= abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
 			"cooldown", 40, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -115,6 +120,33 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
 		}
+	};
+	
+	public static final SettingObject<Double> BUBBLE = abilitySettings.new SettingObject<Double>(Soda.class,
+			"bubble-duration", 6.0, "# 버블 지속시간") {
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> ABSORTION_GAIN = abilitySettings.new SettingObject<Integer>(Soda.class,
+			"absortion-health-gain", 8, "# 흡수 체력 획득량") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> SPEED_INCREASE = abilitySettings.new SettingObject<Integer>(Soda.class,
+			"speed-increase", 40, "# 이동 속도 증가치", "# 단위: %") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
 	};
 	
 	private final Predicate<Effect> effectpredicate = new Predicate<Effect>() {
@@ -175,8 +207,26 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	    }
 	}
 	
+	private final double absortion = ABSORTION_GAIN.getValue();
+	private final int bubbledur = (int) (BUBBLE.getValue() * 20);
+	private final double speedup = SPEED_INCREASE.getValue() * 0.01;
+	private final AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "addspeed", speedup, Operation.ADD_SCALAR);
 	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private boolean potiondrank = false;
+	private boolean trigger = false;
+	private double preabsortion = 0;
+	private final ActionbarChannel ac = newActionbarChannel();
+	private final DecimalFormat df = new DecimalFormat("0.0");
+	
+	private void actived() {
+		preabsortion = NMS.getAbsorptionHearts(getPlayer());
+		NMS.setAbsorptionHearts(getPlayer(), (float) (preabsortion + absortion));
+		try {
+			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(modifier);
+		} catch (IllegalArgumentException ignored) {
+		}
+		trigger = true;
+	}
 	
 	private static boolean isWater(final Block block) {
 		return block.getType().name().endsWith("WATER");
@@ -187,6 +237,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
     	@Override
 		public void run(int count) {
     		for (PotionEffect pe : getPlayer().getActivePotionEffects()) {
+    			if (bubble.isRunning() && !trigger) actived();
     			getPlayer().removePotionEffect(pe.getType());
     		}
     		if (getPlayer().getFireTicks() > 0) {
@@ -219,6 +270,30 @@ public class Soda extends AbilityBase implements ActiveHandler {
     	
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
+	private final AbilityTimer bubble = new AbilityTimer(bubbledur) {
+		
+		@Override
+		public void run(int count) {
+			ac.update((trigger ? "§b" : "§7") + "버블§f: §3" + df.format(count / 20.0) + "§f초");
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			if (trigger) {
+				double delete = Math.max(0, NMS.getAbsorptionHearts(getPlayer()) - preabsortion - absortion);
+				NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) - delete));
+				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier);
+				trigger = false;
+			}
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
 	private final AbilityTimer potiondrankchecker = new AbilityTimer(1) {
     	
     	@Override
@@ -235,6 +310,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent(onlyRelevant = true)
 	public void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
+		if (bubble.isRunning() && !trigger) actived();
 		e.setCancelled(true);
 	}
 	
@@ -275,6 +351,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		if (e.getItem().getType().equals(Material.POTION)) {
 			potiondrankchecker.start();
 			potiondrank = true;
+			if (bubble.isRunning() && !trigger) actived();
 		}
 	}
 	
@@ -383,6 +460,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), RANGE_CONFIG.getValue(), RANGE_CONFIG.getValue(), predicate)) {
 				Corrosion.apply(getGame().getParticipant(p), TimeUnit.SECONDS, EFFECT_DURATION.getValue());
 			}
+			bubble.start();
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1);
