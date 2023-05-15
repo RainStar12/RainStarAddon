@@ -4,8 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -27,7 +25,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
 @AbilityManifest(name = "도살자", rank = Rank.A, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c블러드러스트§f: 대상에 체력에 따라 많을수록 §a약하게§8(§7최소 0.$[DAMAGE_MULTIPLY]배§8)§f,",
+		"§7근접 공격 §8- §c블러드러스트§f: 대상에 체력에 따라 많을수록 §a약하게§8(§7최소 0.$[DAMAGE_MULTIPLY]배§8)§f,",
 		" 적을수록 §4강하게§8(§7최대 1.$[DAMAGE_MULTIPLY]배§8)§f 공격합니다.",
 		"§7킬 §8- §c카니발리즘§f: 대상을 죽였을 경우, 현재 남은 체력만큼 체력을 회복합니다.",
 		" 이때 최대 체력을 넘는 회복량은 §e흡수 체력§f으로 얻습니다."
@@ -59,13 +57,7 @@ public class Butcher extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {	
-		Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (getPlayer().equals(damager) && e.getEntity() instanceof LivingEntity) {
+		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity) {
 			final LivingEntity target = (LivingEntity) e.getEntity();
 	    	double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 	    	double nowHealth = target.getHealth();

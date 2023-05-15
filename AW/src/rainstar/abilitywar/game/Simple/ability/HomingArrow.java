@@ -18,6 +18,6 @@ public class HomingArrow extends AbilityBase {
 	}
 	
 	public AbilityTimer gauge = new AbilityTimer() {
-	}
+	};
 
 }
