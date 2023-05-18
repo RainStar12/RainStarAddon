@@ -76,15 +76,14 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
+import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
 
 @AbilityManifest(name = "하늘고래", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §d드림 이터§f: 누군가를 죽이면 적의 §e꿈§f을 먹어 §a꿈 레벨§f을 올립니다.",
-		" §e꿈§f을 먹을 때 체력을 §b12§f% 회복하고, 남은 쿨타임이 §b28§f%로 줄어듭니다.",
-		" 만약 능력 지속 중에 §e꿈§f을 먹었다면 지속시간을 $[ADD_DURATION]초 연장합니다.",
+		"§7패시브 §8- §d드림 이터§f: 적에게 입힌 최종 피해 × 대상의 능력 등급만큼",
+		" §a꿈 경험치§f를 획득해 일정량 모으는 것으로 §a꿈 레벨§f을 상승시킬 수 있습니다.",
 		" §a꿈 레벨§f로 얻는 효과는 §7철괴를 좌클릭§f하여 볼 수 있습니다.",
 		"§7철괴 우클릭 §8- §b드림 아쿠아리움§f: $[DURATION]초간 나갈 수 없는 §b꿈§f의 §b들판§f을 펼칩니다.",
-		" 영역 내에서 자신이 잃은 체력의 $[HEAL_PERCENT]%는 영역 지속이 끝날 때 §d회복§f됩니다.",
 		" 또한 §a꿈 레벨§f에 따른 추가 효과를 사용할 수 있습니다. $[COOLDOWN]",
 		"§7영역 내 패시브 §8- §3웨이브§f: 영역의 중심에서부터 파도가 퍼져나가",
 		" 적을 피해입히며 밀쳐냅니다. 피해는 중심에서 멀어질수록 강력해집니다.",
@@ -103,6 +102,25 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	public SkyWhale(Participant participant) {
 		super(participant);
 	}
+	
+	private static final ImmutableMap<Integer, String> skillList = ImmutableMap.<Integer, String>builder()
+			.put(0, "화염 내성")
+			.put(0, "건너편")
+			.put(0, "역방향")
+			.put(0, "달의 인력")
+			.put(0, "물거품")
+			.put(1, "거센 파도")
+			.put(1, "파악")
+			.put(1, "파도타기")
+			.put(1, "빠른 걸음")
+			.put(1, "영역 축소")
+			.put(2, "비행")
+			.put(2, "스킵")
+			.put(2, "능력 장악")
+			.put(2, "수분 과다")
+			.put(2, "무")
+			.put(2, "검기")
+			.build();
 	
 	public static final SettingObject<Integer> ADD_DURATION = abilitySettings.new SettingObject<Integer>(
 			SkyWhale.class, "add-duration", 10, "# 추가 지속 시간") {
@@ -188,6 +206,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	private ActionbarChannel ac = newActionbarChannel();
 	
 	private int dreamlevel = 0;
+	private double dreamexp = 0;
 	
 	private double bestDamage = 7;
 	private double lostHealth = 0;
@@ -199,6 +218,8 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	
 	private int stacks;
 	private boolean turns = true;
+	
+	private Set<String> skills = new HashSet<>();
 
 	private final static Color sky = Color.fromRGB(72, 254, 254), mint = Color.fromRGB(236, 254, 254), snow = Color.fromRGB(28, 254, 243),
 			teal = Color.TEAL, lime = Color.fromRGB(49, 254, 32), yellow = Color.YELLOW, pink = Color.fromRGB(254, 174, 201),
