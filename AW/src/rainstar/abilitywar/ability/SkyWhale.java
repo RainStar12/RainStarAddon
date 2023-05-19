@@ -115,11 +115,17 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			.put(1, "빠른 걸음")
 			.put(1, "영역 축소")
 			.put(2, "비행")
-			.put(2, "스킵")
 			.put(2, "능력 장악")
 			.put(2, "수분 과다")
 			.put(2, "무")
 			.put(2, "검기")
+			.put(3, "스킵")
+			.put(3, "자유 해방")
+			.put(3, "수면파")
+			.put(3, "몽중몽")
+			.put(3, "바다의 부름")
+			.put(4, "스텝 업")
+			.put(4, "꿈 수집가")
 			.build();
 	
 	public static final SettingObject<Integer> ADD_DURATION = abilitySettings.new SettingObject<Integer>(
