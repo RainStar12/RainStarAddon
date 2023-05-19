@@ -103,29 +103,29 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private static final ImmutableMap<Integer, String> skillList = ImmutableMap.<Integer, String>builder()
-			.put(0, "화염 내성")
-			.put(0, "건너편")
-			.put(0, "역방향")
-			.put(0, "달의 인력")
-			.put(0, "물거품")
-			.put(1, "거센 파도")
-			.put(1, "파악")
-			.put(1, "파도타기")
-			.put(1, "빠른 걸음")
-			.put(1, "영역 축소")
-			.put(2, "비행")
-			.put(2, "능력 장악")
-			.put(2, "수분 과다")
-			.put(2, "무")
-			.put(2, "검기")
-			.put(3, "스킵")
-			.put(3, "자유 해방")
-			.put(3, "수면파")
-			.put(3, "몽중몽")
-			.put(3, "바다의 부름")
-			.put(4, "스텝 업")
-			.put(4, "꿈 수집가")
+	private static final ImmutableMap<String, Integer> skillList = ImmutableMap.<String, Integer>builder()
+			.put("화염 내성", 0)
+			.put("건너편", 0)
+			.put("역방향", 0)
+			.put("달의 인력", 0)
+			.put("물거품", 0)
+			.put("거센 파도", 1)
+			.put("파악", 1)
+			.put("파도타기", 1)
+			.put("빠른 걸음", 1)
+			.put("영역 축소", 1)
+			.put("비행", 2)
+			.put("능력 장악", 2)
+			.put("수분 과다", 2)
+			.put("무", 2)
+			.put("검기", 2)
+			.put("스킵", 3)
+			.put("자유 해방", 3)
+			.put("수면파", 3)
+			.put("몽중몽", 3)
+			.put("바다의 부름", 3)
+			.put("스텝 업", 4)
+			.put("꿈 수집가", 4)
 			.build();
 	
 	public static final SettingObject<Integer> ADD_DURATION = abilitySettings.new SettingObject<Integer>(
@@ -196,7 +196,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			ac.update("§b꿈 레벨§f: §a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
 			if (isSkillRunning == true) isSkillRunning = false;
 		}
 	}
@@ -208,8 +207,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	private boolean isSkillRunning = false;
 	private Random random = new Random();
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
-	
-	private ActionbarChannel ac = newActionbarChannel();
 	
 	private int dreamlevel = 0;
 	private double dreamexp = 0;
@@ -424,8 +421,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
+	public void levelUp() {
 		if (getPlayer().equals(e.getEntity().getKiller())) {
 			double addHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.12;
 			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), addHealth, RegainReason.CUSTOM);
@@ -493,7 +489,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			}.runTaskLater(AbilityWar.getPlugin(), 1L);
 			if (dreamlevel < 5) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
 			dreamlevel = Math.min(5, dreamlevel + 1);
-			ac.update("§b꿈 레벨§f: §a" + (dreamlevel == 5 ? "MAX" : dreamlevel));
 		}
 	}
 	
