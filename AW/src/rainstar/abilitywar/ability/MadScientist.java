@@ -187,7 +187,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 						Bukkit.getPluginManager().callEvent(event2);
 						if (!event2.isCancelled()) {
 							double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-							Healths.setHealth(player, Math.min((maxHP * healthy), player.getHealth() + event.getAmount()));
+							Healths.setHealth(getPlayer(), Math.min((maxHP * healthy), getPlayer().getHealth() + event.getAmount()));
 							ParticleLib.HEART.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
 							SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 1);
 						}

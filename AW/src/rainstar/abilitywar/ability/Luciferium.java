@@ -51,7 +51,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> STRENGTH = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-", 1,
             "# 힘 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -60,7 +60,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> SPEED = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-", 1,
             "# 신속 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -69,7 +69,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RESISTANCE = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance", 1,
+			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-", 1,
             "# 저항 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
