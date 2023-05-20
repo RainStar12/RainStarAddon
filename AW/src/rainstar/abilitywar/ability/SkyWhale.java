@@ -422,74 +422,72 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	}
 	
 	public void levelUp() {
-		if (getPlayer().equals(e.getEntity().getKiller())) {
-			double addHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.12;
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), addHealth, RegainReason.CUSTOM);
-			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + addHealth);	
-			}
-			if (cooldown.isRunning()) {
-				cooldown.setCount((int) (cooldown.getCount() * 0.28));
-			}
-			if (skill.isDuration()) {
-				skill.setCount(skill.getCount() + (addDuration * 20));
-			}
-			final Firework firework = getPlayer().getWorld().spawn(e.getEntity().getLocation(), Firework.class);
-			final FireworkMeta meta = firework.getFireworkMeta();
-			Color color1 = null, color2 = null, color3 = null, color4 = null;
-			switch(random.nextInt(5)) {
-			case 0:
-				color1 = mint;
-				color2 = snow;
-				color3 = teal;
-				color4 = sky;
-				break;
-			case 1:
-				color1 = pink;
-				color2 = yellow;
-				color3 = lime;
-				color4 = applemint;
-				break;
-			case 2:
-				color1 = applemint;
-				color2 = snow;
-				color3 = lime;
-				color4 = yellow;
-				break;
-			case 3:
-				color1 = orange;
-				color2 = yellow;
-				color3 = pink;
-				color4 = snow;
-				break;
-			case 4:
-				color1 = Color.WHITE;
-				color2 = Color.SILVER;
-				color3 = Color.GRAY;
-				color4 = Color.BLACK;
-				break;
-			}
-			meta.addEffect(
-					FireworkEffect.builder()
-					.withColor(color1, color2, color3, color4)
-					.withTrail()
-					.withFlicker()
-					.with(Type.STAR)
-					.build()
-			);	
-			meta.setPower(0);
-			firework.setFireworkMeta(meta);
-			firework.setMetadata("Firework", NULL_VALUE);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					firework.detonate();
-				}
-			}.runTaskLater(AbilityWar.getPlugin(), 1L);
-			if (dreamlevel < 5) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
-			dreamlevel = Math.min(5, dreamlevel + 1);
+		double addHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.12;
+		final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), addHealth, RegainReason.CUSTOM);
+		Bukkit.getPluginManager().callEvent(event);
+		if (!event.isCancelled()) {
+			Healths.setHealth(getPlayer(), getPlayer().getHealth() + addHealth);	
 		}
+		if (cooldown.isRunning()) {
+			cooldown.setCount((int) (cooldown.getCount() * 0.28));
+		}
+		if (skill.isDuration()) {
+			skill.setCount(skill.getCount() + (addDuration * 20));
+		}
+		final Firework firework = getPlayer().getWorld().spawn(getPlayer().getLocation(), Firework.class);
+		final FireworkMeta meta = firework.getFireworkMeta();
+		Color color1 = null, color2 = null, color3 = null, color4 = null;
+		switch(random.nextInt(5)) {
+		case 0:
+			color1 = mint;
+			color2 = snow;
+			color3 = teal;
+			color4 = sky;
+			break;
+		case 1:
+			color1 = pink;
+			color2 = yellow;
+			color3 = lime;
+			color4 = applemint;
+			break;
+		case 2:
+			color1 = applemint;
+			color2 = snow;
+			color3 = lime;
+			color4 = yellow;
+			break;
+		case 3:
+			color1 = orange;
+			color2 = yellow;
+			color3 = pink;
+			color4 = snow;
+			break;
+		case 4:
+			color1 = Color.WHITE;
+			color2 = Color.SILVER;
+			color3 = Color.GRAY;
+			color4 = Color.BLACK;
+			break;
+		}
+		meta.addEffect(
+				FireworkEffect.builder()
+				.withColor(color1, color2, color3, color4)
+				.withTrail()
+				.withFlicker()
+				.with(Type.STAR)
+				.build()
+		);	
+		meta.setPower(0);
+		firework.setFireworkMeta(meta);
+		firework.setMetadata("Firework", NULL_VALUE);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				firework.detonate();
+			}
+		}.runTaskLater(AbilityWar.getPlugin(), 1L);
+		if (dreamlevel < 5) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
+		dreamlevel = Math.min(5, dreamlevel + 1);
 	}
 	
 	private final AbilityTimer biggerEffect = new AbilityTimer() {
