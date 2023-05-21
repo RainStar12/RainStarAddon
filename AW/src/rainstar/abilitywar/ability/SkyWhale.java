@@ -1,12 +1,16 @@
 package rainstar.abilitywar.ability;
 
+import java.io.ObjectOutputStream.PutField;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
@@ -60,6 +64,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -76,8 +81,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
+import daybreak.google.common.collect.ArrayListMultimap;
 import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
+import daybreak.google.common.collect.Multimap;
+import daybreak.google.common.collect.MultimapBuilder;
+import daybreak.google.common.collect.Multiset;
 
 @AbilityManifest(name = "하늘고래", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §d드림 이터§f: 적에게 입힌 최종 피해 × 대상의 능력 등급만큼",
@@ -101,42 +110,43 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 	public SkyWhale(Participant participant) {
 		super(participant);
+		
+		final Multimap<Integer, Pair<String, String>> skillList = ArrayListMultimap.create();
+		skillList.put(0, Pair.of("화염 내성", "모든 화염계 피해를 받지 않습니다."));
+		skillList.put(0, Pair.of("건너편", "영역의 끝에 다다르면 반대편 영역의 끝으로 이동됩니다. 자신만 적용됩니다."));
+		skillList.put(0, Pair.of("역방향", "파도가 영역의 끝에서 중심을 향해 칩니다. 이때 대미지는 중심쪽이 더 강해집니다."));
+		skillList.put(0, Pair.of("달의 인력", "밤 시간에는 파도의 주기가 25% 감소합니다."));
+		skillList.put(0, Pair.of("물거품", "영역이 종료될 때 영역 내에서 받은 피해량 50%를 회복합니다."));
+		skillList.put(1, Pair.of("거센 파도", "파도 피해량과 넉백이 20% 증가합니다."));
+		skillList.put(1, Pair.of("물의 답", "영역 내 모든 대상의 체력을 확인 가능합니다."));
+		skillList.put(1, Pair.of("파도타기", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가합니다."));
+		skillList.put(1, Pair.of("빠른 걸음", "영역 내에서 이동 속도가 15% 증가합니다."));
+		skillList.put(1, Pair.of("영역 축소", "영역 범위가 15칸에서 10칸으로 축소됩니다."));
+		skillList.put(1, Pair.of("달의 인력 II", "밤 시간에는 파도의 주기가 50% 감소합니다."));
+		skillList.put(1, Pair.of("물거품 II", "영역이 종료될 때 영역 내에서 받은 피해량 75%를 회복합니다."));
+		skillList.put(2, Pair.of("비행", "자유로운 비행이 가능합니다. 비행 속도가 느려집니다."));
+		skillList.put(2, Pair.of("수분 과다", "파도에 맞은 적은 2초간 부식됩니다."));
+		skillList.put(2, Pair.of("무", "영역과 파도의 파티클을 자신만 볼 수 있습니다."));
+		skillList.put(2, Pair.of("검기", "2초마다 검을 휘두를 때 지형지물과 생명체를 관통하는 특수 투사체를 발사합니다."));
+		skillList.put(2, Pair.of("물거품 III", "영역이 종료될 때 영역 내에서 자신이 받은 피해를 전부 회복합니다."));
+		skillList.put(2, Pair.of("거센 파도 II", "파도 피해량과 넉백이 40% 증가합니다."));
+		skillList.put(2, Pair.of("파도타기 II", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가하고, 체력을 5% 회복합니다."));
+		skillList.put(2, Pair.of("빠른 걸음 II", "영역 내에서 이동 속도가 30% 증가합니다."));
+		skillList.put(2, Pair.of("영역 축소 II", "영역 범위가 10칸에서 5칸으로 축소됩니다."));
+		skillList.put(3, Pair.of("능력 장악", "영역 내에서 자신 외 액티브 / 타게팅 스킬을 발동할 수 없습니다."));
+		skillList.put(3, Pair.of("꿈 깨시지", "치명적인 피해를 입을 때 영역이 즉시 종료됩니다. 물거품이 있을 때만 획득 가능합니다."));
+		skillList.put(3, Pair.of("자유 해방", "본인은 영역 밖으로 나갈 수 있습니다. 건너편이 있으면 등장하지 않습니다."));
+		skillList.put(3, Pair.of("수면파", "25% 확률로 파도에 맞은 적이 5초간 몽환에 빠집니다."));
+		skillList.put(3, Pair.of("몽중몽", "영역 지속 중 적 처치 시 / 꿈 레벨 업 시 지속시간이 30초 추가됩니다."));
+		skillList.put(3, Pair.of("바다의 부름", "30칸 내의 영역 외부의 적이 영역 내로 끌어당겨집니다."));
+		skillList.put(3, Pair.of("거센 파도 III", "파도 피해량과 넉백이 60% 증가합니다."));
+		skillList.put(3, Pair.of("비행 II", "자유로운 비행이 가능합니다."));
+		skillList.put(3, Pair.of("수분 과다 II", "파도에 맞은 적은 3초간 부식됩니다."));
+		skillList.put(4, Pair.of("스텝 업", "획득 이후 꿈 레벨 업 시마다 공격력이 7.5%씩 증가합니다."));
+		skillList.put(4, Pair.of("꿈 수집가", "꿈 경험치 획득량이 2배가 됩니다."));
+		skillList.put(4, Pair.of("능력 장악 II", "영역 내에서 자신 외 모든 능력이 비활성화됩니다."));
 	}
-	
-	private static final ImmutableMap<String, Integer> skillList = ImmutableMap.<String, Integer>builder()
-			.put("화염 내성", 0)
-			.put("건너편", 0)
-			.put("역방향", 0)
-			.put("달의 인력", 0)
-			.put("물거품", 0)
-			.put("거센 파도", 1)
-			.put("파악", 1)
-			.put("파도타기", 1)
-			.put("빠른 걸음", 1)
-			.put("영역 축소", 1)
-			.put("비행", 2)
-			.put("능력 장악", 2)
-			.put("수분 과다", 2)
-			.put("무", 2)
-			.put("검기", 2)
-			.put("스킵", 3)
-			.put("자유 해방", 3)
-			.put("수면파", 3)
-			.put("몽중몽", 3)
-			.put("바다의 부름", 3)
-			.put("스텝 업", 4)
-			.put("꿈 수집가", 4)
-			.build();
-	
-	public static final SettingObject<Integer> ADD_DURATION = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "add-duration", 10, "# 추가 지속 시간") {
 
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-	};
 	
 	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(
 			SkyWhale.class, "duration", 20, "# 지속 시간") {
@@ -173,26 +183,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> HEAL_PERCENT = abilitySettings.new SettingObject<Integer>(
-			SkyWhale.class, "heal-percent", 70, "# 영역이 끝난 후 회복량 (단위: %)") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-	};
-	
-	public static final SettingObject<Double> INCREASE_DAMAGE = abilitySettings.new SettingObject<Double>(
-			SkyWhale.class, "increase-damage", 0.8, "# 꿈 레벨당 추가 공격력") {
-
-		@Override
-		public boolean condition(Double value) {
-			return value >= 0;
-		}
-
-	};
-	
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
@@ -202,8 +192,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 50);	
 	private final int period = WAVE_PERIOD.getValue();
-	private final int addDuration = ADD_DURATION.getValue();
-	private final double increasedamage = INCREASE_DAMAGE.getValue();
 	private boolean isSkillRunning = false;
 	private Random random = new Random();
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
@@ -318,7 +306,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
 	    		getPlayer().sendMessage("§e=========== §b꿈 스킬 §e===========");
 	    		final StringJoiner joiner = new StringJoiner("\n");
-	    		joiner.add("§aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel) + " §7| §c추가 공격력 §e+" + (dreamlevel * increasedamage));
+	    		joiner.add("§aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel));
 	    		if (dreamlevel == 0) joiner.add("§7아직 활성화된 스킬이 없습니다.");
 	    		if (dreamlevel >= 1) joiner.add("§c화염 내성§7: §f모든 화염계 피해에 내성이 생깁니다.");
 	    		if (dreamlevel >= 2) joiner.add("§a정보 통제§7: §f적의 체력을 실시간으로 확인 가능합니다.");
