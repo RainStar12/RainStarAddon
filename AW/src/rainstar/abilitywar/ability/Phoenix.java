@@ -311,7 +311,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 			}
 		}
 		if (update == Update.ABILITY_DESTROY) {
-			if (!parrot.isDead()) parrot.setHealth(0);
+			if (parrot != null && !parrot.isDead()) parrot.setHealth(0);
 		}
 	}
 	

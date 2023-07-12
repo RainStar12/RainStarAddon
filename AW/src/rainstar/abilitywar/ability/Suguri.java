@@ -354,8 +354,8 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer())) {
 			if (evade.isRunning()) {
 				longHeatLose(e.getFinalDamage() * (heat * 0.015));
-				if (accelgauge < 1) {
-					accelgauge = accelgauge + (e.getFinalDamage() * 0.15);
+				if (accelgauge < 1 && !accelerator.isRunning()) {
+					accelgauge = accelgauge + (e.getFinalDamage() * 0.05);
 					if (accelgauge >= 1) {
 						SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));	
 						getPlayer().sendMessage("§c[§b!§c] §f액셀러레이터를 사용할 수 있습니다.");

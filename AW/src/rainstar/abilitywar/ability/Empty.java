@@ -46,18 +46,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 		"$(EXPLAIN)",
 		"§a---------------------------------",
 		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
-		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f갖고 있던 쿨타임 / 2",
-		"능력당 한 번, §2복제§f 시 해당 §b능력이 담긴 책§f을 획득합니다.",
-		"§2복제§f된 능력이 없을 때 §b능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
+		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f가진 쿨타임 / 2",
+		"능력당 한 번, §2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다.",
+		"§2복제§f된 능력이 없을 때 §6능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
 		},
 		summarize = {
 		"§a---------------------------------",
 		"$(SUM_EXPLAIN)",
 		"§a---------------------------------",
 		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
-		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f갖고 있던 쿨타임",
-		"능력당 한 번, §2복제§f 시 해당 §b능력이 담긴 종이§f를 획득합니다.",
-		"§2복제§f된 능력이 없을 때 §b능력이 담긴 종이§f를 우클릭하여 해당 능력을 §2복제§f합니다."
+		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f가진 쿨타임 / 2",
+		"능력당 한 번, §2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다.",
+		"§2복제§f된 능력이 없을 때 §6능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
 		})
 
 @Tips(tip = {
@@ -211,7 +211,6 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 												ItemMeta bookmeta = book.getItemMeta();
 												bookmeta.setDisplayName("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】");
 												bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-												bookmeta.addEnchant(Enchantment.MENDING, 1, true);
 												bookmeta.setLore(lores);
 												book.setItemMeta(bookmeta);
 												getPlayer().getInventory().addItem(book);

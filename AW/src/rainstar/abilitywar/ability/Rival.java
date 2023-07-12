@@ -255,7 +255,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 						if (getGame().getParticipant(rival).hasAbility()) {
 							AbilityBase ab = getGame().getParticipant(rival).getAbility();
 							AbilityBase myab = null;
-							if (ab instanceof Mix) {
+							if (ab.getClass().equals(Mix.class)) {
 								Mix mix = (Mix) ab;
 								Mix myMix = (Mix) getParticipant().getAbility();
 								if (mix.hasSynergy()) {
@@ -405,8 +405,23 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 	@SubscribeEvent
 	public void onParticipantDeath(ParticipantDeathEvent e) {
 		if (e.getPlayer().equals(rival) && getPlayer().equals(e.getPlayer().getKiller())) {
+			AbilityBase ab = getGame().getParticipant(rival).getAbility();
+			AbilityBase myab = null;
+			if (ab.getClass().equals(Mix.class)) {
+				Mix mix = (Mix) ab;
+				Mix myMix = (Mix) getParticipant().getAbility();
+				if (mix.hasSynergy()) {
+					myab = mix.getSynergy();
+				} else {
+					if (myMix.getFirst().equals(Rival.this)) {
+						myab = mix.getFirst();
+					} else if (myMix.getSecond().equals(Rival.this)) {
+						myab = mix.getSecond();
+					}	
+				}
+			} else myab = ab;
 			try {
-				abilities.add(AbilityBase.create(e.getParticipant().getAbility().getClass(), getParticipant()));
+				abilities.add(AbilityBase.create(myab.getClass(), getParticipant()));
 			} catch (ReflectiveOperationException e1) {
 				e1.printStackTrace();
 			}

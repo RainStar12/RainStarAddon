@@ -48,7 +48,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> INBATTLE_CHECK_DURATION = 
-			abilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration", 7.5,
+			abilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration-", 5.0,
             "# 전투 중인지 판단하는 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -57,7 +57,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEAL_COUNT = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count", 6,
+			abilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count-", 8,
             "# 비전투 중에 회복하는 횟수") {
         @Override
         public boolean condition(Integer value) {
@@ -66,7 +66,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DECREASED_HEAL_COUNT = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "decreased-heal-count", 3,
+			abilitySettings.new SettingObject<Integer>(FirstAid.class, "decreased-heal-count-", 4,
             "# 전투 중에 회복하는 횟수") {
         @Override
         public boolean condition(Integer value) {
@@ -142,7 +142,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer().getLocation(), 1, 1.8f);
 					ParticleLib.HEART.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
-					new Holograms(getPlayer().getLocation(), event.getAmount());
+					new Holograms(getPlayer().getLocation(), event.getAmount()).start();
 				}
 				damages.remove(0);
 	    		double sum = damages.stream().limit(inbattle.isRunning() ? count - (healcount - dechealcount) : count).mapToDouble(Double::doubleValue).sum();

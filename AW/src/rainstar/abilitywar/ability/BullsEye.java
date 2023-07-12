@@ -25,10 +25,10 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.random.Random;
 
 @AbilityManifest(name = "명사수", rank = Rank.S, species = Species.HUMAN, explain = {
-		"투사체 적중 시 자신과 대상의 §3거리§f 1칸당 §c$[ADD_DAMAGE]%§f씩 증가합니다."
+		"투사체 적중 시 자신과 대상의 §3거리§f 1칸당 공격력이 §c$[ADD_DAMAGE]%§f씩 증가합니다."
 		},
 		summarize = {
-		"투사체 적중 시 자신과 대상의 §3거리§f 1칸당 §c$[ADD_DAMAGE]%§f씩 증가합니다."
+		"투사체 적중 시 자신과 대상의 §3거리§f 1칸당 공격력이 §c$[ADD_DAMAGE]%§f씩 증가합니다."
 		})
 public class BullsEye extends AbilityBase {
 	

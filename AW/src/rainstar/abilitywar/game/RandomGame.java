@@ -33,6 +33,10 @@ import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
+import rainstar.abilitywar.game.Chaos.GachaGame;
+import rainstar.abilitywar.game.Chaos.KingsGambitGame;
+import rainstar.abilitywar.game.Chaos.RockbottomGame;
+import rainstar.abilitywar.game.Chaos.Overlap.OverlapGame;
 import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 
 @GameManifest(name = "랜덤", description = {
@@ -45,7 +49,7 @@ import rainstar.abilitywar.game.SelectMix.SelectMixGame;
 @GameAliases({"무작위", "random"})
 public class RandomGame extends Game {
 
-	public static final Setting<Integer> NORMAL_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-normal-chance", 15, 
+	public static final Setting<Integer> NORMAL_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-normal-chance-", 14, 
 			"# 일반 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -93,7 +97,7 @@ public class RandomGame extends Game {
 		}
 	};
 	
-	public static final Setting<Integer> MIX_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-mix-chance", 40, 
+	public static final Setting<Integer> MIX_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-mix-chance-", 38, 
 			"# 믹스 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -101,7 +105,7 @@ public class RandomGame extends Game {
 		}
 	};
 	
-	public static final Setting<Integer> SELECT_MIX_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-select-mix-chance", 20, 
+	public static final Setting<Integer> SELECT_MIX_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-select-mix-chance-", 18, 
 			"# 셀렉트 믹스 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -119,6 +123,38 @@ public class RandomGame extends Game {
 	
 	public static final Setting<Integer> TRIPLE_MIX_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-triple-mix-chance", 1, 
 			"# 트리플 믹스 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final Setting<Integer> CHAOS_GACHA_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-chaos-gacha-chance", 1, 
+			"# 카오스 가챠 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final Setting<Integer> CHAOS_KINGS_GAMBIT_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-chaos-king-gambit-chance", 1, 
+			"# 카오스 킹즈 갬빗 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final Setting<Integer> CHAOS_OVERLAP_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-chaos-overlap-chance", 2, 
+			"# 카오스 중첩 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final Setting<Integer> CHAOS_ROCKBOTTOM_CHANCE = gameSettings.new Setting<Integer>(RandomGame.class, "game-chaos-rockbottom-chance", 1, 
+			"# 카오스 최저점 게임모드 등장확률", "# 게임모드 확률의 총합은 정확히 100이어야 합니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -194,7 +230,8 @@ public class RandomGame extends Game {
 		case 1:
 			if (NORMAL_CHANCE.getValue() + BLIND_CHANCE.getValue() + BLIND_MIX_CHANCE.getValue() + ONEABILITY_CHANCE.getValue() + 
 					CHANGE_CHANCE.getValue() + CHANGE_MIX_CHANCE.getValue() + MIX_CHANCE.getValue() + SELECT_MIX_CHANCE.getValue() +
-					SYNERGY_CHANCE.getValue() + TRIPLE_MIX_CHANCE.getValue() != 100) {
+					SYNERGY_CHANCE.getValue() + TRIPLE_MIX_CHANCE.getValue() + CHAOS_GACHA_CHANCE.getValue() + CHAOS_KINGS_GAMBIT_CHANCE.getValue() +
+					CHAOS_OVERLAP_CHANCE.getValue() + CHAOS_ROCKBOTTOM_CHANCE.getValue() != 100) {
 				Bukkit.broadcastMessage("§4[§c!§4] §f게임모드 확률 총합이 100%가 아닙니다.");
 				GameManager.stopGame();
 				break;
@@ -214,6 +251,12 @@ public class RandomGame extends Game {
 				gamemodes.put("§a셀렉트 믹스", SelectMixGame.class);
 				gamemodes.put("§6시너지", SynergyGame.class);
 				gamemodes.put("§e트리플 믹스", TripleMixGame.class);
+				gamemodes.put("§8카오스 §7<§c킹즈 갬빗§7>", KingsGambitGame.class);
+				gamemodes.put("§8카오스 §7<§d뽑기§7>", GachaGame.class);
+				gamemodes.put("§8카오스 §7<§2최저점§7>", RockbottomGame.class);
+				gamemodes.put("§8카오스 §7<§b중첩§7>", OverlapGame.class);
+				if (random.nextInt(10) == 0) gamemodes.put("§4대혼돈", null);
+				if (random.nextInt(20) == 0) gamemodes.put("§a레인스타", null);
 				
 				wrecks.put("§cW§6R§eE§aC§bK §70§f%", null);
 				wrecks.put("§cW§6R§eE§aC§bK §725§f%", "_25");
@@ -251,6 +294,18 @@ public class RandomGame extends Game {
 				}
 				for (int a = 0; a < TRIPLE_MIX_CHANCE.getValue(); a++) {
 					gamemoderesults.add("§e트리플 믹스");
+				}
+				for (int a = 0; a < CHAOS_KINGS_GAMBIT_CHANCE.getValue(); a++) {
+					gamemoderesults.add("§8카오스 §7<§c킹즈 갬빗§7>");
+				}
+				for (int a = 0; a < CHAOS_GACHA_CHANCE.getValue(); a++) {
+					gamemoderesults.add("§8카오스 §7<§d뽑기§7>");
+				}
+				for (int a = 0; a < CHAOS_ROCKBOTTOM_CHANCE.getValue(); a++) {
+					gamemoderesults.add("§8카오스 §7<§2최저점§7>");
+				}
+				for (int a = 0; a < CHAOS_OVERLAP_CHANCE.getValue(); a++) {
+					gamemoderesults.add("§8카오스 §7<§b중첩§7>");
 				}
 				
 				for (int a = 0; a < WRECK_0_CHANCE.getValue(); a++) {

@@ -36,7 +36,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		EffectType.MOVEMENT_RESTRICTION, EffectType.SIGHT_RESTRICTION
 }, description = {
 		"플레이어가 특정 행동들을 할 때마다 확률적으로 훈수를 둡니다.",
-		"훈수를 받으면 시야가 잠깐 봉인됩니다.",
+		"훈수를 받으면 시야가 잠깐 차단됩니다.",
 		"이 효과는 영구 지속이나, 훈수 발동 시마다 5%의 확률로 제거됩니다."
 })
 public class BackseatGaming extends AbstractGame.Effect implements Listener {

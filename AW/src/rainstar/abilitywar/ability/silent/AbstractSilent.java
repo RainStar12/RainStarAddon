@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -104,7 +105,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> UNIT_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "unit-cooldown", 20,
+			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "unit-cooldown-", 10,
             "# 유닛별 쿨타임", "# 단위: 초") {
 
         @Override
@@ -198,7 +199,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 	private final int speedduration = (int) (SPEED_DURATION.getValue() * 20);
 	private final double speedper = SPEED_PER.getValue() * 0.01;
 	private final double maxspeed = MAX_SPEED.getValue() * 0.01;
-	private final int unitCooldown = (int) ((COOLDOWN.getValue() * 1000) * Wreck.calculateDecreasedAmount(25));
+	private final int unitCooldown = (int) ((UNIT_COOLDOWN.getValue() * 1000) * Wreck.calculateDecreasedAmount(25));
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 35);
     
 	private final Map<UUID, Long> unitcooldowns = new HashMap<>();

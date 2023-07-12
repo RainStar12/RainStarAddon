@@ -33,7 +33,9 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7근접 공격 §8- §eE=mc²§f: 내 현재 §b이동 속도§f에 비례하여 피해량이 강력해집니다."
 		},
 		summarize = {
-		""
+		"§7철괴 우클릭 시§f §3가속§f을 획득해 $[ACCEL_DURATION]초간 §3가속§f × $[SPEED_UP]%만큼 §b이동 속도§f가",
+		"§a증가§f합니다. $[MAX_STACK]번 사용 시 §3가속§f을 초기화하고 §c쿨타임§f을 가집니다. $[COOLDOWN]",
+		"§7근접 공격 시§f 내 현재 §b이동 속도§f에 비례하여 피해량이 강력해집니다."
 		})
 public class Accel extends AbilityBase implements ActiveHandler {
 	
@@ -42,7 +44,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> ACCEL_DURATION = 
-			abilitySettings.new SettingObject<Double>(Accel.class, "accel-duration", 5.0,
+			abilitySettings.new SettingObject<Double>(Accel.class, "accel-duration", 7.5,
 					"# 가속 지속시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -51,7 +53,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SPEED_UP = 
-			abilitySettings.new SettingObject<Integer>(Accel.class, "speed-up", 10, 
+			abilitySettings.new SettingObject<Integer>(Accel.class, "speed-up", 15, 
 					"# 가속 당 이동 속도 증가치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -129,7 +131,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac.update("§3가속§7: §b" + df.format(accel * speedup * 100) + "§f% §8/ §e남은 시간§f: §a" + df2.format(count / 20) + "§f초");
+			ac.update("§3가속§7: §b" + df.format(accel * speedup * 100) + "§f% §8/ §e남은 시간§f: §a" + df2.format(count / 20.0) + "§f초");
 		}
 		
 		@Override
@@ -172,19 +174,11 @@ public class Accel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void run(int count) {
-			hologram.setText("§a§l× §3§l" + multiplyDF.format(multiply));
-			if (count < 20) hologram.teleport(hologram.getLocation().add(0, 0.02, 0));	
-			else {
-				if (count % 2 == 0) {
-					for (Player player : getPlayer().getWorld().getPlayers()) {
-						hologram.hide(player);
-					}
-				} else {
-					for (Player player : getPlayer().getWorld().getPlayers()) {
-						hologram.display(player);
-					}
-				}
-			}
+			if (count <= 8) {
+				if (count % 2 == 0) hologram.setText("§7§l× §8§l" + multiplyDF.format(multiply));
+				else hologram.setText("§a§l× §3§l" + multiplyDF.format(multiply));
+			} else hologram.setText("§a§l× §3§l" + multiplyDF.format(multiply));
+			hologram.teleport(hologram.getLocation().add(0, 0.015, 0));	
 		}
 		
 		@Override

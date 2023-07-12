@@ -355,7 +355,7 @@ public class RainStarAddon extends Addon implements Listener {
 		SynergyFactory.registerSynergy(Teabagging.class, LittleDevil.class, BadManner.class);
 		SynergyFactory.registerSynergy(Dash.class, Divinity.class, MovingSkill.class);
 		SynergyFactory.registerSynergy(Curse.class, Divinity.class, CurseOfGod.class);
-		SynergyFactory.registerSynergy(DevilBoots.class, LightningCounter.class, GhostRider.class);
+		SynergyFactory.registerSynergy(DevilBoots.class, Accel.class, GhostRider.class);
 		SynergyFactory.registerSynergy(KuroEye.class, KuroEye.class, DemonLord.class);
 		SynergyFactory.registerSynergy(Ferda.class, Crystal.class, Fairy.class);
 		SynergyFactory.registerSynergy(Kuro.class, Assassin.class, Crow.class);
@@ -411,7 +411,7 @@ public class RainStarAddon extends Addon implements Listener {
 	    GameFactory.registerMode(OverlapGame.class);
 	    
 		Bukkit.broadcastMessage("§a레인스타 애드온§e이 적용되었습니다.");
-		Bukkit.broadcastMessage("§e능력 §f97개 §7/ §d시너지 §f44개 적용 완료.");
+		Bukkit.broadcastMessage("§e능력 §f98개 §7/ §d시너지 §f44개 적용 완료.");
 		
 		Bukkit.getPluginManager().registerEvents(this, getPlugin());
 		
@@ -719,9 +719,8 @@ public class RainStarAddon extends Addon implements Listener {
 		}
 		
 		if (KillRewardGUI.status.equals(KillRewardGUI.Status.ENABLE)) {
-			if (e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller()) != null) {
-				Participant killerparticipant = e.getParticipant().getGame().getParticipant(e.getPlayer().getKiller());
-				Player killer = killerparticipant.getPlayer();
+			if (e.getPlayer().getKiller() != null) {
+				Player killer = e.getPlayer().getKiller();
 				if (KillRewardGUI.type.equals(KillRewardGUI.Type.ALL)) {
 					killer.getInventory().addItem(KillRewardGUI.getItems().toArray(new ItemStack[0]));
 				}
@@ -737,7 +736,7 @@ public class RainStarAddon extends Addon implements Listener {
 	
 	@EventHandler()
 	public void onGameCredit(GameCreditEvent e) {
-		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f97개 적용 완료.");
+		e.addCredit("§a레인스타 애드온§f이 적용되었습니다. §e능력 §f98개 적용 완료.");
 		if (e.getGame() instanceof AbstractMix) {
 			e.addCredit("§d시너지 §f44개 적용 완료.");
 		}

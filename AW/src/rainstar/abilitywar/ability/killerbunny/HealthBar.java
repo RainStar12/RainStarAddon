@@ -44,7 +44,7 @@ public class HealthBar extends GameTimer implements Module {
 				}
 				double healthratio = (participant.getPlayer().getHealth() / participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * 100;
 				holograms.get(participant).teleport(participant.getPlayer().getEyeLocation().add(0, 0.6, 0));
-				holograms.get(participant).setText("§d♥ " + (healthratio <= 33.3 ? "§5" : "§c") + df.format(healthratio) + "%");
+				holograms.get(participant).setText("§d♥ " + (healthratio <= 44.44 ? "§5" : "§c") + df.format(healthratio) + "%");
 			} else {
 				IHologram hologram = NMS.newHologram(participant.getPlayer().getWorld(), participant.getPlayer().getEyeLocation().getX(),
 						participant.getPlayer().getEyeLocation().getY() + 0.6, participant.getPlayer().getEyeLocation().getZ(), "§7");
@@ -65,6 +65,11 @@ public class HealthBar extends GameTimer implements Module {
 		viewers.add(player);
 	}
 
+	public void removePlayer(Player player) {
+		viewers.remove(player);
+	}
+
+	
 	@Override
 	public void register() {
 		start();

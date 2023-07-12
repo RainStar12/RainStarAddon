@@ -71,7 +71,7 @@ import rainstar.abilitywar.effect.Confusion;
 		" 대시 시작부터 1초간 무적 및 타게팅 불능 상태가 됩니다.",
 		" 공격 후 대시를 시전할 경우 대상을 §6혼란§f 및 §c출혈§f시킵니다.",
 		"§7허공에서 웅크리기 §8- §a이단 점프§f: 공중에서 한 번 더 점프합니다. §c소모 §7: §b1.25",
-		" 착지 전까지 적에게 피해를 입힐 때마다 대상은 2초간 §a이동 불능§f이 됩니다.",
+		" 착지 전까지 적에게 피해를 입힐 때마다 대상은 1초간 §a이동 불능§f이 됩니다.",
 		"§7패시브 §8- §b앞지르기§f: 이동 관련 상태 이상을 보유한 적에게 피해를 입히면",
 		" 1.2배로 입히고, 스태미나를 소량 회복합니다."
 		})
@@ -370,7 +370,7 @@ public class MovingSkill extends Synergy {
     			}
     		}
     		if (jumptimer.isRunning() && predicate.test(player)) {
-    			Rooted.apply(getGame().getParticipant(player), TimeUnit.TICKS, 40);
+    			Rooted.apply(getGame().getParticipant(player), TimeUnit.TICKS, 20);
     		}
     		if (attacked.isRunning()) attacked.setCount(3);
     		else attacked.start();

@@ -1,5 +1,6 @@
 package rainstar.abilitywar.ability;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -43,6 +44,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
         "§7철괴 우클릭 §8- §6두유 러버§f: 체력을 $[HEALTH_GAIN] 획득하고, $[DURATION]초간 §e꿀꺽꿀꺽§f이 봉인됩니다.",
         " 지속시간동안 근접 공격 쿨타임이 사라지며 근접 공격력이 §c$[DAMAGE_DECREASE]%§f 감소합니다.",
         " 이때 근접 공격을 피격당한 적은 다음 기본 무적 시간이 초기화됩니다. $[COOLDOWN]",
+        " 근접 공격 적중 시마다 지속시간동안 유지되는 공격력 $[DAMAGE_INCREASE]% 증가를 얻습니다.",
 		"§a[§e능력 제공자§a] §bduyu_999"
         },
         summarize = {
@@ -90,6 +92,17 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
         
     };
     
+	public static final SettingObject<Double> DAMAGE_INCREASE = 
+			abilitySettings.new SettingObject<Double>(SoyMilk.class, "damage-increase", 0.2,
+            "# 공격력 증가율", "# 단위: %") {
+		
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+        
+    };
+    
 	public static final SettingObject<Integer> COOLDOWN = 
 			abilitySettings.new SettingObject<Integer>(SoyMilk.class, "cooldown", 90,
             "# 쿨타임", "# 단위: 초") {
@@ -108,11 +121,14 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     
     private final double healthgain = HEALTH_GAIN.getValue();
     private final double decrease = 1 - (DAMAGE_DECREASE.getValue() * 0.01);
+    private final double increase = DAMAGE_INCREASE.getValue() * 0.01;
     private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	public static final AttributeModifier PLUS_TEN = new AttributeModifier(UUID.fromString("24aff76f-ff3c-44ea-98c8-62fbde439b07"), "soymilk", 11, Operation.ADD_NUMBER);
-	private final ActionbarChannel ac = newActionbarChannel();
+	private final ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
 	private final Crescent crescent = Crescent.of(0.85, 20);
+	private final DecimalFormat df = new DecimalFormat();
 	private int particleSide = 15;
+	private int stack = 0;
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
@@ -155,6 +171,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     	@Override
     	public void run(int count) {
     		ac.update("§e두유 금지 해제§7: §c" + count + "초");
+    		ac2.update("§c공격력 증가§7: §e" + df.format(stack * increase * 100) + "%");
     		passive.pause();
     	}
     	
@@ -165,6 +182,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     	
     	@Override
     	public void onSilentEnd() {
+    		stack = 0;
     		getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).removeModifier(PLUS_TEN);
     		cooldown.start();
     		passive.resume();
@@ -181,7 +199,9 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {		
 		if (skill.isRunning() && getPlayer().equals(e.getDamager())) {
+			stack++;
 			e.setDamage(e.getDamage() * decrease);
+			e.setDamage(e.getDamage() + (e.getDamage() * stack * increase));
 			if (e.getEntity() instanceof LivingEntity) {
 				new BukkitRunnable() {
 					@Override

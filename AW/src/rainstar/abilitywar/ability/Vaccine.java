@@ -29,6 +29,7 @@ import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEv
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import rainstar.abilitywar.utils.Healing;
 
 @AbilityManifest(name = "백신", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §a면역§f: §e바이러스 능력§f에게 감염되지 않습니다.",
@@ -92,11 +93,7 @@ public class Vaccine extends AbilityBase {
             		getPlayer().sendMessage("§d[§a!§d] §f" + joiner.toString() + "§f의 효과를 치료하였습니다.");
         		}
     			double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-    			final EntityRegainHealthEvent healevent = new EntityRegainHealthEvent(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
-    			Bukkit.getPluginManager().callEvent(healevent);
-    			if (!healevent.isCancelled()) {
-    				Healths.setHealth(getPlayer(), healevent.getAmount());	
-    			}
+    			Healing.heal(getPlayer(), maxHealth - getPlayer().getHealth(), RegainReason.CUSTOM);
         		getParticipant().removeEffects();
         	}	
     		e.setCancelled(true);

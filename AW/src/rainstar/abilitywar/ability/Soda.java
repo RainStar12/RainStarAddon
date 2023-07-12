@@ -123,7 +123,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> BUBBLE = abilitySettings.new SettingObject<Double>(Soda.class,
-			"bubble-duration", 6.0, "# 버블 지속시간") {
+			"bubble-duration", 8.0, "# 버블 지속시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -201,9 +201,12 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	protected void onUpdate(AbilityBase.Update update) {
-	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
+	protected void onUpdate(Update update) {
+	    if (update == Update.RESTRICTION_CLEAR) {
 	    	passive.start();
+	    }
+	    if (update == Update.ABILITY_DESTROY) {
+	    	NMS.setAbsorptionHearts(getPlayer(), 0);
 	    }
 	}
 	
@@ -285,11 +288,12 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onSilentEnd() {
 			if (trigger) {
-				double delete = Math.max(0, NMS.getAbsorptionHearts(getPlayer()) - preabsortion - absortion);
+				double delete = Math.max(0, NMS.getAbsorptionHearts(getPlayer()) - preabsortion);
 				NMS.setAbsorptionHearts(getPlayer(), (float) (NMS.getAbsorptionHearts(getPlayer()) - delete));
 				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier);
 				trigger = false;
 			}
+			ac.update(null);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();

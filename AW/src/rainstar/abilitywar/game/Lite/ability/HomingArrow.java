@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.Simple.ability;
+package rainstar.abilitywar.game.Lite.ability;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -19,5 +19,7 @@ public class HomingArrow extends AbilityBase {
 	
 	public AbilityTimer gauge = new AbilityTimer() {
 	};
+	
+	
 
 }

@@ -81,7 +81,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(NineTailFox.class,
-			"damage-increase", 1.5, "# 꼬리 자동 충전 시간", "# 단위: 초") {
+			"damage-increase", 1.5, "# 꼬리 공격력 증가량", "# 단위: %") {
 
 		@Override
 		public boolean condition(Double value) {

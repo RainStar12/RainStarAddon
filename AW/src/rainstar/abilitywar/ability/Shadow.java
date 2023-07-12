@@ -34,6 +34,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
@@ -94,7 +95,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DARK_ARTS_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-duration", 4.4,
+			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-duration-", 3.3,
 			"# 흑마술 지속시간") {
 
 		@Override
@@ -127,7 +128,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DARK_ARTS_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown-", 50,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown--", 40,
 			"# 흑마술 쿨타임") {
 
 		@Override
@@ -143,7 +144,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_MODE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-mode-duration", 5.0,
+			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-mode-duration-", 6.0,
 			"# 그림자 베기 지속시간") {
 
 		@Override
@@ -198,7 +199,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SHADOW_MODE_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown-", 70,
+			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown--", 60,
 			"# 그림자 베기 쿨타임") {
 
 		@Override
@@ -222,8 +223,8 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	private final int shadowfear = (int) (SHADOW_FEAR.getValue() * 20);	
 	private final double healamount = HEAL.getValue();
 	private final double range = RANGE.getValue();
-	private final Cooldown darkartscool = new Cooldown(DARK_ARTS_COOLDOWN.getValue());
-	private final Cooldown shadowcool = new Cooldown(SHADOW_MODE_COOLDOWN.getValue());
+	private final Cooldown darkartscool = new Cooldown(DARK_ARTS_COOLDOWN.getValue(), CooldownDecrease._50);
+	private final Cooldown shadowcool = new Cooldown(SHADOW_MODE_COOLDOWN.getValue(), CooldownDecrease._50);
 	
 	private final static RGB color = RGB.of(1, 128, 128), startColor = RGB.of(1, 1, 64), endColor = RGB.of(64, 1, 64);
 	private final static List<RGB> gradations = Gradient.createGradient(30, startColor, endColor);
@@ -269,7 +270,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
-	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !shadow.isRunning() && !shadowcool.isCooldown() && !darkartscool.isCooldown()) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !shadow.isRunning() && !darkarts.isRunning() && !shadowcool.isCooldown() && !darkartscool.isCooldown()) {
 	    	return shadow.start();
 	    }
 	    return false;
@@ -334,7 +335,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !darkarts.isRunning() && !darkartscool.isCooldown() && !shadowcool.isCooldown()) {
+		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !shadow.isRunning() && !darkarts.isRunning() && !darkartscool.isCooldown() && !shadowcool.isCooldown()) {
 			final AbilityActiveSkillEvent event = new AbilityActiveSkillEvent(this, e.getItem().getType(), ClickType.RIGHT_CLICK);
 			Bukkit.getPluginManager().callEvent(event);
 			getPlayer().sendMessage("§d능력을 사용하였습니다.");

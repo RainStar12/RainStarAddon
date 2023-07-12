@@ -85,6 +85,8 @@ public class OneShotOneKill extends AbilityBase {
 						}
 						
 					}.setPeriod(TimeUnit.TICKS, 1).start();
+					SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 1, 0.9f);
+					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1.35f);
 					SoundLib.ENTITY_POLAR_BEAR_WARNING.playSound(getPlayer().getLocation());
 					ParticleLib.CRIT.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
 					ParticleLib.ITEM_CRACK.spawnParticle(player.getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.REDSTONE);

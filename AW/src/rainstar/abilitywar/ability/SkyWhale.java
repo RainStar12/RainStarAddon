@@ -1,8 +1,9 @@
 package rainstar.abilitywar.ability;
 
-import java.io.ObjectOutputStream.PutField;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.Map.Entry;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -25,6 +26,11 @@ import org.bukkit.World;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
@@ -33,18 +39,26 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -53,26 +67,31 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
+import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
+import daybreak.abilitywar.utils.base.color.Gradient;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -85,13 +104,15 @@ import daybreak.google.common.collect.ArrayListMultimap;
 import daybreak.google.common.collect.ImmutableMap;
 import daybreak.google.common.collect.ImmutableSet;
 import daybreak.google.common.collect.Multimap;
-import daybreak.google.common.collect.MultimapBuilder;
-import daybreak.google.common.collect.Multiset;
+import rainstar.abilitywar.effect.Burn;
+import rainstar.abilitywar.effect.Corrosion;
+import rainstar.abilitywar.effect.Dream;
+import rainstar.abilitywar.utils.Healing;
 
 @AbilityManifest(name = "하늘고래", rank = Rank.SPECIAL, species = Species.ANIMAL, explain = {
-		"§7패시브 §8- §d드림 이터§f: 적에게 입힌 최종 피해 × 대상의 능력 등급만큼",
+		"§7패시브 §8- §d드림 이터§f: 능력 소지자에게 입힌 최종 피해 × 대상의 능력 등급만큼",
 		" §a꿈 경험치§f를 획득해 일정량 모으는 것으로 §a꿈 레벨§f을 상승시킬 수 있습니다.",
-		" §a꿈 레벨§f로 얻는 효과는 §7철괴를 좌클릭§f하여 볼 수 있습니다.",
+		" §a꿈 레벨§f로 얻는 스킬은 §7철괴를 좌클릭§f하여 볼 수 있습니다.",
 		"§7철괴 우클릭 §8- §b드림 아쿠아리움§f: $[DURATION]초간 나갈 수 없는 §b꿈§f의 §b들판§f을 펼칩니다.",
 		" 또한 §a꿈 레벨§f에 따른 추가 효과를 사용할 수 있습니다. $[COOLDOWN]",
 		"§7영역 내 패시브 §8- §3웨이브§f: 영역의 중심에서부터 파도가 퍼져나가",
@@ -100,52 +121,126 @@ import daybreak.google.common.collect.Multiset;
 		"§b[§7아이디어 제공자§b] §bSleepground"
 		},
 		summarize = {
-		"§c적 처치 시§f 꿈 레벨이 상승하고 소량의 체력 회복 및 쿨타임 감소 효과를 받습니다.",
+		"§c적 공격 시§f 꿈 경험치를 모아 레벨이 상승합니다.",
 		"꿈 레벨 효과는 §b필드§f 내에서 사용 가능하고, §7철괴 좌클릭§f으로 확인합니다.",
-		"§7철괴 우클릭 시§f §b필드§f를 만들어 지속적으로 §3파도§f가 쳐 적들에게 피해를 입힙니다.",
-		"§b필드§f에서 잃은 체력의 일부는 지속시간이 끝나면 회복합니다."
+		"§7철괴 우클릭 시§f §b필드§f를 만들어 지속적으로 §3파도§f가 쳐 적들에게 피해를 입힙니다."
 		})
 
 public class SkyWhale extends AbilityBase implements ActiveHandler {
 
+	final Multimap<Integer, DreamSkill> skillList = ArrayListMultimap.create();
+	
 	public SkyWhale(Participant participant) {
 		super(participant);
 		
-		final Multimap<Integer, Pair<String, String>> skillList = ArrayListMultimap.create();
-		skillList.put(0, Pair.of("화염 내성", "모든 화염계 피해를 받지 않습니다."));
-		skillList.put(0, Pair.of("건너편", "영역의 끝에 다다르면 반대편 영역의 끝으로 이동됩니다. 자신만 적용됩니다."));
-		skillList.put(0, Pair.of("역방향", "파도가 영역의 끝에서 중심을 향해 칩니다. 이때 대미지는 중심쪽이 더 강해집니다."));
-		skillList.put(0, Pair.of("달의 인력", "밤 시간에는 파도의 주기가 25% 감소합니다."));
-		skillList.put(0, Pair.of("물거품", "영역이 종료될 때 영역 내에서 받은 피해량 50%를 회복합니다."));
-		skillList.put(1, Pair.of("거센 파도", "파도 피해량과 넉백이 20% 증가합니다."));
-		skillList.put(1, Pair.of("물의 답", "영역 내 모든 대상의 체력을 확인 가능합니다."));
-		skillList.put(1, Pair.of("파도타기", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가합니다."));
-		skillList.put(1, Pair.of("빠른 걸음", "영역 내에서 이동 속도가 15% 증가합니다."));
-		skillList.put(1, Pair.of("영역 축소", "영역 범위가 15칸에서 10칸으로 축소됩니다."));
-		skillList.put(1, Pair.of("달의 인력 II", "밤 시간에는 파도의 주기가 50% 감소합니다."));
-		skillList.put(1, Pair.of("물거품 II", "영역이 종료될 때 영역 내에서 받은 피해량 75%를 회복합니다."));
-		skillList.put(2, Pair.of("비행", "자유로운 비행이 가능합니다. 비행 속도가 느려집니다."));
-		skillList.put(2, Pair.of("수분 과다", "파도에 맞은 적은 2초간 부식됩니다."));
-		skillList.put(2, Pair.of("무", "영역과 파도의 파티클을 자신만 볼 수 있습니다."));
-		skillList.put(2, Pair.of("검기", "2초마다 검을 휘두를 때 지형지물과 생명체를 관통하는 특수 투사체를 발사합니다."));
-		skillList.put(2, Pair.of("물거품 III", "영역이 종료될 때 영역 내에서 자신이 받은 피해를 전부 회복합니다."));
-		skillList.put(2, Pair.of("거센 파도 II", "파도 피해량과 넉백이 40% 증가합니다."));
-		skillList.put(2, Pair.of("파도타기 II", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가하고, 체력을 5% 회복합니다."));
-		skillList.put(2, Pair.of("빠른 걸음 II", "영역 내에서 이동 속도가 30% 증가합니다."));
-		skillList.put(2, Pair.of("영역 축소 II", "영역 범위가 10칸에서 5칸으로 축소됩니다."));
-		skillList.put(3, Pair.of("능력 장악", "영역 내에서 자신 외 액티브 / 타게팅 스킬을 발동할 수 없습니다."));
-		skillList.put(3, Pair.of("꿈 깨시지", "치명적인 피해를 입을 때 영역이 즉시 종료됩니다. 물거품이 있을 때만 획득 가능합니다."));
-		skillList.put(3, Pair.of("자유 해방", "본인은 영역 밖으로 나갈 수 있습니다. 건너편이 있으면 등장하지 않습니다."));
-		skillList.put(3, Pair.of("수면파", "25% 확률로 파도에 맞은 적이 5초간 몽환에 빠집니다."));
-		skillList.put(3, Pair.of("몽중몽", "영역 지속 중 적 처치 시 / 꿈 레벨 업 시 지속시간이 30초 추가됩니다."));
-		skillList.put(3, Pair.of("바다의 부름", "30칸 내의 영역 외부의 적이 영역 내로 끌어당겨집니다."));
-		skillList.put(3, Pair.of("거센 파도 III", "파도 피해량과 넉백이 60% 증가합니다."));
-		skillList.put(3, Pair.of("비행 II", "자유로운 비행이 가능합니다."));
-		skillList.put(3, Pair.of("수분 과다 II", "파도에 맞은 적은 3초간 부식됩니다."));
-		skillList.put(4, Pair.of("스텝 업", "획득 이후 꿈 레벨 업 시마다 공격력이 7.5%씩 증가합니다."));
-		skillList.put(4, Pair.of("꿈 수집가", "꿈 경험치 획득량이 2배가 됩니다."));
-		skillList.put(4, Pair.of("능력 장악 II", "영역 내에서 자신 외 모든 능력이 비활성화됩니다."));
+		skillList.put(0, DreamSkill.FIRE_IMMUNE);
+		skillList.put(0, DreamSkill.OTHER_SIDE);
+		skillList.put(0, DreamSkill.REVERSE);
+		skillList.put(0, DreamSkill.LUNAR_GRAVITY1);
+		skillList.put(0, DreamSkill.FOAM1);
+		skillList.put(1, DreamSkill.RAGING_WAVE1);
+		skillList.put(1, DreamSkill.WATER_ANSWER);
+		skillList.put(1, DreamSkill.SURFING1);
+		skillList.put(1, DreamSkill.FASTWALK1);
+		skillList.put(1, DreamSkill.AREA_REDUCE1);
+		skillList.put(1, DreamSkill.LUNAR_GRAVITY2);
+		skillList.put(1, DreamSkill.FOAM2);
+		skillList.put(2, DreamSkill.OVERHYDRATION1);
+		skillList.put(2, DreamSkill.NOTHINGNESS);
+		skillList.put(2, DreamSkill.SWORDAURA);
+		skillList.put(2, DreamSkill.FOAM3);
+		skillList.put(2, DreamSkill.RAGING_WAVE2);
+		skillList.put(2, DreamSkill.SURFING2);
+		skillList.put(2, DreamSkill.FASTWALK2);
+		skillList.put(2, DreamSkill.AREA_REDUCE2);
+		skillList.put(3, DreamSkill.ABILITY_CONTROL);
+		skillList.put(3, DreamSkill.WAKE_UP);
+		skillList.put(3, DreamSkill.FREEDOM);
+		skillList.put(3, DreamSkill.SLEEP_WAVE);
+		skillList.put(3, DreamSkill.INCEPTION);
+		skillList.put(3, DreamSkill.CALL_OF_SEA);
+		skillList.put(3, DreamSkill.FLIGHT);
+		skillList.put(3, DreamSkill.SCALD);
+		skillList.put(3, DreamSkill.RAGING_WAVE3);
+		skillList.put(3, DreamSkill.OVERHYDRATION2);
+		skillList.put(4, DreamSkill.INSTANT);
+		skillList.put(4, DreamSkill.STEP_UP);
+		skillList.put(4, DreamSkill.DREAM_COLLECTOR);
+		skillList.put(4, DreamSkill.TSUNAMI);
+		skillList.put(4, DreamSkill.SIRENS_BLESS);
+		skillList.put(4, DreamSkill.LIMIT_BREAKER);
 	}
+	
+	enum DreamSkill {
+		FIRE_IMMUNE("화염 내성", "모든 화염계 피해를 받지 않습니다.", 0),
+		OTHER_SIDE("건너편", "영역의 끝에 다다르면 반대편 영역의 끝으로 이동됩니다. 자신만 적용됩니다.", 0),
+		REVERSE("역방향", "파도가 영역의 끝에서 중심을 향해 칩니다. 이때 대미지는 중심쪽이 더 강해집니다.", 0),
+		LUNAR_GRAVITY1("달의 인력 I", "밤 시간에는 파도의 주기가 25% 감소합니다.", 0),
+		FOAM1("물거품 I", "영역이 종료될 때 영역 내에서 받은 피해량 50%를 회복합니다.", 0),
+		RAGING_WAVE1("거센 파도 I", "파도 피해량과 넉백이 20% 증가합니다.", 1),
+		WATER_ANSWER("물의 답", "영역 내 모든 대상의 체력을 확인 가능합니다.", 1),
+		SURFING1("파도타기 I", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가합니다.", 1),
+		FASTWALK1("빠른 걸음 I", "영역 내에서 이동 속도가 15% 증가합니다.", 1),
+		AREA_REDUCE1("영역 축소 I", "영역 범위가 15칸에서 10칸으로 축소됩니다.", 1),
+		LUNAR_GRAVITY2("달의 인력 II", "밤 시간에는 파도의 주기가 50% 감소합니다. 영역이 지속되는 동안 세상의 시간이 밤이 됩니다.", 1),
+		FOAM2("물거품 II", "영역이 종료될 때 영역 내에서 받은 피해량 75%를 회복합니다.", 1),
+		OVERHYDRATION1("수분 과다 I", "파도에 맞은 적은 2초간 부식됩니다.", 2),
+		NOTHINGNESS("무", "영역과 파도의 파티클을 자신만 볼 수 있습니다.", 2),
+		SWORDAURA("검기", "2초마다 검을 휘두를 때 지형지물과 생명체를 관통하는 특수 투사체를 발사합니다.", 2),
+		FOAM3("물거품 III", "영역이 종료될 때 영역 내에서 자신이 받은 피해를 전부 회복합니다.", 2),
+		RAGING_WAVE2("거센 파도 II", "파도 피해량과 넉백이 40% 증가합니다.", 2),
+		SURFING2("파도타기 II", "파도에 자신이 닿으면 이동 속도가 순간적으로 30% 증가하고, 체력을 5% 회복합니다.", 2),
+		FASTWALK2("빠른 걸음 II", "영역 내에서 이동 속도가 30% 증가합니다.", 2),
+		AREA_REDUCE2("영역 축소 II", "영역 범위가 10칸에서 5칸으로 축소됩니다.", 2),
+		ABILITY_CONTROL("능력 장악", "영역 내에서 자신 외 액티브 / 타게팅 스킬을 발동할 수 없습니다.", 3),
+		WAKE_UP("꿈 깨시지", "치명적인 피해를 입을 때 영역이 즉시 종료됩니다. 물거품이 있을 때만 획득 가능합니다.", 3),
+		FREEDOM("자유 해방", "본인은 영역 밖으로 나갈 수 있습니다. 건너편이 있으면 등장하지 않습니다.", 3),
+		SLEEP_WAVE("수면파", "25% 확률로 파도에 맞은 적이 5초간 몽환에 빠집니다.", 3),
+		INCEPTION("몽중몽", "영역 지속 중 적 처치 시 / 꿈 레벨 업 시 지속시간이 20초 추가됩니다.", 3),
+		CALL_OF_SEA("바다의 부름", "30칸 내의 생명체가 영역 중심으로 끌어당겨집니다.", 3),
+		FLIGHT("비행", "자유로운 비행이 가능합니다.", 3),
+		SCALD("열탕", "파도에 맞은 적을 3초간 불태우고 화상을 입힙니다.", 3),
+		RAGING_WAVE3("거센 파도 III", "파도 피해량과 넉백이 60% 증가합니다.", 3),
+		OVERHYDRATION2("수분 과다 II", "파도에 맞은 적은 3.5초간 부식됩니다.", 3),
+		INSTANT("즉발", "꿈 영역이 연출 없이 즉시 전개됩니다.", 4),
+		STEP_UP("스텝 업", "획득 이후 꿈 레벨 업 시마다 공격력이 7.5%씩 증가합니다.", 4),
+		DREAM_COLLECTOR("꿈 수집가", "꿈 경험치 획득량이 2배가 됩니다.", 4),
+		TSUNAMI("쓰나미", "파도 판정 범위가 3배로 증가합니다. 파도가 영역을 넘어 조금 더 잔류합니다.", 4),
+		SIRENS_BLESS("세이렌의 축복", "등장하는 스킬의 최저 퀄리티가 1씩 증가합니다. 4퀄리티 스킬이 등장할 확률이 증가합니다.", 4),
+		LIMIT_BREAKER("리밋 브레이커", "레벨 업을 10까지 할 수 있습니다. 8~10렙 간 레벨 업에서는 퀄리티 상관 없이 모든 스킬이 등장합니다.", 4);
+		
+		private final String name;
+		private final String explain;
+		private final int quality;
+		
+		DreamSkill(String name, String explain, Integer quality) {
+			this.name = name;
+			this.explain = explain;
+			this.quality = quality;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public String getExplain() {
+			return explain;
+		}
+		
+		public int getQuality() {
+			return quality;
+		}
+		
+	}
+	
+	private static final ImmutableMap<Rank, Double> rankmultiply = ImmutableMap.<Rank, Double>builder()
+			.put(Rank.C, 1.0)
+			.put(Rank.B, 1.2)
+			.put(Rank.A, 1.5)
+			.put(Rank.S, 2.0)
+			.put(Rank.L, 2.3)
+			.put(Rank.SPECIAL, 3.0)
+			.build();
 
 	
 	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(
@@ -187,6 +282,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			if (isSkillRunning == true) isSkillRunning = false;
+			expbar.start();
 		}
 	}
 
@@ -203,14 +299,22 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 	private double lostHealth = 0;
 	
 	private final Circle circle = Circle.of(15, 100);
+	private final Circle circle2 = Circle.of(10, 75);
+	private final Circle circle3 = Circle.of(5, 50);
 
 	private Location center;
 	private double currentRadius;
+	private double nowrange = 15;
+	private int damagestack = 0;
+	
+	private BossBar bossbar;
 	
 	private int stacks;
 	private boolean turns = true;
 	
-	private Set<String> skills = new HashSet<>();
+	private final DecimalFormat df = new DecimalFormat("0");
+	
+	private List<DreamSkill> skills = new ArrayList<>();
 
 	private final static Color sky = Color.fromRGB(72, 254, 254), mint = Color.fromRGB(236, 254, 254), snow = Color.fromRGB(28, 254, 243),
 			teal = Color.TEAL, lime = Color.fromRGB(49, 254, 32), yellow = Color.YELLOW, pink = Color.fromRGB(254, 174, 201),
@@ -291,33 +395,37 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
+	private static boolean isNight(long worldtime) {
+		return worldtime >= 13000;
+	}
+	
+	public String getOver(int level) {
+		switch(level) {
+		case 7: return "";
+		case 8: return "+";
+		case 9: return "++";
+		case 10: return "+++";
+		}
+		return "";
+	}
+	
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT)) {
 	    	if (clicktype.equals(ClickType.RIGHT_CLICK)) {
-		    	if (!isSkillRunning) {
-		    		if (!cooldown.isCooldown()) {
-		    	   		showSpiral(RGB.AQUA);
-		    	   		isSkillRunning = true;
-		    	   		return true;		
-		    		}
-		    	} else {
+		    	if (!isSkillRunning && !cooldown.isCooldown()) {
+	    	   		if (skills.contains(DreamSkill.INSTANT)) skill.start();
+	    	   		else showSpiral(RGB.AQUA);
+	    	   		isSkillRunning = true;
+	    	   		return true;		
+		    	} else if (isSkillRunning) {
 		    		getPlayer().sendMessage("§3[§b!§3] §c아직 스킬이 지속 중입니다.");
 		    	}	
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
 	    		getPlayer().sendMessage("§e=========== §b꿈 스킬 §e===========");
 	    		final StringJoiner joiner = new StringJoiner("\n");
-	    		joiner.add("§aLevel " + (dreamlevel == 5 ? "MAX" : dreamlevel));
-	    		if (dreamlevel == 0) joiner.add("§7아직 활성화된 스킬이 없습니다.");
-	    		if (dreamlevel >= 1) joiner.add("§c화염 내성§7: §f모든 화염계 피해에 내성이 생깁니다.");
-	    		if (dreamlevel >= 2) joiner.add("§a정보 통제§7: §f적의 체력을 실시간으로 확인 가능합니다.");
-	    		if (dreamlevel >= 3) joiner.add("§b자유 비행§7: §f자유롭게 비행할 수 있습니다.");
-	    		if (dreamlevel >= 4) {
-	    			joiner.add("§d공간 초월§7: §f3초마다 사거리가 매우 길고 지형지물을 관통하는");
-	    			joiner.add("           §f특수한 근접 공격을 사용 가능합니다.");
-	    		}	
-	    		if (dreamlevel == 5) {
-	    			joiner.add("§6시간 단축§7: §f사망 위기에 빠지면 능력 지속시간을 0초로 만들고");
-	    			joiner.add("           §f영역이 끝나면 받는 회복을 바로 받습니다.");
+	    		joiner.add("§aLevel " + (dreamlevel == 7 ? "MAX" + getOver(dreamlevel) : dreamlevel));
+	    		for (DreamSkill dreamskill : skills) {
+	    			joiner.add("§3" + dreamskill.getName() + "§7: §b" + dreamskill.getExplain());
 	    		}
 	    		getPlayer().sendMessage(joiner.toString());
 	    		getPlayer().sendMessage("§e================================");
@@ -326,7 +434,7 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 	
-    private final AbilityTimer attackcool = new AbilityTimer(60) {
+    private final AbilityTimer attackcool = new AbilityTimer(40) {
     	
     	@Override
 		public void run(int count) {
@@ -334,26 +442,35 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
     	
     }.setPeriod(TimeUnit.TICKS, 1).register();
 	
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 5)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			if (skill.isRunning() && LocationUtil.isInCircle(center, getPlayer().getLocation(), 15)) {
-				if (dreamlevel >= 1) {
+			if (skill.isRunning() && LocationUtil.isInCircle(center, getPlayer().getLocation(), nowrange)) {
+				if (skills.contains(DreamSkill.FIRE_IMMUNE)) {
 					if (e.getCause().equals(DamageCause.LAVA) || e.getCause().equals(DamageCause.FIRE_TICK) || e.getCause().equals(DamageCause.FIRE) || e.getCause().equals(DamageCause.HOT_FLOOR)) {
 						e.setDamage(0);
 						e.setCancelled(true);
 					}	
 				}
 				
-				lostHealth += (e.getFinalDamage() * 0.85);
+				if (skills.contains(DreamSkill.FOAM3)) lostHealth += e.getFinalDamage();	
+				else if (skills.contains(DreamSkill.FOAM2)) lostHealth += (e.getFinalDamage() * 0.75);
+				else if (skills.contains(DreamSkill.FOAM1)) lostHealth += (e.getFinalDamage() * 0.5);
 				
-				if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && dreamlevel == 5) {
+				if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && skills.contains(DreamSkill.WAKE_UP)) {
 					ParticleLib.ITEM_CRACK.spawnParticle(getPlayer().getLocation(), 0, 1, 0, 100, 0.3, MaterialX.CLOCK);
 					SoundLib.BLOCK_END_PORTAL_SPAWN.playSound(getPlayer().getLocation(), 1, 1.5f);
 					e.setCancelled(true);
 					skill.stop(false);
 				}
 			}	
+		}
+	}
+	
+	@SubscribeEvent
+	public void onParticipantDeath(ParticipantDeathEvent e) {
+		if (getPlayer().equals(e.getParticipant().getPlayer().getKiller()) && skill.isDuration() && skills.contains(DreamSkill.INCEPTION)) {
+			skill.setCount(skill.getCount() + 400);
 		}
 	}
 	
@@ -369,34 +486,74 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			e.setCancelled(true);
 		}
 		
-		if (skill.isRunning()) {
-			if (e.getDamager() instanceof Projectile) {
-				Projectile projectile = (Projectile) e.getDamager();
-				if (getPlayer().equals(projectile.getShooter())) {
-					e.setDamage(e.getDamage() + (dreamlevel * increasedamage));
-					if (e.getDamage() > bestDamage) bestDamage = e.getDamage();
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) {
+			if (skill.isRunning()) e.setDamage(e.getDamage() * (1 + (damagestack * 0.075)));
+			if (e.getEntity() instanceof Player && getGame().isParticipating(((Player) e.getEntity()))) {
+				Player player = (Player) e.getEntity();
+				if (getGame().getParticipant(player).hasAbility()) {
+					Rank rankvalue = Rank.C;
+					AbilityBase ab = getGame().getParticipant(player).getAbility();
+					if (ab.getClass().equals(Mix.class)) {
+						Mix mix = (Mix) ab;
+						if (mix.hasSynergy()) rankvalue = mix.getSynergy().getRank();
+						else {
+							Mix mymix = (Mix) getParticipant().getAbility();
+							if (mymix.getFirst().equals(this)) rankvalue = mix.getFirst().getRank();
+							else if (mymix.getSecond().equals(this)) rankvalue = mix.getSecond().getRank();
+						}
+					} else rankvalue = ab.getRank();
+					if ((dreamlevel < 10 && skills.contains(DreamSkill.LIMIT_BREAKER)) || dreamlevel < 7) {
+						dreamexp += e.getFinalDamage() * 3 * rankmultiply.get(rankvalue) * (skills.contains(DreamSkill.DREAM_COLLECTOR) ? 2 : 1);
+						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer(), 1, 1.35f);
+					}
 				}
-			} else if (e.getDamager().equals(getPlayer())) {
-				e.setDamage(e.getDamage() + (dreamlevel * increasedamage));
-				if (e.getDamage() > bestDamage) bestDamage = e.getDamage();
-			} else if (e.getDamager().hasMetadata("Wave")) {
-				if ((e.getDamage() * 0.8) > bestDamage) bestDamage = e.getDamage() * 0.8;
 			}
+		}
+		if (skill.isRunning() && e.getDamager().hasMetadata("Wave")) {
+			if ((e.getDamage() * 0.8) > bestDamage) bestDamage = e.getDamage() * 0.8;
 		}
 	}
 	
 	@SubscribeEvent
+	public void onPreActiveSkill(AbilityPreActiveSkillEvent e) {
+		if (skill.isRunning() && skills.contains(DreamSkill.ABILITY_CONTROL) && !e.getParticipant().equals(getParticipant()) && LocationUtil.isInCircle(center, e.getParticipant().getPlayer().getLocation(), nowrange)) {
+			e.getParticipant().getPlayer().sendMessage("§3[§b하늘고래§3] §c능력을 사용할 수 없습니다!");
+			e.setCancelled(true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPreTargetSkill(AbilityPreTargetEvent e) {
+		if (skill.isRunning() && skills.contains(DreamSkill.ABILITY_CONTROL) && !e.getParticipant().equals(getParticipant()) && LocationUtil.isInCircle(center, e.getParticipant().getPlayer().getLocation(), nowrange)) {
+			e.getParticipant().getPlayer().sendMessage("§3[§b하늘고래§3] §c능력을 사용할 수 없습니다!");
+			e.setCancelled(true);
+		}
+	}
+	
+	
+	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (skill.isRunning() && (predicate.test(e.getPlayer()) || getPlayer().equals(e.getPlayer()))) {
-			if (LocationUtil.isInCircle(center, e.getFrom(), 15) && !LocationUtil.isInCircle(center, e.getTo(), 15)) {
-				e.setTo(e.getFrom());
+			if (LocationUtil.isInCircle(center, e.getFrom(), nowrange) && !LocationUtil.isInCircle(center, e.getTo(), nowrange)) {
+				if (skills.contains(DreamSkill.OTHER_SIDE) && e.getPlayer().equals(getPlayer())) {
+					Vector beside = center.toVector().clone().subtract(e.getFrom().toVector().clone());
+					Location goTo = center.clone().add(beside);
+					goTo.setY(e.getFrom().getY());
+					e.setTo(goTo.setDirection(getPlayer().getLocation().getDirection()));
+				} else if (!(skills.contains(DreamSkill.FREEDOM) && e.getPlayer().equals(getPlayer()))) e.setTo(e.getFrom());
 			}
 		}
 	}
 	
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(final PlayerInteractEvent e) {
-		if (skill.isRunning() && dreamlevel >= 4) {
+		if (skill.isRunning() && skills.contains(DreamSkill.SWORDAURA)) {
 			if (e.getItem() != null && swords.contains(e.getItem().getType()) && !attackcool.isRunning()) {
 				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					final ItemStack mainHand = getPlayer().getInventory().getItemInMainHand();
@@ -409,19 +566,56 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	public void levelUp() {
-		double addHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.12;
-		final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), addHealth, RegainReason.CUSTOM);
-		Bukkit.getPluginManager().callEvent(event);
-		if (!event.isCancelled()) {
-			Healths.setHealth(getPlayer(), getPlayer().getHealth() + addHealth);	
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossbar != null) bossbar.addPlayer(e.getPlayer());
 		}
-		if (cooldown.isRunning()) {
-			cooldown.setCount((int) (cooldown.getCount() * 0.28));
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossbar != null) bossbar.removePlayer(e.getPlayer());
 		}
-		if (skill.isDuration()) {
-			skill.setCount(skill.getCount() + (addDuration * 20));
+	}
+	
+	private final AbilityTimer expbar = new AbilityTimer() {
+		
+    	@Override
+    	public void onStart() {
+    		bossbar = Bukkit.createBossBar("§3Lv §b" + (dreamlevel >= 7 ? "§cMAX" + getOver(dreamlevel) : df.format(dreamlevel)) + " §7/ §aEXP§7: §e" + (df.format(dreamexp)), BarColor.GREEN, BarStyle.SOLID);
+    		bossbar.setProgress(dreamlevel >= 7 ? 1 : Math.min(1, dreamexp / (100 + (dreamlevel * 20))));
+    		bossbar.addPlayer(getPlayer());
+    		if (ServerVersion.getVersion() >= 10) bossbar.setVisible(true);
+    	}
+    	
+    	@Override
+		public void run(int count) {
+    		if ((dreamlevel >= 7 && skills.contains(DreamSkill.LIMIT_BREAKER)) || dreamlevel >= 10) bossbar.setProgress(1);
+    		else bossbar.setProgress(Math.min(1, dreamexp / (100 + (dreamlevel * 20))));
+			bossbar.setTitle("§3Lv §b" + (dreamlevel >= 7 ? "§cMAX" + getOver(dreamlevel) : df.format(dreamlevel)) + " §7/ §aEXP§7: §e" + (df.format(dreamexp)));
+    		if (dreamexp >= (100 + (dreamlevel * 20)) && dreamlevel < (skills.contains(DreamSkill.LIMIT_BREAKER) ? 10 : 7)) levelup();
+    	}
+    	
+		@Override
+		public void onEnd() {
+			onSilentEnd();
 		}
+
+		@Override
+		public void onSilentEnd() {
+			bossbar.removeAll();
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	public void levelup() {
+		if (cooldown.isRunning()) cooldown.setCount(0);
+		if (skill.isDuration() && skills.contains(DreamSkill.INCEPTION)) {
+			skill.setCount(skill.getCount() + 400);
+		}
+		if (skills.contains(DreamSkill.STEP_UP)) damagestack++;
 		final Firework firework = getPlayer().getWorld().spawn(getPlayer().getLocation(), Firework.class);
 		final FireworkMeta meta = firework.getFireworkMeta();
 		Color color1 = null, color2 = null, color3 = null, color4 = null;
@@ -474,14 +668,44 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 				firework.detonate();
 			}
 		}.runTaskLater(AbilityWar.getPlugin(), 1L);
-		if (dreamlevel < 5) SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
-		dreamlevel = Math.min(5, dreamlevel + 1);
+		SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1);
+		dreamlevel = Math.min((skills.contains(DreamSkill.LIMIT_BREAKER) ? 10 : 7), dreamlevel + 1);
+		new SkillGUI(dreamlevel).start();
+		dreamexp = 0;
 	}
+	
+	private final AbilityTimer speedup = new AbilityTimer(30) {
+		
+		private final AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "addspeed", 0.3, Operation.ADD_SCALAR);
+		
+		@Override
+		public void onStart() {
+			try {
+				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(modifier);
+			} catch (IllegalArgumentException ignored) {
+			}
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier);
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private final AbilityTimer biggerEffect = new AbilityTimer() {
 		
 		@Override
 		protected void onStart() {
+			if (skills.contains(DreamSkill.AREA_REDUCE2)) nowrange = 5;
+			else if (skills.contains(DreamSkill.AREA_REDUCE1)) nowrange = 10;
+			else nowrange = 15;
+			
 			center = LocationUtil.floorY(getPlayer().getLocation().clone());
 			currentRadius = 0;
 			final Firework firework = getPlayer().getWorld().spawn(center, Firework.class);
@@ -518,13 +742,16 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			}
 			
 			double playerY = getPlayer().getLocation().getY();
-			if (currentRadius < 15) currentRadius += 0.5;
+			if (currentRadius < nowrange) currentRadius += 0.5;
 			for (Iterator<Location> iterator = Circle.iteratorOf(center, currentRadius, 100); iterator.hasNext(); ) {
 				Location loc = iterator.next();
 				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
-				ParticleLib.REDSTONE.spawnParticle(loc, aqua);
+				if (skills.contains(DreamSkill.NOTHINGNESS)) ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, aqua);
+				else ParticleLib.REDSTONE.spawnParticle(loc, aqua);
 			}
-			if (currentRadius == 15) this.stop(false);
+			if (currentRadius == nowrange) this.stop(false);
+			
+			
 		}
 		
 		@Override
@@ -538,10 +765,28 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		
 		private boolean up = true;
 		private double addY = 0.1;
+		private AttributeModifier modifier1 = null;
+		private long worldtime = 0;
+		private boolean timechanged = false;
 		
 		@Override
 		protected void onDurationStart() {
-			if (dreamlevel >= 2) {
+			worldtime = getPlayer().getWorld().getTime();
+			if (skills.contains(DreamSkill.INSTANT)) {
+				SoundLib.ENTITY_PLAYER_SPLASH.playSound(center, 2, 0.5f);
+				ParticleLib.TOTEM.spawnParticle(center, 1, 1, 1, 25, 0);
+			}
+			if (center == null) center = LocationUtil.floorY(getPlayer().getLocation().clone());
+			if (skills.contains(DreamSkill.AREA_REDUCE2)) nowrange = 5;
+			else if (skills.contains(DreamSkill.AREA_REDUCE1)) nowrange = 10;
+			else nowrange = 15;
+			
+			if (skills.contains(DreamSkill.FASTWALK2)) modifier1 = new AttributeModifier(UUID.randomUUID(), "addspeed3", 0.3, Operation.ADD_SCALAR);
+			else if (skills.contains(DreamSkill.FASTWALK1)) modifier1 = new AttributeModifier(UUID.randomUUID(), "addspeed2", 0.15, Operation.ADD_SCALAR);
+			
+			if (modifier1 != null) getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(modifier1);
+
+			if (skills.contains(DreamSkill.WATER_ANSWER)) {
 				for (Player player : getPlayer().getWorld().getPlayers()) {
 					if (predicate.test(player)) {
 						new DataCatch(player).start();
@@ -552,16 +797,20 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int count) {
-			ParticleLib.DRIP_WATER.spawnParticle(center, 15, 5, 15, 20, 0);
+			if (skills.contains(DreamSkill.NOTHINGNESS)) ParticleLib.DRIP_WATER.spawnParticle(getPlayer(), center, nowrange, 5, nowrange, 20, 0);
+			else ParticleLib.DRIP_WATER.spawnParticle(center, nowrange, 5, nowrange, 20, 0);
 			
-			if (dreamlevel >= 3) {
+			if (skills.contains(DreamSkill.FLIGHT)) {
 				getPlayer().setAllowFlight(true);
 				if (getPlayer().isFlying()) ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0.5, 0.1, 0.5, 10, 0);
 			}
 			
 			if (count % 2 == 0) {
 				double playerY = getPlayer().getLocation().getY();
-				for (Location loc : circle.toLocations(center).floor(playerY)) {
+				Circle nowcircle = circle;
+				if (skills.contains(DreamSkill.AREA_REDUCE2)) nowcircle = circle3;
+				else if (skills.contains(DreamSkill.AREA_REDUCE1)) nowcircle = circle2;
+				for (Location loc : nowcircle.toLocations(center).floor(playerY)) {
 					if (turns)
 						stacks++;
 					else
@@ -574,17 +823,33 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 					else if (addY <= 0) up = true;		
 					addY = addY + (up ? 0.05 : -0.05);
 					Location location = loc.clone().add(0, addY + 0.3, 0);
-					ParticleLib.REDSTONE.spawnParticle(location, aqua);
+					if (skills.contains(DreamSkill.NOTHINGNESS)) ParticleLib.REDSTONE.spawnParticle(getPlayer(), location, aqua);
+					else ParticleLib.REDSTONE.spawnParticle(location, aqua);
+				}
+				
+				if (skills.contains(DreamSkill.CALL_OF_SEA)) {
+					for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, center, 30, 30, predicate)) {
+						livingEntity.setVelocity(VectorUtil.validateVector(center.toVector().subtract(livingEntity.getLocation().toVector()).normalize().setY(0).multiply(0.035)));
+					}
 				}
 			}
 			
 			if (count % 10 == 0) {
-				for (Player p : LocationUtil.getEntitiesInCircle(Player.class, center, 15, soundpredicate)) {
+				for (Player p : LocationUtil.getEntitiesInCircle(Player.class, center, nowrange, soundpredicate)) {
 					SoundLib.BLOCK_WATER_AMBIENT.playSound(p, 1, 1.2f);	
 				}
 			}
 			
-			if (count % period == 0) {
+			int nowperiod = period;
+			if (isNight(getPlayer().getWorld().getTime())) {
+				if (skills.contains(DreamSkill.LUNAR_GRAVITY2)) nowperiod *= 0.5;
+				else if(skills.contains(DreamSkill.LUNAR_GRAVITY1)) nowperiod *= 0.75;	
+			} else if (skills.contains(DreamSkill.LUNAR_GRAVITY2)) {
+				getPlayer().getWorld().setTime(17500);
+				timechanged = true;
+			}
+			
+			if (count % nowperiod == 0) {
 				new Wave(bestDamage).start();
 				SoundLib.PLING.playInstrument(center, 1.5f, Note.sharp(0, Tone.F));
 			}
@@ -599,15 +864,20 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		protected void onDurationSilentEnd() {
 			bestDamage = 7;
 			isSkillRunning = false;
-			if (dreamlevel >= 3) {
-				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && !getPlayer().getGameMode().equals(GameMode.SPECTATOR)) getPlayer().setAllowFlight(false);
+			if (skills.contains(DreamSkill.FLIGHT)) {
+				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && !getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+					getPlayer().setAllowFlight(false);
+				}
 			}
-			final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), lostHealth, RegainReason.CUSTOM);
-			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled()) {
-				Healths.setHealth(getPlayer(), getPlayer().getHealth() + lostHealth);	
+			
+			if (skills.contains(DreamSkill.FOAM1)) {
+				Healing.heal(getPlayer(), lostHealth, RegainReason.CUSTOM);
+				lostHealth = 0;
 			}
-			lostHealth = 0;
+			
+			if (timechanged) getPlayer().getWorld().setTime(worldtime);
+			
+			if (modifier1 != null) getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(modifier1);
 		}
 	
 	}.setPeriod(TimeUnit.TICKS, 1);
@@ -621,6 +891,9 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		private ArmorStand damager;
 		private boolean up = true;
 		private double addY = 0.1;
+		private final RGB startColor = RGB.of(230, 1, 1), endColor = RGB.of(254, 164, 164);
+		private final List<RGB> gradations = Gradient.createGradient(12, startColor, endColor);
+		private double boundingbox = 0;
 		
 		private RGB waveColor1 = RGB.of(1, 183, 194), waveColor2 = RGB.of(18, 186, 197), waveColor3 = RGB.of(36, 189, 200),
 				waveColor4 = RGB.of(55, 192, 204), waveColor5 = RGB.of(73, 195, 207), waveColor6 = RGB.of(92, 198, 211),
@@ -654,7 +927,6 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 				@Override
 				public boolean test(Entity entity) {
 					if (entity instanceof ArmorStand) return false;
-					if (entity.equals(getPlayer())) return false;
 					if (hitEntity.contains(entity)) return false;
 					if (entity instanceof Player) {
 						if (!getGame().isParticipating(entity.getUniqueId())
@@ -681,24 +953,33 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 		}
 		
 		@Override
-		public void onStart() {
-			waveRadius = 0;
+		public void onStart() {			
+			if (skills.contains(DreamSkill.REVERSE)) waveRadius = nowrange;
+			else waveRadius = 0;
 			damager = center.getWorld().spawn(center.clone().add(99999, 0, 99999), ArmorStand.class);
 			damager.setVisible(false);
 			damager.setInvulnerable(true);
 			damager.setGravity(false);
 			damager.setMetadata("Wave", NULL_VALUE);
 			NMS.removeBoundingBox(damager);
+			boundingbox = skills.contains(DreamSkill.TSUNAMI) ? 1.8 : 0.6;
 		}
 		
 		@Override
 		public void run(int count) {
 			if (!skill.isRunning()) this.stop(false);
-			if (waveRadius < 15) waveRadius += 0.35;
-			else this.stop(false);
+			if (skills.contains(DreamSkill.REVERSE)) {if (waveRadius > 0) waveRadius = Math.max(0.01, waveRadius - 0.35);}
+			else if (waveRadius < nowrange + (skills.contains(DreamSkill.TSUNAMI) ? 7.5 : 0)) waveRadius += 0.35;
 			
-			if (count == 1) color = waveColor1;
-			if (count % 4 == 0) color = waveColors.get(count / 4);
+			if ((skills.contains(DreamSkill.REVERSE) && waveRadius <= 0.01) || waveRadius >= nowrange + (skills.contains(DreamSkill.TSUNAMI) ? 7.5 : 0)) this.stop(false);
+			
+			if (skills.contains(DreamSkill.SCALD)) {
+				if (count == 1) color = gradations.get(0);
+				if (count % 4 == 0) color = gradations.get(Math.min(12, count / 4));
+			} else {
+				if (count == 1) color = waveColor1;
+				if (count % 4 == 0) color = waveColors.get(Math.min(12, count / 4));	
+			}
 			if (count % 5 == 0) up = !up;
 			
 			addY = addY + (up ? 0.1 : -0.1);
@@ -707,14 +988,40 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 			for (Iterator<Location> iterator = Circle.iteratorOf(center, waveRadius, 75); iterator.hasNext(); ) {
 				Location loc = iterator.next();
 				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + addY + 0.2);
-				ParticleLib.REDSTONE.spawnParticle(loc, color);
-				if (addY <= 0.1 || count < 5) ParticleLib.WATER_SPLASH.spawnParticle(loc, 0, 0, 0, 1, 0);
-				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.6, 0.6, predicate)) {
-					double increase = (waveRadius / 15) + 0.5;
-					damageable.damage(increase * damage, damager);
+				if (skills.contains(DreamSkill.NOTHINGNESS)) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
+					if (addY <= 0.1 || count < 5) ParticleLib.WATER_SPLASH.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+				} else {
+					ParticleLib.REDSTONE.spawnParticle(loc, color);
+					if (addY <= 0.1 || count < 5) ParticleLib.WATER_SPLASH.spawnParticle(loc, 0, 0, 0, 1, 0);
+				}
+				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, boundingbox, boundingbox, predicate)) {
+					double increase = 0.5;
+					if (skills.contains(DreamSkill.REVERSE)) increase = (1 - (waveRadius / nowrange)) + 0.5;
+					else increase = (waveRadius / nowrange) + 0.5;
+					
+					double addIncrease = 1;
+					if (skills.contains(DreamSkill.RAGING_WAVE3)) addIncrease = 1.6;
+					else if (skills.contains(DreamSkill.RAGING_WAVE2)) addIncrease = 1.4;
+					else if (skills.contains(DreamSkill.RAGING_WAVE1)) addIncrease = 1.2;
+					
+					if (!damageable.equals(getPlayer())) {
+						damageable.damage(increase * damage * addIncrease, damager);
+						damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(center.toVector()).normalize().multiply(1.1 * addIncrease).setY(0.5)));
+						if (damageable instanceof LivingEntity) PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 100, 1, false);
+						if (damageable instanceof Player) {
+							Player player = (Player) damageable;
+							if (skills.contains(DreamSkill.OVERHYDRATION1)) Corrosion.apply(getGame().getParticipant(player), TimeUnit.TICKS, skills.contains(DreamSkill.OVERHYDRATION2) ? 70 : 40);
+							if (skills.contains(DreamSkill.SLEEP_WAVE) && random.nextInt(4) == 0) Dream.apply(getGame().getParticipant(player), TimeUnit.TICKS, 100);
+							if (skills.contains(DreamSkill.SCALD)) Burn.apply(getGame().getParticipant(player), TimeUnit.TICKS, 60);
+						}
+						if (skills.contains(DreamSkill.SCALD)) damageable.setFireTicks(damageable.getFireTicks() + (damageable.getFireTicks() <= 0 ? 80 : 60));
+					} else if (skills.contains(DreamSkill.SURFING1)) {
+						speedup.start();
+						if (skills.contains(DreamSkill.SURFING2)) Healing.heal(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.05, RegainReason.CUSTOM);
+					}
+					
 					hitEntity.add(damageable);
-					damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(center.toVector()).normalize().multiply(1.1).setY(0.5)));
-					if (damageable instanceof LivingEntity) PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 100, 1, false);
 				}
 			}
 		}
@@ -920,6 +1227,211 @@ public class SkyWhale extends AbilityBase implements ActiveHandler {
 
 		}
 
+	}
+	
+	public class SkillGUI extends AbilityTimer implements Listener {
+		
+		private final ItemStack NULL = (new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)).displayName(" ").build();
+		private final List<DreamSkill> tempvalues = new ArrayList<>();
+		private final List<DreamSkill> values = new ArrayList<>();
+		private final LimitedPushingList<DreamSkill> list = new LimitedPushingList<>(3);
+		private Map<Integer, DreamSkill> slots = new HashMap<>();
+		
+		private DreamSkill selected;
+		private final Inventory gui;
+		
+		public SkillGUI(int quality) {
+			super(TaskType.REVERSE, 300);
+			setPeriod(TimeUnit.TICKS, 1);
+			gui = Bukkit.createInventory(null, InventoryType.HOPPER, "§0스킬을 선택해주세요.");
+			createSkillList(quality);
+		}
+		
+		private void createSkillList(int quality) {
+			int minquality = 0, maxquality = 0;
+			switch(quality) {
+			case 1:
+				minquality = 0;
+				maxquality = 0;
+				break;
+			case 2:
+				minquality = 0;
+				maxquality = 1;
+				break;
+			case 3:
+			case 4:
+				minquality = 1;
+				maxquality = 2;
+				break;
+			case 5:
+				minquality = 1;
+				maxquality = 3;
+				break;
+			case 6:
+				minquality = 2;
+				maxquality = 3;
+				break;
+			case 7:
+				minquality = 3;
+				maxquality = 3;
+				break;
+			case 8:
+			case 9:
+			case 10:
+				minquality = 0;
+				maxquality = 3;
+				break;
+			}
+			
+			if (skills.contains(DreamSkill.SIRENS_BLESS)) minquality = Math.min(3, minquality + 1);
+			
+			for (int a = minquality; a <= maxquality; a++) {
+				for (DreamSkill skill : skillList.get(a)) {
+					if (!skills.contains(skill)) tempvalues.add(skill);
+				}	
+			}
+			
+			for (DreamSkill skill : tempvalues) {
+				if (skill.equals(DreamSkill.AREA_REDUCE2) && !skills.contains(DreamSkill.AREA_REDUCE1)) {}
+				else if (skill.equals(DreamSkill.FASTWALK2) && !skills.contains(DreamSkill.FASTWALK1)) {}
+				else if (skill.equals(DreamSkill.FOAM3) && !skills.contains(DreamSkill.FOAM2)) {}
+				else if (skill.equals(DreamSkill.FOAM2) && !skills.contains(DreamSkill.FOAM1)) {}
+				else if (skill.equals(DreamSkill.LUNAR_GRAVITY2) && !skills.contains(DreamSkill.LUNAR_GRAVITY1)) {}
+				else if (skill.equals(DreamSkill.OVERHYDRATION2) && !skills.contains(DreamSkill.OVERHYDRATION1)) {}
+				else if (skill.equals(DreamSkill.RAGING_WAVE3) && !skills.contains(DreamSkill.RAGING_WAVE2)) {}
+				else if (skill.equals(DreamSkill.RAGING_WAVE2) && !skills.contains(DreamSkill.RAGING_WAVE1)) {}
+				else if (skill.equals(DreamSkill.SURFING2) && !skills.contains(DreamSkill.SURFING1)) {}
+				else if (skill.equals(DreamSkill.FREEDOM) && skills.contains(DreamSkill.OTHER_SIDE)) {}
+				else if (skill.equals(DreamSkill.WAKE_UP) && !skills.contains(DreamSkill.FOAM1)) {}
+				else values.add(skill);
+			}
+		}
+		
+		private MaterialX getQualityBlock(int a) {
+			switch(a) {
+			case 0: return MaterialX.WHITE_BED;
+			case 1: return MaterialX.LIME_BED;
+			case 2: return MaterialX.LIGHT_BLUE_BED;
+			case 3: return MaterialX.MAGENTA_BED;
+			case 4: return MaterialX.YELLOW_BED;
+			}
+			return null;
+		}
+		
+		private String getQualityColor(int a) {
+			switch(a) {
+			case 0: return "§f";
+			case 1: return "§a";
+			case 2: return "§b";
+			case 3: return "§d";
+			case 4: return "§e§l";
+			}
+			return null;
+		}
+		
+		private void placeItem() {
+			for (int i = 0; i < 3; i++) {
+				ItemStack item = new ItemBuilder(getQualityBlock(list.get(i).getQuality())).build();
+				ItemMeta meta = item.getItemMeta();
+				meta.setDisplayName(getQualityColor(list.get(i).getQuality()) + list.get(i).getName());
+				List<String> lore = Messager.asList();
+				lore.add("§3퀄리티§7: " + getQualityColor(list.get(i).getQuality()) + list.get(i).getQuality());
+				String exp = list.get(i).getExplain();
+				int len = exp.length();
+				StringBuilder builder = new StringBuilder("§f");
+				int spaces = 0;
+				for (int j = 0; j < len; j++) {
+				    char c = exp.charAt(j);
+				    if (c == ' ') spaces++;
+				    builder.append(c);
+				    if (spaces == 5) {
+				    	spaces = 0;
+				        lore.add(builder.toString());
+				        builder = new StringBuilder("§f");
+				    }
+				}
+				lore.add(builder.toString());
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+				gui.setItem((i * 2), item);
+				slots.put((i * 2), list.get(i));
+			}
+			gui.setItem(1, NULL);
+			gui.setItem(3, NULL);
+		}
+		
+		protected void onStart() {
+			SoundLib.BLOCK_ENDER_CHEST_OPEN.playSound(getPlayer().getLocation(), 1f, 0.5f);
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			getPlayer().openInventory(gui);
+			for (int a = 0; a < 3; a++) {
+				DreamSkill addskill = values.get(random.nextInt(values.size()));
+				list.add(addskill);
+				values.remove(addskill);
+			}
+			if (random.nextInt(skills.contains(DreamSkill.SIRENS_BLESS) ? 15 : 20) == 0) {
+				List<DreamSkill> quality4 = new ArrayList<>(skillList.get(4));
+				List<DreamSkill> leftquality4 = new ArrayList<>();
+				for (DreamSkill q4 : quality4) {
+					if (!skills.contains(q4)) leftquality4.add(q4);
+				}
+				DreamSkill specialskill = random.pick(leftquality4);
+				list.add(specialskill);
+				Collections.shuffle(list);
+			}
+		}
+		
+		protected void run(int arg0) {
+			placeItem();
+			if (arg0 == 60) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 40) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+			if (arg0 == 20) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
+		}
+		
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		protected void onSilentEnd() {
+			if (selected != null) skills.add(selected);
+			else skills.add(slots.get(0));
+			HandlerList.unregisterAll(this);
+			getPlayer().closeInventory();
+		}
+		
+		@EventHandler
+		private void onInventoryClose(InventoryCloseEvent e) {
+			if (e.getInventory().equals(gui)) stop(false);
+		}
+
+		@EventHandler
+		private void onQuit(PlayerQuitEvent e) {
+			if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) stop(false);
+		}
+		
+		@EventHandler
+		private void onPlayerMove(PlayerMoveEvent e) {
+			if (e.getPlayer().equals(getPlayer())) e.setCancelled(true);
+		}
+		
+		@EventHandler
+		private void onEntityDamage(EntityDamageEvent e) {
+			if (e.getEntity().equals(getPlayer())) e.setDamage(e.getDamage() / 2);
+		}
+
+		@EventHandler
+		private void onInventoryClick(InventoryClickEvent e) {
+			if (e.getInventory().equals(gui)) {
+				e.setCancelled(true);
+				if (slots.containsKey(e.getSlot())) {
+					selected = slots.get(e.getSlot());
+					getPlayer().closeInventory();
+				}
+			}
+		}
+		
 	}
 	
 }

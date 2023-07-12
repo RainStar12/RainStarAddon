@@ -114,7 +114,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> COOLDECREASE_MULTIPLY = 
-			abilitySettings.new SettingObject<Double>(Succubus.class, "cooldown-decrease-multiply", 3.3,
+			abilitySettings.new SettingObject<Double>(Succubus.class, "cooldown-decrease-multiply", 1.2,
             "# 회복량 비례 쿨타임 감소율") {
 
         @Override
@@ -167,10 +167,10 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	
 	private static final ImmutableMap<EffectRegistration<?>, Double> multiplyEffects = ImmutableMap.<EffectRegistration<?>, Double>builder()
 			.put(Stun.registration, 4.0)
-			.put(Fear.registration, 4.0)
-			.put(Charm.registration, 3.5)
+			.put(Fear.registration, 2.0)
+			.put(Charm.registration, 2.0)
 			.put(Poison.registration, 1.2)
-			.put(Rooted.registration, 2.5)
+			.put(Rooted.registration, 1.5)
 			.put(Oppress.registration, 3.0)
 			.build();
     
@@ -182,7 +182,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     private final int heal = CHARM_HEAL.getValue();
     private final double multiply = COOLDECREASE_MULTIPLY.getValue();
     private int stack = 1;
-    private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
+    private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 44);
     private final Circle circle = Circle.of(range, (int) Math.min(range * 12.5, 200));
 	private static final RGB color = RGB.of(251, 43, 136);
 	
@@ -228,8 +228,8 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
-		if (healpredicate.test(e.getEntity()) && cooldown.isCooldown()) {
-			cooldown.setCount((int) (cooldown.getCount() - e.getAmount() * multiply));
+		if (healpredicate.test(e.getEntity()) && cooldown.isRunning()) {
+			cooldown.setCount((int) (cooldown.getCount() - (e.getAmount() * multiply)));
 		}
 	}
     
@@ -261,12 +261,14 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
 	    			if (p.getEffects().size() > 0) {
+	    				boolean changed = false;
 	    				Collection<Effect> effectlist = new HashSet<>(p.getEffects());
 		    			for (Effect effects : effectlist) {
 		    				if (!effects.getRegistration().equals(Hemophilia.registration) && !effects.getRegistration().equals(Bleed.registration)) {
 			    				int duration = (int) (effects.getCount() * effects.getPeriod());
 			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
-			    				Bleed.apply(p, TimeUnit.TICKS, duration);
+			    				Bleed.apply(p, TimeUnit.TICKS, duration, 30);
+			    				changed = true;
 		    				}
 		    			}	
 		    			p.removeEffects(new Predicate<Effect>() {
@@ -280,9 +282,11 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 								return false;
 							}
 		                });
-		    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
-		    				ParticleLib.DAMAGE_INDICATOR.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
-						}
+		    			if (changed) {
+			    			for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+			    				ParticleLib.DAMAGE_INDICATOR.spawnParticle(getPlayer(), loc, 0, 0, 0, 1, 0);
+							}
+		    			}
 	    			}
 	    		}
 	    	}

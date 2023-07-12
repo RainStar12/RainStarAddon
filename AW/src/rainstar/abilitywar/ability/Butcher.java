@@ -55,6 +55,13 @@ public class Butcher extends AbilityBase {
 	private static final RGB MinorityHealth = RGB.of(183, 0, 0);
 	private final double damagevalue = DAMAGE_MULTIPLY.getValue() * 0.01;
 	
+	@Override
+	protected void onUpdate(Update update) {
+	    if (update == Update.ABILITY_DESTROY) {
+	    	NMS.setAbsorptionHearts(getPlayer(), 0);
+	    }
+	}
+	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {	
 		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity) {

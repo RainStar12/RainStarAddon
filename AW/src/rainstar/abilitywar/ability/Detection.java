@@ -28,7 +28,6 @@ import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -87,7 +86,7 @@ public class Detection extends AbilityBase {
 		super(participant);
 	}
 
-	private final Cooldown cool = new Cooldown(SKILL_COOLDOWN.getValue(), CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(SKILL_COOLDOWN.getValue(), 33);
 	private final int duration = DURATION.getValue();
 
 	private Set<UUID> noatk = new HashSet<>();

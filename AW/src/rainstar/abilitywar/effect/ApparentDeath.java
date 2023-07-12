@@ -29,9 +29,9 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 @EffectManifest(name = "가사", displayName = "§7가사", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION, EffectType.MOVEMENT_RESTRICTION, EffectType.HEALING_BAN
 }, description = {
-		"§f체력이 33% 이하라면 체력이 고정되고,",
+		"§f체력이 44.44% 이하라면 체력이 고정되고,",
 		"§f공격 및 이동이 불가능해집니다.",
-		"§f체력이 33%를 초과한다면 받는 피해량이 25% 증가합니다."
+		"§f체력이 44.44%를 초과한다면 받는 피해량이 25% 증가합니다."
 })
 public class ApparentDeath extends AbstractGame.Effect implements Listener {
 
@@ -49,7 +49,7 @@ public class ApparentDeath extends AbstractGame.Effect implements Listener {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
 		final Location location = participant.getPlayer().getLocation();
-		this.hologram = location.getWorld().spawn(location.clone().add(0, 2.2, 0), ArmorStand.class);
+		this.hologram = location.getWorld().spawn(location.clone().add(0, 2.7, 0), ArmorStand.class);
 		hologram.setVisible(false);
 		hologram.setGravity(false);
 		hologram.setInvulnerable(true);
@@ -60,7 +60,7 @@ public class ApparentDeath extends AbstractGame.Effect implements Listener {
 	}
 	
 	private boolean isLowHealth() {
-		if (participant.getPlayer().getHealth() <= participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3) return true;
+		if (participant.getPlayer().getHealth() <= participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.4444) return true;
 		return false;
 	}
 	
@@ -72,8 +72,8 @@ public class ApparentDeath extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void run(int count) {
-		hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2, 0));
-		hologram.setCustomName(isLowHealth() ? "§4" : "§7" + "X_X");
+		hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.5, 0));
+		hologram.setCustomName((isLowHealth() ? "§4" : "§7") + "X_X");
 		if (isLowHealth() && healthlock == 0) healthlock = participant.getPlayer().getHealth();
 		if (participant.getPlayer().getHealth() > 0 && healthlock > 0) participant.getPlayer().setHealth(healthlock);
 		super.run(count);

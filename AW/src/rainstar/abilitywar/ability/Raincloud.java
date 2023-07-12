@@ -150,7 +150,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DELAY = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay", 1.8,
+			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay-", 1.4,
             "# 자신의 (설정값)초 전의 위치에 구름이 위치합니다.", "# 단위: 초") {
 		
         @Override

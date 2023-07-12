@@ -19,6 +19,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -30,10 +31,9 @@ import rainstar.abilitywar.effect.BackseatGaming;
 
 @AbilityManifest(
 		name = "티배깅", rank = Rank.C, species = Species.HUMAN, explain = {
-		"누군가가 나를 보고 있을 때 웅크리기를 연타할 경우 피해를 줍니다.",
-		"만일 상대가 내 뒷모습을 보고 있을 때는 피해량이 더 강해집니다.",
+		"누군가가 나를 보고 있을 때 웅크리기를 연타할 경우 피해를 주고 §e§n기절§f시킵니다.",
 		"나를 죽인 대상은 §c§n훈수§f 상태이상을 받습니다.",
-		"§e[§c훈수§e]§f 플레이어가 특정 행동들을 할 때마다 확률적으로 시야를 봉쇄합니다.",
+		"§e[§c훈수§e]§f 플레이어가 특정 행동들을 할 때마다 확률적으로 시야를 차단합니다.",
 		" 이 효과는 자동 영구 지속 효과입니다."
 		},
 		summarize = {
@@ -142,29 +142,32 @@ public class Teabagging extends AbilityBase {
         					}
         					if (teabaggingcount.get(player) >= 3) {
         						if (isBehind(getPlayer(), player)) {
-            						player.damage(6, getPlayer());	
+            						player.damage(9, getPlayer());
+            						Stun.apply(participant, TimeUnit.TICKS, 3);
         						} else {
-            						player.damage(3, getPlayer());	
+            						player.damage(6, getPlayer());
+            						Stun.apply(participant, TimeUnit.TICKS, 1);
         						}
+        						
         						Random random = new Random();
         						if (random.nextInt(10) == 0) {
             						SoundLib.ENTITY_WITCH_AMBIENT.playSound(player, 1, 1.5f);
         							switch(random.nextInt(8)) {
-        							case 0: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせせ 醤 加閤劃?");
+        							case 0: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c허접~");
         							break;
-        							case 1: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cez");
+        							case 1: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §cez");
         							break;
-        							case 2: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c公説相?");
+        							case 2: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c그걸 맞는wwww");
         							break;
-        							case 3: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cせ");
+        							case 3: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c이것도 못 때리면 도능 왜함?");
         							break;
-        							case 4: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c荘~");
+        							case 4: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §cㅋ");
         							break;
-        							case 5: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c冊弾嬢推? 嬢村虞壱推~");
+        							case 5: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c기분 나쁘셨다면 죄송합니다~");
         							break;
-        							case 6: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」cさぉずし~");
+        							case 6: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c이걸 맞네");
         							break;
-        							case 7: player.sendMessage("」3[」b管径」3] 」e" + getPlayer().getName() + " 」b>」e " + player.getName() + "」7: 」c滴滴欠紙薩四~");
+        							case 7: player.sendMessage("§3[§b티배깅§3] §e" + getPlayer().getName() + " §b>§e " + player.getName() + "§7: §c너 개못하잖아");
         							break;
         							}
         						}

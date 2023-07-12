@@ -37,7 +37,7 @@ import rainstar.abilitywar.effect.SightLock;
 		"§a[§e능력 제공자§a] §6Ddang_67"
 		},
 		summarize = {
-		"자신을 공격한 적을 확률적으로 시야를 돌립니다.",
+		"자신을 공격한 적을 확률적으로 시야를 돌리고 §5§n고정§f시킵니다.",
 		"§7철괴 우클릭 시§f 공격한 적들 중 확률 실패 대상을 비례 §e§n기절§f시킵니다."
 		})
 public class Kid extends AbilityBase implements ActiveHandler {
@@ -69,7 +69,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SIGHT_LOCK = 
-			abilitySettings.new SettingObject<Double>(Kid.class, "sight-lock-duration", 0.3,
+			abilitySettings.new SettingObject<Double>(Kid.class, "sight-lock-duration-", 0.5,
 			"# 시야 고정 지속시간") {
 
 		@Override

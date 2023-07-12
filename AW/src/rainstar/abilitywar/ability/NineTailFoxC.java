@@ -48,7 +48,7 @@ import rainstar.abilitywar.effect.Charm;
 		"§7철괴 우클릭 §8- §c집착§f: 마지막으로 §d§n유혹§f한 대상에게 돌진합니다.",
 		" 이후 $[DEADLINE]초 내로 가하는 다음 근접 공격이 §d§n유혹§f을 제거하고",
 		" §d§n유혹§f의 남은 시간당 $[DAMAGE_INCREASE]%의 추가 피해를 가합니다. $[COOLDOWN]",
-		"§c[§d유혹§c] 대상이 강제로 나를 바라보게 되고, 내게 주는 피해량이 $[CHARM_DECREASE]% 감소합니다.",
+		"§c[§d유혹§c]§f 대상이 강제로 나를 바라보게 되고, 내게 주는 피해량이 $[CHARM_DECREASE]% 감소합니다.",
 		" 대상을 공격할 때마다 준 최종 대미지의 $[CHARM_HEAL]%만큼 체력을 얻습니다."
 		},
 		summarize = {
@@ -93,7 +93,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> STACK_MAX = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "stack-max", 4,
+			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "stack-max-", 5,
             "# 최대 스택 개수") {
 
         @Override
@@ -104,7 +104,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DURATION = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-duration", 4,
+			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-duration-", 5,
             "# 유혹 지속 시간") {
 
         @Override
@@ -192,7 +192,6 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int deadline = (int) (DEADLINE.getValue() * 20);
 	private final double dmginc = DAMAGE_INCREASE.getValue() / 2000.0;
 	private Participant lastcharmed;
-	private ActionbarChannel ac = newActionbarChannel();
 	private DecimalFormat df = new DecimalFormat("0.0");
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
@@ -277,10 +276,14 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 				for (Charm charm : target.getEffects(Charm.registration)) {
 					if (charm.getApplier().equals(getPlayer())) {
 						durations += charm.getDuration();
-						charm.stop(false);
 					}
 				}
 				e.setDamage(e.getDamage() * (1 + (durations * dmginc)));
+				for (Charm charm : target.getEffects(Charm.registration)) {
+					if (charm.getApplier().equals(getPlayer())) {
+						charm.stop(false);
+					}
+				}
 				skill.stop(false);
 				SoundLib.ENTITY_PLAYER_ATTACK_CRIT.playSound(target.getPlayer().getLocation(), 1, 1.3f);
 				ParticleLib.DAMAGE_INDICATOR.spawnParticle(target.getPlayer().getLocation(), 0.5, 1, 0.5, 10, 1);
@@ -304,12 +307,12 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onStart() {
-			getPlayer().setVelocity(lastcharmed.getPlayer().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.23).setY(0));
+			getPlayer().setVelocity(lastcharmed.getPlayer().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.4).setY(0));
 		}
 		
 		@Override
 		protected void run(int count) {
-			ac.update("§c집착§f: §c" + df.format(count / 20.0) + "§f초");
+			
 		}
 		
 		@Override
@@ -319,7 +322,6 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onSilentEnd() {
-			ac.update(null);
 			cool.start();
 		}
 
