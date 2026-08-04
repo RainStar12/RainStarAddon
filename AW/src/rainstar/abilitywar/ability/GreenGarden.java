@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +73,12 @@ import rainstar.abilitywar.effect.Poison;
 		"형형색색의 §d꽃§f의 §6씨앗§f을 최대 $[MAX_SEEDS]개까지 소지합니다.", 
 		"§6씨앗§f을 전부 사용하면 $[RECHARGE]초 후 보급됩니다.", 
 		"§7철괴 좌클릭§f으로 제자리에 §6씨앗§f을 심어 색에 맞는 §d꽃§f을 $[BLOOMING_WAIT]초 후 피워냅니다.", 
-		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[FLOWER_RANGE]칸 내 생명체에게 효과를 부여합니다.", 
+		"§d꽃§f의 종류에 따라 $[FLOWER_EFFECT_DURATION]초간 $[FLOWER_RANGE]칸 내 대상에게 효과를 부여합니다.", 
 		"§a긍정 효과§f라면 아군에게, §c부정 효과§f라면 적에게 적용됩니다.", 
 		"§4양귀비 §c§n중독§7 | §e민들레 §a회복속도 증가§7 | §5파꽃 §c받는 피해량 $[ALLIUM_INCREASE]% 증가", 
 		"§b난초 §a신속 $[ORCHID_SPEED]§7 | §f선애기별꽃 §a저항 및 저지 불가§7 | §d라일락 §c§n몽환", 
 		"§6튤립 §a공격력 $[TULIP_INCREASE]% 증가§7 | §c장미 §a피해량 $[ROSE_REFLECT]% 반사§7 | §a모란 §c§n유혹",
-		"§a[§e능력 제공자§a] green_kim"
+		"§b[§7아이디어 제공자§b] §agreen_kim"
 		},
 		summarize = {
 		"$[MAX_SEED]개의 §d꽃§f 씨앗을 지니고 시작하며 전부 사용하면 $[RECHARGE]초 후 보급됩니다.",
@@ -90,7 +92,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> MAX_SEEDS = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "max-seeds", 4,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "max-seeds", 4,
             "# 소지 가능한 최대 씨앗 개수") {
 		
         @Override
@@ -101,7 +103,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RECHARGE = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "recharge-time-", 55,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "recharge-time-amount", 45,
             "# 씨앗 보급까지 걸리는 시간", "# 단위: 초") {
 		
         @Override
@@ -112,7 +114,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> BLOOMING_WAIT = 
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "blooming-wait", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(GreenGarden.class, "blooming-wait", 3.0,
             "# 개화까지 걸리는 시간", "# 단위: 초") {
 		
         @Override
@@ -123,7 +125,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> FLOWER_EFFECT_DURATION =
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-effect-duration-", 9.3,
+			rsAbilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-effect-duration-", 9.3,
             "# 효과 지속시간", "# 단위: 초") {
 		
         @Override
@@ -134,7 +136,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> FLOWER_RANGE = 
-			abilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range-", 8.0,
+			rsAbilitySettings.new SettingObject<Double>(GreenGarden.class, "flower-range-", 8.0,
             "# 꽃 영향 범위", "# 단위: 칸") {
 		
         @Override
@@ -145,7 +147,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ALLIUM_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "allium-increase", 10,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "allium-increase", 10,
             "# 파꽃 받는 피해량 증가량", "# 단위: %") {
 		
         @Override
@@ -156,7 +158,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ORCHID_SPEED = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "orchid-speed", 1,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "orchid-speed", 1,
 		            "# 난초 신속 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -171,7 +173,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> TULIP_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "tulip-increase", 15,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "tulip-increase", 15,
             "# 튤립 공격력 증가량", "# 단위: %") {
 		
         @Override
@@ -182,7 +184,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> ROSE_REFLECT = 
-			abilitySettings.new SettingObject<Integer>(GreenGarden.class, "rose-reflect", 50,
+			rsAbilitySettings.new SettingObject<Integer>(GreenGarden.class, "rose-reflect", 50,
             "# 반사 피해량", "# 단위: %") {
 		
         @Override
@@ -348,7 +350,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		private boolean onchange = true;
 		private Block block;
 		private IBlockSnapshot snapshot;
-		private Circle circle = Circle.of(range, (int) (range * 12));
+		private Circle circle = Circle.of(range, (int) (range * 9));
 		private final Predicate<Entity> predicate;		
 		private final Predicate<Effect> effectpredicate = new Predicate<Effect>() {
 			@Override
@@ -468,7 +470,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 						if (!player.isDead()) {
 							final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 							if (player.getHealth() < maxHealth) {
-								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .015, RegainReason.CUSTOM);
+								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .025, RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled()) {
 									player.setHealth(RangesKt.coerceIn(player.getHealth() + event.getAmount(), 0, maxHealth));
@@ -518,7 +520,7 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 			seedlocations.remove(location);
 			HandlerList.unregisterAll(this);
 			hologram.unregister();
-			snapshot.apply();
+			if (snapshot != null) snapshot.apply();
 		}
 		
 		@EventHandler
@@ -578,6 +580,5 @@ public class GreenGarden extends AbilityBase implements ActiveHandler {
 		}
 		
 	}
-	
 	
 }

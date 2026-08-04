@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,7 +60,7 @@ public class Horus extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> PERIOD = 
-			abilitySettings.new SettingObject<Integer>(Horus.class, "period", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Horus.class, "period", 15,
             "# 피해를 많이 준 적을 산출하는 주기") {
         @Override
         public boolean condition(Integer value) {
@@ -67,7 +69,7 @@ public class Horus extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Horus.class, "percentage", 25,
+			rsAbilitySettings.new SettingObject<Integer>(Horus.class, "percentage", 25,
             "# 산출된 피해량만큼 공격 증가량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -76,7 +78,7 @@ public class Horus extends AbilityBase {
     };
     
 	public static final SettingObject<Double> LIMIT_VALUE = 
-			abilitySettings.new SettingObject<Double>(Horus.class, "limit-value", 7.5,
+			rsAbilitySettings.new SettingObject<Double>(Horus.class, "limit-value", 7.5,
             "# 제한값", "# 대미지를 집계할 때 (대미지 * (제한값 / (제한값 + 집계된 총대미지)))로 집계합니다.", "# 즉, 쌓인 총 대미지가 제한값에 도달하면 올라가는 수치가 절반이 됩니다.") {
         @Override
         public boolean condition(Double value) {

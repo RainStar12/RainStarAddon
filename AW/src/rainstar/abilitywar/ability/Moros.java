@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -176,7 +178,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		{false, false, false, false, false, false, true, true, true, true, true, true, true, true, false, false, false, false, false, false},
 	});
 	
-	public static final SettingObject<Integer> MORTAL_DURATION = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> MORTAL_DURATION = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"mortal-duration-", 7, "# 필멸 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -184,7 +186,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> MORTAL_DURATION_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> MORTAL_DURATION_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"mortal-duration-spread", 3, "# 필멸 지속시간 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -197,7 +199,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
         }
 	};
 	
-	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> RANGE = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"range", 10, "# 운명 개찬 범위", "# 단위: 칸") {
 		@Override
 		public boolean condition(Integer value) {
@@ -205,7 +207,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RANGE_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> RANGE_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"range-spread", 5, "# 운명 개찬 범위 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -218,7 +220,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
         }
 	};
 	
-	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> DURATION = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"targetable-false-duration", 10, "# 타게팅 불가 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -226,7 +228,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DURATION_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> DURATION_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"targetable-false-duration-spread", 7, "# 타게팅 불가 지속시간 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -239,7 +241,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
         }
 	};
 	
-	public static final SettingObject<Integer> PASSIVE_COOLDOWN = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> PASSIVE_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"passive-cooldown", 60, "# 운명 개찬 쿨타임", "# WRECK 감소 최대 50% 적용") {
 		@Override
 		public boolean condition(Integer value) {
@@ -252,7 +254,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> PASSIVE_COOLDOWN_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> PASSIVE_COOLDOWN_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"passive-cooldown-spread", 20, "# 운명 개찬 쿨타임의 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -265,7 +267,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
         }
 	};
 	
-	public static final SettingObject<Integer> ACTIVE_COOLDOWN = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> ACTIVE_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"active-cooldown", 80, "# 변수 제거 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -278,7 +280,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> ACTIVE_COOLDOWN_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> ACTIVE_COOLDOWN_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"active-cooldown-spread", 40, "# 변수 제거 쿨타임의 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -291,7 +293,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
         }
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> DAMAGE_INCREASE = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"damage-increase", 25, "# 공격력 배율", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -299,7 +301,7 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE_SPREAD = abilitySettings.new SettingObject<Integer>(Moros.class,
+	public static final SettingObject<Integer> DAMAGE_INCREASE_SPREAD = rsAbilitySettings.new SettingObject<Integer>(Moros.class,
 			"damage-increase-spread", 15, "# 공격력 배율 오차범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -338,15 +340,30 @@ public class Moros extends AbilityBase implements ActiveHandler {
 	public void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR && !first) {
 			first = true;
+			double defaultMortalDuration = mortalDuration, defaultRange = range, defaultDuration = duration, defaultPassiveCool = passivecool.getCooldown(), defaultActiveCool = activecool.getCooldown(), defaultDamageIncrease = damageIncrease;
 			mortalDuration = (int) ((mortalDuration + ((random.nextInt(mortalDurationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))) * 20);
 			range = (range + ((random.nextInt(rangeSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01))));
 			duration = (int) ((duration + ((random.nextInt(durationSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))) * 20);
 			passivecool.setCooldown((int) (PASSIVE_COOLDOWN.getValue() + ((random.nextInt(passiveCooldownSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))), CooldownDecrease._50);
 			activecool.setCooldown((int) (ACTIVE_COOLDOWN.getValue() + ((random.nextInt(activeCooldownSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))));
 			damageIncrease = (int) ((damageIncrease + ((random.nextInt(damageIncreaseSpread * 100 + 1) * (random.nextBoolean() ? -0.01 : 0.01)))));
-			getPlayer().sendMessage("§3[§b운명론§3] §c필멸 §e" + df.format(mortalDuration / 20.0) + "§f초 §7/ §a범위 §e" + range + "§f칸 §7/ §3타게팅 불가 §e" + df.format(duration / 20.0) 
-			+ "§f초 §7/ §c운명 개찬 쿨타임 §e" + passivecool.getCooldown() + "§f초 §7/ §c변수 제거 쿨타임 §e" + activecool.getCooldown() + "§f초 §7/ §c공격력 증가 §e" + damageIncrease + "§f%로 결정되었습니다.");
+			getPlayer().sendMessage("§3[§b운명론§3] §c필멸 " + getColor(defaultMortalDuration * 20, mortalDuration, false) + df.format(mortalDuration / 20.0) + "§f초 §7/ §a범위 " + getColor(defaultRange, range, false) + range + "§f칸 §7/ §3타게팅 불가 " + getColor(defaultDuration * 20, duration, false) + df.format(duration / 20.0) 
+			+ "§f초 §7/ §c운명 개찬 쿨타임 §e" + getColor(defaultPassiveCool, passivecool.getCooldown(), true) + passivecool.getCooldown() + "§f초 §7/ §c변수 제거 쿨타임 §e" + getColor(defaultActiveCool, activecool.getCooldown(), true) + activecool.getCooldown() + "§f초 §7/ §c공격력 증가 §e" + getColor(defaultDamageIncrease, damageIncrease, false) + damageIncrease + "§f%로 결정되었습니다.");
 		}
+	}
+	
+	private String getColor(double defaultValue, double nowValue, boolean isCooldown) {
+		String color = "";
+		if (isCooldown) {
+			if (nowValue > defaultValue) color = "§c";
+			else if (nowValue < defaultValue) color = "§a";
+			else color = "§e";
+		} else {
+			if (nowValue > defaultValue) color = "§a";
+			else if (nowValue < defaultValue) color = "§c";
+			else color = "§e";
+		}
+		return color;
 	}
 	
 	private final AbilityTimer particle = new AbilityTimer(5) {
@@ -495,13 +512,13 @@ public class Moros extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update("§4필멸§f: " + df.format(count / 20) + "초");
+			actionbarChannel.update("§4필멸§f: " + df.format(count / 20.0) + "초");
 		}
 		
 		private void addDamage() {
 			if (isRunning()) {
 				setCount(mortalDuration);
-				actionbarChannel.update("§4필멸§f: " + df.format(getCount() / 20) + "초");
+				actionbarChannel.update("§4필멸§f: " + df.format(getCount() / 20.0) + "초");
 			}
 		}
 		

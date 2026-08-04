@@ -10,7 +10,9 @@ import org.bukkit.Note.Tone;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -18,7 +20,6 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -32,7 +33,7 @@ import daybreak.google.common.base.Strings;
 
 @AbilityManifest(
 		name = "속전속결", rank = Rank.B, species = Species.HUMAN, explain = {
-		"§c주는 대미지 §f및 §c받는 대미지§f가 기본적으로 0이 됩니다.",
+		"§c주는 대미지 §f및 §c받는 대미지§f가 기본적으로 0이 되고, 항시 타게팅 불가입니다.",
 		"같은 대상을 7회 타격 시 대상은 §c사망§f합니다.",
 		"같은 대상에게서 7회 피격 시 즉시 §c사망§f합니다.",
 		"이 효과로 §c사망§f한 적은 부활 효과를 무시합니다."
@@ -71,6 +72,40 @@ public class ASAP extends Synergy {
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
 	private final Map<Player, MyStack> deathMap = new HashMap<>();
+	
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) passive.start();
+	}
+	
+	private final AbilityTimer passive = new AbilityTimer() {
+		@Override
+		protected void run(int count) {
+			getParticipant().attributes().TARGETABLE.setValue(false);
+		}
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+		@Override
+		protected void onSilentEnd() {
+			getParticipant().attributes().TARGETABLE.setValue(true);
+		}
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			e.setDamage(0);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			e.setDamage(0);
+		}
+	}
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -134,6 +169,9 @@ public class ASAP extends Synergy {
 					} else new MyStack((Player) arrow.getShooter()).start();
 				}	
 			}
+		}
+		if (e.getEntity().equals(getPlayer())) {
+			e.setDamage(0);
 		}
 	}
 	

@@ -1,10 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -37,14 +40,13 @@ import daybreak.abilitywar.utils.base.random.Random;
 		"§7철괴 우클릭으로§f 잊어버리는 속도를 §b가속§f시킵니다. $[COOLDOWN]",
 		"§c쿨타임§f 간에는 패시브 스킬도 같이 비활성화됩니다."
 		})
-
 public class Fool extends AbilityBase implements ActiveHandler {
 
 	public Fool(Participant participant) {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Fool.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Fool.class,
 			"cooldown", 40, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -57,7 +59,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Fool.class,
+	public static final SettingObject<Integer> DURATION = rsAbilitySettings.new SettingObject<Integer>(Fool.class,
 			"duration", 10, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -65,7 +67,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> DELAY = abilitySettings.new SettingObject<Double>(Fool.class,
+	public static final SettingObject<Double> DELAY = rsAbilitySettings.new SettingObject<Double>(Fool.class,
 			"delay", 20.0, "# 피해를 잊는 데 걸리는 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -73,7 +75,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> PERCENTAGE = abilitySettings.new SettingObject<Integer>(Fool.class,
+	public static final SettingObject<Integer> PERCENTAGE = rsAbilitySettings.new SettingObject<Integer>(Fool.class,
 			"percentage", 75, "# 잊어버릴 피해량의 비율", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -81,7 +83,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> MULTIPLY = abilitySettings.new SettingObject<Integer>(Fool.class,
+	public static final SettingObject<Integer> MULTIPLY = rsAbilitySettings.new SettingObject<Integer>(Fool.class,
 			"multiply", 2, "# 스킬 사용시 피해를 잊는 속도") {
 		@Override
 		public boolean condition(Integer value) {
@@ -89,7 +91,7 @@ public class Fool extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Fool.class,
+	public static final SettingObject<Integer> CHANCE = rsAbilitySettings.new SettingObject<Integer>(Fool.class,
 			"chance", 20, "# 시야가 흔들릴 확률") {
 		@Override
 		public boolean condition(Integer value) {
@@ -173,7 +175,9 @@ public class Fool extends AbilityBase implements ActiveHandler {
 							yaw = -180 + mod;
 						}
 					}
-					NMS.rotateHead(getPlayer(), getPlayer(), yaw, location.getPitch() + random.nextInt(90) - 45);
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						NMS.rotateHead(player, getPlayer(), yaw, location.getPitch() + random.nextInt(90) - 45);	
+					}
 				}
 			}
 			channel.unregister();

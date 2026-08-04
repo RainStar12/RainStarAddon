@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +124,7 @@ public class Crow extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DAMAGE = synergySettings.new SettingObject<Integer>(Crow.class, "damage", 9,
+	public static final SettingObject<Integer> DAMAGE = rsSynergySettings.new SettingObject<Integer>(Crow.class, "damage", 9,
 			"# 섀도우 스텝의 기본 대미지") {
 
 		@Override
@@ -132,7 +134,7 @@ public class Crow extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Crow.class, "right-cooldown", 50,
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Crow.class, "right-cooldown", 50,
 			"# 철괴 우클릭 쿨타임") {
 
 		@Override

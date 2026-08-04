@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -37,7 +38,8 @@ import daybreak.google.common.base.Predicate;
 }, description = {
 		"신체가 좀비화되어 통제할 수 없게 됩니다. 받는 대미지가 절반이 됩니다.",
 		"좀비가 공격한 대상을 4초간 §5§n감염§f시킵니다.",
-		"이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
+		"이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다.",
+		"강타에 의한 피해를 절반만 적용받습니다."
 })
 public class Erosion extends AbstractGame.Effect implements Listener {
 
@@ -76,6 +78,7 @@ public class Erosion extends AbstractGame.Effect implements Listener {
 		}
 	};
 			
+	@SuppressWarnings("deprecation")
 	public Erosion(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
@@ -157,6 +160,12 @@ public class Erosion extends AbstractGame.Effect implements Listener {
 	@EventHandler()
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(zombie)) {
+			if (e.getDamager() instanceof Player) {
+				Player attacker = (Player) e.getDamager();
+				if (attacker.getInventory().getItemInMainHand().containsEnchantment(Enchantment.DAMAGE_UNDEAD)) {
+					e.setDamage(e.getDamage() - (attacker.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD) * 1.25));
+				}
+			}
 			e.setDamage(e.getDamage() * 0.5);
 		}
 		if (e.getDamager().equals(zombie) && e.getEntity() instanceof Player) {

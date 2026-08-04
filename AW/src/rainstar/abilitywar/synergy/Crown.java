@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -58,13 +61,13 @@ import daybreak.google.common.collect.ImmutableMap;
 @AbilityManifest(name = "왕관", rank = Rank.S, species = Species.OTHERS, explain = {
 		"§e방패병§f을 $[MAX_CHARGE]만큼 고용해 다니며, 전부 사용 시 20초 후 고용합니다.",
 		"철괴 우클릭으로 §e방패병§f을 하나씩 내보내, 생명체를 밀쳐내며",
-		"5초 후 $[DAMAGE]의 §c폭발 피해§f와 함께 §4자폭§f시킵니다. 좌클릭 시 해고합니다.",
+		"4초 후 $[DAMAGE]의 §c폭발 피해§f와 함께 §4자폭§f시킵니다.",
 		"§e방패병§f의 $[RANGE]칸 내의 플레이어는 위압감 탓에 느려집니다.",
 		"$[CHANCE]% 확률로, 특수한 방패병이 나올 가능성이 있습니다.",
 		"§8[§7철§8] §f맞닿는 생명체가 있다면 대기 시간 없이 폭발합니다.",
 		"§2[§a사슬§2] §f세 명의 방패 병사가 일렬로 나갑니다.",
 		"§3[§b다이아몬드§3] §f위압감과 폭발 범위가 증가합니다.",
-		"§5[§d네더라이트§5] §f폭발 피해가 1.3배 증가하고 폭발 위치로 순간 이동합니다."
+		"§5[§d네더라이트§5] §f폭발 피해가 1.5배 증가합니다."
 		})
 public class Crown extends Synergy implements ActiveHandler {
 	
@@ -81,7 +84,7 @@ public class Crown extends Synergy implements ActiveHandler {
 			.build();
 	
 	public static final SettingObject<Integer> MAX_CHARGE = 
-			synergySettings.new SettingObject<Integer>(Crown.class, "max-charge", 10,
+			rsSynergySettings.new SettingObject<Integer>(Crown.class, "max-charge-amount", 10,
 			"# 방패 병사 최대 충전 수") {
 
 		@Override
@@ -92,7 +95,7 @@ public class Crown extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DAMAGE = 
-			synergySettings.new SettingObject<Double>(Crown.class, "damage", 15.0,
+			rsSynergySettings.new SettingObject<Double>(Crown.class, "damage", 18.0,
             "# 방패 병사의 자폭 대미지") {
         @Override
         public boolean condition(Double value) {
@@ -101,7 +104,7 @@ public class Crown extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> RANGE = 
-			synergySettings.new SettingObject<Double>(Crown.class, "range", 5.0,
+			rsSynergySettings.new SettingObject<Double>(Crown.class, "range", 7.0,
             "# 병사 위압감 범위", "# 단위: 칸") {
         @Override
         public boolean condition(Double value) {
@@ -110,7 +113,7 @@ public class Crown extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHANCE = 
-			synergySettings.new SettingObject<Integer>(Crown.class, "chance", 20,
+			rsSynergySettings.new SettingObject<Integer>(Crown.class, "chance", 40,
             "# 특수 병사 확률", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -122,17 +125,10 @@ public class Crown extends Synergy implements ActiveHandler {
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
 			if (clickType == ClickType.RIGHT_CLICK) {
-				if (charge.charges > 0) {
-					if (Crown.this.charge.subtractCharge(1)) {	
-						new Shieldbearer(shieldbearers.get(0)).start();	
-						return true;
-					}
-				}
-			}
-			if (clickType == ClickType.LEFT_CLICK) {
-				if (charge.charges > 0) {
+				if (charge.charges > 0 && !shieldbearers.isEmpty()) {
+					int value = shieldbearers.remove(0);
 					if (Crown.this.charge.subtractCharge(1)) {
-						getPlayer().sendMessage("§c[§e!§c] §f방패병을 해고하였습니다.");
+						new Shieldbearer(value).start();	
 						return true;
 					}
 				}
@@ -144,7 +140,10 @@ public class Crown extends Synergy implements ActiveHandler {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			charge.actionbarChannel.update(charge.toString());
+			if (!charge.isRunning()) {
+				charge.start();
+				charge.setCount(1);
+			}
 		}
 	}
 	
@@ -188,18 +187,18 @@ public class Crown extends Synergy implements ActiveHandler {
 		private Vector direction;
 		private Vector push;
 		private final int value;
-		private HashMap<ArmorStand, Vector> diff;
+		private HashMap<ArmorStand, Vector> diff = new HashMap<>();
 		private final Set<ArmorStand> armorStands = new HashSet<>();
+		private boolean stopped = false;
 		
 		public Shieldbearer(int value) {
-			super(TaskType.REVERSE, 100);
+			super(TaskType.REVERSE, 80);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.value = value;
 		}
 		
 		@Override
 		public void onStart() {
-			shieldbearers.remove(0);
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 			final Location playerLocation = getPlayer().getLocation();
 			direction = playerLocation.getDirection();
@@ -276,12 +275,22 @@ public class Crown extends Synergy implements ActiveHandler {
 				}
 				break;
 			}
-			push = direction.clone().multiply(2).setY(0);
+			push = direction.clone().multiply(1.5).setY(0);
 		}
 		
 		@Override
 		public void run(int count) {
-			if (count >= 80) {
+			for (ArmorStand armorStand : armorStands) {
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, armorStand.getEyeLocation(), 2, 2, predicate)) {
+					entity.setVelocity(push);
+					if (value == 1) this.stop(false);
+				}	
+			}
+			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, shieldbearer.getEyeLocation(), 2, 2, predicate)) {
+				entity.setVelocity(push);
+				if (value == 1) this.stop(false);
+			}
+			if (count >= 65) {
 				shieldbearer.setVelocity(direction);
 				if (value == 2) {
 					Location centerLocation = shieldbearer.getLocation();
@@ -292,6 +301,7 @@ public class Crown extends Synergy implements ActiveHandler {
 					}
 				}
 			} else {
+				stopped = true;
 				shieldbearer.setGravity(false);
 				if (value == 2) {
 					for (ArmorStand armorStand : armorStands) {
@@ -301,19 +311,12 @@ public class Crown extends Synergy implements ActiveHandler {
 					}
 				}
 			}
-			for (Entity entity : LocationUtil.getConflictingEntities(Entity.class, shieldbearer, predicate)) {
-				entity.setVelocity(push);
-				if (value == 1) this.stop(false);
-			}
 			if (count <= 20) {
-				shieldbearer.setGlowing(count % 4 <= 1);
 				if (value == 2) {
 					for (ArmorStand armorStand : armorStands) {
-						if (!armorStand.equals(shieldbearer)) {
-							armorStand.setGlowing(count % 4 <= 1);
-						}
+						armorStand.setGlowing(count % 4 <= 1);
 					}
-				}
+				} else shieldbearer.setGlowing(count % 4 <= 1);
 			}
 		}
 		
@@ -325,9 +328,9 @@ public class Crown extends Synergy implements ActiveHandler {
 		@Override
 		public void onSilentEnd() {
 			double realRange = range;
-			if (value == 3) realRange += 3;
+			if (value == 3) realRange += 5;
 			for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, shieldbearer.getLocation(), realRange, realRange, predicate)) {
-				Damages.damageExplosion(damageable, getPlayer(), (float) (value == 4 ? damage * 1.3 : damage));
+				Damages.damageExplosion(damageable, getPlayer(), (float) (value == 4 ? damage * 1.5 : damage));
 				damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(shieldbearer.getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
 			}
 			if (value == 2) {
@@ -344,43 +347,45 @@ public class Crown extends Synergy implements ActiveHandler {
 			}
 			ParticleLib.EXPLOSION_HUGE.spawnParticle(shieldbearer.getLocation());
 			SoundLib.ENTITY_GENERIC_EXPLODE.playSound(shieldbearer.getLocation());
-			if (value == 4) getPlayer().teleport(shieldbearer);
 			shieldbearer.remove();
 			HandlerList.unregisterAll(this);
 		}
 		
+		@SuppressWarnings("deprecation")
 		@EventHandler()
 		public void onPlayerMove(PlayerMoveEvent e) {
-			double realRange = range;
-			if (value == 3) realRange += 3;
-			if (value == 2) {
-				for (ArmorStand armorstands : armorStands) {
-					if (LocationUtil.isInCircle(armorstands.getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer())) {
-						final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
-						if (toY > fromY) {
-							double dx, dy, dz;
-							final Location from = e.getFrom(), to = e.getTo();
-							dx = to.getX() - from.getX();
-							dy = to.getY() - from.getY();
-							dz = to.getZ() - from.getZ();
-							e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
-						} else if (e.getPlayer().isOnGround()) {
-							e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.6));	
+			if (stopped) {
+				double realRange = range;
+				if (value == 3) realRange += 3;
+				if (value == 2) {
+					for (ArmorStand armorstands : armorStands) {
+						if (LocationUtil.isInCircle(armorstands.getLocation(), e.getPlayer().getLocation(), range) && predicate.test(e.getPlayer())) {
+							final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
+							if (toY > fromY) {
+								double dx, dy, dz;
+								final Location from = e.getFrom(), to = e.getTo();
+								dx = to.getX() - from.getX();
+								dy = to.getY() - from.getY();
+								dz = to.getZ() - from.getZ();
+								e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
+							} else if (e.getPlayer().isOnGround()) {
+								e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.6));	
+							}	
 						}	
-					}	
+					}
 				}
-			}
-			if (LocationUtil.isInCircle(shieldbearer.getLocation(), e.getPlayer().getLocation(), realRange) && predicate.test(e.getPlayer())) {
-				final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
-				if (toY > fromY) {
-					double dx, dy, dz;
-					final Location from = e.getFrom(), to = e.getTo();
-					dx = to.getX() - from.getX();
-					dy = to.getY() - from.getY();
-					dz = to.getZ() - from.getZ();
-					e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
-				} else if (e.getPlayer().isOnGround()) {
-					e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.6));	
+				if (LocationUtil.isInCircle(shieldbearer.getLocation(), e.getPlayer().getLocation(), realRange) && predicate.test(e.getPlayer())) {
+					final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
+					if (toY > fromY) {
+						double dx, dy, dz;
+						final Location from = e.getFrom(), to = e.getTo();
+						dx = to.getX() - from.getX();
+						dy = to.getY() - from.getY();
+						dz = to.getZ() - from.getZ();
+						e.getPlayer().setVelocity(new Vector((dx * 0.6), (dy * 0.1), (dz * 0.6)));	
+					} else if (e.getPlayer().isOnGround()) {
+						e.getPlayer().setVelocity(e.getPlayer().getVelocity().multiply(0.6));	
+					}	
 				}	
 			}
 		}
@@ -402,7 +407,7 @@ public class Crown extends Synergy implements ActiveHandler {
 	private class Charge extends AbilityTimer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
-		private int charges = maxCharge;
+		private int charges = 0;
 
 		private Charge() {
 			super(TaskType.REVERSE, (int) (20 * Wreck.calculateDecreasedAmount(25)));

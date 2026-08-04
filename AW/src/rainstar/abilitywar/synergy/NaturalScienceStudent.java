@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
@@ -108,8 +110,8 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> RESTOCK
-	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
-			"restock", 13, "# 포션 재충전 시간", "# 쿨타임 감소 효과를 40%까지 받습니다.") {
+	= rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
+			"restock", 13, "# 포션 재충전 시간") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -117,8 +119,8 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SLOT_ADD_DAMAGE
-	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-add-damage", 1.6, "# 슬롯머신 <코> 추가 대미지") {
+	= rsSynergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
+			"slot-add-damage", 1.7, "# 슬롯머신 <코> 추가 대미지") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -126,8 +128,8 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SLOT_REDUCE_DAMAGE
-	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-reduce-damage", 2.5, "# 슬롯머신 <크> 대미지 감소") {
+	= rsSynergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
+			"slot-reduce-damage", 2.8, "# 슬롯머신 <크> 대미지 감소") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -135,8 +137,8 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SLOT_HEAL
-	= synergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
-			"slot-heal", 0.7, "# 슬롯머신 <스> 초당 회복량") {
+	= rsSynergySettings.new SettingObject<Double>(NaturalScienceStudent.class,
+			"slot-heal", 0.9, "# 슬롯머신 <스> 초당 회복량") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -144,7 +146,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SLOT_COOLDOWN
-	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
+	= rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
 			"slot-cooldown", 60, "# 슬롯머신 능력 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -158,7 +160,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SLOT_DURATION
-	= synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
+	= rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class,
 			"slot-duration", 10, "# 슬롯머신 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -167,7 +169,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_POISON_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-poison-duration", 14,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-poison-duration", 14,
 			"# 독 지속시간 (단위: 초)") {
 
 		@Override
@@ -178,7 +180,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_WEAKNESS_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-weakness-duration", 17,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-weakness-duration", 17,
 			"# 나약함 지속시간 (단위: 초)") {
 
 		@Override
@@ -189,7 +191,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_SLOWNESS_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slowness-duration", 23,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slowness-duration", 23,
 			"# 구속 지속시간 (단위: 초)") {
 
 		@Override
@@ -200,7 +202,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 
 	public static final SettingObject<Integer> POTION_WITHER_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-wither-duration", 19,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-wither-duration", 19,
 			"# 시듦 지속시간 (단위: 초)") {
 
 		@Override
@@ -211,7 +213,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_BLINDNESS_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-blind-duration", 12,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-blind-duration", 12,
 			"# 실명 지속시간 (단위: 초)") {
 
 		@Override
@@ -222,7 +224,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_CONFUSION_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-confusion-duration", 14,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-confusion-duration", 14,
 			"# 멀미 지속시간 (단위: 초)") {
 
 		@Override
@@ -233,7 +235,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_GLOWING_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-glowing-duration", 90,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-glowing-duration", 90,
 			"# 발광 지속시간 (단위: 초)") {
 
 		@Override
@@ -244,7 +246,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_HUNGER_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-hunger-duration", 120,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-hunger-duration", 120,
 			"# 허기 지속시간 (단위: 초)") {
 
 		@Override
@@ -255,7 +257,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_LEVITATION_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-levitation-duration", 5,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-levitation-duration", 5,
 			"# 공중 부양 지속시간 (단위: 초)") {
 
 		@Override
@@ -266,7 +268,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_SLOW_DIGGING_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slow-digging-duration", 30,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-slow-digging-duration", 30,
 			"# 채굴 피로 지속시간 (단위: 초)") {
 
 		@Override
@@ -277,7 +279,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POTION_UNLUCK_DURATION = 
-			synergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-unluck-duration", 300,
+			rsSynergySettings.new SettingObject<Integer>(NaturalScienceStudent.class, "poiton-unluck-duration", 300,
 			"# 불행 지속시간 (단위: 초)") {
 
 		@Override
@@ -294,8 +296,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 			if (entity instanceof ArmorStand) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))) {
 					return false;
 				}
 				if (getGame() instanceof Teamable) {
@@ -385,6 +386,14 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	restock.start();
 	    	passive.start();
+	    	
+	    	if (!getPlayer().getInventory().getItemInOffHand().getType().equals(MaterialX.SPLASH_POTION.getMaterial())) {
+	    		ItemStack item = getPlayer().getInventory().getItemInOffHand();
+	    		getPlayer().getInventory().setItemInOffHand(null);
+	    		if (getPlayer().getInventory().firstEmpty() == -1) {
+	    			getPlayer().getWorld().dropItem(getPlayer().getLocation(), item);
+	    		} else getPlayer().getInventory().addItem(item);
+	    	}
 	    }
 	}
 	
@@ -393,7 +402,7 @@ public class NaturalScienceStudent extends Synergy implements ActiveHandler {
 	private final double slotadddamage = SLOT_ADD_DAMAGE.getValue();
 	private final double slotreducedamage = SLOT_REDUCE_DAMAGE.getValue();
 	private final double slotheal = SLOT_HEAL.getValue();
-	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(40) * RESTOCK.getValue() : RESTOCK.getValue());
+	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * RESTOCK.getValue() : RESTOCK.getValue());
 	private final Cooldown slotcooldown = new Cooldown(SLOT_COOLDOWN.getValue(), "슬롯머신");
 	private PotionEffectType offhandPotion;
 	private static final Set<Material> bows;

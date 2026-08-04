@@ -1,10 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.potion.PotionEffectType;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -44,8 +47,8 @@ public class OneShotOneKill extends AbilityBase {
 	    }
 	}
 	
-	public static final SettingObject<Integer> MULTIPLY = abilitySettings.new SettingObject<Integer>(OneShotOneKill.class,
-			"multiply", 275, "# 추가 대미지 배율") {
+	public static final SettingObject<Integer> MULTIPLY = rsAbilitySettings.new SettingObject<Integer>(OneShotOneKill.class,
+			"damage-multiply", 300, "# 추가 대미지 배율") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -75,7 +78,7 @@ public class OneShotOneKill extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
 			if (e.getEntity() instanceof Player) {
-				if (isCriticalHit(getPlayer(), attackCooldown) && !attacked.contains(e.getEntity())) {
+				if (isCriticalHit(getPlayer(), attackCooldown) && !attacked.contains(e.getEntity()) && !e.getCause().equals(DamageCause.THORNS)) {
 					Player player = (Player) e.getEntity();
 					new AbilityTimer(5) {
 						
@@ -88,7 +91,7 @@ public class OneShotOneKill extends AbilityBase {
 					SoundLib.ENTITY_ZOMBIE_ATTACK_IRON_DOOR.playSound(getPlayer().getLocation(), 1, 0.9f);
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 1, 1.35f);
 					SoundLib.ENTITY_POLAR_BEAR_WARNING.playSound(getPlayer().getLocation());
-					ParticleLib.CRIT.spawnParticle(player.getLocation().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
+					ParticleLib.CRIT.spawnParticle(player.getLocation().clone().add(0, 1, 0), .3f, .3f, .3f, 100, 1);
 					ParticleLib.ITEM_CRACK.spawnParticle(player.getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.REDSTONE);
 					e.setDamage(e.getDamage() * multiply);	
 					attacked.add(player);

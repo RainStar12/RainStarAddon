@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.SelectMix;
+package rainstar.abilitywar.game.selectmix;
 
 import java.util.StringJoiner;
 

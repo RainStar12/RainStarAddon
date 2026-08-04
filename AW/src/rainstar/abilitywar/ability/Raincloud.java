@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -62,7 +64,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "range", 1.2,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "range", 1.2,
             "# 구름의 범위", "# 단위: 칸") {
 		
         @Override
@@ -73,7 +75,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> MOISTURE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "moisture-duration", 0.1,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "moisture-duration", 0.1,
             "# 습기 지속시간", "# 단위: 초") {
 		
         @Override
@@ -84,7 +86,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEAL_PERCENT = 
-			abilitySettings.new SettingObject<Integer>(Raincloud.class, "heal-percent", 40,
+			rsAbilitySettings.new SettingObject<Integer>(Raincloud.class, "heal-percent", 40,
             "# 회복 치환율", "# 단위: %", "# 40%라면, 1초에 0.40의 체력을 회복합니다.") {
 		
         @Override
@@ -95,7 +97,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
 
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Raincloud.class, "duration", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Raincloud.class, "duration", 15,
             "# 기후 조작 지속시간", "# 단위: 초") {
 		
         @Override
@@ -106,7 +108,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> ADD_RANGE = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "add-range", 1.5,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "add-range", 1.5,
             "# 기후 조작 도중 구름 범위 증가량", "# 단위: 칸") {
 		
         @Override
@@ -117,7 +119,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHANCE = 
-			abilitySettings.new SettingObject<Integer>(Raincloud.class, "chance", 20,
+			rsAbilitySettings.new SettingObject<Integer>(Raincloud.class, "chance", 20,
             "# 먹구름 확률", "# 단위: %") {
 		
         @Override
@@ -128,7 +130,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> LIGHTNING_DELAY = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "lightning-delay", 2.5,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "lightning-delay", 2.5,
             "# 먹구름의 번개 주기", "# 단위: 초") {
 		
         @Override
@@ -139,7 +141,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "stun", 0.8,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "stun", 0.8,
             "# 기절 지속시간", "# 단위: 초") {
 		
         @Override
@@ -150,7 +152,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DELAY = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay-", 1.4,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "cloud-delay-", 1.4,
             "# 자신의 (설정값)초 전의 위치에 구름이 위치합니다.", "# 단위: 초") {
 		
         @Override
@@ -161,7 +163,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> LIGHTNING_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Raincloud.class, "lightning-damage", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(Raincloud.class, "lightning-damage", 3.0,
             "# 번개 피해량", "# 번개의 피해량은 고정 피해량입니다.") {
 		
         @Override
@@ -172,7 +174,7 @@ public class Raincloud extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Raincloud.class, "cooldown", 90,
+			rsAbilitySettings.new SettingObject<Integer>(Raincloud.class, "cooldown", 90,
             "# 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

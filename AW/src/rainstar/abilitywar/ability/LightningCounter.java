@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.attribute.Attribute;
@@ -87,7 +89,7 @@ public class LightningCounter extends AbilityBase {
 	private final Cooldown RunCool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._25);
 	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1, true, false);
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
 			LightningCounter.class, "cooldown", 10, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -100,7 +102,7 @@ public class LightningCounter extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> DAMAGE = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> DAMAGE = rsAbilitySettings.new SettingObject<Double>(
 			LightningCounter.class, "damage", 7.0, "# 기본 대미지") {
 		@Override
 		public boolean condition(Double value) {
@@ -108,7 +110,7 @@ public class LightningCounter extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> DAMAGE_INCREASE = rsAbilitySettings.new SettingObject<Double>(
 			LightningCounter.class, "damage-increase", 1.0, "# 대미시 상승량") {
 		@Override
 		public boolean condition(Double value) {

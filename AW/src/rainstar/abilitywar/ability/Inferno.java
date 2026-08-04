@@ -1,11 +1,14 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -43,8 +46,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Burn;
 
-@AbilityManifest(name = "인페르노", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"§c불 속성§f의 화염 검사, 인페르노.",
+@AbilityManifest(name = "인페르노", rank = Rank.L, species = Species.DEMIGOD, explain = {
 		"§7패시브 §8- §c업화의 주인§f: 화염이 붙은 적을 타격하면 §4불꽃§f을 획득해",
 		" §4불꽃§f이 자신의 화염 피해를 대체하고, 하나당 화염 피해를 10% 더 입습니다.",
 		"§7검 공격 §8- §c열화폭참§f: 자신이 타격한 대상을 2초간 추가 발화시킵니다.",
@@ -71,7 +73,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Inferno.class, "cooldown", 80,
+			rsAbilitySettings.new SettingObject<Integer>(Inferno.class, "cooldown", 80,
             "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
@@ -84,7 +86,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RANGE = 
-			abilitySettings.new SettingObject<Integer>(Inferno.class, "range", 5,
+			rsAbilitySettings.new SettingObject<Integer>(Inferno.class, "range", 5,
             "# 사거리") {
         @Override
         public boolean condition(Integer value) {
@@ -93,7 +95,7 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Inferno.class, "duration", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Inferno.class, "duration", 10,
             "# 지속시간") {
         @Override
         public boolean condition(Integer value) {
@@ -236,8 +238,8 @@ public class Inferno extends AbilityBase implements ActiveHandler {
     @SubscribeEvent
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
     	onEntityDamage(e);
-    	if (e.getDamager().equals(getPlayer())) {
-    		if (e.getEntity().getFireTicks() > 0) {
+    	if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof LivingEntity) {
+    		if (e.getEntity().getFireTicks() > 0 && ((LivingEntity) e.getEntity()).getNoDamageTicks() <= 10) {
     			flameSet((int) (e.getEntity().getFireTicks() * 0.0125));
     			new CutParticle(particleSide).start();
     			particleSide *= -1;

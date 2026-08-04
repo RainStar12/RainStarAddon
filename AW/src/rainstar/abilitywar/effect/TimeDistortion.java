@@ -4,8 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
@@ -16,12 +19,13 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.PotionEffects;
 
 @EffectManifest(name = "시간 왜곡", displayName = "§3시간 왜곡", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION, EffectType.COMBAT_RESTRICTION
 }, description = {
-		"이동 속도 및 공격 속도가 감소합니다.",
+		"이동 / 공격 / 회복 속도가 감속됩니다.",
 		"또한 모든 벡터 영향을 절반만 받습니다."
 })
 public class TimeDistortion extends AbstractGame.Effect implements Listener {
@@ -57,6 +61,24 @@ public class TimeDistortion extends AbstractGame.Effect implements Listener {
 	private void onVelocity(PlayerVelocityEvent e) {
 		if (e.getPlayer().equals(participant.getPlayer())) {
 			e.setVelocity(e.getVelocity().multiply(0.5));
+		}
+	}
+	
+	@EventHandler
+	private void onEntityRegainHealth(EntityRegainHealthEvent e) {
+		if (e.getEntity().equals(participant.getPlayer()) && !e.getRegainReason().equals(RegainReason.ENDER_CRYSTAL)) {
+			double amount = e.getAmount();
+			e.setAmount(amount / 2);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(e.getEntity(), amount / 2, RegainReason.ENDER_CRYSTAL);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+						Healths.setHealth(participant.getPlayer(), participant.getPlayer().getHealth() + amount / 2);
+					}
+				}
+			}.runTaskLater(AbilityWar.getPlugin(), 30L);	
 		}
 	}
 	

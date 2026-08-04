@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.GameMode;
@@ -72,7 +74,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> DURATION_CONFIG 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"duration", 7, "# 물 상태 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -82,7 +84,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> EFFECT_DURATION 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"effect-duration", 7, "# 부식 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -92,7 +94,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> BUFF_DURATION 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"buff-duration", 5, "# 효과 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -102,7 +104,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CHANCE_CONFIG 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"chance", 22, "# 피격시 버프를 받을 확률",
 			"# 30 = 30%") {
 
@@ -114,7 +116,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"range", 5, "# 부식 범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -124,7 +126,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> NO_CHANGE_DURATION 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"no-change-duration", 10, "# 맛 고정 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -134,7 +136,7 @@ public class Demisoda extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG 
-	= synergySettings.new SettingObject<Integer>(Demisoda.class,
+	= rsSynergySettings.new SettingObject<Integer>(Demisoda.class,
 			"cooldown", 30, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {

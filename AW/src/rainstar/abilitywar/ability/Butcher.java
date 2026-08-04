@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -43,7 +45,7 @@ public class Butcher extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> DAMAGE_MULTIPLY = 
-			abilitySettings.new SettingObject<Integer>(Butcher.class, "damage-multiply", 65,
+			rsAbilitySettings.new SettingObject<Integer>(Butcher.class, "damage-multiply", 65,
             "# 공격력 배율", "# 최소 공격력은 0.[값]배이며", "# 최대 공격력은 1.[값]배입니다.") {
         @Override
         public boolean condition(Integer value) {

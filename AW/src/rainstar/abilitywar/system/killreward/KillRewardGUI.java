@@ -52,20 +52,24 @@ public class KillRewardGUI implements Listener {
         openGUI();
 	}
 	
+	private static final YamlConfiguration rewardconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("killreward.txt"));
 	public static Status status = Status.DISABLE;
 	public static Type type = Type.ALL;
 	private final Player player;
-	private final YamlConfiguration rewardconfig = YamlConfiguration.loadConfiguration(FileUtil.newFile("killreward.txt"));
     private Inventory gui = Bukkit.createInventory(null, 54, "§c킬 보상 설정");
     private static List<ItemStack> itemstacks = new ArrayList<>();
     private boolean openguicalled = false;
 	
     @SuppressWarnings("unchecked")
-	private void openGUI() {
-    	openguicalled = true;
+	public static void update() {
     	if (rewardconfig.get("활성화 여부") != null) status = Status.valueOf(rewardconfig.getString("활성화 여부"));
     	if (rewardconfig.get("지급 방법") != null) type = Type.valueOf(rewardconfig.getString("지급 방법"));
     	if (rewardconfig.get("킬 보상 아이템") != null) itemstacks = (List<ItemStack>) rewardconfig.get("킬 보상 아이템");
+    }
+    
+	private void openGUI() {
+    	openguicalled = true;
+    	update();
     	gui.clear();
         gui.setItem(0, status.getItem());
         gui.setItem(2, type.getItem());
@@ -117,7 +121,7 @@ public class KillRewardGUI implements Listener {
     
     public void save() {
         itemstacks.clear();
-        for (int a = 18; a < 53; a++) {
+        for (int a = 18; a < 54; a++) {
         	if (gui.getItem(a) != null) itemstacks.add(gui.getItem(a));
         }
 		rewardconfig.set("활성화 여부", status.name());

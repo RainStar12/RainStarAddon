@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -151,7 +153,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> RIGHT_COOL 
-	= synergySettings.new SettingObject<Integer>(BadManner.class,
+	= rsSynergySettings.new SettingObject<Integer>(BadManner.class,
 			"right-cooldown", 20, "# 우클릭 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -165,7 +167,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> LEFT_COOL
-	= synergySettings.new SettingObject<Integer>(BadManner.class,
+	= rsSynergySettings.new SettingObject<Integer>(BadManner.class,
 			"left-cooldown", 80, "# 좌클릭 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -179,7 +181,7 @@ public class BadManner extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION
-	= synergySettings.new SettingObject<Integer>(BadManner.class,
+	= rsSynergySettings.new SettingObject<Integer>(BadManner.class,
 			"duration", 10, "# 농락 지속시간") {
 		@Override
 		public boolean condition(Integer value) {

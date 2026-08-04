@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +13,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -37,7 +40,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @AbilityManifest(name = "타짜", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7다이아몬드 타격 §8- §b승부수§f: 대상과의 §a도박§f을 진행합니다. $[COOLDOWN]",
-		" §e50%§f 확률로 자신 혹은 상대가 남은 체력의 2/3를 잃게 됩니다.",
+		" §e50%§f 확률로 자신 혹은 상대가 최대 체력의 절반을 잃게 됩니다.",
 		"§7패시브 §8- §c밑장빼기§f: 자신이 패배할 §a도박§f에서 §e50%§f의 확률로",
 		" 결과를 바꿔 상대가 대신 패배하게 됩니다.",
 		"§7패시브 §8- §3운명 엿보기§f: 한 번 이상 도박을 진행한 대상에게 다시 도박을 걸 때",
@@ -56,7 +59,7 @@ public class Sharper extends Synergy {
 		}
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Sharper.class,
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Sharper.class,
 			"cooldown", 10, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -105,15 +108,18 @@ public class Sharper extends Synergy {
 		if (player.equals(getPlayer())) {
 			Random random = new Random();
 			if (random.nextBoolean()) {
-				target.setHealth(target.getHealth() / 3);
+				target.setHealth(Math.max(1, target.getHealth() - (target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.5)));
+				if (target.getHealth() == 1) target.damage(Integer.MAX_VALUE, getPlayer());
 				target.getWorld().createExplosion(target.getLocation(), 1.0F); 	
 				player.sendMessage("§3[§b!§3] §c밑장 빼기§f를 통하여 살아남았습니다.");
 			} else {
-				player.setHealth(player.getHealth() / 3);
+				player.setHealth(Math.max(1, player.getHealth() - (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.5)));
+				if (player.getHealth() == 1) player.damage(Integer.MAX_VALUE, getPlayer());
 				player.getWorld().createExplosion(player.getLocation(), 1.0F); 	
 			}
 		} else {
-			player.setHealth(player.getHealth() / 3);
+			player.setHealth(Math.max(1, player.getHealth() - (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.5)));
+			if (player.getHealth() == 1) player.damage(Integer.MAX_VALUE, getPlayer());
 			player.getWorld().createExplosion(player.getLocation(), 1.0F); 	
 		}
 		if (fateMap.containsKey(target)) fateMap.get(target).stop(false);

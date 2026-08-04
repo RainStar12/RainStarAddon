@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability.silent;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +11,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -72,7 +73,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 	}
 	
 	public static final SettingObject<Integer> NOT_LOOK_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "not-look-damage-increase-", 15,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "not-look-damage-increase-amount", 15,
             "# 나를 바라보지 않는 대상에게 공격력 증가", "# 단위: %") {
 
         @Override
@@ -83,7 +84,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> MAX_STACK = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-stack-", 6,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-stack", 3,
             "# 최대 표식 개수") {
 
         @Override
@@ -94,7 +95,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> PASSIVE_MUTE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "passive-mute-", 3.3,
+			rsAbilitySettings.new SettingObject<Double>(AbstractSilent.class, "passive-mute", 4.4,
             "# 표식 폭발 시 침묵 부여 시간", "# 단위: 초") {
 
         @Override
@@ -105,7 +106,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> UNIT_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "unit-cooldown-", 10,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "unit-cooldown", 10,
             "# 유닛별 쿨타임", "# 단위: 초") {
 
         @Override
@@ -121,7 +122,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "range-", 8.0,
+			rsAbilitySettings.new SettingObject<Double>(AbstractSilent.class, "range", 10.0,
             "# 액티브 침묵 범위", "# 단위: 칸") {
 
         @Override
@@ -132,7 +133,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> ACTIVE_MUTE = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "active-mute-", 7.0,
+			rsAbilitySettings.new SettingObject<Double>(AbstractSilent.class, "active-mute", 10.0,
             "# 액티브 침묵 시간", "# 단위: 초") {
 
         @Override
@@ -143,7 +144,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "cooldown", 45,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "cooldown", 35,
             "# 액티브 쿨타임", "# 단위: 초") {
 
         @Override
@@ -159,7 +160,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Double> SPEED_DURATION = 
-			abilitySettings.new SettingObject<Double>(AbstractSilent.class, "speed-duration", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(AbstractSilent.class, "speed-duration", 20.0,
             "# 액티브 이동 속도 증가 시간", "# 단위: 초") {
 
         @Override
@@ -170,7 +171,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> SPEED_PER = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "speed-per-", 25,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "speed-per", 35,
             "# 침묵 소지자 수 비례 이속 증가치", "# 단위: %") {
 
         @Override
@@ -181,7 +182,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
     };
     
 	public static final SettingObject<Integer> MAX_SPEED = 
-			abilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-speed-", 200,
+			rsAbilitySettings.new SettingObject<Integer>(AbstractSilent.class, "max-speed", 300,
             "# 최대 이동 속도 증가치", "# 단위: %") {
 
         @Override
@@ -290,7 +291,7 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 		
 		if (getPlayer().equals(damager)) {
 			if (!getPlayer().equals(LocationUtil.getEntityLookingAt(Player.class, (LivingEntity) e.getEntity(), 30, predicate))) {
-				e.setDamage(e.getDamage() * notlookdamageincrease);
+				e.setDamage(e.getDamage() + (e.getDamage() * notlookdamageincrease));
 			}
 			
 			if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof Player && !e.isCancelled()) {
@@ -300,14 +301,14 @@ public abstract class AbstractSilent extends AbilityBase implements ActiveHandle
 					if (stackMap.containsKey(participant)) {
 						if (stackMap.get(participant).addStack()) {
 							Mute.apply(participant, TimeUnit.TICKS, passivemute);
-						} else SightLock.apply(participant, TimeUnit.TICKS, 3);
+						} else SightLock.apply(participant, TimeUnit.TICKS, 5);
 					} else if (System.currentTimeMillis() - unitcooldowns.getOrDefault(player.getUniqueId(), 0L) >= unitCooldown) new Stack(participant).start();
 					
 				}
 			}
 		}
 		
-		if (stackMap.containsKey(getGame().getParticipant(damager)) && e.getEntity().equals(getPlayer())) {
+		if (damager != null && stackMap.containsKey(getGame().getParticipant(damager)) && e.getEntity().equals(getPlayer())) {
 			stackMap.get(getGame().getParticipant(damager)).stop(false);
 		}
 	}

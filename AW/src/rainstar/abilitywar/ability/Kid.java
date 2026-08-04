@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ import rainstar.abilitywar.effect.SightLock;
 		" §b망설임§f × $[CHANCE]%의 확률로 대상은 시야가 뒤틀리고, §b망설임§f이 초기화됩니다.",
 		" 시야를 뒤틀고 나면 대상에게 $[SIGHT_LOCK]초간 §5§n시야 고정§f 상태이상을 부여합니다.",
 		"§7철괴 우클릭 §8- §c방범벨§f: 적들을 §b망설임§f × $[STUN]초간 §e§n기절§f시킵니다. $[COOLDOWN]",
-		"§a[§e능력 제공자§a] §6Ddang_67"
+		"§b[§7아이디어 제공자§b] §6Ddang_67"
 		},
 		summarize = {
 		"자신을 공격한 적을 확률적으로 시야를 돌리고 §5§n고정§f시킵니다.",
@@ -47,7 +49,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> CHANCE = 
-			abilitySettings.new SettingObject<Integer>(Kid.class, "chance", 20,
+			rsAbilitySettings.new SettingObject<Integer>(Kid.class, "chance", 20,
 			"# 망설임 당 시야가 뒤틀릴 확률") {
 
 		@Override
@@ -58,7 +60,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(Kid.class, "stun-duration", 1.0,
+			rsAbilitySettings.new SettingObject<Double>(Kid.class, "stun-duration", 1.0,
 			"# 기절 지속시간") {
 
 		@Override
@@ -69,7 +71,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SIGHT_LOCK = 
-			abilitySettings.new SettingObject<Double>(Kid.class, "sight-lock-duration-", 0.5,
+			rsAbilitySettings.new SettingObject<Double>(Kid.class, "sight-lock-duration-", 0.5,
 			"# 시야 고정 지속시간") {
 
 		@Override
@@ -80,7 +82,7 @@ public class Kid extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Kid.class, "cooldown", 60,
+			rsAbilitySettings.new SettingObject<Integer>(Kid.class, "cooldown", 60,
 			"# 쿨타임") {
 
 		@Override

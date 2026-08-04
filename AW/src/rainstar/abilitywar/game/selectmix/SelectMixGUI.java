@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.SelectMix;
+package rainstar.abilitywar.game.selectmix;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -80,11 +80,11 @@ public class SelectMixGUI implements Listener {
             .lore(new ArrayList<String>() {
             	{
             		add("§a==========================================");
-            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
-                    add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
-                    add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
-                    add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
-                    add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+            		add("§7콘크리트 블럭을 §b§n좌클릭§7하면, 해당 §b능력§7을 §d선택§7합니다.");
+                    add("§7같은 방식으로 최대 §e2개§7까지 지정할 수 있으며,");
+                    add("§e2개§7를 넘는다면 가장 먼저 선택한 §b능력§7이 지워집니다.");
+                    add("§7배정되는 순서는 §b능력§7이 지정된 순서입니다.");
+                    add("§e2개§7를 전부 선택하였으면 §a라임색 유리판§7을 눌러 결정을 마칩니다.");
                     add("§a==========================================");
                     add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
                     add("§7리롤 기회: -회");
@@ -148,14 +148,14 @@ public class SelectMixGUI implements Listener {
     	meta.setLore(new ArrayList<String>() {
         	{
         		add("§a==========================================");
-        		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
-                add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
-                add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
-                add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
-                add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+        		add("§7콘크리트 블럭을 §b§n좌클릭§7하면, 해당 §b능력§7을 §d선택§7합니다.");
+                add("§7같은 방식으로 최대 §e2개§7까지 지정할 수 있으며,");
+                add("§e2개§7를 넘는다면 가장 먼저 선택한 §b능력§7이 지워집니다.");
+                add("§7배정되는 순서는 §b능력§7이 지정된 순서입니다.");
+                add("§e2개§7를 전부 선택하였으면 §a라임색 유리판§7을 눌러 결정을 마칩니다.");
                 add("§a==========================================");
                 add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
-                add("§3리롤 기회§f: §a" + rerollable + "§f회");
+                add("§7리롤 기회: §a" + rerollable + "§7회");
                 add("§a==========================================");
                 add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
                 add("§a==========================================");
@@ -234,7 +234,7 @@ public class SelectMixGUI implements Listener {
     		}
     		break;
     	}
-    	if (mix.hasSynergy()) player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getSynergy().getDisplayName() + "§e(" + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getLeft() + " + " + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getRight() + "§e)§f입니다.");
+    	if (mix.hasSynergy()) player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getSynergy().getDisplayName() + "§e(" + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getLeft().getManifest().name() + " + " + SynergyFactory.getSynergyBase(mix.getSynergy().getRegistration()).getRight().getManifest().name() + "§e)§f입니다.");
     	else player.getPlayer().sendMessage("§2[§a!§2] §f능력을 확정하였습니다. 당신의 능력: §b" + mix.getFirst().getDisplayName() + " §7+ §b" + mix.getSecond().getDisplayName() + "§f입니다.");
     }
     
@@ -290,14 +290,14 @@ public class SelectMixGUI implements Listener {
                 	meta.setLore(new ArrayList<String>() {
 		            	{
 		            		add("§a==========================================");
-		            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
-		                    add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
-		                    add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
-		                    add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
-		                    add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+		            		add("§7콘크리트 블럭을 §b§n좌클릭§7하면, 해당 §b능력§7을 §d선택§7합니다.");
+		                    add("§7같은 방식으로 최대 §e2개§7까지 지정할 수 있으며,");
+		                    add("§e2개§7를 넘는다면 가장 먼저 선택한 §b능력§7이 지워집니다.");
+		                    add("§7배정되는 순서는 §b능력§7이 지정된 순서입니다.");
+		                    add("§e2개§7를 전부 선택하였으면 §a라임색 유리판§7을 눌러 결정을 마칩니다.");
 		                    add("§a==========================================");
 		                    add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
-		                    add("§3리롤 기회§f: §a" + (rerollable - rerollused) + "§f회");
+		                    add("§7리롤 기회: §a" + (rerollable - rerollused) + "§7회");
 		                    add("§a==========================================");
 		                    add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
 		                    add("§a==========================================");
@@ -313,14 +313,14 @@ public class SelectMixGUI implements Listener {
                 	meta.setLore(new ArrayList<String>() {
 		            	{
 		            		add("§a==========================================");
-		            		add("§7콘크리트 블럭을 §b§n좌클릭§f하면, 해당 §b능력§f을 §d선택§f합니다.");
-		                    add("§7같은 방식으로 최대 §e2개§f까지 지정할 수 있으며,");
-		                    add("§e2개§f를 넘는다면 가장 먼저 선택한 §b능력§f이 지워집니다.");
-		                    add("§7배정되는 순서는 §b능력§f이 지정된 순서입니다.");
-		                    add("§e2개§f를 전부 선택하였으면 §a라임색 유리판§f을 눌러 결정을 마칩니다.");
+		            		add("§7콘크리트 블럭을 §b§n좌클릭§7하면, 해당 §b능력§7을 §d선택§7합니다.");
+		                    add("§7같은 방식으로 최대 §e2개§7까지 지정할 수 있으며,");
+		                    add("§e2개§7를 넘는다면 가장 먼저 선택한 §b능력§7이 지워집니다.");
+		                    add("§7배정되는 순서는 §b능력§7이 지정된 순서입니다.");
+		                    add("§e2개§7를 전부 선택하였으면 §a라임색 유리판§7을 눌러 결정을 마칩니다.");
 		                    add("§a==========================================");
 		                    add("§7종이를 눌러 리롤 기회를 사용해 선택지들을 바꿀 수도 있습니다.");
-		                    add("§3리롤 기회§f: §a" + (rerollable - rerollused) + "§f회");
+		                    add("§7리롤 기회: §a" + (rerollable - rerollused) + "§7회");
 		                    add("§a==========================================");
 		                    add("§c자동 스킵까지 선택을 미루는 것을 추천드리지 않습니다...");
 		                    add("§a==========================================");

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,7 +109,7 @@ public class Detection extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Detection.class,
+			rsAbilitySettings.new SettingObject<Integer>(Detection.class,
 			"duration", 2, "# 능력 지속시간") {
 
 		@Override
@@ -117,7 +119,7 @@ public class Detection extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> RANGE = rsAbilitySettings.new SettingObject<Integer>(
 			Detection.class,
 			"range", 3, "# 범위 설정", "# 주의! 범위 모드로 change 콘피그 변경 후 적용됩니다.") {
 
@@ -128,7 +130,7 @@ public class Detection extends AbilityBase {
 
 	};	
 	
-	public static final SettingObject<Boolean> CHANGE = abilitySettings.new SettingObject<Boolean>(
+	public static final SettingObject<Boolean> CHANGE = rsAbilitySettings.new SettingObject<Boolean>(
 			Detection.class, "change", false, "# true로 변경하시면 간파 시도시 대상의",
 			"일부 범위 내의 모든 플레이어의 근접 공격을 간파합니다.") {
 		
@@ -140,7 +142,7 @@ public class Detection extends AbilityBase {
 	};
 	 
 	public static final SettingObject<Integer> SKILL_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Detection.class, "skill-cooldown", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Detection.class, "skill-cooldown", 15,
             "# 쿨타임") {
 
         @Override
@@ -194,8 +196,9 @@ public class Detection extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
 		if (swords.contains(e.getOffHandItem().getType())) {
-			if (e.getPlayer().equals(getPlayer()) && !cool.isCooldown()) {
-				if (LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate) != null) {
+			if (e.getPlayer().equals(getPlayer())) {
+				e.setCancelled(true);
+				if (!cool.isCooldown() && LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 3, predicate) != null) {
 	    			final AbilityPreActiveSkillEvent event = new AbilityPreActiveSkillEvent(this, e.getOffHandItem().getType(), null);
 	    			Bukkit.getPluginManager().callEvent(event);
 	    			if (!event.isCancelled()) {
@@ -284,7 +287,6 @@ public class Detection extends AbilityBase {
 	    			}
 				}
 			}
-			e.setCancelled(true);
 		}
 	}
 }

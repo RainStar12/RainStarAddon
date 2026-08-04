@@ -1,14 +1,14 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -17,17 +17,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -67,7 +66,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
@@ -83,13 +81,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 		"§7철괴 우클릭 §8- §a기회 부여§f: 다른 플레이어를 15칸 내에서 우클릭 해 대상의 능력이",
 		" §dS 등급§f보다 낮을 경우 최소 한 등급 이상의 능력으로 §b재추첨§f합니다.",
 		" 이때 대상에게 바꿔준 능력을 알 수 있습니다. $[COOLDOWN]",
-		" 또한 바꿔준 대상에게서 §e기회 체력§f을 2칸 적립합니다. 대상은 나에게",
-		" 다음 공격 피해를 입히지 못하고 강하게 넉백당합니다.",
+		" 기회를 준 횟수만큼, §a마지막 기회§f의 능력 선택지가 늘어납니다.",
 		"§7패시브 §8- §a마지막 기회§f: §c치명적인 피해를 입었을 때§f 단 한 번",
-		" 사망하지 않고 대신 체력 한 칸으로 §d부활§f합니다. 이때, 다른 플레이어에게",
-		" 적립한 §e기회 체력§f만큼 각 대상의 체력을 가져와 즉시 §d회복§f합니다.",
-		" 또한 최대 15초간 GUI가 열려 회복한 체력에 비례해 최대 7가지의 능력 중",
-		" 한 가지의 능력을 선택해 이 능력을 변경할 수 있습니다."
+		" 사망하지 않고 대신 최대 체력으로 §d부활§f합니다. 이후 15초간 GUI가 열려",
+		" 최소 2가지부터 최대 9가지의 능력 중 하나를 선택해 이 능력을 변경할 수 있습니다."
 		},
 		summarize = {
 		"§7철괴 우클릭§f으로 다른 플레이어를 15칸 내에서 바라보고 우클릭하면",
@@ -150,9 +145,6 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 	private static final Circle circle = Circle.of(0.5, 30);
 	private static final RGB gold = RGB.of(254, 228, 1);
 	private Participant target = null;
-	private Set<UUID> inv = new HashSet<>();
-	private Map<Participant, Integer> getHp = new HashMap<>();
-	private Set<Player> knockback = new HashSet<>();
 	private static final Random random = new Random();
 	private boolean rebirth = false;
 	private final int chance = CHANCE.getValue();
@@ -177,7 +169,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Kairos.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Kairos.class,
 			"cooldown", 20, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -190,8 +182,8 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Kairos.class,
-			"chance", 10, "# 시너지 등장 확률", "# 기준: n/1000", "# 10으로 입력 시 10/1000, 1%입니다.") {
+	public static final SettingObject<Integer> CHANCE = rsAbilitySettings.new SettingObject<Integer>(Kairos.class,
+			"synergy-chance", 30, "# 시너지 등장 확률", "# 기준: n/1000", "# 10으로 입력 시 10/1000, 1%입니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -212,14 +204,28 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		).collect(Collectors.toList());
 		return registrations.isEmpty() ? null : random.pick(registrations);
 	}
-
-    public AbilityRegistration getRandomSynergy() {
-
+	
+	public AbilityRegistration getRandomSynergyByRank(Participant target, Rank rank) {
 		Set<AbilityRegistration> synergies = new HashSet<>();
 		
         for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
         	String name = synergy.getManifest().name();
-        	if (!Configuration.Settings.isBlacklisted(name) && !name.equals("기회")) {
+        	final int criterion = rank.ordinal();
+        	if (!Configuration.Settings.isBlacklisted(name) && synergy.getAbilityClass().getAnnotation(Beta.class) == null && (getParticipant().equals(target) || synergy.getManifest().rank().ordinal() < criterion)) {
+        		synergies.add(synergy);
+        	}
+        }
+		
+        Random r = new Random();
+        return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
+    }
+
+    public AbilityRegistration getRandomSynergy() {
+		Set<AbilityRegistration> synergies = new HashSet<>();
+		
+        for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
+        	String name = synergy.getManifest().name();
+        	if (!Configuration.Settings.isBlacklisted(name) && synergy.getAbilityClass().getAnnotation(Beta.class) == null) {
         		synergies.add(synergy);
         	}
         }
@@ -237,7 +243,28 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 				target = getGame().getParticipant(player);
 				if (target.hasAbility() && !target.getAbility().isRestricted()) {
 					AbilityBase ab = target.getAbility();
-					if (ab.getRank().equals(Rank.C) || ab.getRank().equals(Rank.B) || ab.getRank().equals(Rank.A)) {
+					if (SynergyFactory.isRegistered(ab.getName())) {
+						if (ab.getRank().equals(Rank.C) || ab.getRank().equals(Rank.B) || ab.getRank().equals(Rank.A)) {
+							try {
+								target.setAbility(getRandomSynergyByRank(target, ab.getRank()).getAbilityClass());
+							} catch (UnsupportedOperationException | ReflectiveOperationException e) {
+								e.printStackTrace();
+							}
+							getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
+							getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + target.getAbility().getDisplayName() + "§f입니다.");
+							target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + target.getAbility().getDisplayName() + "§f" + KoreanUtil.getJosa(target.getAbility().getDisplayName(), Josa.이가) + " 되었습니다.");
+							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);
+							SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
+							cooldown.start();
+							stack++;
+							ac.update("§b기회를 준 횟수§7: §e" + stack);
+							return true;
+						} else {
+							getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
+							SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
+							return false;
+						}
+					} else if (ab.getRank().equals(Rank.C) || ab.getRank().equals(Rank.B) || ab.getRank().equals(Rank.A)) {
 						try {
 							target.setAbility(getRandomAbility(target, ab.getRank()).getAbilityClass());
 						} catch (UnsupportedOperationException | ReflectiveOperationException e) {
@@ -246,37 +273,6 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 						getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
 						getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + target.getAbility().getDisplayName() + "§f입니다.");
 						target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + target.getAbility().getDisplayName() + "§f" + KoreanUtil.getJosa(target.getAbility().getDisplayName(), Josa.이가) + " 되었습니다.");
-						new AbilityTimer(150) {
-
-							private ActionbarChannel actionbarChannel;
-
-							@Override
-							protected void run(int count) {
-								actionbarChannel.update("§7무적 §f: " + (getCount() / 20.0) + "초");
-							}
-
-							@Override
-							protected void onStart() {
-								inv.add(target.getPlayer().getUniqueId());
-								actionbarChannel = target.actionbar().newChannel();
-							}
-
-							@Override
-							protected void onEnd() {
-								inv.remove(target.getPlayer().getUniqueId());
-								if (actionbarChannel != null)
-									actionbarChannel.unregister();
-							}
-
-							@Override
-							protected void onSilentEnd() {
-								inv.remove(target.getPlayer().getUniqueId());
-								if (actionbarChannel != null)
-									actionbarChannel.unregister();
-							}
-						}.setPeriod(TimeUnit.TICKS, 1).start();
-						getHp.put(target, getHp.getOrDefault(target, 0) + 4);
-						knockback.add(target.getPlayer());
 						SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);
 						SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
 						cooldown.start();
@@ -288,56 +284,17 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 						final AbilityBase first = mix.getFirst(), second = mix.getSecond();
 						
 						if (mix.hasSynergy()) {
-							getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
-							SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
-							return false;
-						}
-						final Mix myAbility = (Mix) getParticipant().getAbility();
-						if (this.equals(myAbility.getFirst())) {
-							final boolean firstStatus = first.getRank().equals(Rank.C) || first.getRank().equals(Rank.B) || first.getRank().equals(Rank.A);
-							if (firstStatus) {
-								Class<? extends AbilityBase> firstClass = first.getClass();
-								if (firstStatus) firstClass = getRandomAbility(target, first.getRank()).getAbilityClass();
+							if (mix.getSynergy().getRank().equals(Rank.C) || mix.getSynergy().getRank().equals(Rank.B) || mix.getSynergy().getRank().equals(Rank.A)) {
+								AbilityRegistration synergy = getRandomSynergyByRank(target, mix.getSynergy().getRank());
 								try {
-									mix.setAbility(firstClass, mix.getSecond().getClass());
-								} catch (ReflectiveOperationException e) {
+									mix.setAbility(SynergyFactory.getSynergyBase(synergy).getLeft(), SynergyFactory.getSynergyBase(synergy).getRight());
+								} catch (UnsupportedOperationException | ReflectiveOperationException e) {
 									e.printStackTrace();
 								}
 								getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
-								getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getFirst().getDisplayName() + "§f입니다.");
-								target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
-								new AbilityTimer(150) {
-
-									private ActionbarChannel actionbarChannel;
-
-									@Override
-									protected void run(int count) {
-										actionbarChannel.update("§8무적§f: " + (getCount() / 20.0) + "초");
-									}
-
-									@Override
-									protected void onStart() {
-										inv.add(target.getPlayer().getUniqueId());
-										actionbarChannel = target.actionbar().newChannel();
-									}
-
-									@Override
-									protected void onEnd() {
-										inv.remove(target.getPlayer().getUniqueId());
-										if (actionbarChannel != null)
-											actionbarChannel.unregister();
-									}
-
-									@Override
-									protected void onSilentEnd() {
-										inv.remove(target.getPlayer().getUniqueId());
-										if (actionbarChannel != null)
-											actionbarChannel.unregister();
-									}
-								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 4);
-								knockback.add(target.getPlayer());
-								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
+								getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + synergy.getManifest().name() + "§f입니다.");
+								target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + synergy.getManifest().name() + "§f" + KoreanUtil.getJosa(target.getAbility().getDisplayName(), Josa.이가) + " 되었습니다.");
+								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
 								cooldown.start();
 								stack++;
@@ -348,67 +305,63 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 								SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
 								return false;
 							}
-						} else if (this.equals(myAbility.getSecond())) {
-							final boolean secondStatus = second.getRank().equals(Rank.C) || second.getRank().equals(Rank.B) || second.getRank().equals(Rank.A);
-							if (secondStatus) {
-								Class<? extends AbilityBase> secondClass = second.getClass();
-								if (secondStatus) secondClass = getRandomAbility(target, second.getRank()).getAbilityClass();
-								try {
-									mix.setAbility(mix.getFirst().getClass(), secondClass);
-								} catch (ReflectiveOperationException e) {
-									e.printStackTrace();
+						} else {
+							final Mix myAbility = (Mix) getParticipant().getAbility();
+							if (this.equals(myAbility.getFirst())) {
+								final boolean firstStatus = first.getRank().equals(Rank.C) || first.getRank().equals(Rank.B) || first.getRank().equals(Rank.A);
+								if (firstStatus) {
+									Class<? extends AbilityBase> firstClass = first.getClass();
+									if (firstStatus) firstClass = (SynergyFactory.isRegistered(first.getName())) ? getRandomSynergyByRank(target, first.getRank()).getAbilityClass() : getRandomAbility(target, first.getRank()).getAbilityClass();
+									try {
+										mix.setAbility(firstClass, mix.getSecond().getClass());
+									} catch (ReflectiveOperationException e) {
+										e.printStackTrace();
+									}
+									getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
+									getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getFirst().getDisplayName() + "§f입니다.");
+									target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
+									SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
+									SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
+									cooldown.start();
+									stack++;
+									ac.update("§b기회를 준 횟수§7: §e" + stack);
+									return true;
+								} else {
+									getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
+									SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
+									return false;
 								}
-								getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
-								getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getSecond().getDisplayName() + "§f입니다.");
-								target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
-								new AbilityTimer(150) {
-
-									private ActionbarChannel actionbarChannel;
-
-									@Override
-									protected void run(int count) {
-										actionbarChannel.update("§8무적§f: " + (getCount() / 20.0) + "초");
+							} else if (this.equals(myAbility.getSecond())) {
+								final boolean secondStatus = second.getRank().equals(Rank.C) || second.getRank().equals(Rank.B) || second.getRank().equals(Rank.A);
+								if (secondStatus) {
+									Class<? extends AbilityBase> secondClass = second.getClass();
+									if (secondStatus) secondClass = (SynergyFactory.isRegistered(second.getName())) ? getRandomSynergyByRank(target, second.getRank()).getAbilityClass() : getRandomAbility(target, second.getRank()).getAbilityClass();
+									try {
+										mix.setAbility(mix.getFirst().getClass(), secondClass);
+									} catch (ReflectiveOperationException e) {
+										e.printStackTrace();
 									}
-
-									@Override
-									protected void onStart() {
-										inv.add(target.getPlayer().getUniqueId());
-										actionbarChannel = target.actionbar().newChannel();
-									}
-
-									@Override
-									protected void onEnd() {
-										inv.remove(target.getPlayer().getUniqueId());
-										if (actionbarChannel != null)
-											actionbarChannel.unregister();
-									}
-
-									@Override
-									protected void onSilentEnd() {
-										inv.remove(target.getPlayer().getUniqueId());
-										if (actionbarChannel != null)
-											actionbarChannel.unregister();
-									}
-								}.setPeriod(TimeUnit.TICKS, 1).start();
-								getHp.put(target, getHp.getOrDefault(target, 0) + 4);
-								knockback.add(target.getPlayer());
-								SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
-								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
-								cooldown.start();
-								stack++;
-								ac.update("§b기회를 준 횟수§7: §e" + stack);
-								return true;
-							} else {
-								getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
-								SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
-								return false;
-							}
+									getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님에게 §a기회§f를 드립니다.");
+									getPlayer().sendMessage("§b[§a!§b] §f이제 대상의 능력은 §e" + mix.getSecond().getDisplayName() + "§f입니다.");
+									target.getPlayer().sendMessage("§b[§a!§b] §e" + getPlayer().getName() + "§f님이 당신에게 기회를 주어 능력이 §e" + mix.getFirst().getDisplayName() + "§f, §e" + mix.getSecond().getDisplayName() + "§f" + KoreanUtil.getJosa(mix.getSecond().getDisplayName(), Josa.이가) + " 되었습니다.");
+									SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(target.getPlayer(), 1, 1.3f);;
+									SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer(), 1, 1.5f);
+									cooldown.start();
+									stack++;
+									ac.update("§b기회를 준 횟수§7: §e" + stack);
+									return true;
+								} else {
+									getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
+									SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
+									return false;
+								}
+							}	
 						}
 					} else {
-							getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
-							SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
-							return false;
-						}
+						getPlayer().sendMessage("§b[§a!§b] §e" + player.getName() + "§f님은 §c기회§f를 받을 필요가 없습니다.");
+						SoundLib.ENTITY_ENDERMAN_HURT.playSound(getPlayer(), 1, 0.7f);
+						return false;
+					}
 				} else {
 					getPlayer().sendMessage("§b[§a!§b] §f해당 플레이어는 받을 수 있는 기회가 없습니다.");
 					return false;
@@ -418,62 +371,24 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	@SubscribeEvent(priority = 4)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (inv.contains(e.getDamager().getUniqueId()) || inv.contains(e.getEntity().getUniqueId())) {
-		 	e.setCancelled(true);
-		}
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() != null) {
-				Player player = (Player) projectile.getShooter();
-				if (inv.contains(player.getUniqueId())) {
-					e.setCancelled(true);
-				}
-				if (knockback.contains(player)) {
-					knockback.remove(player);
-					player.setVelocity(VectorUtil.validateVector(player.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().clone().setY(0).multiply(3.5)));	
-					e.setCancelled(true);
-				}
-			}
-		}
-		if (knockback.contains(e.getDamager()) && e.getEntity().equals(getPlayer())) {
-			knockback.remove(e.getDamager());
-			e.getDamager().setVelocity(VectorUtil.validateVector(e.getDamager().getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().clone().setY(0).multiply(3.5)));	
-			e.setCancelled(true);
-		}
 		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent(priority = 4)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 
-	@SubscribeEvent(priority = 10)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0 && !rebirth) {
 			e.setCancelled(true);
 			e.setDamage(0);
 			this.rebirth = true;
-			int sum = 0;
-			for (final Entry<Participant, Integer> entry : getHp.entrySet()) {
-				final int health = entry.getValue();
-				final Player player = entry.getKey().getPlayer();
-				Healths.setHealth(player, player.getHealth() - health);
-				sum += health;
-			}
-			Healths.setHealth(getPlayer(), 1 + sum);
-			if (sum >= 4) {
-				new AbilitySelect(sum / 4).start();
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onEntityShootBow(EntityShootBowEvent e) {
-		if (inv.contains(e.getEntity().getUniqueId())) {
-			e.setCancelled(true);
+			Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+			new AbilitySelect(stack).start();
 		}
 	}
 	
@@ -489,20 +404,20 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		private AbilityRegistration selected;
 		
 		private final Inventory gui;
-		private int getHps;
+		private int stack;
 		
-		public AbilitySelect(int getHps) {
+		public AbilitySelect(int stack) {
 			super(TaskType.REVERSE, 300);
 			setPeriod(TimeUnit.TICKS, 1);
 			gui = Bukkit.createInventory(null, 9, "§0능력을 선택해주세요.");
-			this.getHps = Math.min(7, getHps + 1);
+			this.stack = Math.min(9, stack + 2);
 		}
 		
 		protected void onStart() {
 			SoundLib.BLOCK_ENDER_CHEST_OPEN.playSound(getPlayer().getLocation(), 1f, 0.5f);
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 			getPlayer().openInventory(gui);
-			for (int i = 0; i < getHps; i++) {
+			for (int i = 0; i < stack; i++) {
 				if (getParticipant().getAbility().getClass().equals(Mix.class)) {
 					final Mix mix = (Mix) getParticipant().getAbility();
 					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
@@ -544,7 +459,7 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void run(int arg0) {
-			placeItem(getHps);
+			placeItem(stack);
 			getPlayer().setGameMode(GameMode.SPECTATOR);
 			if (arg0 == 60) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
 			if (arg0 == 40) SoundLib.BLOCK_NOTE_BLOCK_SNARE.playSound(getPlayer(), 1, 1.7f); 
@@ -791,6 +706,82 @@ public class Kairos extends AbilityBase implements ActiveHandler {
 					case 6:
 						gui.setItem(7, item);
 						slots.put(7, values.get(i));
+						break;
+					}
+					break;
+				case 8:
+					switch(i) {
+					case 0:
+						gui.setItem(0, item);
+						slots.put(0, values.get(i));
+						break;
+					case 1:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 2:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 3:
+						gui.setItem(3, item);
+						slots.put(3, values.get(i));
+						break;
+					case 4:
+						gui.setItem(5, item);
+						slots.put(5, values.get(i));
+						break;
+					case 5:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					case 6:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
+						break;
+					case 7:
+						gui.setItem(8, item);
+						slots.put(8, values.get(i));
+						break;
+					}
+					break;
+				case 9:
+					switch(i) {
+					case 0:
+						gui.setItem(0, item);
+						slots.put(0, values.get(i));
+						break;
+					case 1:
+						gui.setItem(1, item);
+						slots.put(1, values.get(i));
+						break;
+					case 2:
+						gui.setItem(2, item);
+						slots.put(2, values.get(i));
+						break;
+					case 3:
+						gui.setItem(3, item);
+						slots.put(3, values.get(i));
+						break;
+					case 4:
+						gui.setItem(4, item);
+						slots.put(4, values.get(i));
+						break;
+					case 5:
+						gui.setItem(5, item);
+						slots.put(5, values.get(i));
+						break;
+					case 6:
+						gui.setItem(6, item);
+						slots.put(6, values.get(i));
+						break;
+					case 7:
+						gui.setItem(7, item);
+						slots.put(7, values.get(i));
+						break;
+					case 8:
+						gui.setItem(8, item);
+						slots.put(8, values.get(i));
 						break;
 					}
 					break;

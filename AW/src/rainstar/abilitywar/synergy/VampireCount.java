@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -80,8 +83,8 @@ public class VampireCount extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> DRAIN = synergySettings.new SettingObject<Integer>(
-			VampireCount.class, "drain-period", 5, "# 흡혈 주기", "# (단위: 초)") {
+	public static final SettingObject<Integer> DRAIN = rsSynergySettings.new SettingObject<Integer>(
+			VampireCount.class, "drain-period-amount", 4, "# 흡혈 주기", "# (단위: 초)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -90,8 +93,8 @@ public class VampireCount extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> RANGE = synergySettings.new SettingObject<Double>(
-			VampireCount.class, "range", 8.0, "# 흡혈 범위", "# (단위: 칸)") {
+	public static final SettingObject<Double> RANGE = rsSynergySettings.new SettingObject<Double>(
+			VampireCount.class, "range-amount", 10.0, "# 흡혈 범위", "# (단위: 칸)") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -100,7 +103,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> USE_HP = synergySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> USE_HP = rsSynergySettings.new SettingObject<Double>(
 			VampireCount.class, "use-hp", 1.5, "# 발검 체력 소모량") {
 
 		@Override
@@ -110,8 +113,8 @@ public class VampireCount extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> DAMAGE_MULTIPLY = synergySettings.new SettingObject<Double>(
-			VampireCount.class, "damage-multiply", 1.4, "# 발검의 대미지 배율") {
+	public static final SettingObject<Double> DAMAGE_MULTIPLY = rsSynergySettings.new SettingObject<Double>(
+			VampireCount.class, "damage-multiply-amount", 1.7, "# 발검의 대미지 배율") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -120,7 +123,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> ENTITY_MAX_DRAIN = synergySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> ENTITY_MAX_DRAIN = rsSynergySettings.new SettingObject<Double>(
 			VampireCount.class, "entity-max-drain", 2.0, "# 한 흡혈로 얻는 대상당 최대 흡혈량") {
 
 		@Override
@@ -130,7 +133,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(
 			VampireCount.class, "cooldown", 15, "# 쿨타임") {
 
 		@Override
@@ -208,6 +211,17 @@ public class VampireCount extends Synergy implements ActiveHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._25);
 	private final int drainperiod = (DRAIN.getValue() * 20);
 	
+	private void updateTime(World world) {
+		final long diff = 15000 - world.getTime();
+		if (diff < 0) {
+			if (-diff > 2000) world.setTime(world.getTime() - 1500);
+			else world.setTime(15000);
+		} else if (diff > 0) {
+			if (diff > 2000) world.setTime(world.getTime() + 1500);
+			else world.setTime(15000);
+		}
+	}
+	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown()) {
 			bs = !bs;
@@ -250,7 +264,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 			else if (bs && bloodgrail.isRunning()) bloodgrail.stop(false);
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	private AbilityTimer bloodgrail = new AbilityTimer(TaskType.REVERSE, drainperiod) {
 		
@@ -313,7 +327,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 			bossBar.removeAll();
 		}
 		
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	@SubscribeEvent
 	private void onPlayerJoin(final PlayerJoinEvent e) {
@@ -331,6 +345,7 @@ public class VampireCount extends Synergy implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (getPlayer().equals(e.getDamager())) updateTime(getPlayer().getWorld());
 		if (getPlayer().equals(e.getDamager()) && bs) {
 			stack++;
 			double temp = (double) stack;

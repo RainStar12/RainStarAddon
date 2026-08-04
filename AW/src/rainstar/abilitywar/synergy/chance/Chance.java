@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy.chance;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +39,7 @@ public class Chance extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> READY_COUNT = 
-			synergySettings.new SettingObject<Integer>(Chance.class, "ready-count", 30,
+			rsSynergySettings.new SettingObject<Integer>(Chance.class, "ready-count", 30,
             "# 게임 시작 후 대기하는 시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

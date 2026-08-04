@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
@@ -34,7 +36,7 @@ public class HeadtoHead extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> GET_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(HeadtoHead.class, "get-damage-decrease", 50, 
+			rsAbilitySettings.new SettingObject<Integer>(HeadtoHead.class, "get-damage-decrease", 50, 
 			"# 받는 피해 감소량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -43,7 +45,7 @@ public class HeadtoHead extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> ATTACK_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(HeadtoHead.class, "attack-damage-decrease", 35, 
+			rsAbilitySettings.new SettingObject<Integer>(HeadtoHead.class, "attack-damage-decrease", 35, 
 			"# 받는 피해 감소량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -52,7 +54,7 @@ public class HeadtoHead extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> ATTACK_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(HeadtoHead.class, "attack-damage-increase", 15, 
+			rsAbilitySettings.new SettingObject<Integer>(HeadtoHead.class, "attack-damage-increase", 15, 
 			"# 주는 피해 증가량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {

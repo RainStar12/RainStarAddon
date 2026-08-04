@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +81,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "cooldown", 45,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "cooldown", 45,
             "# 쿨타임") {
 
         @Override
@@ -95,7 +97,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> STACK_COOL = 
-			synergySettings.new SettingObject<Double>(NineTailFoxSynergy.class, "stack-cooldown", 1.0,
+			rsSynergySettings.new SettingObject<Double>(NineTailFoxSynergy.class, "stack-cooldown", 1.0,
             "# 스택을 쌓을 때 내부 쿨타임") {
 
         @Override
@@ -106,7 +108,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> STACK_MAX = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "stack-max", 3,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "stack-max", 3,
             "# 최대 스택 개수") {
 
         @Override
@@ -117,7 +119,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DURATION = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-duration", 6,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-duration", 6,
             "# 유혹 지속 시간") {
 
         @Override
@@ -128,7 +130,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DECREASE = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-decrease", 50,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-decrease", 50,
             "# 유혹 도중 대미지 감소율 (단위: %)") {
 
         @Override
@@ -139,7 +141,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-heal", 100,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "charm-heal", 100,
             "# 유혹된 대상 타격시 회복률 (단위: %)") {
 
         @Override
@@ -150,7 +152,7 @@ public class NineTailFoxSynergy extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE = 
-			synergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "damage", 5,
+			rsSynergySettings.new SettingObject<Integer>(NineTailFoxSynergy.class, "damage", 5,
             "# 철괴 좌클릭 피해량") {
 
         @Override

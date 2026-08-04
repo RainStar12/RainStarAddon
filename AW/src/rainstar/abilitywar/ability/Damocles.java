@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +45,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 		summarize = {
 		"기본 공격력이 §c$[DAMAGE_INCREASE]§f배가 되지만 피격 이후 매 순간 매우 낮은 확률로 즉사합니다."
 		})
-
 public class Damocles extends AbilityBase {
 
 	public Damocles(Participant participant) {
@@ -51,7 +52,7 @@ public class Damocles extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> DAMAGE_MULTIPLY = 
-			abilitySettings.new SettingObject<Double>(Damocles.class, "damage-multiply", 1.4,
+			rsAbilitySettings.new SettingObject<Double>(Damocles.class, "damage-multiply-value", 1.6,
 			"# 공격력 배수") {
 
 		@Override
@@ -62,7 +63,7 @@ public class Damocles extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> MULTIPLY = 
-			abilitySettings.new SettingObject<Double>(Damocles.class, "damage-multiply-for-chance", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(Damocles.class, "damage-multiply-for-chance", 3.0,
 			"# 피해량의 배수만큼 확률 추가 시도") {
 
 		@Override
@@ -73,7 +74,7 @@ public class Damocles extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> CHANCE_NUMERATOR = 
-			abilitySettings.new SettingObject<Integer>(Damocles.class, "chance-numerator", 1,
+			rsAbilitySettings.new SettingObject<Integer>(Damocles.class, "chance-numerator", 1,
 			"# 확률 분자") {
 
 		@Override
@@ -84,7 +85,7 @@ public class Damocles extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> CHANCE_DENOMINATOR = 
-			abilitySettings.new SettingObject<Integer>(Damocles.class, "chance-denominator", 10000,
+			rsAbilitySettings.new SettingObject<Integer>(Damocles.class, "chance-denominator", 10000,
 			"# 확률 분모") {
 
 		@Override
@@ -118,7 +119,7 @@ public class Damocles extends AbilityBase {
 			NMS.removeBoundingBox(armorstand);
 		}
 		if (update == Update.ABILITY_DESTROY) {
-			armorstand.remove();
+			if (armorstand != null) armorstand.remove();
 		}
 	}
 	

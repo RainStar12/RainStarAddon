@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -23,7 +25,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
@@ -63,9 +64,8 @@ import rainstar.abilitywar.effect.SuperRegen;
 		"주변 $[EATING_RANGE]칸 내 생명체가 회복할 때 정기를 획득합니다.",
 		"구슬의 효과는 $[CHANGE_PERIOD]초마다 현재 상황에 적합하게 변경됩니다.",
 		"§a회복 §7-§f 5초 지속의 §d§n초회복§f 상태를 하나 부여합니다. $[MANA_HEALING]",
-		"§b속사 §7-§f $[RAPID_RANGE]칸 내의 가장 가까운 적에게 §c고정 피해§f §50.211§f의 투사체를 §b속사§f합니다.",
-		" 속사 피해는 기본 무적 시스템을 무시하고 계속 입힙니다. $[MANA_RAPID]",
-		" 속사 피해를 입은 적은 밀려나지 않고 반대로 끌려옵니다.",
+		"§b속사 §7-§f $[RAPID_RANGE]칸 내의 가장 가까운 적에게 §c체력 감소§f §50.211§f의 투사체를 §b속사§f합니다.",
+		" 체력 감소를 당한 적은 밀려나지 않고 반대로 끌려옵니다. $[MANA_RAPID]",
 		"§d유도 §7-§f 대상의 방향으로 빠르게 나아가는 §d유도 미사일§f을 발사합니다.",
 		" 미사일은 지형지물 혹은 생명체에 충돌 시 폭발합니다. $[MANA_HOMING]",
 		"§e관통 §7-§f $[PIERCE_RANGE]칸 내의 가장 먼 대상에게 직격하는 특수 투사체를 발사합니다.",
@@ -86,7 +86,7 @@ public class FoxCrystalBall extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> PIERCE_DAMAGE 
-	= abilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
 			"pierce-damage", 1.0, "# 관통의 대미지") {
 		
 		@Override
@@ -97,8 +97,8 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> HOMING_DAMAGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
-			"homing-damage", 15, "# 폭발 대미지") {
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+			"homing-damage", 20, "# 폭발 대미지") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -108,7 +108,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> EATING_RANGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"eating-range", 15, "# 정기 흡수의 범위") {
 		
 		@Override
@@ -119,7 +119,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> PIERCE_RANGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"pierce-range", 14, "# 관통 상태의 범위") {
 		
 		@Override
@@ -130,7 +130,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> RAPID_RANGE 
-	= abilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Double>(FoxCrystalBall.class,
 			"rapid-range", 4.5, "# 속사 상태의 범위") {
 		
 		@Override
@@ -141,7 +141,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> HOMING_RANGE 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"homing-range", 20, "# 유도 상태의 적 도망을 인식하는 범위") {
 		
 		@Override
@@ -152,7 +152,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> CHANGE_PERIOD 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"change-period", 10, "# 구슬 효과의 변경 주기 (단위: 초)") {
 		
 		@Override
@@ -163,7 +163,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> MANA_PIERCE_SHOT 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"mana-pierce", 25, "# 관통 상태의 마나 소모량") {
 		
 		@Override
@@ -179,7 +179,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> MANA_HEALING 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"mana-heal", 70, "# 회복 상태의 마나 소모량") {
 		
 		@Override
@@ -195,7 +195,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> MANA_RAPID 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"mana-rapid", 2, "# 속사 상태의 마나 소모량") {
 		
 		@Override
@@ -211,7 +211,7 @@ public class FoxCrystalBall extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> MANA_HOMING 
-	= abilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
+	= rsAbilitySettings.new SettingObject<Integer>(FoxCrystalBall.class,
 			"mana-homing", 75, "# 유도 상태의 마나 소모량") {
 		
 		@Override
@@ -677,12 +677,8 @@ public class FoxCrystalBall extends AbilityBase {
 				}
 				for (Player player : LocationUtil.getConflictingEntities(Player.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(player)) {
-						if (Damages.canDamage(player, DamageCause.PROJECTILE, 0.211)) {
-							Damages.damageArrow(player, shooter, (float) 0.000001);
-							Healths.setHealth(player, player.getHealth() - 0.211);
-							player.setNoDamageTicks(1);
-							player.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(player.getLocation().toVector()).normalize().setY(0).multiply(0.15)));
-						}
+						Healths.setHealth(player, player.getHealth() - 0.211);
+						player.setVelocity(VectorUtil.validateVector(getPlayer().getLocation().toVector().subtract(player.getLocation().toVector()).normalize().setY(0).multiply(0.15)));
 						stop(true);
 						return;
 					}

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> INBATTLE_CHECK_DURATION = 
-			abilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration-", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(FirstAid.class, "inbattle-check-duration-amount", 10.0,
             "# 전투 중인지 판단하는 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -57,7 +59,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEAL_COUNT = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count-", 8,
+			rsAbilitySettings.new SettingObject<Integer>(FirstAid.class, "heal-count-amount", 6,
             "# 비전투 중에 회복하는 횟수") {
         @Override
         public boolean condition(Integer value) {
@@ -66,7 +68,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DECREASED_HEAL_COUNT = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "decreased-heal-count-", 4,
+			rsAbilitySettings.new SettingObject<Integer>(FirstAid.class, "decreased-heal-count-", 4,
             "# 전투 중에 회복하는 횟수") {
         @Override
         public boolean condition(Integer value) {
@@ -75,7 +77,7 @@ public class FirstAid extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(FirstAid.class, "cooldown", 65,
+			rsAbilitySettings.new SettingObject<Integer>(FirstAid.class, "cooldown", 65,
             "# 전투 중 사용시 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

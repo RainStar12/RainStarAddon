@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -44,7 +46,7 @@ public class Delusion extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> DAMAGE_BOOST = 
-			abilitySettings.new SettingObject<Integer>(Delusion.class, "damage-boost", 75,
+			rsAbilitySettings.new SettingObject<Integer>(Delusion.class, "damage-boost", 75,
             "# 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -53,7 +55,7 @@ public class Delusion extends AbilityBase {
     };
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Delusion.class, "cooldown", 40,
+			rsAbilitySettings.new SettingObject<Integer>(Delusion.class, "cooldown", 40,
             "# 검 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

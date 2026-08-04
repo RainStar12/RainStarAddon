@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -32,16 +34,17 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
-@AbilityManifest(name = "호조사", rank = Rank.L, species = Species.GOD, explain = {
+@AbilityManifest(name = "호조사", rank = Rank.S, species = Species.GOD, explain = {
 		"§7철괴 §8- §b여의주§f: 철괴를 이용하여 자신이 원하는 스탯을 $[STAT_BOOST]초간 $[BOOST_PERCENTAGE]% §6강화§f합니다.",
 		" §c공격력§8(§7좌클릭§8) §a/ §3방어력§8(§7우클릭§8) §a/ §b이동 속도§8(§7F키§8)",
 		" §6강화§f된 스탯이 아닌 스탯은 $[STAT_WEAKEN]% §7약화§f됩니다. $[COOLDOWN]",
 		" 지속시간이 절반 이상 남았을 때 동일한 키입력으로 §6강화§f를 즉시 해제하고,",
 		" §c쿨타임§f을 절반만 가질 수 있습니다.",
-		"§7패시브 §8- §c여우신§f: 적에게 치명타 피해를 입힐 때마다 꼬리를 하나 획득합니다.",
+		"§7패시브 §8- §c여우신§f: 적에게 치명타 피해를 입힐 때마다 꼬리를 1~3개 획득합니다.",
 		" 꼬리는 다음 §6강화§f 수치를 $[TAIL_PER_BOOST]%씩 올려주며, 최대 9개까지 소지 가능합니다.",
 		" 꼬리를 19개 소진할 때마다 다음 §b여의주§f 효과의 §7약화§f 수치가 §6강화§f 효과가 됩니다.",
 		"§a[§e능력 제공자§a] §5Rodpog"
@@ -61,7 +64,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> STAT_BOOST = 
-			abilitySettings.new SettingObject<Double>(Hozosa.class, "stat-boost", 10.0,
+			rsAbilitySettings.new SettingObject<Double>(Hozosa.class, "stat-boost", 10.0,
 			"# 스탯 부스트 지속시간", "# 단위: 초") {
 		
 		@Override
@@ -72,7 +75,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> BOOST_PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Hozosa.class, "boost-percentage", 23,
+			rsAbilitySettings.new SettingObject<Integer>(Hozosa.class, "boost-percentage", 23,
             "# 기본적으로 강화되는 수치", "# 단위: %") {
 		
         @Override
@@ -83,7 +86,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> STAT_WEAKEN = 
-			abilitySettings.new SettingObject<Integer>(Hozosa.class, "stat-weaken", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Hozosa.class, "stat-weaken", 15,
             "# 스탯 약화 수치", "# 단위: %") {
 		
         @Override
@@ -94,7 +97,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     };
 
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Hozosa.class, "cooldown", 70,
+			rsAbilitySettings.new SettingObject<Integer>(Hozosa.class, "cooldown", 50,
             "# 쿨타임") {
 		
         @Override
@@ -110,7 +113,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> TAIL_PER_BOOST = 
-			abilitySettings.new SettingObject<Integer>(Hozosa.class, "tail-per-boost", 3,
+			rsAbilitySettings.new SettingObject<Integer>(Hozosa.class, "tail-per-boost", 3,
             "# 꼬리 하나당 추가 강화 수치", "# 단위: %") {
 		
         @Override
@@ -137,6 +140,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
     private int type = 0, tail = 0, usedtail = 0;
     private final ActionbarChannel ac1 = newActionbarChannel(), ac2 = newActionbarChannel(), ac3 = newActionbarChannel();
     private final DecimalFormat df = new DecimalFormat("0.0");
+    private final Random random = new Random();
 	
     private boolean attackCooldown = false, charged = false;
 	
@@ -263,7 +267,7 @@ public class Hozosa extends AbilityBase implements ActiveHandler {
 			if (NMS.isArrow(e.getDamager()) && ((Arrow) e.getDamager()).isCritical()) isCrit = true;
 			
 			if (isCrit && tail < 9) {
-				tail++;
+				tail = Math.min(9, tail + random.nextInt(3) + 1);
 				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 2);
 				ParticleLib.SPELL_WITCH.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 20, 0.6f);
 	    		ac2.update("§6꼬리§7: " + (charged ? "§a§l" : "§7") + tail);

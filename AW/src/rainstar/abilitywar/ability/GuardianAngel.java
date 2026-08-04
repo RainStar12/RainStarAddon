@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -45,7 +47,6 @@ import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.effect.Stun;
@@ -138,7 +139,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
+	= rsAbilitySettings.new SettingObject<Integer>(GuardianAngel.class,
 			"cooldown", 95, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -152,7 +153,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION 
-	= abilitySettings.new SettingObject<Integer>(GuardianAngel.class,
+	= rsAbilitySettings.new SettingObject<Integer>(GuardianAngel.class,
 			"duration", 10, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -161,7 +162,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	};
 
 	public static final SettingObject<Double> MORE_MOVE 
-	= abilitySettings.new SettingObject<Double>(GuardianAngel.class,
+	= rsAbilitySettings.new SettingObject<Double>(GuardianAngel.class,
 			"more-move", 0.25, "# 추가 이동 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -170,7 +171,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> RELOAD_DURATION 
-	= abilitySettings.new SettingObject<Double>(GuardianAngel.class,
+	= rsAbilitySettings.new SettingObject<Double>(GuardianAngel.class,
 			"reload-duration", 1.5, "# 재장전 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -799,7 +800,7 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		protected void onEnd() {
-			final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * reloaddur) : reloaddur;
+			final int reloadCount = getReload(reloaddur);
 			reload = new AbilityTimer(reloadCount) {
 				private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -825,6 +826,14 @@ public class GuardianAngel extends AbilityBase implements ActiveHandler {
 		protected void onSilentEnd() {
 			entity.remove();
 			GuardianAngel.this.bullet2 = null;
+		}
+		
+		private int getReload(int baseReload) {
+			double decrease = Wreck.calculateDecreasedAmount(20);
+			if (Wreck.isEnabled(GameManager.getGame())) {
+				if (decrease == 100) return 1;
+				else return (int) (decrease * baseReload);
+			} else return baseReload;
 		}
 
 		public class ArrowEntity extends CustomEntity {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,7 +36,7 @@ public class CowardlyMatch extends Synergy {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
+	public static final SettingObject<Integer> DAMAGE_INCREASE = rsSynergySettings.new SettingObject<Integer>(CowardlyMatch.class,
 			"damage-increase", 65, "# 대미지 증가 배율(단위: %)") {
 		@Override
 		public boolean condition(Integer value) {
@@ -42,7 +44,7 @@ public class CowardlyMatch extends Synergy {
 		}
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_DECREASE = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
+	public static final SettingObject<Integer> DAMAGE_DECREASE = rsSynergySettings.new SettingObject<Integer>(CowardlyMatch.class,
 			"damage-decrease", 25, "# 대미지 감소 배율(단위: %)") {
 		@Override
 		public boolean condition(Integer value) {
@@ -50,8 +52,8 @@ public class CowardlyMatch extends Synergy {
 		}
 	};
 	
-	public static final SettingObject<Integer> PERIOD = synergySettings.new SettingObject<Integer>(CowardlyMatch.class,
-			"period", 6, "# 후방 이동 효과 주기", "# 쿨타임 감소가 50%까지 적용됩니다.") {
+	public static final SettingObject<Integer> PERIOD = rsSynergySettings.new SettingObject<Integer>(CowardlyMatch.class,
+			"period", 5, "# 후방 이동 효과 주기", "# 쿨타임 감소가 50%까지 적용됩니다.") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -92,10 +94,10 @@ public class CowardlyMatch extends Synergy {
 	private ActionbarChannel ac = newActionbarChannel();
 	private final double increase = 1 + (0.01 * DAMAGE_INCREASE.getValue());
 	private final double decrease = 1 - (0.01 * DAMAGE_DECREASE.getValue());
-	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * PERIOD.getValue() : PERIOD.getValue());
+	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
 	private boolean teleportable = true;
 	
-    private final AbilityTimer periodtimer = new AbilityTimer(period * 20) {
+    private final AbilityTimer periodtimer = new AbilityTimer(period) {
     	
     	@Override
 		public void run(int count) {

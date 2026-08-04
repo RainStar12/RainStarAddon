@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +30,7 @@ public class FingerExersize extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> COUNT = 
-			synergySettings.new SettingObject<Integer>(FingerExersize.class, "count", 7,
+			rsSynergySettings.new SettingObject<Integer>(FingerExersize.class, "count", 7,
 			"# 추가 공격력을 획득하기 위한 요구 웅크리기 횟수") {
 
 		@Override
@@ -39,7 +41,7 @@ public class FingerExersize extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DURATION = 
-			synergySettings.new SettingObject<Integer>(FingerExersize.class, "duration", 12,
+			rsSynergySettings.new SettingObject<Integer>(FingerExersize.class, "duration-amount", 30,
 			"# 추가 공격력의 지속 시간") {
 
 		@Override
@@ -50,7 +52,7 @@ public class FingerExersize extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE = 
-			synergySettings.new SettingObject<Integer>(FingerExersize.class, "damage", 1,
+			rsSynergySettings.new SettingObject<Integer>(FingerExersize.class, "damage", 1,
 			"# 조건 충족시 얻는 추가 공격력") {
 
 		@Override

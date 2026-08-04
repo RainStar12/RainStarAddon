@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,7 +78,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> CONTRACT_DURATION = 
-			abilitySettings.new SettingObject<Double>(Devil.class, "contract-duration", 20.0,
+			rsAbilitySettings.new SettingObject<Double>(Devil.class, "contract-duration-value", 15.0,
             "# 계약 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -85,17 +87,16 @@ public class Devil extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> LOOK = 
-			abilitySettings.new SettingObject<Double>(Devil.class, "look", 0.5,
+			rsAbilitySettings.new SettingObject<Double>(Devil.class, "look", 0.5,
             "# 대상을 바라보는 지속 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
             return value >= 0;
         }
     };
-    
 	
 	public static final SettingObject<Integer> INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Devil.class, "increase", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Devil.class, "increase", 15,
             "# 계약자 당 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -104,7 +105,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> HEALTH_STOLE = 
-			abilitySettings.new SettingObject<Integer>(Devil.class, "health-stole", 2,
+			rsAbilitySettings.new SettingObject<Integer>(Devil.class, "health-stole", 2,
             "# 잠식 시 매 0.5초당 가져올 체력", "# 단위: 최대 체력의 (수치)%", "# 예) 20체력 기준 10으로 설정 시 20체력의 10%, 2HP") {
         @Override
         public boolean condition(Integer value) {
@@ -113,7 +114,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> ENCROACH_DURATION = 
-			abilitySettings.new SettingObject<Double>(Devil.class, "encroach-duration", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(Devil.class, "encroach-duration", 3.0,
             "# 계약자 잠식 최대 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -122,7 +123,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> ENCROACH_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Devil.class, "cooldown", 90,
+			rsAbilitySettings.new SettingObject<Integer>(Devil.class, "cooldown", 90,
             "# 철괴 좌클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -147,7 +148,7 @@ public class Devil extends AbilityBase implements ActiveHandler {
 	private final Set<Player> encroached = new HashSet<>();
 	private Player encroachtarget;
 	private final DecimalFormat df = new DecimalFormat("0.0");
-	private RGB hornred = RGB.of(217, 113, 113), hornblack = RGB.of(67, 56, 50);
+	private static final RGB hornred = RGB.of(217, 113, 113), hornblack = RGB.of(67, 56, 50);
 	private ArmorStand armorstand;
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {

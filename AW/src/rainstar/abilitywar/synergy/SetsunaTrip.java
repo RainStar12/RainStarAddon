@@ -1,5 +1,8 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
+import java.text.DecimalFormat;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -58,13 +61,13 @@ import daybreak.abilitywar.config.enums.CooldownDecrease;
 		" 유리, 액체는 관통하며, 최대 $[RANGE_CONFIG]칸 멀리의 블록까지 카운트합니다."
 		})
 
-public class MomentaryTrip extends Synergy implements ActiveHandler {
+public class SetsunaTrip extends Synergy implements ActiveHandler {
 
-	public MomentaryTrip(Participant participant) {
+	public SetsunaTrip(Participant participant) {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> INV_DURATION = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> INV_DURATION = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"invincibility-duration", 4, "# 순간 여행 후 무적 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Integer value) {
@@ -72,7 +75,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> SPEED_DURATION = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> SPEED_DURATION = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"speed-duration", 10, "# 순간 여행 후 신속 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Integer value) {
@@ -80,7 +83,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DEBUFF_DURATION = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> DEBUFF_DURATION = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"debuff-duration", 10, "# 표식 발동 후 디버프 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Integer value) {
@@ -88,7 +91,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RANGE_CONFIG = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> RANGE_CONFIG = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"range", 15, "# Dive 텔레포트 최대 범위", "# 단위: 칸") {
 		@Override
 		public boolean condition(Integer value) {
@@ -96,7 +99,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RETURN_COOLDOWN = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> RETURN_COOLDOWN = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"return-cooldown", 15, "# 순간 여행 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -109,7 +112,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> ARROW_COOLDOWN = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> ARROW_COOLDOWN = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"arrow-cooldown", 30, "# 표식 생성 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -122,7 +125,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> TELEPORT_COOLDOWN = synergySettings.new SettingObject<Integer>(MomentaryTrip.class,
+	public static final SettingObject<Integer> TELEPORT_COOLDOWN = rsSynergySettings.new SettingObject<Integer>(SetsunaTrip.class,
 			"teleport-cooldown", 25, "# 철괴 우클릭 Dive 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -145,6 +148,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 	private static final Set<Material> nocheck;
 	private Location targetblock;
 	private int number = 1;
+	private DecimalFormat df = new DecimalFormat("0.0");
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -226,7 +230,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac.update("§5되돌아가기§f: §b" + (count / 20) + "§f초");
+			ac.update("§5되돌아가기§f: §b" + df.format(count / 20.0) + "§f초");
 			if (getPlayer().isSneaking()) {
 				returnCool.start();
 				getPlayer().teleport(previousLoc);
@@ -255,7 +259,7 @@ public class MomentaryTrip extends Synergy implements ActiveHandler {
 		
 		@Override
 		public void run(int count) {
-			ac2.update("§d무적§f: " + (count / 20) + "초");
+			ac2.update("§d무적§f: " + df.format(count / 20.0) + "초");
 		}
 		
 		@Override

@@ -1,10 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -67,7 +70,7 @@ public class GlassCannon extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> DAMAGE = 
-			abilitySettings.new SettingObject<Double>(GlassCannon.class, "damage", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(GlassCannon.class, "damage", 5.0,
             "# 유리 대포 대미지") {
         @Override
         public boolean condition(Double value) {
@@ -96,7 +99,7 @@ public class GlassCannon extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = 4, eventPriority = EventPriority.HIGH)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {		
 		Player damager = null;
 		if (e.getDamager() instanceof Projectile) {
@@ -104,10 +107,10 @@ public class GlassCannon extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (glasscannon && (getPlayer().equals(damager) || e.getEntity().equals(getPlayer()))) {
+		if (glasscannon && damager != null && (getPlayer().equals(damager) || e.getEntity().equals(getPlayer()))) {
 			e.setDamage(e.getDamage() + damage);
-			SoundLib.BLOCK_GLASS_BREAK.playSound(getPlayer(), 1, 1.5f);
-			ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 30, 1, MaterialX.GLASS);
+			SoundLib.BLOCK_GLASS_BREAK.playSound(damager, 1, 1.5f);
+			ParticleLib.BLOCK_CRACK.spawnParticle(e.getEntity().getLocation(), 0, 2, 0, 40, 1, MaterialX.GLASS);
 		}
 	}
 }

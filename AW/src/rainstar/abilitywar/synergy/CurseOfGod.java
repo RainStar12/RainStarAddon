@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +14,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -48,14 +49,13 @@ import rainstar.abilitywar.effect.Cursed;
 
 @AbilityManifest(
 		name = "신의 저주", rank = Rank.S, species = Species.GOD, explain = {
-		"§7철괴 타게팅 §8- §c신벌§f: 다른 플레이어를 13칸 내에서 철괴 우클릭 시",
+		"§7철괴 타게팅 §8- §c신벌§f: 다른 플레이어를 20칸 내에서 철괴 우클릭 시",
 		" $[DURATION]초간 지속되는 대상의 §b분신§f을 소환해냅니다. $[COOLDOWN]",
 		" §b분신§f으로부터 6.5칸 내 모든 플레이어는 §b분신§f을 바라보며 §b분신§f을 타격할 때",
-		" 50%의 피해량을 §b분신§f의 주인에게 입히고, §5저주§f 상태이상을 걸며 끌어옵니다.",
+		" $[DAMAGE_PERCENTAGE]%의 피해량을 §b분신§f의 주인에게 입히고, §5저주§f 상태이상을 걸며 끌어옵니다.",
 		" 이후 그들이 분신에게 입힌 피해량에 비례해 속박당합니다.",
-		" §b분신§f이 있을 때, 자신이 주는 피해량이 25% 감소합니다.",
-		"§7상태이상 §8- §5저주§f: 상태이상이 지속되는 동안 갑옷에 §c귀속 저주§f가 부여됩니다.",
-		" §5저주§f를 제외한 받게 될 모든 상태이상 지속시간이 2배 증가합니다.",
+		"§9[§5저주§9]§f 지속되는 동안 갑옷에 §c귀속 저주§f가 부여됩니다.",
+		" §5§n저주§f를 제외한 받게 될 모든 상태이상 지속시간이 2배 증가합니다.",
 		" 이 효과는 중복으로 받으면 지속 시간이 계속해서 쌓이게 됩니다.",
 		"§b[§7아이디어 제공자§b] §ecommon_Mango"
 		})
@@ -92,7 +92,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(CurseOfGod.class, "cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -107,8 +107,18 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(CurseOfGod.class, "duration", 10,
+	public static final SettingObject<Integer> DURATION = rsSynergySettings.new SettingObject<Integer>(CurseOfGod.class, "duration", 10,
 			"# 지속시간") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_PERCENTAGE = rsSynergySettings.new SettingObject<Integer>(CurseOfGod.class, "damage-percentage", 75,
+			"# 분신이 주는 피해 배율", "# 단위: %") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -125,11 +135,12 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	private ArmorStand armorStand = null;
 	private static final Sphere sphere = Sphere.of(6.5, 14);
 	private Map<Player, Double> damages = new HashMap<>();
+	private double damagemultiply = DAMAGE_PERCENTAGE.getValue() * 0.01;
 
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cool.isCooldown()) {
-			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, predicate);
+			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 20, predicate);
 			if (player != null) {
 				target = player;
 				skill.start();
@@ -192,12 +203,13 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 		protected void onDurationEnd() {
 			if (damages.size() > 0) {
 				for (Player p : damages.keySet()) {
-					BindingSmoke.apply(getGame().getParticipant(p), TimeUnit.TICKS, (int) (damages.get(p) * 7.5));
+					BindingSmoke.apply(getGame().getParticipant(p), TimeUnit.TICKS, (int) (damages.get(p) * 15));
 				}
 			}
 			target = null;
 			armorStand.remove();
 			armorStand = null;
+			damages.clear();
 		}
 
 		@Override
@@ -232,24 +244,13 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 			if (e.getDamager() instanceof Player && !e.getDamager().equals(getPlayer())) damages.put((Player) e.getDamager(), e.getDamage());
 			e.setCancelled(true);
 			if (!target.isInvulnerable()) {
-				target.damage(e.getDamage() * 0.5, armorStand);
+				target.damage(e.getDamage() * damagemultiply, armorStand);
 				target.setVelocity(VectorUtil.validateVector(armorStand.getLocation().toVector().subtract(target.getLocation().toVector()).normalize()));	
 				Participant participant = getGame().getParticipant(target);
-				Cursed.apply(participant, TimeUnit.TICKS, 60);
+				Cursed.apply(participant, TimeUnit.TICKS, 20);
 			}
 			if (e.getDamager() instanceof Player) {
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
-			}	
-		}
-		if (skill.isRunning()) {
-			if (e.getDamager().equals(getPlayer())) {
-				e.setDamage(e.getDamage() * 0.75);
-			}
-			if (e.getDamager() instanceof Projectile) {
-				Projectile p = (Projectile) e.getDamager();
-				if (getPlayer().equals(p.getShooter())) {
-					e.setDamage(e.getDamage() * 0.75);
-				}
 			}	
 		}
 	}
@@ -263,7 +264,7 @@ public class CurseOfGod extends Synergy implements ActiveHandler {
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
-			target.damage(e.getDamage() * (2.3 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			target.damage(e.getDamage() * (4.5 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
 		}
 	}
 

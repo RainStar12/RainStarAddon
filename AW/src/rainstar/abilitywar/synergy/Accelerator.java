@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,7 +95,7 @@ public class Accelerator extends Synergy {
 	}
 	
 	public static final SettingObject<Double> DASH_STAMINA_CONSUME = 
-			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-consume", 3.0,
+			rsSynergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-consume", 3.0,
 			"# 대시 스태미나 소모량") {
 
 		@Override
@@ -109,7 +111,7 @@ public class Accelerator extends Synergy {
 	};
 	
 	public static final SettingObject<Double> DASH_STAMINA_HEAL = 
-			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-heal", 0.2,
+			rsSynergySettings.new SettingObject<Double>(Accelerator.class, "dash-stamina-heal", 0.2,
 			"# 대시 잔상의 스태미나 회복량") {
 
 		@Override
@@ -125,7 +127,7 @@ public class Accelerator extends Synergy {
 	};
 	
 	public static final SettingObject<Double> ATTACKDASH_STAMINA_HEAL = 
-			synergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-stamina-heal", 0.5,
+			rsSynergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-stamina-heal", 0.5,
 			"# 공격 후 대시 잔상의 스태미나 회복량") {
 
 		@Override
@@ -141,7 +143,7 @@ public class Accelerator extends Synergy {
 	};
 	
 	public static final SettingObject<Double> DASH_DAMAGE = 
-			synergySettings.new SettingObject<Double>(Accelerator.class, "dash-damage", 1.2,
+			rsSynergySettings.new SettingObject<Double>(Accelerator.class, "dash-damage", 1.2,
 			"# 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
 
 		@Override
@@ -152,7 +154,7 @@ public class Accelerator extends Synergy {
 	};
 	
 	public static final SettingObject<Double> ATTACKDASH_DAMAGE = 
-			synergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-damage", 1.7,
+			rsSynergySettings.new SettingObject<Double>(Accelerator.class, "attackdash-damage", 1.7,
 			"# 공격 후 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
 
 		@Override
@@ -376,7 +378,7 @@ public class Accelerator extends Synergy {
                 				if (count < 55) {
                 				Damages.damageFixed(p, getPlayer(), (float) skilldamage);
                 				staminaGain(normalheal);
-    	        			    	new AbilityTimer(10) {
+    	        			    	new AbilityTimer(15) {
     	        			    			
     	        			    		@Override
     	        			    		protected void onStart() {
@@ -420,7 +422,7 @@ public class Accelerator extends Synergy {
         				} else {
         					Damages.damageFixed(p, getPlayer(), (float) damage);
         					staminaGain(normalheal);
-        			    	new AbilityTimer(10) {
+        			    	new AbilityTimer(15) {
     			    			
         			    		@Override
         			    		protected void onStart() {

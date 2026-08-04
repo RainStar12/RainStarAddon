@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,7 +143,7 @@ public class Megalodon extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Megalodon.class, "damage", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(Megalodon.class, "damage", 5.0,
             "# 추가 피해량", "# 추가 피해량의 1/2만큼 자신도 추가 피해를 입습니다.") {
 
         @Override
@@ -152,7 +154,7 @@ public class Megalodon extends AbilityBase {
     };
     
 	public static final SettingObject<Double> REQUEST_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Megalodon.class, "request-damage", 25.0,
+			rsAbilitySettings.new SettingObject<Double>(Megalodon.class, "request-damage", 25.0,
             "# 버스트 아웃의 요구 피해량의 총합") {
 
         @Override
@@ -163,7 +165,7 @@ public class Megalodon extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> RANGE = 
-			abilitySettings.new SettingObject<Integer>(Megalodon.class, "range", 5,
+			rsAbilitySettings.new SettingObject<Integer>(Megalodon.class, "range", 5,
             "# 액체를 흩뿌릴 범위") {
 
         @Override
@@ -174,7 +176,7 @@ public class Megalodon extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> LIQUID_COUNT = 
-			abilitySettings.new SettingObject<Integer>(Megalodon.class, "liquid-count", 3,
+			rsAbilitySettings.new SettingObject<Integer>(Megalodon.class, "liquid-count", 3,
             "# 흩뿌릴 액체의 수") {
 
         @Override

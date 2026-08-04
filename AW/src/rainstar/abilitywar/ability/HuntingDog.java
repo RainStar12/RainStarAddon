@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +82,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "cooldown", 110, "# 쿨타임") {
+	private static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "cooldown", 110, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -94,7 +96,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> DURATION_A = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-a", 12, "# 지속 시간") {
+	private static final SettingObject<Integer> DURATION_A = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-a", 12, "# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -103,16 +105,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private static final SettingObject<Integer> DURATION_B = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-b", 14, "# 지속 시간") {
-
-		@Override
-		public boolean condition(Integer arg0) {
-			return arg0 >= 1;
-		}
-
-	};
-	
-	private static final SettingObject<Integer> COUNT = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "count", 7, "# 소환하는 사냥개의 수") {
+	private static final SettingObject<Integer> DURATION_B = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "duration-b", 14, "# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -121,7 +114,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> DAMAGE = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "damage", 6, "# 사냥개의 기본 대미지") {
+	private static final SettingObject<Integer> COUNT = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "count", 7, "# 소환하는 사냥개의 수") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -130,7 +123,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "health", 20, "# 사냥개의 기본 체력") {
+	private static final SettingObject<Integer> DAMAGE = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "damage", 6, "# 사냥개의 기본 대미지") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -139,7 +132,16 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> STUN = abilitySettings.new SettingObject<Integer>(HuntingDog.class, "stun", 2, "# 사냥개 공격의 기절 시간(단위: 틱)") {
+	private static final SettingObject<Integer> HEALTH = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "health", 20, "# 사냥개의 기본 체력") {
+
+		@Override
+		public boolean condition(Integer arg0) {
+			return arg0 >= 1;
+		}
+
+	};
+	
+	private static final SettingObject<Integer> STUN = rsAbilitySettings.new SettingObject<Integer>(HuntingDog.class, "stun", 2, "# 사냥개 공격의 기절 시간(단위: 틱)") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -348,12 +350,12 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 					wolf.setHealth(Math.max(1, dogHealth * 0.4));
 					wolf.setAdult();
 				} else if (wolf.getCollarColor().equals(DyeColor.LIME)) {
-					wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.325);
+					wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.35);
 					wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Math.max(1, dogHealth * 2.15));
 					wolf.setHealth(Math.max(1, dogHealth * 2.15));
 					wolf.setAdult();
 				} else if (wolf.getCollarColor().equals(DyeColor.LIGHT_BLUE)) {
-					wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.645);
+					wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.7);
 					wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Math.max(1, dogHealth));
 					wolf.setHealth(Math.max(1, dogHealth));
 					wolf.setAdult();
@@ -446,7 +448,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 					rgb = RGB.of(168, 13, 20);
 				} else if (wolf.getCollarColor().equals(DyeColor.LIME)) {
 					e.setDamage(dogDamage);
-					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getFinalDamage() * 0.5, RegainReason.CUSTOM);
+					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getFinalDamage(), RegainReason.CUSTOM);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
 						Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
@@ -454,8 +456,8 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 					Stun.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, stunduration);
 					rgb = RGB.of(1, 113, 1);
 				} else if (wolf.getCollarColor().equals(DyeColor.LIGHT_BLUE)) {
-					e.setDamage(dogDamage * 0.6);
-					Stun.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, (int) (stunduration * 1.5));
+					e.setDamage(dogDamage * 0.4);
+					Stun.apply(getGame().getParticipant((Player) e.getEntity()), TimeUnit.TICKS, (int) (stunduration * 2));
 					rgb = RGB.of(1, 94, 138);
 				}
 				new CutParticle(wolf, particleSide, rgb).start();
@@ -493,7 +495,7 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 			final List<String> greenlore = new ArrayList<>();
 			greenlore.add("§c공격력§7: §a■■■§8□□");
 			greenlore.add("§d체력§7  : §a■■■■■");
-			greenlore.add("§b속도§7  : §a■§8□□□□");
+			greenlore.add("§b속도§7  : §a■■§8□□□");
 			greenlore.add("§8====================");
 			greenlore.add("§3우선 타게팅 대상§7: §f자신으로부터 가장 가까운 적");
 			greenlore.add("§2특수 능력§7: §f적에게 입힌 피해에 비례해 주인을 §a회복§f시킴");
@@ -502,9 +504,9 @@ public class HuntingDog extends AbilityBase implements ActiveHandler {
 			
 			ItemMeta bluemeta = BLUE.getItemMeta();
 			final List<String> bluelore = new ArrayList<>();
-			bluelore.add("§c공격력§7: §a■■§8□□□");
+			bluelore.add("§c공격력§7: §a■§8□□□□");
 			bluelore.add("§d체력§7  : §a■■■§8□□");
-			bluelore.add("§b속도§7  : §a■■■■§8□");
+			bluelore.add("§b속도§7  : §a■■■■■");
 			bluelore.add("§8====================");
 			bluelore.add("§3우선 타게팅 대상§7: §f주인에게 가장 가까이 있는 적");
 			bluelore.add("§2특수 능력§7: §f피해를 입힐 때 적이 §b§n기절§f하는 시간이 2배 길어짐");

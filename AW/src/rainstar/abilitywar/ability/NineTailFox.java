@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -80,7 +82,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Double> DAMAGE_INCREASE = abilitySettings.new SettingObject<Double>(NineTailFox.class,
+	public static final SettingObject<Double> DAMAGE_INCREASE = rsAbilitySettings.new SettingObject<Double>(NineTailFox.class,
 			"damage-increase", 1.5, "# 꼬리 공격력 증가량", "# 단위: %") {
 
 		@Override
@@ -90,7 +92,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(NineTailFox.class,
+	public static final SettingObject<Integer> PERIOD = rsAbilitySettings.new SettingObject<Integer>(NineTailFox.class,
 			"period", 25, "# 꼬리 자동 충전 시간", "# 단위: 초") {
 
 		@Override
@@ -103,7 +105,7 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
 	private final double increasep = DAMAGE_INCREASE.getValue() * 0.01;
 	private final ActionbarChannel ac = newActionbarChannel();
 	private int stack = 2;	
-	private final int period = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(25) * PERIOD.getValue() * 20 : PERIOD.getValue() * 20);
+	private final int period = (int) (Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(90) * PERIOD.getValue() * 20 : PERIOD.getValue() * 20);
 	private Set<DamageCause> damagetype = new HashSet<>();
 	
 	@Override
@@ -156,6 +158,8 @@ public class NineTailFox extends AbilityBase implements ActiveHandler {
     
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+		
 		Player damager = null;
 		if (e.getDamager() instanceof Projectile) {
 			Projectile projectile = (Projectile) e.getDamager();

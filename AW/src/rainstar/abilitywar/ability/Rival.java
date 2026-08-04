@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,14 +53,15 @@ import daybreak.google.common.base.Predicate;
 
 @AbilityManifest(name = "라이벌", rank = Rank.L, species = Species.HUMAN, explain = {
         "§7패시브 §8- §c단 한 명의§f: 적에게 피해를 받으면 대상을 §c라이벌§f로 지정합니다.",
-        " §c라이벌§f 외에게 피해를 주고받지 않습니다. $[RIVAL_DURATION]",
-        "§7철괴 우클릭 §8- §b매칭 성사§f: §c§n라이벌§f이 없다면 바라보는 대상을 §c라이벌§f로 지정합니다.",
+        " §c라이벌§f 외에게 피해를 주고받지 않습니다. §6지속 시간 §f: $[RIVAL_DURATION]초",
+        " §c라이벌§f을 처치하면 §e챔피언 스택§f을 $[WIN_DURATION]만큼 얻습니다.",
+        "§7철괴 우클릭 §8- §b매칭 성사§f: §c라이벌§f이 없다면 바라보는 대상을 §c라이벌§f로 지정합니다.",
         " §c라이벌§f 지속시간을 $[RIVAL_ADDITIONAL_DURATION]초 증가시킵니다. §c라이벌§f의 체력을 내 체력까지 회복시키고,",
         " §c라이벌§f에게 순간 이동합니다. 남은 지속시간 동안 §c라이벌§f의 능력을 획득하고",
         " 공격력이 $[PERCENTAGE]% 증가합니다. $[COOLDOWN]",
-        "§7§n라이벌§7 처치 §8- §e챔피언§f: $[WIN_DURATION]초간 이 능력의 모든 스킬이 §3비활성화§f되지만,",
+        "§7철괴 좌클릭 §8- §e챔피언§f: §e챔피언 스택§f을 전부 소모하고 그만큼의 지속시간 동안",
         " 지금까지 처치했던 모든 §c라이벌§f들의 능력을 사용할 수 있습니다.",
-        "§a[§e능력 제공자§a] §bjjapdook_"
+        "§a[§e능력 제공자§a] §dSakay0r1_Ir0ha"
         },
         summarize = {
         "자신을 공격한 자를 §c§n라이벌§f로 지정해 §c라이벌§f 외에게 피해를 주고받지 않습니다.",
@@ -74,7 +77,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Rival.class, "cooldown", 100,
+			rsAbilitySettings.new SettingObject<Integer>(Rival.class, "cooldown", 100,
             "# 매칭 성사 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -88,7 +91,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     };
     
 	public static final SettingObject<Double> RIVAL_DURATION = 
-			abilitySettings.new SettingObject<Double>(Rival.class, "rival-duration", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(Rival.class, "rival-duration", 5.0,
             "# 라이벌 지속 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -97,7 +100,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     };
     
 	public static final SettingObject<Double> RIVAL_ADDITIONAL_DURATION = 
-			abilitySettings.new SettingObject<Double>(Rival.class, "rival-additional-duration", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(Rival.class, "rival-additional-duration", 20.0,
             "# 매칭 성사 라이벌 추가 지속 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -106,7 +109,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     };
     
 	public static final SettingObject<Integer> PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Rival.class, "percentage", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Rival.class, "damage-increase-percentage", 15,
             "# 매칭 성사 공격력 증가", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -115,8 +118,8 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     };
     
 	public static final SettingObject<Integer> WIN_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Rival.class, "win-duration", 40,
-            "# 챔피언 지속 시간", "# 단위: 초") {
+			rsAbilitySettings.new SettingObject<Integer>(Rival.class, "win-duration", 20,
+            "# 챔피언 스택 시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -128,13 +131,14 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
     private final int rivaladdduration = (int) (RIVAL_ADDITIONAL_DURATION.getValue() * 20);
     private final int winduration = WIN_DURATION.getValue();
     private final double multiply = 1 + (PERCENTAGE.getValue() * 0.01);
-    private final ActionbarChannel ac = newActionbarChannel();
+    private final ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
     private final DecimalFormat df = new DecimalFormat("0.0");
     private final Random random = new Random();
 	private final Circle circle = Circle.of(1, 25);
     private List<AbilityBase> abilities = new ArrayList<>();
     private AbilityBase rivalability;
     private Player rival;
+    private int championstack = 0;
     
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -163,8 +167,11 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 			for (AbilityBase ability : abilities) {
 				timers.addAll(SetUnion.union(super.getTimers(), ability.getTimers()));	
 			}
+			if (rivalability != null) timers.addAll(SetUnion.union(super.getTimers(), rivalability.getTimers()));
+			else timers.addAll(super.getTimers());
 			return timers;
-		} else return rivalability != null ? SetUnion.union(super.getTimers(), rivalability.getTimers()) : super.getTimers();
+		}
+		return rivalability != null ? SetUnion.union(super.getTimers(), rivalability.getTimers()) : super.getTimers();
 	}
 
 	@Override
@@ -174,8 +181,11 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 			for (AbilityBase ability : abilities) {
 				timers.addAll(SetUnion.union(super.getRunningTimers(), ability.getRunningTimers()));	
 			}
+			if (rivalability != null) timers.addAll(SetUnion.union(super.getRunningTimers(), rivalability.getRunningTimers()));
+			else timers.addAll(super.getRunningTimers());
 			return timers;
-		} else return rivalability != null ? SetUnion.union(super.getRunningTimers(), rivalability.getRunningTimers()) : super.getRunningTimers();
+		}
+		return rivalability != null ? SetUnion.union(super.getRunningTimers(), rivalability.getRunningTimers()) : super.getRunningTimers();
 	}
 
 	@Override
@@ -186,13 +196,15 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 					return ability.usesMaterial(material);
 				}	
 			}
-			return super.usesMaterial(material);
-		} else {
 			if (rivalability != null) {
 				return rivalability.usesMaterial(material);
 			}
-			return super.usesMaterial(material);	
+			return super.usesMaterial(material);
 		}
+		if (rivalability != null) {
+			return rivalability.usesMaterial(material);
+		}
+		return super.usesMaterial(material);
 	}
 
 	@Override
@@ -208,11 +220,10 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 						ability.setRestricted(true);
 					}
 				}
-			} else {
-				if (rivalability != null) {
-					rivalability.setRestricted(true);
-				}	
 			}
+			if (rivalability != null) {
+				rivalability.setRestricted(true);
+			}	
 		} else if (update == Update.ABILITY_DESTROY) {
 			if (champion.isRunning()) {
 				if (!abilities.isEmpty()) {
@@ -221,11 +232,10 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 					}
 					abilities.clear();
 				}
-			} else {
-				if (rivalability != null) {
-					rivalability.destroy();
-					rivalability = null;
-				}	
+			}
+			if (rivalability != null) {
+				rivalability.destroy();
+				rivalability = null;
 			}
 		}
 	}
@@ -245,62 +255,69 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 				if (dontchange == true) actived = true;
 				if (actived) return true;	
 			}
-		} else {
-			if (Rival.this.rivalability == null) {
-				if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
-					if (rival != null || LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate) != null) {
-						if (rival == null) rival = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
-						if (!rivaltimer.isRunning()) rivaltimer.start();
-						rivaltimer.setCount(rivaltimer.getCount() + rivaladdduration);
-						if (getGame().getParticipant(rival).hasAbility()) {
-							AbilityBase ab = getGame().getParticipant(rival).getAbility();
-							AbilityBase myab = null;
-							if (ab.getClass().equals(Mix.class)) {
-								Mix mix = (Mix) ab;
-								Mix myMix = (Mix) getParticipant().getAbility();
-								if (mix.hasSynergy()) {
-									myab = mix.getSynergy();
-								} else {
-									if (myMix.getFirst().equals(Rival.this)) {
-										myab = mix.getFirst();
-									} else if (myMix.getSecond().equals(Rival.this)) {
-										myab = mix.getSecond();
-									}	
-								}
-							} else myab = ab;
-							
-							try {
-								this.rivalability = AbilityBase.create(myab.getClass(), getParticipant());
-								this.rivalability.setRestricted(false);
-								getPlayer().sendMessage("§3[§b!§3] §b라이벌의 능력을 복제했습니다. 능력: §a" + rivalability.getDisplayName());
-							} catch (ReflectiveOperationException e) {
-								e.printStackTrace();
+		}
+		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK) {
+			if (championstack > 0) {
+				champion.start();
+				champion.setCount(championstack * winduration);
+				championstack = 0;
+				return true;
+			} else getPlayer().sendMessage("§c[§e!§c] §e챔피언 스택이 없습니다.");
+		}
+		if (Rival.this.rivalability == null) {
+			if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
+				if (rival != null || LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate) != null) {
+					if (rival == null) rival = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 100, predicate);
+					if (!rivaltimer.isRunning()) rivaltimer.start();
+					rivaltimer.setCount(rivaltimer.getCount() + rivaladdduration);
+					if (getGame().getParticipant(rival).hasAbility()) {
+						AbilityBase ab = getGame().getParticipant(rival).getAbility();
+						AbilityBase myab = null;
+						if (ab.getClass().equals(Mix.class)) {
+							Mix mix = (Mix) ab;
+							Mix myMix = (Mix) getParticipant().getAbility();
+							if (mix.hasSynergy()) {
+								myab = mix.getSynergy();
+							} else {
+								if (myMix.getFirst().equals(Rival.this)) {
+									myab = mix.getFirst();
+								} else if (myMix.getSecond().equals(Rival.this)) {
+									myab = mix.getSecond();
+								}	
 							}
-						} else cooldown.start();
+						} else myab = ab;
 						
-						if (rival.getHealth() < getPlayer().getHealth()) {
-							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), getPlayer().getHealth() - rival.getHealth(), RegainReason.CUSTOM);
-							Bukkit.getPluginManager().callEvent(event);
-							if (!event.isCancelled()) {
-								Healths.setHealth(rival, getPlayer().getHealth());
-							}
+						try {
+							this.rivalability = AbilityBase.create(myab.getClass(), getParticipant());
+							this.rivalability.setRestricted(false);
+							getPlayer().sendMessage("§3[§b!§3] §b라이벌의 능력을 복제했습니다. 능력: §a" + rivalability.getDisplayName());
+						} catch (ReflectiveOperationException e) {
+							e.printStackTrace();
 						}
-						
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								getPlayer().teleport(rival);
-							}	
-						}.runTaskLater(AbilityWar.getPlugin(), 1L);
-					} else {
-						getPlayer().sendMessage("§c[§e!§c] §f바라보고 있는 곳에 아무런 대상이 없습니다.");
-						return false;
+					} else cooldown.start();
+					
+					if (rival.getHealth() < getPlayer().getHealth()) {
+						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), getPlayer().getHealth() - rival.getHealth(), RegainReason.CUSTOM);
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) {
+							Healths.setHealth(rival, getPlayer().getHealth());
+						}
 					}
-					return true;
+					
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							getPlayer().teleport(rival);
+						}	
+					}.runTaskLater(AbilityWar.getPlugin(), 1L);
+				} else {
+					getPlayer().sendMessage("§c[§e!§c] §f바라보고 있는 곳에 아무런 대상이 없습니다.");
+					return false;
 				}
-			} else {
-				return rivalability instanceof ActiveHandler && ((ActiveHandler) rivalability).ActiveSkill(material, clickType);	
+				return true;
 			}
+		} else {
+			return rivalability instanceof ActiveHandler && ((ActiveHandler) rivalability).ActiveSkill(material, clickType);	
 		}
 		return false;
 	}
@@ -315,12 +332,11 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 					}	
 				}
 			}
-		} else {
-			if (rivalability != null) {
-				if (rivalability instanceof TargetHandler) {
-				((TargetHandler) rivalability).TargetSkill(material, entity);
-				}
-			}	
+		}
+		if (rivalability != null) {
+			if (rivalability instanceof TargetHandler) {
+			((TargetHandler) rivalability).TargetSkill(material, entity);
+			}
 		}
 	}
     
@@ -328,8 +344,9 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		public void onStart() {
-			rivaltimer.stop(false);
-			ac.update("§e챔피언§7: §f" + winduration + "초");
+			ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 25, 1);
+			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer().getLocation(), 1, 2);
+			ac2.update("§e챔피언§7: §f" + winduration + "초");
 			for (AbilityBase ability : abilities) {
 				ability.setRestricted(false);
 			}
@@ -344,7 +361,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		public void run(int count) {
-			ac.update("§e챔피언§7: §f" + count + "초");
+			ac2.update("§e챔피언§7: §f" + count + "초");
 		}
 		
 		@Override
@@ -354,7 +371,7 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		public void onSilentEnd() {
-			ac.update(null);
+			ac2.update(null);
 			for (AbilityBase ability : abilities) {
 				ability.setRestricted(true);
 			}
@@ -425,38 +442,36 @@ public class Rival extends AbilityBase implements ActiveHandler, TargetHandler {
 			} catch (ReflectiveOperationException e1) {
 				e1.printStackTrace();
 			}
-			ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0.5, 1, 0.5, 25, 1);
-			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(getPlayer().getLocation(), 1, 2);
-			champion.start();
+			rivaltimer.setCount(0);
+			championstack++;
+			ac2.update("§e챔피언§7: §c" + championstack);
 		}
 	}
     
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (!champion.isRunning()) {
-	    	Player damager = null;
-			if (e.getDamager() instanceof Projectile) {
-				Projectile projectile = (Projectile) e.getDamager();
-				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-			
-			if (rival == null) {
-				if (e.getEntity().equals(getPlayer()) && damager != null) {
-					rival = damager;
-					rivaltimer.start();
-				}
-			} else {
-				if (getPlayer().equals(damager) && e.getEntity() instanceof Player && !e.getEntity().equals(rival)) {
-					e.setCancelled(true);
-				}
-				if (getPlayer().equals(e.getEntity()) && !rival.equals(damager)) {
-					e.setCancelled(true);
-				}
-				if (Rival.this.rivalability != null && getPlayer().equals(damager) && e.getEntity().equals(rival)) {
-					rivaltimer.setCount(rivalduration);
-					e.setDamage(e.getDamage() * multiply);
-				}
-			}	
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (rival == null) {
+			if (e.getEntity().equals(getPlayer()) && damager != null) {
+				rival = damager;
+				rivaltimer.start();
+			}
+		} else {
+			if (getPlayer().equals(damager) && e.getEntity() instanceof Player && !e.getEntity().equals(rival)) {
+				e.setCancelled(true);
+			}
+			if (getPlayer().equals(e.getEntity()) && !rival.equals(damager)) {
+				e.setCancelled(true);
+			}
+			if (Rival.this.rivalability != null && getPlayer().equals(damager) && e.getEntity().equals(rival)) {
+				rivaltimer.setCount(rivalduration);
+				e.setDamage(e.getDamage() * multiply);
+			}
 		}
 	}
 

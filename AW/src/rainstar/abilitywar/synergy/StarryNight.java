@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +46,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -94,8 +97,8 @@ public class StarryNight extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN =
-			synergySettings.new SettingObject<Integer>(StarryNight.class, "cooldown", 12, 
-					"# 쿨타임", "# 주의! 쿨타임 감소를 33%까지만 받습니다.") {
+			rsSynergySettings.new SettingObject<Integer>(StarryNight.class, "cooldown", 12, 
+					"# 쿨타임", "# 주의! 쿨타임 감소를 50%까지만 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -108,7 +111,7 @@ public class StarryNight extends Synergy {
 	};
 	
 	public static final SettingObject<Double> STACK_COOL = 
-			synergySettings.new SettingObject<Double>(StarryNight.class, "stack-cooldown", 1.0,
+			rsSynergySettings.new SettingObject<Double>(StarryNight.class, "stack-cooldown", 0.5,
             "# 표식을 쌓을 때 내부 쿨타임") {
 
         @Override
@@ -119,7 +122,7 @@ public class StarryNight extends Synergy {
     };
     
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
-			synergySettings.new SettingObject<Integer>(StarryNight.class, "damage-increase", 15,
+			rsSynergySettings.new SettingObject<Integer>(StarryNight.class, "damage-increase", 25,
             "# 별 스택 당 공격력 증가 수치") {
 
         @Override
@@ -130,7 +133,7 @@ public class StarryNight extends Synergy {
     };
     
 	public static final SettingObject<Double> STUN = 
-			synergySettings.new SettingObject<Double>(StarryNight.class, "stun-duration", 0.3,
+			rsSynergySettings.new SettingObject<Double>(StarryNight.class, "stun-duration", 0.7,
             "# 달 스택 당 기절 지속시간 증가") {
 
         @Override
@@ -181,7 +184,7 @@ public class StarryNight extends Synergy {
 		}
 	}
 	
-	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 33);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
 	private static final Set<Material> swords;
 	private Bullet bullet = null;
 	private static final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
@@ -409,8 +412,8 @@ public class StarryNight extends Synergy {
 		private List<Boolean> stacks = new ArrayList<>();
 		
 		private Stack(Player player, boolean stacktype) {
-			super(20);
-			setPeriod(TimeUnit.TICKS, 4);
+			super(300);
+			setPeriod(TimeUnit.TICKS, 1);
 			this.player = player;
 			this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(),
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
@@ -437,7 +440,7 @@ public class StarryNight extends Synergy {
 			stacks.add(stacktype);
 			String string = "";
 			for (Boolean booleans : stacks) {
-				string += (booleans ? "§e✭" : "§e🌙");
+				string += (booleans ? "§e✭" : "§e☽");
 			}
 			hologram.setText(string + Strings.repeat("§7?", 4 - stacks.size()));
 			if (stacks.size() >= 4) {

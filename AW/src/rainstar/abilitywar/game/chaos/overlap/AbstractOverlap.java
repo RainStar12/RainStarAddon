@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.Chaos.Overlap;
+package rainstar.abilitywar.game.chaos.overlap;
 
 import java.util.Collection;
 import java.util.StringJoiner;

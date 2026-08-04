@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.Chaos;
+package rainstar.abilitywar.game.chaos;
 
 import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;

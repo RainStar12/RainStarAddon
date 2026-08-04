@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -76,7 +78,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "cooldown", 120,
+			rsAbilitySettings.new SettingObject<Integer>(Dinosaur.class, "cooldown", 120,
 			"# 쿨타임") {
 
 		@Override
@@ -92,7 +94,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> LONGEST_WAIT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "longest-wait", 180,
+			rsAbilitySettings.new SettingObject<Integer>(Dinosaur.class, "longest-wait", 180,
 			"# 최대 지속 시간") {
 
 		@Override
@@ -103,7 +105,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COUNT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "count", 9,
+			rsAbilitySettings.new SettingObject<Integer>(Dinosaur.class, "count", 9,
 			"# 연속 찍기 횟수") {
 
 		@Override
@@ -114,7 +116,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "damage", 11,
+			rsAbilitySettings.new SettingObject<Integer>(Dinosaur.class, "damage", 11,
 			"# 연속 찍기의 피해량") {
 
 		@Override
@@ -125,7 +127,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ABSORTION_AMOUNT = 
-			abilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 150,
+			rsAbilitySettings.new SettingObject<Integer>(Dinosaur.class, "absortion-amount", 150,
 			"# 획득하는 흡수 체력", "# 단위는 %로, 최대 체력에 비례합니다.") {
 
 		@Override
@@ -264,7 +266,7 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 			NMS.setAbsorptionHearts(getPlayer(), (float) (yellowheart + 1));
 		}
 		
-	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 30).register();
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).setPeriod(TimeUnit.TICKS, 20).register();
 	
 	@SubscribeEvent
 	public void onEntityPickup(EntityPickupItemEvent e) {
@@ -347,8 +349,9 @@ public class Dinosaur extends AbilityBase implements ActiveHandler {
 				ac2.update(null);
 				skillstack = 0;
 				cooldown.start();
+				double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 				absortionAdd.start();
-				absortionAdd.setCount(absortionAdd.getCount() + (damagecounter.size() * 3));
+				absortionAdd.setCount((int) ((damagecounter.size() + 1) * maxHealth * 0.2));
 				damagecounter.clear();
 			}
 		}

@@ -39,6 +39,8 @@ import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.TimeInterrupt;
 import rainstar.abilitywar.system.event.ChronosCooldownResetEvent;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 @AbilityManifest(name = "크로노스", rank = Rank.S, species = Species.GOD, explain = {
 		"시간의 신 크로노스.",
 		"§7공유 패시브 §8- §3시간 가속§f: 게임 내에 크로노스가 한 명이라도 있으면",
@@ -61,7 +63,7 @@ import rainstar.abilitywar.system.event.ChronosCooldownResetEvent;
 public class Chronos extends AbilityBase implements ActiveHandler {
 
 	private static final SettingObject<Integer> TIME_SPEED = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "time-speed", 10, "# 시간 가속의 속도 배율") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "time-speed", 10, "# 시간 가속의 속도 배율") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -71,7 +73,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> RANGE = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "range", 10, "# 시간 지배의 사거리") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "range", 10, "# 시간 지배의 사거리") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -81,7 +83,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "duration", 7, "# 시간 조작의 지속 시간") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "duration", 7, "# 시간 조작의 지속 시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -91,7 +93,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> BUFF_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 7, "# 조작으로 얻는 기본 버프 지속시간") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "buff-duration", 7, "# 조작으로 얻는 기본 버프 지속시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -101,7 +103,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	private static final SettingObject<Integer> BUFF_ADD_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "buff-add-duration", 30, "# 조작한 대상 하나당 얻는 추가 지속시간", "# 단위: 틱 (20틱 = 1초)") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "buff-add-duration", 30, "# 조작한 대상 하나당 얻는 추가 지속시간", "# 단위: 틱 (20틱 = 1초)") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -111,7 +113,7 @@ public class Chronos extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 80, "# 쿨타임") {
+			rsAbilitySettings.new SettingObject<Integer>(Chronos.class, "cooldown", 80, "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;

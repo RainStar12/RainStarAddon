@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,8 +58,8 @@ public class Panda extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> SKILL_COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Panda.class, "skill-cooldown", 150, "# 쿨타임") {
+	public static final SettingObject<Integer> SKILL_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
+			Panda.class, "skill-cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -72,7 +74,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 	};
 	
 	
-	public static final SettingObject<Integer> DAMAGE_DECREASE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> DAMAGE_DECREASE = rsAbilitySettings.new SettingObject<Integer>(
 			Panda.class, "damage-decrease", 30, "# 기본 피해량 감소", "# 단위: %") {
 
 		@Override
@@ -82,7 +84,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> DAMAGE_INCREASE = rsAbilitySettings.new SettingObject<Integer>(
 			Panda.class, "damage-increase", 10, "# 아머당 피해량 증가", "# 단위: %") {
 
 		@Override
@@ -92,7 +94,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> MAX_STACK = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> MAX_STACK = rsAbilitySettings.new SettingObject<Integer>(
 			Panda.class, "max-stack", 5, "# 아머 최대 스택") {
 
 		@Override
@@ -102,7 +104,7 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> MAX_STACK_INCREASED = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> MAX_STACK_INCREASED = rsAbilitySettings.new SettingObject<Integer>(
 			Panda.class, "max-stack-increased", 10, "# 증가된 아머 최대 스택") {
 
 		@Override
@@ -112,8 +114,8 @@ public class Panda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(Panda.class,
-			"stack-duration", 3.0, "# 아머 지속시간") {
+	private static final SettingObject<Double> DURATION = rsAbilitySettings.new SettingObject<Double>(Panda.class,
+			"stack-duration", 5.0, "# 아머 지속시간") {
 
 		@Override
 		public boolean condition(Double arg0) {

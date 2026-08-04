@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -119,7 +121,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 	
 	private final Cooldown cool = new Cooldown(CooldownConfig.getValue());
 	
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Flex.class,
+	public static final SettingObject<Integer> CooldownConfig = rsAbilitySettings.new SettingObject<Integer>(Flex.class,
 			"Cooldown", 30, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -132,7 +134,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Flex.class,
+	public static final SettingObject<Integer> DurationConfig = rsAbilitySettings.new SettingObject<Integer>(Flex.class,
 			"Duration", 10, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -264,7 +266,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer()) && duration.isRunning()) {
-			e.setDamage(e.getDamage() - (Iron * 0.05));
+			e.setDamage(e.getDamage() - (Iron * 0.1));
 		}
 	}
 	
@@ -276,7 +278,7 @@ public class Flex extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && duration.isRunning()) {
-			e.setDamage(e.getDamage() + (Gold * 0.03));
+			e.setDamage(e.getDamage() + (Gold * 0.1));
 		}
 		onEntityDamage(e);
 	}

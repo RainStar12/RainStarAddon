@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -49,7 +51,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> DAMAGE_DECREASE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Tekkai.class, "damage-decrease-duration-", 1.5,
+			rsAbilitySettings.new SettingObject<Double>(Tekkai.class, "damage-decrease-duration", 2.0,
             "# 피해 경감 효과 지속시간") {
         @Override
         public boolean condition(Double value) {
@@ -58,7 +60,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> INV_DURATION = 
-			abilitySettings.new SettingObject<Double>(Tekkai.class, "inv-duration-", 2.2,
+			rsAbilitySettings.new SettingObject<Double>(Tekkai.class, "inv-duration", 3.0,
             "# 무적 효과 지속시간") {
         @Override
         public boolean condition(Double value) {
@@ -67,7 +69,7 @@ public class Tekkai extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Tekkai.class, "cooldown", 75,
+			rsAbilitySettings.new SettingObject<Integer>(Tekkai.class, "cooldown", 75,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

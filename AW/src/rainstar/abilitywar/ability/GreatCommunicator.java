@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
@@ -52,7 +56,7 @@ public class GreatCommunicator extends AbilityBase {
     }
     
 	public static final SettingObject<Integer> MAX_TRUEDMG = 
-			abilitySettings.new SettingObject<Integer>(GreatCommunicator.class, "max-true-damage", 15,
+			rsAbilitySettings.new SettingObject<Integer>(GreatCommunicator.class, "max-true-damage-amount", 25,
 			"# 최대 고정 피해량 배율", "# 단위: %") {
 
 		@Override
@@ -63,7 +67,7 @@ public class GreatCommunicator extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> MAX_FEAR = 
-			abilitySettings.new SettingObject<Double>(GreatCommunicator.class, "max-fear", 2.5,
+			rsAbilitySettings.new SettingObject<Double>(GreatCommunicator.class, "max-fear", 2.5,
 			"# 최대 공포 시간") {
 
 		@Override
@@ -74,7 +78,7 @@ public class GreatCommunicator extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(GreatCommunicator.class, "cooldown", 40,
+			rsAbilitySettings.new SettingObject<Integer>(GreatCommunicator.class, "cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -198,5 +202,19 @@ public class GreatCommunicator extends AbilityBase {
     		}
     	}
     }
+    
+	@SubscribeEvent
+	private void onPlayerJoin(final PlayerJoinEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && handchecker.isRunning()) {
+			if (bossBar != null) bossBar.addPlayer(e.getPlayer());
+		}
+	}
+
+	@SubscribeEvent
+	private void onPlayerQuit(final PlayerQuitEvent e) {
+		if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			if (bossBar != null) bossBar.removePlayer(e.getPlayer());
+		}
+	}
 
 }

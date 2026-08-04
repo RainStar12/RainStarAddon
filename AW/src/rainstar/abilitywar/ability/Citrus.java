@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -72,7 +74,6 @@ import rainstar.abilitywar.effect.SnowflakeMark;
 
 @SuppressWarnings("deprecation")
 @AbilityManifest(name = "시트러스", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§a풀 속성§f의 미스터리 연금술사, 시트러스.",
 		"§7철괴 좌클릭 §8- §2엘릭서§f: §a긍정 포션 효과§f의 계수를 §e1단계§f 높여서 받습니다.",
 		" 이 효과로 강화된 수에 비례해 다음 쿨타임이 감소합니다. $[COOLDOWN]",
 		"§7패시브 §8- §3케미컬 쓰로워§f: 기본적으로 비주류 손을 사용하지 못합니다.",
@@ -96,9 +97,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> RESTOCK = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "restock", 13,
-			"# 포션 재충전 시간",
-			"# 쿨타임 감소 효과를 40%까지 받습니다.") {
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "restock", 13,
+			"# 포션 재충전 시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -108,8 +108,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(Citrus.class,
-			"cooldown", 75, "# 쿨타임") {
+	= rsAbilitySettings.new SettingObject<Integer>(Citrus.class,
+			"cooldown", 90, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -122,7 +122,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> POISON_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "poison-duration", 14,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "poison-duration", 14,
 			"# 독 지속시간 (단위: 초)") {
 
 		@Override
@@ -133,7 +133,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> WEAKNESS_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "weakness-duration", 17,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "weakness-duration", 17,
 			"# 나약함 지속시간 (단위: 초)") {
 
 		@Override
@@ -144,7 +144,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SLOWNESS_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "slowness-duration", 23,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "slowness-duration", 23,
 			"# 구속 지속시간 (단위: 초)") {
 
 		@Override
@@ -155,7 +155,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 
 	public static final SettingObject<Integer> WITHER_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "wither-duration", 19,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "wither-duration", 19,
 			"# 시듦 지속시간 (단위: 초)") {
 
 		@Override
@@ -166,7 +166,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> BLINDNESS_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "blind-duration", 12,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "blind-duration", 12,
 			"# 실명 지속시간 (단위: 초)") {
 
 		@Override
@@ -177,7 +177,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CONFUSION_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "confusion-duration", 14,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "confusion-duration", 14,
 			"# 멀미 지속시간 (단위: 초)") {
 
 		@Override
@@ -188,7 +188,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> GLOWING_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "glowing-duration", 90,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "glowing-duration", 90,
 			"# 발광 지속시간 (단위: 초)") {
 
 		@Override
@@ -199,7 +199,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> HUNGER_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "hunger-duration", 120,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "hunger-duration", 120,
 			"# 허기 지속시간 (단위: 초)") {
 
 		@Override
@@ -210,7 +210,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> LEVITATION_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "levitation-duration", 5,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "levitation-duration", 5,
 			"# 공중 부양 지속시간 (단위: 초)") {
 
 		@Override
@@ -221,7 +221,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SLOW_DIGGING_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "slow-digging-duration", 30,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "slow-digging-duration", 30,
 			"# 채굴 피로 지속시간 (단위: 초)") {
 
 		@Override
@@ -232,7 +232,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> UNLUCK_DURATION = 
-			abilitySettings.new SettingObject<Integer>(Citrus.class, "unluck-duration", 300,
+			rsAbilitySettings.new SettingObject<Integer>(Citrus.class, "unluck-duration", 300,
 			"# 불행 지속시간 (단위: 초)") {
 
 		@Override
@@ -248,8 +248,7 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 			if (entity.equals(getPlayer())) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))) {
 					return false;
 				}
 				if (getGame() instanceof Teamable) {
@@ -342,11 +341,19 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
 	    	restock.start();
 	    	passive.start();
+	    	
+	    	if (!getPlayer().getInventory().getItemInOffHand().getType().equals(MaterialX.SPLASH_POTION.getMaterial())) {
+	    		ItemStack item = getPlayer().getInventory().getItemInOffHand();
+	    		getPlayer().getInventory().setItemInOffHand(null);
+	    		if (getPlayer().getInventory().firstEmpty() == -1) {
+	    			getPlayer().getWorld().dropItem(getPlayer().getLocation(), item);
+	    		} else getPlayer().getInventory().addItem(item);
+	    	}
 	    }
 	}
 	
 	private int messagestack = 0;
-	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(40) * RESTOCK.getValue() : RESTOCK.getValue());
+	private final int restocktimer = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * RESTOCK.getValue() : RESTOCK.getValue());
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private boolean converted = false;
 	private PotionEffectType offhandPotion;
@@ -393,6 +400,9 @@ public class Citrus extends AbilityBase implements ActiveHandler {
 				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, purple);
 				}
+    		}
+    		if (!restock.isRunning() && !getPlayer().getInventory().getItemInOffHand().getType().equals(MaterialX.SPLASH_POTION.getMaterial())) {
+    			restock.start();
     		}
 		}
 		
@@ -442,8 +452,8 @@ public class Citrus extends AbilityBase implements ActiveHandler {
     		}
 			SoundLib.BLOCK_BREWING_STAND_BREW.playSound(getPlayer().getLocation(), 1, 0.75f);
 	    	cooldown.start();
-	    	cooldown.setCount(Math.max(0, cooldown.getCount() - Math.min(changedcounter, (cooldown.getCount() / 2))));
-	    	if (restock.isRunning()) restock.setCount(Math.max(0, restock.getCount() - changedcounter));
+	    	cooldown.setCount(Math.max(0, cooldown.getCount() - Math.min(changedcounter * 5, (cooldown.getCount() / 2))));
+	    	if (restock.isRunning()) restock.setCount(Math.max(0, restock.getCount() - (changedcounter * 5)));
 	    	return true;
 	    }
 	    return false;

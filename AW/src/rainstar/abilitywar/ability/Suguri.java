@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +74,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> EVADE = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "evade", 0.8,
+			rsAbilitySettings.new SettingObject<Double>(Suguri.class, "evade", 0.8,
 			"# 대시 직후 회피 지속시간") {
 
 		@Override
@@ -83,7 +85,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> ACCELERATOR_DURATION = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "accelerator-duration", 7.5,
+			rsAbilitySettings.new SettingObject<Double>(Suguri.class, "accelerator-duration", 7.5,
 			"# 액셀러레이터 지속 시간") {
 
 		@Override
@@ -94,7 +96,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DASH_START_HEAT_UP = 
-			abilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat-up", 50,
+			rsAbilitySettings.new SettingObject<Integer>(Suguri.class, "dash-start-heat-up", 70,
 			"# 대시 시작 시 추가 히트") {
 
 		@Override
@@ -105,7 +107,7 @@ public class Suguri extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DASH_RUN_HEAT_UP = 
-			abilitySettings.new SettingObject<Double>(Suguri.class, "dash-run-heat-up", 20.0,
+			rsAbilitySettings.new SettingObject<Double>(Suguri.class, "dash-run-heat-up", 15.0,
 			"# 대시 유지 시 초당 증가하는 히트량") {
 
 		@Override

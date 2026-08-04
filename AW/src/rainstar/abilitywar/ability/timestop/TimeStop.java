@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability.timestop;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +23,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -65,16 +68,13 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 
+@SuppressWarnings("deprecation")
 @AbilityManifest(name = "시간 정지", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7철괴 우클릭 §8- §b타임 스톱§f: 5초의 시간을 재고 $[DURATION_CONFIG]초간 시간을 멈춥니다.",
 		" 시간이 멈춘 동안 모든 플레이어는 행동 불능이 되어 정지 해제 후 정지된 시간동안",
-		" 받을 피해를 한 번에 1/5로 줄여서 받습니다. 시간이 정지되기 전 지속 중이던",
+		" 받을 피해를 한 번에 $[DAMAGE_CONFIG]배로 줄여서 받습니다. 시간이 정지되기 전 지속 중이던",
 		" 능력은 정지가 끝난 이후 연속해서 지속하게 됩니다. $[COOLDOWN_CONFIG]",
-		" §7반전 세계 효과§f: $[EFFECT]",
-		"§7패시브 §8- §a타임 플로우§f: 시간 정지의 영향을 받지 않습니다.",
-		"§7패시브 §8- §3타임 디비전§f: 시간 정지 소유자 한 명당 지속시간이 30%씩 감소합니다.",
-		" 줄어든 지속시간의 소수점은 올림 처리되며, 1초 미만으로는 줄지 않습니다.",
-		" 또한 한 명당 정지 종료 후 피해 감소량이 줄어듭니다."
+		"§7패시브 §8- §a타임 플로우§f: 시간 정지의 영향을 받지 않습니다."
 		},
 		summarize = {
 		"§7철괴 우클릭 시§f 시간을 멈춰 자신 혹은 시간 정지 능력자들 외 모든 플레이어의",
@@ -103,20 +103,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private final Map<Player, Double> damageCounter = new HashMap<>();
-	private final Map<Player, Stack> stackMap = new HashMap<>();
-	private final Map<Projectile, Vector> velocityMap = new HashMap<>();
-	private Set<Player> custominv = new HashSet<>();
-	private Set<Player> timestoppers = new HashSet<>();
-	private final Cooldown timeStop = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
-	private boolean effectboolean = EFFECT.getValue();
-	private Duration stopduration = null;
-	private static final Vector zerov = new Vector(0, 0, 0);
-	private ArmorStand hologram;
-	private Location defaultLocation;
-	private long worldtime = 0;
-	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(TimeStop.class,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = rsAbilitySettings.new SettingObject<Integer>(TimeStop.class,
 			"cooldown", 120, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -129,7 +116,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(TimeStop.class,
+	public static final SettingObject<Integer> DURATION_CONFIG = rsAbilitySettings.new SettingObject<Integer>(TimeStop.class,
 			"duration", 7, "# 시간을 몇 초 정지시킬지 설정합니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -137,8 +124,8 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Boolean> EFFECT = abilitySettings.new SettingObject<Boolean>(TimeStop.class,
-			"effect-config", false, "# 이펙트 여부", "# 시간 정지 시 반전 세계 시점을 볼 수 있을지 선택합니다.") {
+	public static final SettingObject<Boolean> EFFECT = rsAbilitySettings.new SettingObject<Boolean>(TimeStop.class,
+			"effect", false, "# 이펙트 여부", "# 시간 정지 시 반전 세계 시점을 볼 수 있을지 선택합니다.") {
 		
 		@Override
 		public String toString() {
@@ -146,6 +133,29 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
         }
 		
 	};
+	
+	public static final SettingObject<Double> DAMAGE_CONFIG = rsAbilitySettings.new SettingObject<Double>(TimeStop.class,
+			"damage", 0.33, "# 피해량", "# 시간 정지 해제 시 받을 대미지의 배율입니다.") {
+		
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	private final Map<Player, Double> damageCounter = new HashMap<>();
+	private final Map<Player, Stack> stackMap = new HashMap<>();
+	private final Map<Projectile, Vector> velocityMap = new HashMap<>();
+	private Set<Player> custominv = new HashSet<>();
+	private final Cooldown timeStop = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
+	private boolean effectboolean = EFFECT.getValue();
+	private Duration stopduration = null;
+	private static final Vector zerov = new Vector(0, 0, 0);
+	private ArmorStand hologram;
+	private Location defaultLocation;
+	private long worldtime = 0;
+	private double damagemultifly = DAMAGE_CONFIG.getValue();
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -179,7 +189,6 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_CLEAR) {
-	    	if (!checkTimestoppers.isRunning()) checkTimestoppers.start();
 	    	defaultLocation = getPlayer().getLocation().clone().add(0, 100, 0);
 			this.hologram = getPlayer().getWorld().spawn(defaultLocation, ArmorStand.class);
 			hologram.setVisible(false);
@@ -195,32 +204,6 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	    	}
 	    }
 	}
-	
-    private final AbilityTimer checkTimestoppers = new AbilityTimer() {
-    	
-    	@Override
-		public void run(int count) {
-			for (Participant participants : getGame().getParticipants()) {
-				if (participants.hasAbility()) {
-					AbilityBase ab = participants.getAbility();
-					if (ab.getClass().equals(Mix.class)) {
-						Mix mix = (Mix) ab;
-						if (!mix.hasSynergy()) {
-							if (mix.getFirst() != null && mix.getSecond() != null) {
-								if (mix.getFirst().getClass().equals(TimeStop.class)) timestoppers.add(participants.getPlayer());
-								if (mix.getSecond().getClass().equals(TimeStop.class)) timestoppers.add(participants.getPlayer());
-								if (!mix.getFirst().getClass().equals(TimeStop.class) && !mix.getSecond().getClass().equals(TimeStop.class)) timestoppers.remove(participants.getPlayer());	
-							} else timestoppers.remove(participants.getPlayer());
-						} else timestoppers.remove(participants.getPlayer());
-					} else {
-						if (ab.getClass().equals(TimeStop.class)) timestoppers.add(participants.getPlayer());
-						else timestoppers.remove(participants.getPlayer());
-					}
-				} else if (!participants.hasAbility()) timestoppers.remove(participants.getPlayer());
-			}
-    	}
-    
-    }.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	private AbilityTimer timecount = new AbilityTimer(100) {
 		
@@ -450,7 +433,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 						arrow.remove();
 			      	}
 					double damage = (damageCounter.getOrDefault(e.getEntity(), Double.valueOf(0.0D))).doubleValue();
-					damageCounter.put((Player) e.getEntity(), Double.valueOf(damage + e.getFinalDamage()));
+					damageCounter.put((Player) e.getEntity(), Double.valueOf(damage + (e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION))));
 					if (!getGame().hasModule(ZeroTick.class)) {
 						new CustomInv((Player) e.getEntity()).start();	
 					}
@@ -499,7 +482,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 					player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), 
 					player.getLocation().getYaw(), 0);
 			if (damageCounter.containsKey(player)) {
-				hologram.setText("§c§l" + df.format((damageCounter.get(player) / Math.max(1, 5 - (timestoppers.size() - 1)))));
+				hologram.setText("§c§l" + df.format((damageCounter.get(player) / 2.0)));
 			}
 		}
 		
@@ -519,7 +502,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 	class InvTimer extends Duration {
 
 		public InvTimer() {
-			super((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))), timeStop);
+			super((int) Math.max(1, DURATION_CONFIG.getValue()), timeStop);
 			setPeriod(TimeUnit.SECONDS, 1);
 		}
 		
@@ -555,7 +538,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 						enderman.setSilent(true);
 						enderman.setAI(false);
 						PotionEffects.INVISIBILITY.addPotionEffect(enderman, 9999, 1, false);
-						new AbilityTimer((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))) * 20) {
+						new AbilityTimer((int) DURATION_CONFIG.getValue() * 20) {
 								
 							@Override
 							public void onStart() {
@@ -575,7 +558,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 								
 						}.setPeriod(TimeUnit.TICKS, 1).start();	
 					} else {
-						PotionEffects.BLINDNESS.addPotionEffect(participants.getPlayer(), ((int) Math.max(1, Math.ceil((DURATION_CONFIG.getValue() * Math.pow(0.7, timestoppers.size() - 1)))) * 20), 2, false);
+						PotionEffects.BLINDNESS.addPotionEffect(participants.getPlayer(), ((int) DURATION_CONFIG.getValue() * 20), 2, false);
 					}
 				}
 				
@@ -611,7 +594,7 @@ public class TimeStop extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationSilentEnd() {
 			for (Player p : damageCounter.keySet()) {
-				Healths.setHealth((Player) p, Math.max(1, p.getHealth() - (damageCounter.get(p) / Math.max(1, 5 - (timestoppers.size() - 1)))));
+				Healths.setHealth((Player) p, Math.max(1, p.getHealth() - (damageCounter.get(p) * damagemultifly)));
 			}
 			damageCounter.clear();
 			

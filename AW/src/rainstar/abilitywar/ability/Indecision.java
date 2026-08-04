@@ -1,15 +1,18 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -29,7 +32,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 
@@ -97,7 +99,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Indecision.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Indecision.class,
 			"cooldown", 60, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -110,7 +112,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> COUNT = abilitySettings.new SettingObject<Integer>(Indecision.class,
+	public static final SettingObject<Integer> COUNT = rsAbilitySettings.new SettingObject<Integer>(Indecision.class,
 			"count", 3, "# 타격 요구 횟수") {
 		@Override
 		public boolean condition(Integer value) {
@@ -118,15 +120,15 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> ADD_DAMAGE = abilitySettings.new SettingObject<Integer>(Indecision.class,
-			"add-damage", 50, "# 딜 추가 대미지 배수") {
+	public static final SettingObject<Integer> ADD_DAMAGE = rsAbilitySettings.new SettingObject<Integer>(Indecision.class,
+			"add-damage-amount", 40, "# 딜 추가 대미지 배수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};	
 	
-	public static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Indecision.class,
+	public static final SettingObject<Integer> HEAL_AMOUNT = rsAbilitySettings.new SettingObject<Integer>(Indecision.class,
 			"heal-amount", 10, "# 힐 최대 체력 비례 회복력") {
 		@Override
 		public boolean condition(Integer value) {
@@ -148,9 +150,9 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 
-		if (NMS.isArrow(e.getDamager())) {
-			Arrow arrow = (Arrow) e.getDamager();
-			if (arrow.getShooter().equals(getPlayer()) && e.getEntity() instanceof LivingEntity) {
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (getPlayer().equals(projectile.getShooter()) && e.getEntity() instanceof LivingEntity) {
 				final LivingEntity target = (LivingEntity) e.getEntity();
 
 				if (sword == false) {
@@ -176,7 +178,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 						target.setHealth(Math.min(target.getHealth() + event.getAmount(), target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 					}
 					e.setCancelled(true);
-					(arrow).remove();
+					projectile.remove();
 
 					new AbilityTimer(5) {
 						@Override
@@ -202,7 +204,7 @@ public class Indecision extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof LivingEntity) {
+		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof LivingEntity && !e.getCause().equals(DamageCause.THORNS)) {
 			final LivingEntity target = (LivingEntity) e.getEntity();
 
 			if (sword == true) {

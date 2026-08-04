@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +73,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> ARROW_COOL = abilitySettings.new SettingObject<Integer>(Mira.class,
+	public static final SettingObject<Integer> ARROW_COOL = rsAbilitySettings.new SettingObject<Integer>(Mira.class,
 			"arrow-cooldown", 30, "# 표식 생성 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -84,7 +86,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Mira.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Mira.class,
 			"cooldown", 70, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -97,8 +99,8 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> FIELD_RANGE = abilitySettings.new SettingObject<Integer>(Mira.class,
-			"field-range", 7, "# 표식 필드 범위", "§2[§c!§2] §7주의! 파티클이 변경되지 않습니다.") {
+	public static final SettingObject<Integer> FIELD_RANGE = rsAbilitySettings.new SettingObject<Integer>(Mira.class,
+			"field-range", 7, "# 표식 필드 범위") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -107,7 +109,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> TELEPORT_RANGE = abilitySettings.new SettingObject<Integer>(Mira.class,
+	public static final SettingObject<Integer> TELEPORT_RANGE = rsAbilitySettings.new SettingObject<Integer>(Mira.class,
 			"teleport-range", 5, "# 텔레포트 범위") {
 
 		@Override
@@ -117,7 +119,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Boolean> TELEPORT_COUNT = abilitySettings.new SettingObject<Boolean>(Mira.class,
+	public static final SettingObject<Boolean> TELEPORT_COUNT = rsAbilitySettings.new SettingObject<Boolean>(Mira.class,
 			"teleport-count", false, "# 단일 대상 텔레포트 여부", "# true로 변경하시면 주변 모든 플레이어가 아닌", "  가장 가까운 한 플레이어만 같이 텔레포트됩니다.") {
 		
 		@Override
@@ -178,7 +180,6 @@ public class Mira extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	private final Circle circle = Circle.of(7, 100);
 	private final Cooldown teleCool = new Cooldown(COOLDOWN.getValue(), "공간 도약");
 	private final Cooldown arrowCool = new Cooldown(ARROW_COOL.getValue(), "표식");
 	private final int range = FIELD_RANGE.getValue();
@@ -190,6 +191,7 @@ public class Mira extends AbilityBase implements ActiveHandler {
 	private Arrow shootarrow;
 	private boolean check = false;
 	private final Set<Player> fallcancel = new HashSet<>();
+	private final Circle circle = Circle.of(range, 100);
 	
 	protected void onUpdate(AbilityBase.Update update) {
 	    if (update == AbilityBase.Update.RESTRICTION_SET || update == AbilityBase.Update.ABILITY_DESTROY) {

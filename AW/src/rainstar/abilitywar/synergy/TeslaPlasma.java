@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +58,6 @@ import daybreak.google.common.collect.Iterables;
 
 @AbilityManifest(
 		name = "테슬라<플라즈마>", rank = Rank.S, species = Species.HUMAN, explain = {
-		"고화력 플라즈마 건을 난사하는 §e전기 속성§f의 천재 과학자, 테슬라.",
 		"§7패시브 §8- §e변류§f: 기절 효과를 받을 때 기절의 지속을 절반으로 줄입니다.",
 		" 기절 중에는 플라즈마 탄환의 폭발 위력이 1.3배 강력해집니다.",
 		"§7활 장전 §8- §d플라즈마 건§f: 플라즈마 건이 장전되기 전까진 활을 쏠 수 없습니다.",
@@ -75,7 +76,7 @@ public class TeslaPlasma extends Synergy {
 		super(participant);
 	}
 	
-	public static final SettingObject<Double> EXPLOSIVE_NORMAL = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+	public static final SettingObject<Double> EXPLOSIVE_NORMAL = rsSynergySettings.new SettingObject<Double>(TeslaPlasma.class, 
 			"explosive-normal", 3.3, "# 폭발의 기본 위력") {
 
 		@Override
@@ -85,7 +86,7 @@ public class TeslaPlasma extends Synergy {
 
 	};
 	
-	public static final SettingObject<Double> POWER_ENCHANT_MULTIPLY = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+	public static final SettingObject<Double> POWER_ENCHANT_MULTIPLY = rsSynergySettings.new SettingObject<Double>(TeslaPlasma.class, 
 			"power-enchant-multiply", 0.5, "# 힘 1당 추가 위력") {
 
 		@Override
@@ -95,7 +96,7 @@ public class TeslaPlasma extends Synergy {
 
 	};
 	
-	public static final SettingObject<Double> STUN_DURATION = synergySettings.new SettingObject<Double>(TeslaPlasma.class, 
+	public static final SettingObject<Double> STUN_DURATION = rsSynergySettings.new SettingObject<Double>(TeslaPlasma.class, 
 			"stun-duration", 2.0, "# 기절 지속시간") {
 
 		@Override

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +46,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -83,7 +87,7 @@ public class Mirror extends Synergy {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"cooldown", 40, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -96,7 +100,7 @@ public class Mirror extends Synergy {
 		}
 	};
 	
-	public static final SettingObject<Integer> DURABILITY = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> DURABILITY = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"durability-decrease", 1, "# 내구도 감소") {
 		
 		@Override
@@ -106,7 +110,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> FIX = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> FIX = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"fix", 5, "# 내구도 수리") {
 		
 		@Override
@@ -116,7 +120,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> MAX_DURABILITY = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> MAX_DURABILITY = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"max-durability", 30, "# 총 내구도") {
 		
 		@Override
@@ -126,7 +130,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> ARROW_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> ARROW_COUNT = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"arrow-count", 2, "# 화살을 튕겨내는 횟수") {
 		
 		@Override
@@ -136,7 +140,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_COUNT = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> DAMAGE_COUNT = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"damage-count", 4, "# 근접 공격을 반격하는 횟수") {
 		
 		@Override
@@ -146,7 +150,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> REGEN = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> REGEN = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"regen", 15, "# 회복량", "# 단위: %") {
 		
 		@Override
@@ -156,7 +160,7 @@ public class Mirror extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> RETURN = synergySettings.new SettingObject<Integer>(Mirror.class,
+	public static final SettingObject<Integer> RETURN = rsSynergySettings.new SettingObject<Integer>(Mirror.class,
 			"return", 75, "# 반격 피해량", "# 단위: %") {
 		
 		@Override
@@ -191,6 +195,7 @@ public class Mirror extends Synergy {
 	private double durability = maxDurability;
 	private final DecimalFormat df = new DecimalFormat("0");
 	private BossBar bossBar = null;
+	private int cool = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * COOLDOWN.getValue() : COOLDOWN.getValue());
 	
 	private Player target;
 	
@@ -216,7 +221,7 @@ public class Mirror extends Synergy {
 		}
 	}
 	
-	private final AbilityTimer cooldown = new AbilityTimer(COOLDOWN.getValue() * 20) {
+	private final AbilityTimer cooldown = new AbilityTimer(cool * 20) {
 		
 		@Override
 		public void onEnd() {
@@ -240,8 +245,9 @@ public class Mirror extends Synergy {
 		public void run(int count) {
     		if (cooldown.isRunning()) {
     			bossBar.setColor(BarColor.RED);
-    			bossBar.setProgress(cooldown.getCount() / (double) (COOLDOWN.getValue() * 20));
+    			bossBar.setProgress(cooldown.getCount() / (double) (cool * 20));
     		} else {
+    			bossBar.setColor(BarColor.WHITE);
         		bossBar.setTitle("§b내구도 §f: §7" + df.format(durability));
         		bossBar.setProgress(durability / maxDurability);
     		}
@@ -393,7 +399,7 @@ public class Mirror extends Synergy {
 										final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
 										Bukkit.getPluginManager().callEvent(event);
 										if (!event.isCancelled() && !getPlayer().isDead()) {
-											Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+											Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
 										}
 										ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
 										SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());
@@ -428,7 +434,7 @@ public class Mirror extends Synergy {
 								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (returnDamage * ((double) regen / 100)), RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled() && !getPlayer().isDead()) {
-									Healths.setHealth(getPlayer(), getPlayer().getHealth() + (returnDamage * ((double) regen / 100)));	
+									Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	
 								}
 								ParticleLib.SWEEP_ATTACK.spawnParticle(d.getLocation().clone().add(0, 1, 0));
 								SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(d.getLocation());

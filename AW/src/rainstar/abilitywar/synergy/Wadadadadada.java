@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,7 +34,7 @@ public class Wadadadadada extends Synergy {
 	private final int multiply = DAMAGE_CONFIG.getValue();
 	private final int invincibility = (int) (INV_CONFIG.getValue() * 20);
 	
-	public static final SettingObject<Double> INV_CONFIG = abilitySettings.new SettingObject<Double>(Wadadadadada.class,
+	public static final SettingObject<Double> INV_CONFIG = rsSynergySettings.new SettingObject<Double>(Wadadadadada.class,
 			"invulnerable-time", 0.5, "# 무적 시간", "# 단위는 초입니다.") {
 
 		@Override
@@ -42,7 +44,7 @@ public class Wadadadadada extends Synergy {
 
 	};
 	
-	public static final SettingObject<Integer> COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(Wadadadadada.class,
+	public static final SettingObject<Integer> COUNT_CONFIG = rsSynergySettings.new SettingObject<Integer>(Wadadadadada.class,
 			"damage-count", 6, "# 타격 횟수") {
 
 		@Override
@@ -52,7 +54,7 @@ public class Wadadadadada extends Synergy {
 
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Wadadadadada.class,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = rsSynergySettings.new SettingObject<Integer>(Wadadadadada.class,
 			"damage", 30, "# 대미지", "# 단위: % (50 = 50%)") {
 
 		@Override

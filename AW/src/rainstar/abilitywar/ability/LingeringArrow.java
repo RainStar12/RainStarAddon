@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +78,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	private Random random = new Random();
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
+	= rsAbilitySettings.new SettingObject<Integer>(LingeringArrow.class,
 			"cooldown", 12, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -87,7 +89,7 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
 		}
-	}, ACTIVE_COOLDOWN = abilitySettings.new SettingObject<Integer>(LingeringArrow.class,
+	}, ACTIVE_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(LingeringArrow.class,
 			"change-cooldown", 10, "# 변경 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -214,16 +216,16 @@ public class LingeringArrow extends AbilityBase implements ActiveHandler {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (NMS.isArrow(e.getDamager())) {
 			Arrow arrow = (Arrow) e.getDamager();
-			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof Player
-					&& !e.getEntity().equals(getPlayer()) && !arrowC.isCooldown()) {
+			if (getPlayer().equals(arrow.getShooter()) && e.getEntity() instanceof Player && !arrowC.isRunning()) {
 				final Player target = (Player) e.getEntity();
 				AreaEffectCloud AEC
 					= target.getPlayer().getWorld().spawn(target.getPlayer().getLocation().add(0, 0.2, 0), 
 							AreaEffectCloud.class);
 				AEC.setDuration(300);
-				AEC.addCustomEffect(new PotionEffect((potionEffect), (random.nextInt(15) + 5) * 20, 0), true);
+				AEC.addCustomEffect(new PotionEffect((potionEffect), (random.nextInt(501) + 200), random.nextInt(4) / 2), true);
 				AEC.setColor(POTION_TYPES.get(potionEffect).getRight());
 				AEC.setWaitTime(0);
+				AEC.setRadius(AEC.getRadius() + (float) (AEC.getRadius() * (random.nextInt(51) * 0.01)));
 				getPlayer().sendMessage(POTION_TYPES.get(potionEffect).getLeft() + "§f 지대가 생성되었습니다.");
 				arrowC.start();
 

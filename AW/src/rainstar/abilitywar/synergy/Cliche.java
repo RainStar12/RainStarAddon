@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -22,6 +24,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -87,6 +90,7 @@ public class Cliche extends Synergy {
 	private double nowMaxHealth = 0;
 	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * PERIOD.getValue() : PERIOD.getValue());
 	private final int range = RANGE.getValue();
+	private final Random random = new Random();
 	
 	private static final Set<Material> swords;
 	
@@ -98,7 +102,7 @@ public class Cliche extends Synergy {
 		}
 	}
 
-	public static final SettingObject<Integer> PERIOD = synergySettings.new SettingObject<Integer>(Cliche.class,
+	public static final SettingObject<Integer> PERIOD = rsSynergySettings.new SettingObject<Integer>(Cliche.class,
 			"period", 60, "# 불사의 토템 재충전 시간", "# 쿨타임 감소가 50%까지 적용됩니다.") {
 		
 		@Override
@@ -108,7 +112,7 @@ public class Cliche extends Synergy {
 		
 	};
 	
-	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Cliche.class,
+	public static final SettingObject<Integer> RANGE = rsSynergySettings.new SettingObject<Integer>(Cliche.class,
 			"range", 13, "# 일당백 효과 사거리") {
 		
 		@Override
@@ -229,7 +233,6 @@ public class Cliche extends Synergy {
     		if (bufflevel >= 1) {
     			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 7, 7, predicate)) {
     				if (!getPlayer().equals(projectile.getShooter()) && !projectiles.contains(projectile)) {
-    					Random random = new Random();
     					if (bufflevel <= 4) {
         					if (random.nextInt(10) <= 2) {
             					if (random.nextBoolean() == true) {
@@ -305,15 +308,16 @@ public class Cliche extends Synergy {
     public void onEntityRegainHealth(EntityRegainHealthEvent e) {
     	if (e.getEntity().equals(getPlayer())) {
     		switch(bufflevel) {
+    		case 1:
     		case 2:
     		case 3:
-    			e.setAmount(e.getAmount() * 1.2);
+    			e.setAmount(e.getAmount() * (1 + (0.1 * bufflevel)));
     			break;
     		case 4:
-    			e.setAmount(e.getAmount() * 1.4);
+    			e.setAmount(e.getAmount() * 1.5);
     			break;
     		case 5:
-    			e.setAmount(e.getAmount() * 1.65);
+    			e.setAmount(e.getAmount() * 1.7);
     			break;
     		}
     	}
@@ -338,34 +342,21 @@ public class Cliche extends Synergy {
     			break;
     		case 2:
     		case 3:
-    			e.setDamage(e.getDamage() * 0.8);
-    			break;
     		case 4:
-    			e.setDamage(e.getDamage() * 0.7);
-    			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 0.65);
+    			e.setDamage(e.getDamage() * (1 - (0.1 * (bufflevel - 1))));
     			break;
     		}
     	}
-    	if (getPlayer().equals(e.getDamager())) {
-    		switch(bufflevel) {
-    		case 0:
-    			e.setDamage(e.getDamage() * 1.05);
-    			break;
-    		case 2:
-    			e.setDamage(e.getDamage() * 1.1);
-    			break;
-    		case 3:
-    			e.setDamage(e.getDamage() * 1.15);
-    			break;
-    		case 4:
-    			e.setDamage(e.getDamage() * 1.2);
-    			break;
-    		case 5:
-    			e.setDamage(e.getDamage() * 1.25);
-    			break;
-    		}
+    	
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+    	
+		if (getPlayer().equals(damager)) {
+			e.setDamage(e.getDamage() * (1 + (0.05 * (bufflevel + 1))));
     	}
     }
     
@@ -373,7 +364,7 @@ public class Cliche extends Synergy {
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
 			if (bufflevel >= 4) {
-				new Homing((Arrow) e.getEntity(), e.getEntity().getVelocity().length()).start();
+				new Homing((Arrow) e.getEntity(), e.getEntity().getVelocity().length(), bufflevel >= 3 ? 4 : 2).start();
 			}
 		}
 	}
@@ -382,8 +373,9 @@ public class Cliche extends Synergy {
 		
 		private Arrow arrow;
 		private double lengths;
+		private double range;
 		
-		private Homing(Arrow arrow, Double length) {
+		private Homing(Arrow arrow, Double length, double range) {
 			super(TaskType.REVERSE, 50);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.arrow = arrow;
@@ -401,7 +393,7 @@ public class Cliche extends Synergy {
 				arrow.setCritical(true);
 				Player p = LocationUtil.getNearestEntity(Player.class, arrow.getLocation(), predicate);
 				if (p != null) {
-					if (arrow.getLocation().distanceSquared(p.getEyeLocation()) <= (1.75 * 1.75)) {
+					if (arrow.getLocation().distanceSquared(p.getEyeLocation()) <= (range * range)) {
 						arrow.setGravity(false);
 						arrow.setVelocity(VectorUtil.validateVector((p.getPlayer().getEyeLocation().toVector()
 									.subtract(arrow.getLocation().toVector())).normalize().multiply(lengths)));	
@@ -421,6 +413,7 @@ public class Cliche extends Synergy {
 		protected void onEnd() {
 			arrow.setGravity(true);
 			arrow.setGlowing(false);
+			HandlerList.unregisterAll(this);
 		}
 		
 		@Override

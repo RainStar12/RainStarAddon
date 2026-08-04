@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,7 +64,7 @@ public class HealthFreak extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> MAX_DAMAGE = 
-			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "max-damage", 5,
+			rsAbilitySettings.new SettingObject<Integer>(HealthFreak.class, "max-damage", 5,
 			"# 최대 대미지",
 			"# 최대 대미지가 늘어나는 만큼",
 			"# 회복 속도도 같이 늘어납니다.") {
@@ -75,7 +77,7 @@ public class HealthFreak extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> PROTEIN_DURATION = 
-			abilitySettings.new SettingObject<Integer>(HealthFreak.class, "protein-duration", 30,
+			rsAbilitySettings.new SettingObject<Integer>(HealthFreak.class, "protein-duration", 30,
 			"# 프로틴 효과의 지속 시간") {
 
 		@Override

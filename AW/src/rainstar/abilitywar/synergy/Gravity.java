@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,7 +122,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Gravity.class,
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Gravity.class,
 			"cooldown", 30, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -133,7 +135,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Gravity.class,
+	public static final SettingObject<Integer> DURATION = rsSynergySettings.new SettingObject<Integer>(Gravity.class,
 			"duration", 10, "# 지속 시간") {
 
 		@Override
@@ -188,8 +190,7 @@ public class Gravity extends Synergy implements ActiveHandler {
 					break;
 				}
 				arrowMap.put((Arrow) e.getEntity(), gravityType);
-				new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), (Arrow) e.getEntity(),
-						e.getEntity().getVelocity().length(), gravityType).start();
+				new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), (Arrow) e.getEntity(), e.getEntity().getVelocity().length(), gravityType).start();
 			}
 		}
 	}

@@ -67,7 +67,7 @@ public class Moisture extends AbstractGame.Effect implements Listener {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (damager.equals(participant.getPlayer())) e.setDamage(e.getDamage() * 0.85);
+		if (participant.getPlayer().equals(damager)) e.setDamage(e.getDamage() * 0.85);
 	}
 
 	@Override

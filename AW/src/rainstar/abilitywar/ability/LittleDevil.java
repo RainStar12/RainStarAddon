@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -83,7 +85,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG 
-	= abilitySettings.new SettingObject<Integer>(LittleDevil.class,
+	= rsAbilitySettings.new SettingObject<Integer>(LittleDevil.class,
 			"cooldown", 60, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -97,7 +99,7 @@ public class LittleDevil extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> RANGE_CONFIG 
-	= abilitySettings.new SettingObject<Integer>(LittleDevil.class,
+	= rsAbilitySettings.new SettingObject<Integer>(LittleDevil.class,
 			"range", 10, "# 능력 범위") {
 
 		@Override

@@ -142,7 +142,7 @@ public class Teabagging extends AbilityBase {
         					}
         					if (teabaggingcount.get(player) >= 3) {
         						if (isBehind(getPlayer(), player)) {
-            						player.damage(9, getPlayer());
+            						player.damage(12, getPlayer());
             						Stun.apply(participant, TimeUnit.TICKS, 3);
         						} else {
             						player.damage(6, getPlayer());

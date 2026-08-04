@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,6 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -38,7 +39,7 @@ public class Encore extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Encore.class, "cooldown", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Encore.class, "cooldown", 10,
             "# 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -51,7 +52,7 @@ public class Encore extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Encore.class, "percentage", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Encore.class, "percentage", 15,
             "# 인당 추가 대미지 배율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -63,19 +64,16 @@ public class Encore extends AbilityBase implements ActiveHandler {
     private final double percentage = PERCENTAGE.getValue() * 0.01;
     private Map<LivingEntity, Double> damageMap = new HashMap<>();
     
-    public AbilityTimer skill = new AbilityTimer(10) {
-	}.setPeriod(TimeUnit.TICKS, 1).register();
-    
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK)) {
-			if (!cooldown.isCooldown() && !skill.isRunning()) {
+			if (!cooldown.isCooldown()) {
 				if (damageMap.size() <= 0) {
 					getPlayer().sendMessage("§f[§c!§f] 최근에 피해를 준 생명체가 없습니다.");
 					return false;
 				} else {
-					skill.start();
 					double multiply = (1 + ((damageMap.size() - 1) * percentage));
 					for (LivingEntity livingEntity : damageMap.keySet()) {
+						livingEntity.setNoDamageTicks(0);
 						livingEntity.damage(damageMap.get(livingEntity) * multiply, getPlayer());
 						SoundLib.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR.playSound(livingEntity.getLocation(), 1, 1.8f);
 						ParticleLib.ITEM_CRACK.spawnParticle(livingEntity.getLocation(), 0.25, 0.5, 0.25, 150, 0.77, MaterialX.REDSTONE_BLOCK);
@@ -96,7 +94,7 @@ public class Encore extends AbilityBase implements ActiveHandler {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (getPlayer().equals(damager) && e.getEntity() instanceof LivingEntity && !skill.isRunning()) {
+		if (getPlayer().equals(damager) && !e.getEntity().equals(getPlayer()) && e.getEntity() instanceof LivingEntity) {
 			damageMap.put((LivingEntity) e.getEntity(), e.getDamage());
 		}
     }

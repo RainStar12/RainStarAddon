@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,7 +84,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
-			abilitySettings.new SettingObject<Integer>(Alice.class, "cooldown", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Alice.class, "cooldown", 15,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -95,7 +97,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DELAY_CONFIG = 
-			abilitySettings.new SettingObject<Integer>(Alice.class, "shoot-delay", 3,
+			rsAbilitySettings.new SettingObject<Integer>(Alice.class, "shoot-delay", 3,
             "# 철괴 좌클릭 연속발사 딜레이", "# 단위: 틱", "# 20틱 = 1초") {
         @Override
         public boolean condition(Integer value) {
@@ -197,7 +199,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 		
 		private final int rank;
         private final int suit;
-        private final String[] ranks = {"A","2","3","4","5","6","7","8","9","10","J","Q","K", "Joker"};
+        private final String[] ranks = {"A","2","3","4","5","6","7","8","9","10","J","Q","K","Joker"};
         private final String[] suits = {"§8♠ §f","§c♥ §f","§8♣ §f","§c♦ §f", "§8", "§c"};
 
         public Cards(int suit, int values) {
@@ -526,7 +528,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 					if (!shooter.equals(damageable) && !checkhit.contains(damageable)) {
 						checkhit.add(damageable);
 						if (suit == 0) {
-							Damages.damageArrow(damageable, shooter, (float) (8 + ((rank + 1) * 0.3)));
+							Damages.damageArrow(damageable, shooter, (float) (9 + ((rank + 1) * 0.5)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -555,12 +557,12 @@ public class Alice extends AbilityBase implements ActiveHandler {
 						}
 						if (suit == 2) {
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), (float) (1 + ((rank + 1) * 0.1)), false, true);
+							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), (float) (1.5 + ((rank + 1) * 0.15)), false, true);
 							stop(false);
 							return;
 						}
 						if (suit == 3) {
-							Damages.damageArrow(damageable, shooter, (float) (6 + ((rank + 1) * 0.7)));
+							Damages.damageArrow(damageable, shooter, (float) (4 + ((rank + 1) * 1.3)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Confusion.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -574,7 +576,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, 130, 10);
 							}
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), 2.4f, false, true);
+							shooter.getWorld().createExplosion(entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), 3.6f, false, true);
 						}
 						if (suit == 5) {
 							if (damageable instanceof Player) {
@@ -588,7 +590,7 @@ public class Alice extends AbilityBase implements ActiveHandler {
 								}
 								Confusion.apply(getGame().getParticipant(p), TimeUnit.TICKS, 130, 10);
 							}
-							Damages.damageArrow(damageable, shooter, 17.1f);
+							Damages.damageArrow(damageable, shooter, 20.9f);
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, 6.5, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {

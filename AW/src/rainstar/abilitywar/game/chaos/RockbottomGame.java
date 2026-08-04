@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.Chaos;
+package rainstar.abilitywar.game.chaos;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

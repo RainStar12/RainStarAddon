@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -60,7 +62,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> HEALTH_GAIN = 
-			abilitySettings.new SettingObject<Double>(SoyMilk.class, "health-gain", 7.0,
+			rsAbilitySettings.new SettingObject<Double>(SoyMilk.class, "health-gain", 7.0,
             "# 체력 획득량") {
 		
         @Override
@@ -71,7 +73,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(SoyMilk.class, "duration", 30,
+			rsAbilitySettings.new SettingObject<Integer>(SoyMilk.class, "duration", 30,
             "# 지속시간", "# 단위: 초") {
 		
         @Override
@@ -82,7 +84,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(SoyMilk.class, "damage-decrease", 80,
+			rsAbilitySettings.new SettingObject<Integer>(SoyMilk.class, "damage-decrease", 80,
             "# 공격력 감소율", "# 단위: %") {
 		
         @Override
@@ -93,7 +95,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(SoyMilk.class, "damage-increase", 0.2,
+			rsAbilitySettings.new SettingObject<Double>(SoyMilk.class, "damage-increase", 0.2,
             "# 공격력 증가율", "# 단위: %") {
 		
         @Override
@@ -104,7 +106,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(SoyMilk.class, "cooldown", 90,
+			rsAbilitySettings.new SettingObject<Integer>(SoyMilk.class, "cooldown", 90,
             "# 쿨타임", "# 단위: 초") {
 		
         @Override
@@ -187,6 +189,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     		cooldown.start();
     		passive.resume();
     		ac.update(null);
+    		ac2.update(null);
     	}
     	
     }.setPeriod(TimeUnit.SECONDS, 1).register();
@@ -196,7 +199,7 @@ public class SoyMilk extends AbilityBase implements ActiveHandler {
     	if (passive.isRunning()) e.setCancelled(true);
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = -100)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {		
 		if (skill.isRunning() && getPlayer().equals(e.getDamager())) {
 			stack++;

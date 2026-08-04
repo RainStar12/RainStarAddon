@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -30,10 +32,10 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Rooted;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -41,7 +43,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.random.Random;
@@ -52,12 +53,12 @@ import rainstar.abilitywar.effect.ElectricShock;
 @AbilityManifest(
 		name = "다람쥐", rank = Rank.S, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §6도토리§f: 자신의 주변에 3초 유지되는 §6도토리§f가 계속해 생겨납니다.",
-		" 소환 간격은 0.7초마다, 쿨타임일 땐 1.2초마다 하나씩 소환됩니다.",
+		" 소환 간격은 0.5초마다, 쿨타임일 땐 1초마다 하나씩 소환됩니다.",
 		" §6도토리§f는 최대 §e22개§f까지 수집 가능합니다. §6도토리§f를 소모하여",
 		" 스킬을 사용 가능하고, 두 스킬은 쿨타임을 공유합니다. $[COOLDOWN]",
 		"§7철괴 우클릭 §8- §a냠냠§f: 비어 있는 체력의 $[HEAL_AMOUNT]%를 회복합니다. $[EAT_CONSUME]",
 		"§7철괴 좌클릭 §8- §b람쥐썬더§f: $[CHANNELING]초간 §2§n이동 불가§f 상태가 되고, 내 현재 위치에서",
-		" 퍼져나가는 번개를 떨어뜨려 적들을 §d§n감전§f시킵니다. $[THUNDER_CONSUME]",
+		" 퍼져나가는 번개를 떨어뜨려 적들을 §e§n기절§f 및 §d§n감전§f시킵니다. $[THUNDER_CONSUME]",
 		"§b[§7아이디어 제공자§b] §eLessso"
 		},
 		summarize = {
@@ -74,7 +75,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> EAT_CONSUME 
-	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
+	= rsAbilitySettings.new SettingObject<Integer>(Squirrel.class,
 			"eat-consume", 8, "# 냠냠으로 소모되는 도토리의 수") {
 		
 		@Override
@@ -90,7 +91,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> THUNDER_CONSUME 
-	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
+	= rsAbilitySettings.new SettingObject<Integer>(Squirrel.class,
 			"thunder-consume", 16, "# 람쥐썬더로 소모되는 도토리의 수") {
 		
 		@Override
@@ -106,8 +107,8 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> HEAL_AMOUNT 
-	= abilitySettings.new SettingObject<Integer>(Squirrel.class,
-			"heal-amount", 40, "# 사용시 회복되는 양 (단위: %)") {
+	= rsAbilitySettings.new SettingObject<Integer>(Squirrel.class,
+			"heal-amount-", 50, "# 사용시 회복되는 양 (단위: %)") {
 		
 		@Override
 		public boolean condition(Integer value) {
@@ -117,7 +118,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> CHANNELING 
-	= abilitySettings.new SettingObject<Double>(Squirrel.class,
+	= rsAbilitySettings.new SettingObject<Double>(Squirrel.class,
 			"channeling", 1.5, "# 람쥐썬더의 채널링 시간(이동 불가 지속시간)") {
 		
 		@Override
@@ -127,7 +128,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
 			Squirrel.class, "cooldown", 50, "# 쿨타임", "# 쿨타임 감소 효과를 50%까지 받습니다.") {
 
 		@Override
@@ -188,7 +189,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 	private boolean isThunder = false;
 	private boolean used = false;
 	
-	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), CooldownDecrease._50);
+	private final Cooldown cool = new Cooldown(COOLDOWN.getValue());
 	private final int eatconsume = EAT_CONSUME.getValue();
 	private final int thunderconsume = THUNDER_CONSUME.getValue();
 	private final int healamount = HEAL_AMOUNT.getValue();
@@ -246,25 +247,34 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 	
-	@SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getCause().equals(DamageCause.LIGHTNING)) {
-			e.setCancelled(true);
+			if (e.getEntity() instanceof Player) {
+				if (e.getCause().equals(DamageCause.LIGHTNING) && !e.isCancelled()) {
+					if (e.getEntity().equals(getPlayer())) e.setCancelled(true);
+					else {
+						Player player = (Player) e.getEntity();
+						Healths.setHealth(player, Math.max(1, player.getHealth() - (e.getDamage() * 0.5)));
+						if (predicate.test(player)) {
+							Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 20);
+							ElectricShock.apply(getGame().getParticipant(player), TimeUnit.TICKS, 60);
+						}
+						e.setDamage(0);
+					}
+				}	
+			}
 		}
 	}
 	
-	@SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-		if (e.getCause().equals(DamageCause.LIGHTNING)) {
-			e.setCancelled(true);
-		}
+		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent(onlyRelevant = true)
+	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getCause().equals(DamageCause.LIGHTNING)) {
-			e.setCancelled(true);
-		}
+		onEntityDamage(e);
 	}
 	
 	private final AbilityTimer passive = new AbilityTimer() {
@@ -273,7 +283,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		public void run(int count) {
 			if (acornstack < 22) {
 				if (cool.isRunning()) {
-					if (count % 24 == 0) {
+					if (count % 20 == 0) {
 						Location location = getPlayer().getLocation();
 						for (Location loc : LocationUtil.getRandomLocations(location, 6, 1)) {
 							loc.add(0, 1, 0);
@@ -282,7 +292,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 						new AcornSpawner(location).start();	
 					}
 				} else {
-					if (count % 14 == 0) {
+					if (count % 10 == 0) {
 						Location location = getPlayer().getLocation();
 						for (Location loc : LocationUtil.getRandomLocations(location, 6, 1)) {
 							loc.add(0, 1, 0);
@@ -352,7 +362,7 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 	}
 	
-	public class Thunders extends AbilityTimer implements Listener {
+	public class Thunders extends AbilityTimer {
 		
 		private final Location startLocation;
 		private final Location endLocation;
@@ -371,7 +381,6 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onStart() {
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 			firstDirection = endLocation.toVector().subtract(startLocation.toVector()).normalize().multiply(1);
 			nowLocation = startLocation;
 			nowDirection = firstDirection;
@@ -387,23 +396,6 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 			nowLocation.getWorld().strikeLightning(LocationUtil.floorY(nowLocation));
 		}
 		
-		@EventHandler
-		public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-			if (e.getEntity() instanceof Player) {
-				if (e.getCause().equals(DamageCause.LIGHTNING)) {
-					if (e.getEntity().equals(getPlayer())) e.setCancelled(true);
-					else {
-						Player player = (Player) e.getEntity();
-						if (Damages.canDamage(player, DamageCause.LIGHTNING, e.getDamage())) {
-							Healths.setHealth(player, Math.max(1, player.getHealth() - (e.getDamage() * 0.45)));
-							if (predicate.test(player)) ElectricShock.apply(getGame().getParticipant(player), TimeUnit.TICKS, 20);
-							e.setDamage(0);
-						}
-					}
-				}	
-			}
-		}
-		
 		@Override
 		public void onEnd() {
 			onSilentEnd();
@@ -411,7 +403,6 @@ public class Squirrel extends AbilityBase implements ActiveHandler {
 		
 		@Override
 		public void onSilentEnd() {
-			HandlerList.unregisterAll(this);
 			if (used) {
 				if (!isThunder) {
 					getPlayer().getWorld().setStorm(false);

@@ -1,15 +1,20 @@
 package rainstar.abilitywar.effect;
 
+import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
@@ -23,9 +28,9 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 @EffectManifest(name = "감전", displayName = "§d감전", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.MOVEMENT_RESTRICTION
 }, description = {
-		"매 2초마다 0.5초간 기절합니다. 감전 도중에 기절 효과가",
-		"새로이 들어올 때마다 획득한 기절의 시간에 비례해",
-		"0.5초당 1의 피해를 끝날 때 입습니다."
+		"§f매 2초마다 0.5초간 이동이 불가능해집니다. §d감전§f 도중에 §e기절§f 효과가",
+		"§f새로이 들어올 때마다 획득한 §e기절§f 시간에 비례해",
+		"§f0.25초당 1의 피해를 지속 종료 시 입습니다."
 })
 public class ElectricShock extends AbstractGame.Effect implements Listener {
 
@@ -40,11 +45,22 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 	private boolean stun = false;
 	private int checking = 0;
 	private ArmorStand armorstand;
+	private Field field;
+	private ActionbarChannel defaultChannel;
+	private DecimalFormat df = new DecimalFormat("0.0");
 
 	public ElectricShock(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 2));
 		this.participant = participant;
 		setPeriod(TimeUnit.TICKS, 2);
+		try {
+			field = AbstractGame.Effect.class.getDeclaredField("channel");
+			field.setAccessible(true);	
+			defaultChannel = (ActionbarChannel) field.get(this);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -56,6 +72,7 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 		armorstand.setGravity(false);
 		armorstand.setInvulnerable(true);
 		armorstand.setCustomNameVisible(true);
+		armorstand.setMetadata("ElectricShock", new FixedMetadataValue(AbilityWar.getPlugin(), true));
 		NMS.removeBoundingBox(armorstand);
 	}
 
@@ -75,13 +92,13 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 		} else {
 			armorstand.setCustomName("§7§l⚡ §d감전§f §7§l⚡");
 		}
-		super.run(count);
+		defaultChannel.update((stun ? "§b" : "§d") + "감전§8(" + (stun ? "§e" : "§7") + df.format(damagecounter) + "§8)§7: §f" + df.format(count / 10.0) + "초");
 	}
 	
 	@EventHandler
 	private void onParticipantEffectApply(final ParticipantPreEffectApplyEvent e) {
 		if (e.getParticipant().equals(participant) && e.getEffectType().equals(Stun.registration)) {
-			damagecounter += (e.getDuration() / 4);
+			damagecounter += (e.getDuration() / 5);
 		}
 	}
 	
@@ -106,6 +123,10 @@ public class ElectricShock extends AbstractGame.Effect implements Listener {
 		HandlerList.unregisterAll(this);
 		armorstand.remove();
 		super.onSilentEnd();
+	}
+	
+	public int getRemainingTicks() {
+	    return getCount() * 2;
 	}
 	
 }

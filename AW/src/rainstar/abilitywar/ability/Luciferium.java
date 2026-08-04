@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +53,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> STRENGTH = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-", 1,
+			rsAbilitySettings.new SettingObject<Integer>(Luciferium.class, "strength-", 1,
             "# 힘 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -60,7 +62,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> SPEED = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-", 1,
+			rsAbilitySettings.new SettingObject<Integer>(Luciferium.class, "speed-", 1,
             "# 신속 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -69,7 +71,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RESISTANCE = 
-			abilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-", 1,
+			rsAbilitySettings.new SettingObject<Integer>(Luciferium.class, "resistance-", 1,
             "# 저항 포션 효과 계수", "# 주의! 1부터 시작합니다.", "# 1일 때 포션 효과 계수는 1레벨,", "# 2일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {
@@ -89,7 +91,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		575, 545, 525, 505, 485, 465, 445, 425, 405, 390, 375, 360, 345, 330, 315, 300, 285, 270, 255, 243, 231, 219, 207, 195, 183, 171, 159, 147, 135,
     		125, 115, 105,  95, 85, 77, 69, 61, 53, 46, 40, 34, 30, 24, 18, 14, 10, 7, 5, 3, 1));
     
-    public AbilityTimer nextpill = new AbilityTimer(TaskType.REVERSE, 120) {
+    public AbilityTimer nextpill = new AbilityTimer(TaskType.REVERSE, 120 + (killstack * 80)) {
     	
     	int startcount;
     	
@@ -111,7 +113,7 @@ public class Luciferium extends AbilityBase implements ActiveHandler {
     		if (pumplistA.contains(count)) SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.A));
     		if (pumplistE.contains(count)) SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.E));
     		
-    		bossBar.setProgress(count / (double) startcount);
+    		bossBar.setProgress(Math.max(0, Math.min(1, count  / (double) startcount)));
     		if (count <= startcount / 10.0) {
     			bossBar.setColor(BarColor.PURPLE);
     			bossBar.setTitle("§4§l루시페륨을 복용해야 합니다!");

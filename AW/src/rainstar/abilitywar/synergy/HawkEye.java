@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -18,6 +17,7 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -52,9 +52,9 @@ import org.bukkit.util.Vector;
 		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 소멸합니다.",
 		"단, 유리나 유리 판과 같은 블록은 뚫고 지나갑니다.",
 		"투사체를 쏘고 난 후 일정 시간동안 재장전을 하며, 재장전 중에는",
-		"활을 쏠 수 없습니다. 활을 들고 있을 경우 빠르게 이동할 수 없으며,",
-		"이동이 제한되고, 가장 가까운 플레이어를 자동 조준합니다.",
-		"피해를 받은 대상에게 §7실명§f과 §e발광§f 효과를 부여합니다."
+		"활을 쏠 수 없습니다. 활을 들고 있을 경우 이동 속도가 조금 느려지며,",
+		"가장 가까운 플레이어를 자동 조준합니다.",
+		"투사체가 적중하면 §7실명§f과 §e발광§f 효과를 부여합니다."
 })
 
 public class HawkEye extends Synergy {
@@ -72,8 +72,7 @@ public class HawkEye extends Synergy {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersion() >= 14 && (main.equals(MaterialX.CROSSBOW.compare(getPlayer().getInventory().getItemInMainHand())) || off.equals(MaterialX.CROSSBOW.compare(getPlayer().getInventory().getItemInOffHand()))))) {
-				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
-				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
+				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 2, true);
 				final Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
 				if (target != null) {
 					final Vector direction = target.getEyeLocation().toVector().subtract(getPlayer().getEyeLocation().toVector());
@@ -129,7 +128,7 @@ public class HawkEye extends Synergy {
 				Arrow arrow = (Arrow) e.getProjectile();
 				new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_WITHER_BREAK_BLOCK.playSound(getPlayer().getLocation(), 7, 2);
-				final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 25.0) : 25;
+				final int reloadCount = getReload(25);
 				reload = new AbilityTimer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -151,6 +150,14 @@ public class HawkEye extends Synergy {
 				getPlayer().sendMessage("§b재장전 §f중입니다.");
 			}
 		}
+	}
+	
+	private int getReload(int baseReload) {
+		double decrease = Wreck.calculateDecreasedAmount(20);
+		if (Wreck.isEnabled(GameManager.getGame())) {
+			if (decrease == 100) return 1;
+			else return (int) (decrease * baseReload);
+		} else return baseReload;
 	}
 
 	public class Bullet<Shooter extends Entity & ProjectileSource> extends AbilityTimer {
@@ -194,7 +201,7 @@ public class HawkEye extends Synergy {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
-						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant), shooter);
+						Damages.damageArrow(damageable, (LivingEntity) shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min(((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ())) / 100.0, 15), powerEnchant));
 						stop(false);
 						if (damageable instanceof LivingEntity) {
 						PotionEffects.BLINDNESS.addPotionEffect((LivingEntity) damageable, 30, 0, true);

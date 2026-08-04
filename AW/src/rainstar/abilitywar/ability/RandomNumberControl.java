@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -33,8 +36,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 
-@AbilityManifest(
-		name = "난수 조절", rank = Rank.L, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "난수 조절", rank = Rank.L, species = Species.HUMAN, explain = {
 		"$[DURATION]초간 §a수치를 조정§f하여, §c공격§f과 §b방어§f값을 조절합니다.",
 		"§c공격§f은 게임 도중에 세운 §c역대 최고치의 입힌 피해량§f 이하로 §e떨어지지 않으며§f,",
 		"§b방어§f는 게임 도중에 세운 §b역대 최소치의 받은 피해량§f 이상으로 §e올라가지 않습니다§f.",
@@ -51,7 +53,7 @@ public class RandomNumberControl extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> PERIOD = abilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
+	public static final SettingObject<Integer> PERIOD = rsAbilitySettings.new SettingObject<Integer>(RandomNumberControl.class,
 			"period", 30, "# 능력 지속 주기") {
 		
 		@Override
@@ -61,7 +63,7 @@ public class RandomNumberControl extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(RandomNumberControl.class,
+	public static final SettingObject<Double> DURATION = rsAbilitySettings.new SettingObject<Double>(RandomNumberControl.class,
 			"duration", 3.5, "# 능력 지속시간") {
 		
 		@Override
@@ -191,7 +193,7 @@ public class RandomNumberControl extends AbilityBase {
 			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 			
 			if (getPlayer().equals(damager) && !e.getEntity().equals(getPlayer())) {
-				if (available) {
+				if (available && !e.getCause().equals(DamageCause.THORNS)) {
 					if (skill.isRunning()) skill.setCount((int) (duration * 20));
 					else skill.start();
 					available = false;

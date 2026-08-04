@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.Chaos.Glitch;
+package rainstar.abilitywar.game.chaos.glitch;
 
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;

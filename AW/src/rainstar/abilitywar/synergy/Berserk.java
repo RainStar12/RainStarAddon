@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -72,7 +74,7 @@ public class Berserk extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Berserk.class, 
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Berserk.class, 
 			"cooldown", 60, "# 쿨타임") {
 
 		@Override
@@ -87,8 +89,8 @@ public class Berserk extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> MAX_DAMAGE = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"add-max-damage", 9, "# 스킬 지속 중", "# 최대 체력 반비례 추가 피해량 최대치", "# 7일 경우 최대 7까지 대미지가 증가합니다.") {
+	public static final SettingObject<Integer> MAX_DAMAGE = rsSynergySettings.new SettingObject<Integer>(Berserk.class, 
+			"add-max-damage-amount", 14, "# 스킬 지속 중", "# 최대 체력 반비례 추가 피해량 최대치", "# 7일 경우 최대 7까지 대미지가 증가합니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -97,8 +99,8 @@ public class Berserk extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> MIN_DAMAGE = synergySettings.new SettingObject<Integer>(Berserk.class, 
-			"remove-min-damage", 5, "# 리스크 지속 중", "# 최대 체력 비례 감소 피해량 최대치", "# 5일 경우 최대 5까지 대미지가 감소합니다.") {
+	public static final SettingObject<Integer> MIN_DAMAGE = rsSynergySettings.new SettingObject<Integer>(Berserk.class, 
+			"remove-min-damage-", 3, "# 리스크 지속 중", "# 최대 체력 비례 감소 피해량 최대치", "# 5일 경우 최대 5까지 대미지가 감소합니다.") {
 
 		@Override
 		public boolean condition(Integer value) {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +68,7 @@ import rainstar.abilitywar.effect.Confusion;
 		" 스태미나는 전투 도중에는 더 적게 차오르고, 더 많이 소모합니다.",
 		" 화면을 전환하지도 않고 움직이지도 않고 있다면 더 빨리 차오릅니다.",
 		"§7검 들고 F키 §8- §3대시§f: 바라보는 방향의 수평으로 짧게 대시합니다. $[DASH_STAMINA_CONSUME]",
-		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 피해를 입힙니다.",
+		" 대시로 이동한 거리에 대시 잔상이 남아 닿은 적에게 마법 피해를 입힙니다.",
 		" 대시 잔상에 누군가가 맞을 때마다 스태미나를 회복합니다. $[DASH_STAMINA_HEAL]",
 		"§7공격 후 대시 §8- §e광속§f: 근접 공격 후 0.15초 내에 대시할 경우 대상에게 2초간",
 		" §c§n출혈§f 및 무작위 방향으로 튕겨나가는 §6§n혼란§f 효과를 부여합니다. $[ATTACKDASH_STAMINA_HEAL]"
@@ -112,7 +114,7 @@ public class Dash extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> DASH_STAMINA_CONSUME = 
-			abilitySettings.new SettingObject<Double>(Dash.class, "dash-stamina-consume", 2.0,
+			rsAbilitySettings.new SettingObject<Double>(Dash.class, "dash-stamina-consume", 2.0,
 			"# 대시 스태미나 소모량") {
 
 		@Override
@@ -128,7 +130,7 @@ public class Dash extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DASH_STAMINA_HEAL = 
-			abilitySettings.new SettingObject<Double>(Dash.class, "dash-stamina-heal", 0.2,
+			rsAbilitySettings.new SettingObject<Double>(Dash.class, "dash-stamina-heal", 0.2,
 			"# 대시 잔상의 스태미나 회복량") {
 
 		@Override
@@ -144,7 +146,7 @@ public class Dash extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> ATTACKDASH_STAMINA_HEAL = 
-			abilitySettings.new SettingObject<Double>(Dash.class, "attackdash-stamina-heal", 0.5,
+			rsAbilitySettings.new SettingObject<Double>(Dash.class, "attackdash-stamina-heal", 0.5,
 			"# 공격 후 대시 잔상의 스태미나 회복량") {
 
 		@Override
@@ -160,7 +162,7 @@ public class Dash extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DASH_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Dash.class, "dash-damage", 1.0,
+			rsAbilitySettings.new SettingObject<Double>(Dash.class, "dash-damage", 1.0,
 			"# 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
 
 		@Override
@@ -171,7 +173,7 @@ public class Dash extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> ATTACKDASH_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Dash.class, "attackdash-damage", 1.5,
+			rsAbilitySettings.new SettingObject<Double>(Dash.class, "attackdash-damage", 1.5,
 			"# 공격 후 대시 잔상의 대미지", "# 방어력 및 보호 인챈트를 관통하는 트루 대미지입니다.") {
 
 		@Override
@@ -466,18 +468,21 @@ public class Dash extends AbilityBase {
     	
     	@Override
     	protected void onStart() {
-    		if (!startLocation.equals(getPlayer().getLocation())) {
-    	   		for (Location loc : Line.between(startLocation, getPlayer().getLocation(), (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(getPlayer().getLocation()))))).toLocations(startLocation)) {
+    		Location current = getPlayer().getLocation();
+    		double distance = startLocation.distance(current);
+
+    		if (distance > 0.01) {
+    	   		for (Location loc : Line.between(startLocation, current, (int) Math.min(300, (25 * Math.sqrt(startLocation.distance(current))))).toLocations(startLocation)) {
     	   			ParticleLib.END_ROD.spawnParticle(loc.add(0, 1, 0), 0, 0, 0, 1, 0);
     	   			saveloc1 = startLocation;
     	   			saveloc2 = getPlayer().getLocation();
-    	   		}	
+    	   		}
     		} else stop(false);
     	}
     	
     	@Override
     	protected void run(int count) {
-    		if (!saveloc1.equals(saveloc2)) {
+    		if (saveloc1 != null && !saveloc1.equals(saveloc2)) {
     			for (Damageable damageable : LocationUtil.rayTraceEntities(Damageable.class, saveloc1, saveloc2, 0.75, predicate)) {
         			if (!damageable.equals(getPlayer()) && !damagedcheck.contains(damageable)) {
         				if (damageable instanceof Player) {

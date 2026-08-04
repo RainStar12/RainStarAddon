@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 
-@AbilityManifest(name = "선악과", rank = Rank.L, species = Species.OTHERS, explain = {
+@AbilityManifest(name = "선악과", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴를 이용해 §b선§c악§f 스킬을 사용할 수 있습니다. 두 스킬은 §c쿨타임§f을 공유합니다.",
 		"스킬로 §d회복한§7 / §3없앤§f 체력 반 칸당 다음 §c쿨타임§f이 $[DECREASE_COOLDOWN]초 감소합니다.",
 		"감소 효과는 $[MAX_STACK]스택까지 적용됩니다. $[COOLDOWN]",
@@ -66,8 +68,8 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "cooldown", 200,
-            "# 쿨타임", "# 단위: 초", "# §cW§6R§eE§aC§bK§7 최대 적용: 33%") {
+			rsAbilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "cooldown", 200,
+            "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
@@ -79,7 +81,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> MAX_STACK = 
-			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "max-stack", 20,
+			rsAbilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "max-stack", 20,
             "# 감소 효과 최대치") {
         @Override
         public boolean condition(Integer value) {
@@ -88,7 +90,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_UP = 
-			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "damage-up", 30,
+			rsAbilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "damage-up", 30,
             "# 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -97,7 +99,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DECREASE_COOLDOWN = 
-			abilitySettings.new SettingObject<Double>(ForbiddenFruit.class, "decrease-cooldown", 3.5,
+			rsAbilitySettings.new SettingObject<Double>(ForbiddenFruit.class, "decrease-cooldown", 3.5,
             "# 쿨타임 감소 수치", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -106,7 +108,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHANCE = 
-			abilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "chance", 33,
+			rsAbilitySettings.new SettingObject<Integer>(ForbiddenFruit.class, "chance", 33,
             "# 악 효과가 자신이 걸릴 확률", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -115,7 +117,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> INV_DURATION = 
-			abilitySettings.new SettingObject<Double>(ForbiddenFruit.class, "inv-duration", 10.0,
+			rsAbilitySettings.new SettingObject<Double>(ForbiddenFruit.class, "inv-duration", 10.0,
             "# 악 효과 무적 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -148,7 +150,7 @@ public class ForbiddenFruit extends AbilityBase implements ActiveHandler {
     private final int incdamage = DAMAGE_UP.getValue();
     private final int maxstack = MAX_STACK.getValue();
     private final int chance = CHANCE.getValue();
-	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), 33);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	
 	@SuppressWarnings("unused")
 	private final static Object CHANCE_CALCULATE = new Object() {

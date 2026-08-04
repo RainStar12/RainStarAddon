@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -55,7 +58,7 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> WAIT = abilitySettings.new SettingObject<Integer>(Revenger.class,
+	public static final SettingObject<Integer> WAIT = rsAbilitySettings.new SettingObject<Integer>(Revenger.class,
 			"wait", 15, "# 유령 상태 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -63,23 +66,23 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> HEALTH_LOSE = abilitySettings.new SettingObject<Integer>(Revenger.class,
-			"health-lose-duration", 60, "# 체력이 사라지는 시간", "# (최대 체력 / 시간)만큼의 체력을 매 초마다 없앱니다.") {
+	public static final SettingObject<Integer> HEALTH_LOSE = rsAbilitySettings.new SettingObject<Integer>(Revenger.class,
+			"health-lose-duration", 35, "# 체력이 사라지는 시간", "# (최대 체력 / 시간)만큼의 체력을 매 초마다 없앱니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Double> PERCENTAGE = abilitySettings.new SettingObject<Double>(Revenger.class,
-			"percentage", 1.0, "# 증가할 공격력 배율", "# 단위: %") {
+	public static final SettingObject<Double> PERCENTAGE = rsAbilitySettings.new SettingObject<Double>(Revenger.class,
+			"percentage", 2.0, "# 증가할 공격력 배율", "# 단위: %") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> TELEPORT_COST = abilitySettings.new SettingObject<Integer>(Revenger.class,
+	public static final SettingObject<Integer> TELEPORT_COST = rsAbilitySettings.new SettingObject<Integer>(Revenger.class,
 			"teleport-cost", 10, "# 순간 이동 체력 소모량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -90,7 +93,7 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 	private GameMode previousGameMode = GameMode.SURVIVAL;
 	private Player killer = null;
 	private boolean revenger = false;
-	private final ActionbarChannel ac = newActionbarChannel();
+	private final ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
 	private final DecimalFormat df = new DecimalFormat("0.0");
 	private final Map<UUID, Double> damageCounter = new HashMap<>();
 	private final int wait = WAIT.getValue() * 20;
@@ -154,6 +157,17 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			ParticleLib.FLAME.spawnParticle(getPlayer().getLocation().clone().add(0, 2.5, 0), 0, 0, 0, 1, 0);
+			if (killer != null) ac2.update("§c공격력 증가§7: §f" + df.format(damageCounter.get(killer.getUniqueId()) * percentage));
+		}
+		
+		@Override
+		public void onEnd() {
+			ac2.update(null);
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			ac2.update(null);
 		}
 		
 	}.setPeriod(TimeUnit.TICKS, 1).register();
@@ -172,7 +186,7 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 		
 	}.setPeriod(TimeUnit.SECONDS, 1).register();
 	
-	@SubscribeEvent(priority = 1000)
+	@SubscribeEvent(priority = 1000, eventPriority = EventPriority.HIGHEST)
 	public void onDeath(EntityDamageByEntityEvent e) {
 		if (!e.isCancelled() && !revenger && e.getEntity().equals(getPlayer())) {
 	    	Player damager = null;
@@ -222,6 +236,7 @@ public class Revenger extends AbilityBase implements ActiveHandler {
 		if (getPlayer().equals(e.getEntity().getKiller()) && revenger && e.getEntity().equals(killer)) {
 			hpdecrease.stop(false);
 			revengeParticle.stop(false);
+			ac2.update(null);
 			revenger = false;
 		}
 	}

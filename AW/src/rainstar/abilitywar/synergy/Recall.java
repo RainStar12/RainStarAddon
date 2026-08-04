@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,10 +61,11 @@ import daybreak.google.common.base.Predicate;
 		name = "리콜", rank = Rank.B, species = Species.HUMAN, explain = {
 		"일반 투사체를 바라보면 투사체를 쏜 주인에게 되돌아갑니다.",
 		"되돌아가는 투사체는 주인에게 §c2.5배의 피해§f를 입힙니다.",
-		"원거리 투사체들을 방어해주는 §b50HP§f의 실드를 가지고 있습니다.",
-		"실드는 일반 투사체에 §c-$[LOSS_NORMAL]HP§f, 특수 투사체에 §c-$[LOSS_SPECIAL]HP§f를 잃습니다.",
-		"실드에 닿는 일반 투사체는 2초간 정지, 특수 투사체는 되돌려보냅니다.",
-		"§bHP§f가 §c0§f 이하가 되면 쿨타임을 가집니다. $[COOLDOWN]"
+		"원거리 투사체들을 방어해주는 §b50HP§f의 §3실드§f를 가지고 있습니다.",
+		"§3실드§f는 일반 투사체에 §c-$[LOSS_NORMAL]HP§f, 특수 투사체에 §c-$[LOSS_SPECIAL]HP§f를 잃습니다.",
+		"§3실드§f에 닿는 일반 투사체는 2초간 정지, 특수 투사체는 되돌려보냅니다.",
+		"§bHP§f가 §c0§f 이하가 되면 쿨타임을 가집니다. $[COOLDOWN]",
+		"§3실드§f가 있을 때 §bHP§f에 비례하여 주위 적을 밀어냅니다."
 		})
 
 public class Recall extends Synergy {
@@ -72,8 +75,8 @@ public class Recall extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN
-	= synergySettings.new SettingObject<Integer>(Recall.class,
-			"cooldown", 75, "# 쿨타임") {
+	= rsSynergySettings.new SettingObject<Integer>(Recall.class,
+			"cooldown", 90, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -86,7 +89,7 @@ public class Recall extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> LOSS_NORMAL
-	= synergySettings.new SettingObject<Integer>(Recall.class,
+	= rsSynergySettings.new SettingObject<Integer>(Recall.class,
 			"loss-normal", 2, "# 일반 투사체 체력 감소") {
 		@Override
 		public boolean condition(Integer value) {
@@ -95,7 +98,7 @@ public class Recall extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> LOSS_SPECIAL
-	= synergySettings.new SettingObject<Integer>(Recall.class,
+	= rsSynergySettings.new SettingObject<Integer>(Recall.class,
 			"loss-special", 5, "# 특수 투사체 체력 감소") {
 		@Override
 		public boolean condition(Integer value) {
@@ -194,7 +197,11 @@ public class Recall extends Synergy {
     					shieldHP = Math.max(0, shieldHP - lossNormal);
     				}
     			}
+    			
     			if (count % 2 == 0) {
+        			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), 6, predicate)) {
+        				player.setVelocity(VectorUtil.validateVector(player.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0).multiply(shieldHP * 0.005)));
+        			}
     				for (Location loc : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
     					ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
     				}
@@ -243,7 +250,7 @@ public class Recall extends Synergy {
 				if (e.getEntity().equals(getPlayer())) {
 					e.setCancelled(true);
 				}
-				if (!shooterMap.get(e.getDamager()).equals(e.getEntity())) {
+				if (shooterMap.get(e.getDamager()).equals(e.getEntity())) {
 					e.setDamage(e.getDamage() * 2.5);
 				}
 			}

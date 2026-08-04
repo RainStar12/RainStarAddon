@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,17 +35,19 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.google.common.base.Strings;
 
 @AbilityManifest(name = "파이로매니악", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7철괴 좌클릭 §8- §cTNT 캐논§f: 바라보는 방향으로 §cTNT§f를 날립니다. $[TNT_CANNON_COOLDOWN]",
+		"§7철괴 좌클릭 §8- §cTNT 캐논§f: 바라보는 방향으로 §c§l§n아주 빠르게 터지는§f §cTNT§f를 날립니다.",
+		" 5번 사용 후, $[TNT_CANNON_COOLDOWN]",
 		"§7철괴 우클릭 §8- §3리벤지 붐§f: $[REVENGE_BOOM_DURATION]초간 공격을 할 수 없고, 받는 피해량이 $[REVENGE_BOOM_DECREASE]% 감소합니다.",
 		" 종료 시 피해를 준 대상들에게 준 피해량만큼 폭발 피해를 입힙니다. $[REVENGE_BOOM_COOLDOWN]",
-		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 1/3만큼 §d회복§f합니다.",
+		"§7패시브 §8- §c파이로매니악§f: 폭발 피해량을 받지 않고 그 1/5만큼 §d회복§f합니다.",
 		" 근접 치명타 공격 $[CRIT_COUNT]회마다 자신의 위치에 §c$[EXPLOSIVE]§f의 폭발을 일으킵니다.",
 		"§a[§e능력 제공자§a] §3Dire5778"
 		},
 		summarize = {
-		"§7철괴 좌클릭 시§f 바라보는 방향으로 §cTNT§f를 날립니다.",
+		"§7철괴 좌클릭 시§f 바라보는 방향으로 빠르게 터지는 §cTNT§f를 5번까지 날립니다.",
 		"§7철괴 우클릭 시§f 잠시간 공격이 불가능하고, 받는 피해량이 감소하며, 종료될 때",
 		"자신을 공격한 대상들에게 폭발 피해를 입힙니다.",
 		"기본적으로 모든 폭발 피해량을 받지 않고 그 절반만큼 §d회복§f합니다.",
@@ -56,8 +60,8 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> TNT_CANNON_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Pyromaniac.class, "tnt-cannon-cooldown", 60,
-			"# TNT 캐논 쿨타임") {
+			rsAbilitySettings.new SettingObject<Integer>(Pyromaniac.class, "tnt-cannon-cooldown", 60,
+			"# TNT 캐논 쿨타임", "# 쿨타임 감소 효과를 50%까지만 받습니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -72,7 +76,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> REVENGE_BOOM_DURATION = 
-			abilitySettings.new SettingObject<Double>(Pyromaniac.class, "revenge-boom-duration", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(Pyromaniac.class, "revenge-boom-duration", 5.0,
 			"# 리벤지 붐 지속시간", "# 단위: 초") {
 
 		@Override
@@ -83,7 +87,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> REVENGE_BOOM_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(Pyromaniac.class, "revenge-boom-decrease", 20,
+			rsAbilitySettings.new SettingObject<Integer>(Pyromaniac.class, "revenge-boom-damage-decrease", 40,
 			"# 리벤지 붐 받는 피해량 감소량", "# 단위: %") {
 
 		@Override
@@ -94,7 +98,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> REVENGE_BOOM_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Pyromaniac.class, "revenge-boom-cooldown", 110,
+			rsAbilitySettings.new SettingObject<Integer>(Pyromaniac.class, "revenge-boom-cooldown", 110,
 			"# 리벤지 붐 쿨타임") {
 
 		@Override
@@ -110,7 +114,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CRIT_COUNT = 
-			abilitySettings.new SettingObject<Integer>(Pyromaniac.class, "crit-count", 3,
+			rsAbilitySettings.new SettingObject<Integer>(Pyromaniac.class, "crit-count", 3,
 			"# 근접 치명타 공격 횟수마다 폭발 발동") {
 
 		@Override
@@ -121,7 +125,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> EXPLOSIVE = 
-			abilitySettings.new SettingObject<Double>(Pyromaniac.class, "explosive", 1.6,
+			rsAbilitySettings.new SettingObject<Double>(Pyromaniac.class, "explosive", 1.6,
 			"# 고정 피해 폭발력") {
 
 		@Override
@@ -131,15 +135,16 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private final Cooldown tntcooldown = new Cooldown(TNT_CANNON_COOLDOWN.getValue()), revengecooldown = new Cooldown(REVENGE_BOOM_COOLDOWN.getValue());
+	private final Cooldown tntcooldown = new Cooldown(TNT_CANNON_COOLDOWN.getValue(), 50), revengecooldown = new Cooldown(REVENGE_BOOM_COOLDOWN.getValue());
 	private final int revengeduration = (int) (REVENGE_BOOM_DURATION.getValue() * 20);
 	private final double decrease = 1 - (REVENGE_BOOM_DECREASE.getValue() * 0.01);
 	private final int critcount = CRIT_COUNT.getValue();
 	private final double explosive = EXPLOSIVE.getValue();
 	private int count = 0;
 	private Map<UUID, Double> damageMap = new HashMap<>();
-	private ActionbarChannel ac = newActionbarChannel();
+	private ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
 	private final DecimalFormat df = new DecimalFormat();
+	private int stack = 5;
 	
     private boolean attackCooldown = false;
 	
@@ -147,6 +152,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
     public void onUpdate(Update update) {
     	if (update == Update.RESTRICTION_CLEAR) {
     		attackCooldownChecker.start();
+    		ac2.update(Strings.repeat("§c＃", stack).concat(Strings.repeat("§7＃", 5 - stack)));
     	}
     }
     
@@ -189,11 +195,17 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 		if (material.equals(Material.IRON_INGOT)) {
 			if (clicktype.equals(ClickType.LEFT_CLICK)) {
 				if (!tntcooldown.isCooldown()) {
+					stack--;
 					TNTPrimed tntprimed = getPlayer().getWorld().spawn(getPlayer().getEyeLocation(), TNTPrimed.class);
-					tntprimed.setFuseTicks(30);
+					tntprimed.setFuseTicks(15);
 					final Vector direction = getPlayer().getLocation().getDirection().multiply(1.75);
 					tntprimed.setVelocity(direction.setY(Math.min(0.45, direction.getY())));
-					return tntcooldown.start();
+		    		ac2.update(Strings.repeat("§c＃", stack).concat(Strings.repeat("§7＃", 5 - stack)));
+					if (stack <= 0) {
+						stack = 5;
+			    		ac2.update(Strings.repeat("§c＃", stack).concat(Strings.repeat("§7＃", 5 - stack)));
+						return tntcooldown.start();	
+					}
 				}
 			} else {
 				if (!revengecooldown.isCooldown() && !skill.isRunning()) {
@@ -218,7 +230,7 @@ public class Pyromaniac extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
-				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() / 3.0), RegainReason.CUSTOM);
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (e.getFinalDamage() / 5.0), RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
 					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());	

@@ -73,7 +73,7 @@ public class Burn extends AbstractGame.Effect implements Listener {
 		if (count % 20 == 0) ParticleLib.DRIP_LAVA.spawnParticle(participant.getPlayer().getLocation().clone().add(0, 1, 0), 0.25, 0.5, 0.25, 20, 1);
 		if (participant.getPlayer().getFireTicks() <= 0) {
 			if (fireticks > 0) {
-				participant.getPlayer().damage(Math.min(6, fireticks * 0.025));
+				participant.getPlayer().damage(fireticks * 0.025);
 				ParticleLib.SMOKE_LARGE.spawnParticle(participant.getPlayer().getLocation(), 0, 0, 0, 150, 0.05);
 			}
 		}

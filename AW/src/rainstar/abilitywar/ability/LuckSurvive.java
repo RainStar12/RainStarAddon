@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 
 import org.bukkit.attribute.Attribute;
@@ -26,7 +28,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(name = "이걸 사네", rank = Rank.A, species = Species.HUMAN, explain = {
 		"피해받고 나서 체력 §a8%§f 이하로 생존 시 $[DURATION]초간 무적 및 공격력이 $[INCREASE]% 증가합니다.",
 		"$[COOLDOWN] §3/§f 체력이 20% 이하일 때 피해량을 $[DECREASE]% 줄여 받습니다.",
-		"§b[§7아이디어 제공자§b] §5railohd"
+		"§b[§7아이디어 제공자§b] §5_Millsage_"
 		},
 		summarize = {
 		"피해받은 이후 체력이 매우 적으면 일정 시간 §c무적 및 공격력이 증가§f합니다.",
@@ -39,7 +41,7 @@ public class LuckSurvive extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(LuckSurvive.class, "inv-duration", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(LuckSurvive.class, "inv-duration", 3.0,
             "# 무적 및 공격력 증가 지속시간") {
         @Override
         public boolean condition(Double value) {
@@ -49,7 +51,7 @@ public class LuckSurvive extends AbilityBase {
     
 	
 	public static final SettingObject<Integer> INCREASE = 
-			abilitySettings.new SettingObject<Integer>(LuckSurvive.class, "increase", 25,
+			rsAbilitySettings.new SettingObject<Integer>(LuckSurvive.class, "increase", 25,
             "# 피해 증가량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -58,7 +60,7 @@ public class LuckSurvive extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> DECREASE = 
-			abilitySettings.new SettingObject<Integer>(LuckSurvive.class, "decrease", 30,
+			rsAbilitySettings.new SettingObject<Integer>(LuckSurvive.class, "decrease", 30,
             "# 피해 감소량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -67,7 +69,7 @@ public class LuckSurvive extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(LuckSurvive.class, "cooldown", 40,
+			rsAbilitySettings.new SettingObject<Integer>(LuckSurvive.class, "cooldown", 40,
             "# 쿨타임") {
 
         @Override
@@ -102,11 +104,11 @@ public class LuckSurvive extends AbilityBase {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			double maxHP = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-			if (getPlayer().getHealth() <= maxHP * 0.2) {
+			if (getPlayer().getHealth() <= (maxHP * 0.2)) {
 				e.setDamage(e.getDamage() * decrease);
 			}
 			
-			if (getPlayer().getHealth() - e.getFinalDamage() > 0 && getPlayer().getHealth() - e.getFinalDamage() <= maxHP * 0.08 && !cooldown.isRunning()) {
+			if ((getPlayer().getHealth() - e.getFinalDamage()) > 0 && (getPlayer().getHealth() - e.getFinalDamage()) <= (maxHP * 0.08) && !cooldown.isRunning()) {
 				ParticleLib.TOTEM.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 100, 1);
 				SoundLib.ITEM_TOTEM_USE.playSound(getPlayer().getLocation(), 1, 1.25f);
 				inv.start();

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -66,7 +68,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
 	}
 
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "cooldown", 66,
+			rsAbilitySettings.new SettingObject<Integer>(RussianRoulette.class, "cooldown", 66,
             "# 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -79,7 +81,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> HEAL_BAN = 
-			abilitySettings.new SettingObject<Double>(RussianRoulette.class, "heal-ban-duration", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(RussianRoulette.class, "heal-ban-duration", 15.0,
             "# 회복 불능 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -88,7 +90,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(RussianRoulette.class, "stun-duration", 2.5,
+			rsAbilitySettings.new SettingObject<Double>(RussianRoulette.class, "stun-duration", 2.5,
             "# 기절 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -97,7 +99,7 @@ public class RussianRoulette extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> TRUE_DMG = 
-			abilitySettings.new SettingObject<Integer>(RussianRoulette.class, "projectile-true-damage", 33,
+			rsAbilitySettings.new SettingObject<Integer>(RussianRoulette.class, "projectile-true-damage", 33,
             "# 대상에게 입힐 트루 대미지", "# 단위: 최대 체력의 %") {
         @Override
         public boolean condition(Integer value) {

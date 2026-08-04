@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
@@ -103,7 +105,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 		}
 	}
 
-	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(GhostRider.class,
+	public static final SettingObject<Integer> RANGE = rsSynergySettings.new SettingObject<Integer>(GhostRider.class,
 			"range", 5, "# 화염 피해 증가 범위") {
 
 		@Override
@@ -113,7 +115,7 @@ public class GhostRider extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(GhostRider.class, 
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(GhostRider.class, 
 			"COOLDOWN", 100, "# 쿨타임") {
 
 		@Override

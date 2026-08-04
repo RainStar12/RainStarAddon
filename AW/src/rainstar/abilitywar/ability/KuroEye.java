@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +66,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		" 시간의 흔적이 남고, 다시 능력을 사용 혹은 자동 중단할 때 범위 내의",
 		" 시간의 흔적의 주인들에게 피해를 입힙니다. $[COOLDOWN]",
 		"§7패시브 §8- §c마안 폭주§f: 회복 효과를 받을 수 없습니다.",
-		" 회복량의 10%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있습니다."
+		" 회복량의 30%만큼 추가 공격력을 최대 $[MAX_DAMAGE]까지 획득할 수 있습니다."
 		},
 		summarize = {
 		"체력 회복을 하지 못하는 대신 회복량의 10%만큼 추가 공격력을 획득합니다.",
@@ -81,7 +83,7 @@ public class KuroEye extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(KuroEye.class,
+	= rsAbilitySettings.new SettingObject<Integer>(KuroEye.class,
 			"cooldown", 60, "# 시간 절단 쿨타임",
 			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
@@ -96,7 +98,7 @@ public class KuroEye extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> MAX_DAMAGE 
-	= abilitySettings.new SettingObject<Integer>(KuroEye.class,
+	= rsAbilitySettings.new SettingObject<Integer>(KuroEye.class,
 			"max-damage", 10, "# 최대 추가 피해량") {
 		@Override
 		public boolean condition(Integer value) {
@@ -157,7 +159,7 @@ public class KuroEye extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityRegainHealth(EntityRegainHealthEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			stack = Math.min(MAX_DAMAGE.getValue(), stack + (e.getAmount() * 0.1));
+			stack = Math.min(MAX_DAMAGE.getValue(), stack + (e.getAmount() * 0.3));
 			ac.update("§c마안 폭주§f: §7" + df.format(stack));
 			e.setCancelled(true);
 		}

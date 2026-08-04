@@ -22,6 +22,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -29,6 +30,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -228,15 +230,16 @@ public class Protagonist extends AbilityBase {
     public void onEntityRegainHealth(EntityRegainHealthEvent e) {
     	if (e.getEntity().equals(getPlayer())) {
     		switch(bufflevel) {
+    		case 1:
     		case 2:
     		case 3:
-    			e.setAmount(e.getAmount() * 1.15);
+    			e.setAmount(e.getAmount() * (1 + (0.1 * bufflevel)));
     			break;
     		case 4:
-    			e.setAmount(e.getAmount() * 1.35);
+    			e.setAmount(e.getAmount() * 1.5);
     			break;
     		case 5:
-    			e.setAmount(e.getAmount() * 1.5);
+    			e.setAmount(e.getAmount() * 1.7);
     			break;
     		}
     	}
@@ -253,33 +256,43 @@ public class Protagonist extends AbilityBase {
     		switch(bufflevel) {
     		case 2:
     		case 3:
-    			e.setDamage(e.getDamage() * 0.85);
-    			break;
     		case 4:
-    			e.setDamage(e.getDamage() * 0.75);
-    			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 0.7);
+    			e.setDamage(e.getDamage() * (1 - (0.1 * (bufflevel - 1))));
     			break;
     		}
     		
     		if (bufflevel < 3) {
     			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
     				e.setCancelled(true);
-    				Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25);
+    				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 0.25, RegainReason.CUSTOM);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+	    				Healths.setHealth(getPlayer(), event.getAmount());	
+					}
     			}
     		}
     	}
-    	if (getPlayer().equals(e.getDamager())) {
+    	
+    	Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+    	
+    	if (getPlayer().equals(damager)) {
     		switch(bufflevel) {
-    		case 3:
+    		case 2:
     			e.setDamage(e.getDamage() * 1.05);
     			break;
-    		case 4:
+    		case 3:
     			e.setDamage(e.getDamage() * 1.1);
     			break;
+    		case 4:
+    			e.setDamage(e.getDamage() * 1.2);
+    			break;
     		case 5:
-    			e.setDamage(e.getDamage() * 1.15);
+    			e.setDamage(e.getDamage() * 1.3);
     			break;
     		}
     	}
@@ -289,7 +302,7 @@ public class Protagonist extends AbilityBase {
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
 			if (bufflevel >= 4) {
-				new Homing((Arrow) e.getEntity(), e.getEntity().getVelocity().length()).start();
+				new Homing((Arrow) e.getEntity(), e.getEntity().getVelocity().length(), bufflevel >= 5 ? 3 : 2).start();
 			}
 		}
 	}
@@ -298,12 +311,14 @@ public class Protagonist extends AbilityBase {
 		
 		private Arrow arrow;
 		private double lengths;
+		private double range;
 		
-		private Homing(Arrow arrow, Double length) {
+		private Homing(Arrow arrow, double length, double range) {
 			super(TaskType.REVERSE, 50);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.arrow = arrow;
 			this.lengths = length;
+			this.range = range;
 		}
 		
 		@Override
@@ -317,7 +332,7 @@ public class Protagonist extends AbilityBase {
 				arrow.setCritical(true);
 				Player p = LocationUtil.getNearestEntity(Player.class, arrow.getLocation(), predicate);
 				if (p != null) {
-					if (arrow.getLocation().distanceSquared(p.getEyeLocation()) <= (1.75 * 1.75)) {
+					if (arrow.getLocation().distanceSquared(p.getEyeLocation()) <= (range * range)) {
 						arrow.setGravity(false);
 						arrow.setVelocity(VectorUtil.validateVector((p.getPlayer().getEyeLocation().toVector()
 									.subtract(arrow.getLocation().toVector())).normalize().multiply(lengths)));	
@@ -337,6 +352,7 @@ public class Protagonist extends AbilityBase {
 		protected void onEnd() {
 			arrow.setGravity(true);
 			arrow.setGlowing(false);
+			HandlerList.unregisterAll(this);
 		}
 		
 		@Override

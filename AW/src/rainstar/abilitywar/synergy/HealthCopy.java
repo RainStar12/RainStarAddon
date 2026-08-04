@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -61,7 +63,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(HealthCopy.class, "cooldown", 6,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = rsSynergySettings.new SettingObject<Integer>(HealthCopy.class, "cooldown", 4,
 			"# 흡혈 쿨타임") {
 
 		@Override
@@ -75,7 +77,7 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> MULTIPLY = synergySettings.new SettingObject<Double>(HealthCopy.class, "cooldown", 1.3,
+	public static final SettingObject<Double> MULTIPLY = rsSynergySettings.new SettingObject<Double>(HealthCopy.class, "cooldown", 1.3,
 			"# 받는 대미지 배수") {
 
 		@Override
@@ -208,13 +210,13 @@ public class HealthCopy extends Synergy implements ActiveHandler {
 					if (Damages.canDamage(target, getPlayer(), DamageCause.MAGIC, 3)) {
 						Healths.setHealth(getPlayer(), getPlayer().getHealth() - 2);
 						final Participant participant = getGame().getParticipant(target);
-						new Transfusion(participant, true, 2).start();
+						new Transfusion(participant, true, 3).start();
 						return cooldown.start();
 					}
 				} else {
-					if (Damages.canDamage(target, getPlayer(), DamageCause.MAGIC, 1)) {
+					if (Damages.canDamage(target, getPlayer(), DamageCause.MAGIC, 2)) {
 						final Participant participant = getGame().getParticipant(target);
-						new Transfusion(participant, true, 1).start();
+						new Transfusion(participant, true, 2).start();
 						return cooldown.start();
 					}
 				}

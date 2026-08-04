@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +47,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -64,10 +65,12 @@ import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
@@ -76,20 +79,20 @@ import rainstar.abilitywar.synergy.DemonLord;
 @AbilityManifest(
 		name = "쿠로", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7패시브 §c- §8어둠의 추종자§f: 자신이 있는 위치가 어두울수록 스킬 피해량이 증가합니다.",
-		" 실명을 가진 적을 근접 공격하면 추가 피해를 입힙니다.",
+		" §8실명§f을 가진 적에게 근접 공격 피해량이 50% 증가합니다.",
 		"§7근접 타격 후 F §8- §5차원 절단§f: 바라보는 방향으로 빠르게 질주합니다.",
 		" 질주하며 지나간 공간을 절단시켜 주변 엔티티들을 끌어와 피해를 입히고",
 		" 잠시간 차원의 저편으로 보내버립니다. $[COOLDOWN]",
+		" 이후 빠져나온 대상은 $[BLIND_DURATION]초간 §8실명§f에 빠집니다.",
 		" §7대시형 절단§f: $[DASH_CONFIG]",
-		"§7패시브 §8- §c마안 개방§f: 치명적인 피해를 입었을 때, 체력을 최대 체력의 절반까지",
-		" 즉시 회복하고 마안을 개방합니다."
+		"§7패시브 §8- §c마안 개방§f: 치명적인 피해를 입었을 때, 체력을 전부 회복하고..."
 		},
 		summarize = {
 		"§7근접 타격 후 검을 들고 F키를 빠르게§f 누르면 바라보는 방향으로 질주해",
 		"지나간 공간을 절단시켜 주변 엔티티들을 끌어와 피해를 입히고",
 		"잠시간 §3차원의 저편§f으로 보내 공격 불능, 무적, 타게팅 불능 상태로 만듭니다.",
 		" $[COOLDOWN]",
-		"사망 위기에 놓일 때 체력을 최대 체력의 절반까지 즉시 회복 후",
+		"사망 위기에 놓일 때 체력을 최대 체력까지 즉시 회복 후",
 		"마안이 개방된 능력으로 변경됩니다."
 		})
 
@@ -100,10 +103,8 @@ public class Kuro extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(Kuro.class,
-			"cooldown", 50, "# 차원 절단 쿨타임",
-			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Kuro.class,
+			"cooldown", 50, "# 차원 절단 쿨타임", "# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -115,7 +116,15 @@ public class Kuro extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Boolean> DASH_CONFIG = abilitySettings.new SettingObject<Boolean>(Kuro.class,
+	public static final SettingObject<Double> BLIND_DURATION = rsAbilitySettings.new SettingObject<Double>(Kuro.class,
+			"blind-duration", 2.5, "# 실명 지속시간") {
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Boolean> DASH_CONFIG = rsAbilitySettings.new SettingObject<Boolean>(Kuro.class,
 			"dash-config", false, "# 차원 절단 이동 대시형 여부", "# 질주 개념으로 적용시켜 블럭을 관통할 지 정합니다.") {
 		
 		@Override
@@ -126,12 +135,15 @@ public class Kuro extends AbilityBase {
 	};
 	
 	private final Cooldown cool = new Cooldown(COOLDOWN.getValue(), "차원 절단", CooldownDecrease._50);
+	private final int blindDuration = (int) (BLIND_DURATION.getValue() * 20);
+	
 	private Map<Player, NextDimension> nextMap = new HashMap<>(); 
 	private final Crescent crescent = Crescent.of(1, 20);
 	private boolean dashboolean = DASH_CONFIG.getValue();
 	private static final Vector zerov = new Vector(0, 0, 0);
 	private Location startLocation;
-	
+	private double lastDamage = 0;
+	private boolean awakened = false;
 	private static final Set<Material> swords;
 	
 	static {
@@ -195,11 +207,12 @@ public class Kuro extends AbilityBase {
 		if (e.getRightClicked().hasMetadata("DimensionCutter")) e.setCancelled(true);
 	}
 	
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
-				getPlayer().setHealth(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2);
+	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled() && !awakened) {
+	    		awakened = true;
+	    		Healths.setHealth(getPlayer(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
 			   	getPlayer().sendMessage("§8[§7!§8] §c죽음의 위기§f에서 탈출하기 위해 §4금지된 마안§f을 §3개방§f하였습니다! §7/aw check");
 		    	AbilityBase ab = getParticipant().getAbility();
@@ -231,23 +244,28 @@ public class Kuro extends AbilityBase {
 		}
 	}
 	
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 	
-	@SubscribeEvent(priority = Priority.HIGHEST)
+	@SubscribeEvent(priority = 1000)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
+	}
+	
+	@SubscribeEvent
+	public void onAttack(EntityDamageByEntityEvent e) {
 		if (getPlayer().equals(e.getDamager())) {
 			if (attacked.isRunning()) attacked.setCount(7);
 			else attacked.start();
 			if (e.getEntity() instanceof Player) {
 				Player player = (Player) e.getEntity();
 				if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) {
-					e.setDamage(e.getDamage() + 2);
+					e.setDamage(e.getDamage() * 1.5);
 				}
 			}
+			lastDamage = e.getDamage();
 		}
 	}
 	
@@ -271,7 +289,7 @@ public class Kuro extends AbilityBase {
 				
 				@Override
 				public void run() {
-					new DimensionCutter(startLocation, getPlayer().getLocation()).start();
+					new DimensionCutter(startLocation, getPlayer().getLocation(), lastDamage).start();
 					new CutterParticle(startLocation, getPlayer().getLocation()).start();
 				}
 				
@@ -301,7 +319,7 @@ public class Kuro extends AbilityBase {
     				if (lastEmpty != null) {
     					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
     					new CutParticle(-45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(50, 50, 50)).start();
-    					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
+    					new DimensionCutter(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0), lastDamage).start();
     					new CutterParticle(getPlayer().getLocation(), lastEmpty.getLocation().clone().subtract(0, 0.5, 0)).start();
     					getPlayer().teleport(LocationUtil.floorY(lastEmpty.getLocation()).setDirection(getPlayer().getLocation().getDirection()));
     					new CutParticle(45, getPlayer().getLocation(), getPlayer().getLocation().getDirection(), RGB.of(150, 150, 150)).start();
@@ -476,13 +494,15 @@ public class Kuro extends AbilityBase {
     	private final Location startLoc;
     	private final Location endLoc;
     	private final Location midLoc;
+    	private final double damage;
 		
-		private DimensionCutter(Location startLoc, Location endLoc) {
+		private DimensionCutter(Location startLoc, Location endLoc, double damage) {
 			super(100);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.startLoc = startLoc.clone().add(0, 1, 0);
 			this.endLoc = endLoc.clone().add(0, 1, 0);
 			this.midLoc = startLoc.clone().add(0, 1, 0).toVector().midpoint(endLoc.clone().add(0, 1, 0).toVector()).toLocation(getPlayer().getWorld());
+			this.damage = damage;
 		}
 		
     	@Override
@@ -495,7 +515,7 @@ public class Kuro extends AbilityBase {
     		for (Damageable d : LocationUtil.rayTraceEntities(Damageable.class, startLoc, endLoc, 0.75, predicate)) {
     			if (d instanceof ArmorStand) continue;
     			if (!d.equals(getPlayer()) && !damagedcheck.contains(d)) {
-        			Damages.damageMagic(d, getPlayer(), false, (float) (7 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.4));
+        			Damages.damageMagic(d, getPlayer(), false, (float) (damage * (1 + (15 - getPlayer().getLocation().getBlock().getLightLevel()) * 0.05)));
             		new AbilityTimer(20) {
             			
             			@Override
@@ -549,8 +569,8 @@ public class Kuro extends AbilityBase {
 								if (mix.getSynergy().getClass().equals(DemonLord.class)) {
 									return false;
 								}
-							}
-						}
+							} else if (mix.getFirst().getClass().equals(DemonLord.class) || mix.getSecond().getClass().equals(DemonLord.class)) return false;
+						} else if (ab.getClass().equals(DemonLord.class)) return false;
 					}
 				}
 				return true;
@@ -604,6 +624,7 @@ public class Kuro extends AbilityBase {
 		
 		@Override
 		protected void onEnd() {
+			PotionEffects.BLINDNESS.addPotionEffect(player, blindDuration, 1, false);
 			onSilentEnd();
 		}
 		

@@ -1,7 +1,6 @@
-package rainstar.abilitywar.ability;
+package rainstar.abilitywar.ability.empty;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -13,6 +12,7 @@ import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
@@ -23,11 +23,11 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.utils.RankColor;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -45,19 +45,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 		"§a---------------------------------",
 		"$(EXPLAIN)",
 		"§a---------------------------------",
-		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
-		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f가진 쿨타임 / 2",
-		"능력당 한 번, §2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다.",
-		"§2복제§f된 능력이 없을 때 §6능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
+		"§7철괴§f로 대상을 30칸 내에서 §7우클릭§f하여 능력을 §2복제§f합니다.",
+		"§7웅크린 채 철괴 좌클릭§f으로 §2복제§f를 해제할 수 있습니다.",
+		"해제 시, §c쿨타임 §7: §f가진 쿨타임 / 2 + $[DEFAULT_COOLDOWN]을 가집니다.",
+		"§2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다. §2복제§f된 능력이 없을 때",
+		"§6능력이 담긴 책§f을 우클릭하여 §6책§f을 소모하고 해당 능력을 §2복제§f합니다."
 		},
 		summarize = {
 		"§a---------------------------------",
 		"$(SUM_EXPLAIN)",
 		"§a---------------------------------",
-		"철괴로 대상을 30칸 내에서 우클릭하여 능력을 §2복제§f합니다.",
-		"웅크린 채 철괴 좌클릭으로 §2복제§f를 해제할 수 있습니다. §c쿨타임 §7: §f가진 쿨타임 / 2",
-		"능력당 한 번, §2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다.",
-		"§2복제§f된 능력이 없을 때 §6능력이 담긴 책§f을 우클릭하여 해당 능력을 §2복제§f합니다."
+		"§7철괴§f로 대상을 30칸 내에서 §7우클릭§f하여 능력을 §2복제§f합니다.",
+		"§7웅크린 채 철괴 좌클릭§f으로 §2복제§f를 해제할 수 있습니다.",
+		"해제 시, §c쿨타임 §7: §f가진 쿨타임 / 2 + $[DEFAULT_COOLDOWN]을 가집니다.",
+		"§2복제§f 시 해당 §6능력이 담긴 책§f을 획득합니다. §2복제§f된 능력이 없을 때",
+		"§6능력이 담긴 책§f을 우클릭하여 §6책§f을 소모하고 해당 능력을 §2복제§f합니다."
 		})
 
 @Tips(tip = {
@@ -95,7 +97,21 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	public Empty(Participant participant) {
 		super(participant);
+		if (!getGame().hasModule(Library.class)) {
+			getGame().addModule(new Library());
+		}
+		library = getGame().getModule(Library.class);
 	}
+	
+	public static final SettingObject<Integer> DEFAULT_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Empty.class,
+			"default-cooldown", 15, "# 기본 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -119,7 +135,8 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 	
 	private AbilityBase ability;
 	private final Cooldown cooldown = new Cooldown(1, "공백");
-	private Map<String, AbilityRegistration> abilityMap = new HashMap<>();
+	private Cooldown defaultcooldown = new Cooldown(DEFAULT_COOLDOWN.getValue());
+	private Library library;
 	
 	@SuppressWarnings("serial")
 	private List<String> lores = new ArrayList<String>() {
@@ -182,7 +199,7 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 				Empty.this.ability = null;
 				getParticipant().getPlayer().sendMessage("§3[§b!§3] §b당신의 능력이 §f[  ]§b으로 되돌아왔습니다.");
 				cooldown.start();
-				cooldown.setCount((int) (cooltimeSum / 2.0));
+				cooldown.setCount((int) (cooltimeSum / 2.0) + defaultcooldown.getCooldown());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -205,16 +222,16 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 											this.ability = AbilityBase.create(targetMix.getSynergy().getClass(), getParticipant());
 											this.ability.setRestricted(false);
 											getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 " + RankColor.getColor(ability.getRank()) + ability.getName() + "§b 입니다.");
-											if (!abilityMap.containsKey("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】")) {
-												abilityMap.put("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】", ability.getRegistration());
-												ItemStack book = new ItemStack(Material.BOOK, 1);
-												ItemMeta bookmeta = book.getItemMeta();
-												bookmeta.setDisplayName("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】");
-												bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-												bookmeta.setLore(lores);
-												book.setItemMeta(bookmeta);
-												getPlayer().getInventory().addItem(book);
+											if (!library.getAbilityMap().containsKey("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】")) {
+												library.getAbilityMap().put("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】", ability.getRegistration());
 											}
+											ItemStack book = new ItemStack(Material.BOOK, 1);
+											ItemMeta bookmeta = book.getItemMeta();
+											bookmeta.setDisplayName("§8【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §8】");
+											bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+											bookmeta.setLore(lores);
+											book.setItemMeta(bookmeta);
+											getPlayer().getInventory().addItem(book);
 										} catch (ReflectiveOperationException e) {
 											e.printStackTrace();
 										}
@@ -225,22 +242,20 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 										try {
 											Class<? extends AbilityBase> clazz = (this.equals(myFirst) ? first : second).getClass();
 											if (clazz != Empty.class) {
-												if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
-												if (clazz == Kuro.class) clazz = KuroEye.class;
 												this.ability = AbilityBase.create(clazz, getParticipant());
 												this.ability.setRestricted(false);
 												getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 " + RankColor.getColor(ability.getRank()) + ability.getName() + "§b 입니다.");
-												if (!abilityMap.containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
-													abilityMap.put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
-													ItemStack book = new ItemStack(Material.BOOK, 1);
-													ItemMeta bookmeta = book.getItemMeta();
-													bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
-													bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-													bookmeta.addEnchant(Enchantment.MENDING, 1, true);
-													bookmeta.setLore(lores);
-													book.setItemMeta(bookmeta);
-													getPlayer().getInventory().addItem(book);
+												if (!library.getAbilityMap().containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
+													library.getAbilityMap().put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
 												}
+												ItemStack book = new ItemStack(Material.BOOK, 1);
+												ItemMeta bookmeta = book.getItemMeta();
+												bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
+												bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+												bookmeta.addEnchant(Enchantment.MENDING, 1, true);
+												bookmeta.setLore(lores);
+												book.setItemMeta(bookmeta);
+												getPlayer().getInventory().addItem(book);
 											} else {
 												getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
 											}
@@ -255,22 +270,20 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 								try {
 									Class<? extends AbilityBase> clazz = targetAbility.getClass();
 									if (clazz != Empty.class) {
-										if (clazz == NineTailFoxC.class) clazz = NineTailFox.class; 
-										if (clazz == Kuro.class) clazz = KuroEye.class;
 										this.ability = AbilityBase.create(clazz, getParticipant());
 										this.ability.setRestricted(false);
 										getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 " + RankColor.getColor(ability.getRank()) + targetAbility.getName() + "§b 입니다.");
-										if (!abilityMap.containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
-											abilityMap.put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
-											ItemStack book = new ItemStack(Material.BOOK, 1);
-											ItemMeta bookmeta = book.getItemMeta();
-											bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
-											bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-											bookmeta.addEnchant(Enchantment.MENDING, 1, true);
-											bookmeta.setLore(lores);
-											book.setItemMeta(bookmeta);
-											getPlayer().getInventory().addItem(book);
+										if (!library.getAbilityMap().containsKey("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】")) {
+											library.getAbilityMap().put("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】", ability.getRegistration());
 										}
+										ItemStack book = new ItemStack(Material.BOOK, 1);
+										ItemMeta bookmeta = book.getItemMeta();
+										bookmeta.setDisplayName("§f【 " + RankColor.getColor(ability.getRank()) + ability.getName() + " §f】");
+										bookmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+										bookmeta.addEnchant(Enchantment.MENDING, 1, true);
+										bookmeta.setLore(lores);
+										book.setItemMeta(bookmeta);
+										getPlayer().getInventory().addItem(book);
 									} else {
 										getPlayer().sendMessage("§3[§b!§3] §b공백은 복제할 수 없습니다.");
 									}
@@ -281,11 +294,18 @@ public class Empty extends AbilityBase implements ActiveHandler, TargetHandler {
 						}
 					}
 				} else if (material == Material.BOOK) {			
-					if (abilityMap.containsKey(getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName())) {
+					if (library.getAbilityMap().containsKey(getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName())) {
 						try {
-							this.ability = AbilityBase.create(abilityMap.get(getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName()), getParticipant());
+							this.ability = AbilityBase.create(library.getAbilityMap().get(getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName()), getParticipant());
 							this.ability.setRestricted(false);
 							getPlayer().sendMessage("§3[§b!§3] §b능력을 복제하였습니다. 당신의 능력은 " + RankColor.getColor(ability.getRank()) + ability.getName() + "§b 입니다.");
+							
+					        ItemStack item = getPlayer().getInventory().getItemInMainHand();
+					        if (item.getAmount() <= 1) {
+					            getPlayer().getInventory().setItemInMainHand(null);
+					        } else {
+					            item.setAmount(item.getAmount() - 1);
+					        }
 						} catch (ReflectiveOperationException e1) {
 							e1.printStackTrace();
 						}

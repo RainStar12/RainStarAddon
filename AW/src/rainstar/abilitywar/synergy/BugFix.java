@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.Cooldown.CooldownTimer;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -111,7 +113,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
     };
     
 	public static final SettingObject<Integer> RESET = 
-			synergySettings.new SettingObject<Integer>(BugFix.class, "reset", 60,
+			rsSynergySettings.new SettingObject<Integer>(BugFix.class, "reset", 50,
 			"# 재설정 쿨타임") {
 
 		@Override
@@ -122,7 +124,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 	};
     
 	public static final SettingObject<Double> RANGE = 
-			synergySettings.new SettingObject<Double>(BugFix.class, "range", 15.0,
+			rsSynergySettings.new SettingObject<Double>(BugFix.class, "range-amount", 13.0,
 			"# 디버깅 범위") {
 
 		@Override
@@ -133,7 +135,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 	};
 	
 	public static final SettingObject<Double> ROOTED = 
-			synergySettings.new SettingObject<Double>(BugFix.class, "rooted", 3.7,
+			rsSynergySettings.new SettingObject<Double>(BugFix.class, "rooted-amount", 3.0,
 			"# 디버깅 속박 시간") {
 
 		@Override
@@ -144,7 +146,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 	};
 
 	public static final SettingObject<Double> HEAL = 
-			synergySettings.new SettingObject<Double>(BugFix.class, "heal", 6.0,
+			rsSynergySettings.new SettingObject<Double>(BugFix.class, "heal-amount", 5.0,
 			"# 디버깅 회복력") {
 
 		@Override
@@ -155,7 +157,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
 	};
 	
 	public static final SettingObject<Double> ADD_HEAL = 
-			synergySettings.new SettingObject<Double>(BugFix.class, "add-heal", 1.5,
+			rsSynergySettings.new SettingObject<Double>(BugFix.class, "add-heal-amount", 1.2,
 			"# 디버깅 인당 추가 회복력") {
 
 		@Override
@@ -272,6 +274,7 @@ public class BugFix extends Synergy implements ActiveHandler, TargetHandler {
     private static final Note[] NOTES = {
             Note.natural(1, Tone.D), Note.flat(1, Tone.F), Note.natural(1, Tone.A)
     };
+    
     private class AbilityChanger extends AbilityTimer {
 
         private final BossBar bossBar = Bukkit.createBossBar("§f능력 없음", BarColor.WHITE, BarStyle.SOLID);

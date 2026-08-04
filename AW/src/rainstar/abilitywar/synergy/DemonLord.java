@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +127,7 @@ public class DemonLord extends Synergy {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= synergySettings.new SettingObject<Integer>(DemonLord.class,
+	= rsSynergySettings.new SettingObject<Integer>(DemonLord.class,
 			"cooldown", 40, "# 시공간 절단 쿨타임",
 			"# 쿨타임 감소 효과를 최대 50%까지 받습니다.") {
 		@Override
@@ -140,7 +142,7 @@ public class DemonLord extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE 
-	= synergySettings.new SettingObject<Integer>(DemonLord.class,
+	= rsSynergySettings.new SettingObject<Integer>(DemonLord.class,
 			"damage", 12, "# 시공간 절단 피해량") {
 		@Override
 		public boolean condition(Integer value) {
@@ -150,7 +152,7 @@ public class DemonLord extends Synergy {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_INCREASE 
-	= synergySettings.new SettingObject<Integer>(DemonLord.class,
+	= rsSynergySettings.new SettingObject<Integer>(DemonLord.class,
 			"damage-increase", 40, "# 밝기가 1단계 낮을수록 증가하는 피해량", "# 단위: %", "# 밝기는 15단계로, 최소 밝기인 0일 경우 40%의 기준", "# 15 * 0.4 = 6의 추댐을 가집니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -1243,8 +1245,8 @@ public class DemonLord extends Synergy {
 								if (mix.getSynergy().getClass().equals(DemonLord.class)) {
 									return false;
 								}
-							}
-						}
+							} else if (mix.getFirst().getClass().equals(DemonLord.class) || mix.getSecond().getClass().equals(DemonLord.class)) return false;
+						} else if (ab.getClass().equals(DemonLord.class)) return false;
 					}
 				}
 				return true;

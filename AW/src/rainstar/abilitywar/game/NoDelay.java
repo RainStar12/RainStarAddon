@@ -24,7 +24,7 @@ import java.util.UUID;
 @ModuleBase(NoDelay.class)
 public final class NoDelay implements ListenerModule {
 
-	public static final AttributeModifier PLUS_TEN = new AttributeModifier(UUID.fromString("f218c7c4-c879-403e-b16c-df81e8383a63"), "zerotick", 11, Operation.ADD_NUMBER);
+	public static final AttributeModifier PLUS_TEN = new AttributeModifier(UUID.fromString("f218c7c4-c879-403e-b16c-df81e8383a63"), "zerotick", 21, Operation.ADD_NUMBER);
 
 	private final Set<LivingEntity> entities;
 

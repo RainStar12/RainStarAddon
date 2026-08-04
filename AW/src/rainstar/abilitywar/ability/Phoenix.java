@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Parrot.Variant;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -81,7 +84,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	private static final SettingObject<Double> MAX_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
+	private static final SettingObject<Double> MAX_DAMAGE = rsAbilitySettings.new SettingObject<Double>(Phoenix.class,
 			"max-damage", 4.0, "# 최대 추가 공격력") {
 
 		@Override
@@ -91,7 +94,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Double> DECREASE_DAMAGE = abilitySettings.new SettingObject<Double>(Phoenix.class,
+	private static final SettingObject<Double> DECREASE_DAMAGE = rsAbilitySettings.new SettingObject<Double>(Phoenix.class,
 			"decrease-damage", 0.8, "# 부활 시마다 공격력 감소") {
 
 		@Override
@@ -101,7 +104,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> HEALTH = abilitySettings.new SettingObject<Integer>(Phoenix.class,
+	private static final SettingObject<Integer> HEALTH = rsAbilitySettings.new SettingObject<Integer>(Phoenix.class,
 			"health", 50, "# 하얀 새의 기본 체력") {
 
 		@Override
@@ -111,7 +114,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Phoenix.class,
+	private static final SettingObject<Integer> HEAL_AMOUNT = rsAbilitySettings.new SettingObject<Integer>(Phoenix.class,
 			"heal-amount", 5, "# 응원의 체력 회복량") {
 
 		@Override
@@ -121,7 +124,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	private static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Phoenix.class, 
+	private static final SettingObject<Integer> DURATION = rsAbilitySettings.new SettingObject<Integer>(Phoenix.class, 
 			"duration", 15, "# 능력의 지속 시간") {
 
 		@Override
@@ -131,7 +134,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
+	public static final SettingObject<Integer> CHANCE = rsAbilitySettings.new SettingObject<Integer>(Phoenix.class,
 			"chance", 20, "# 적 공격 시 조언 확률", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -140,7 +143,7 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> ADD_CHANCE = abilitySettings.new SettingObject<Integer>(Phoenix.class,
+	public static final SettingObject<Integer> ADD_CHANCE = rsAbilitySettings.new SettingObject<Integer>(Phoenix.class,
 			"add-chance", 15, "# 조언 실패시 증가 확률치", "# 기준: n/100", "# 10으로 입력 시 10/100, 10%입니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -560,7 +563,14 @@ public class Phoenix extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
-		if (e.getDamager().equals(getPlayer())) {
+		
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) {
 			e.setDamage(e.getDamage() + addDamage);
 			if (e.getEntity() instanceof Player && !parrot.isDead()) {
 				Player p = (Player) e.getEntity();

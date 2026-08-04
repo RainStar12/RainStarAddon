@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -79,7 +81,7 @@ import rainstar.abilitywar.effect.FrozenHeart;
 import rainstar.abilitywar.effect.SnowflakeMark;
 
 @AbilityManifest(
-		name = "펭귄", rank = Rank.S, species = Species.ANIMAL, explain = {
+		name = "펭귄", rank = Rank.A, species = Species.ANIMAL, explain = {
 		"§7철괴 좌클릭 §8- §b얼음 슬라이딩§f: 바라보는 방향 10칸으로 §b얼음 슬라이딩§f을 합니다.",
 		" §b슬라이딩§f 도중엔 §3무적, 타게팅 불능§f이 됩니다. $[COOLDOWN]",
 		" 적에게 부딪히면 피해를 줍니다. 피해는 대상이 §b§n빙결§b된 횟수§f에 비례합니다.",
@@ -105,7 +107,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Penguin.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Penguin.class,
 			"cooldown", 15, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -118,7 +120,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> HEAL_AMOUNT = abilitySettings.new SettingObject<Integer>(Penguin.class,
+	public static final SettingObject<Integer> HEAL_AMOUNT = rsAbilitySettings.new SettingObject<Integer>(Penguin.class,
 			"heal-amount", 5, "# 추위 면역 체력 회복량") {
 		@Override
 		public boolean condition(Integer value) {
@@ -126,7 +128,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DAMAGE = abilitySettings.new SettingObject<Integer>(Penguin.class,
+	public static final SettingObject<Integer> DAMAGE = rsAbilitySettings.new SettingObject<Integer>(Penguin.class,
 			"damage", 10, "# 충돌 피해량") {
 		@Override
 		public boolean condition(Integer value) {
@@ -134,7 +136,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> STACK_COOL = abilitySettings.new SettingObject<Integer>(Penguin.class,
+	public static final SettingObject<Integer> STACK_COOL = rsAbilitySettings.new SettingObject<Integer>(Penguin.class,
 			"stack-cooldown", 7, "# 각 플레이어별 스택 쿨타임 (단위: 초)") {
 		@Override
 		public boolean condition(Integer value) {
@@ -142,7 +144,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> BASE_STACK_COOL = abilitySettings.new SettingObject<Integer>(Penguin.class,
+	public static final SettingObject<Integer> BASE_STACK_COOL = rsAbilitySettings.new SettingObject<Integer>(Penguin.class,
 			"base-stack-cooldown", 7, "# 기본 스택 쿨타임 (단위: 틱)", "# 1초 = 20틱, 1틱 = 0.05초") {
 		@Override
 		public boolean condition(Integer value) {
@@ -277,7 +279,7 @@ public class Penguin extends AbilityBase implements ActiveHandler {
 			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 2, 2, predicate)) {
 				if (!onetimeEntity.contains(livingEntity)) onetimeEntity.add(livingEntity);
 				if (!froststack.containsKey(livingEntity)) livingEntity.damage(damage, getPlayer());
-				else livingEntity.damage(damage * (1 + (froststack.get(livingEntity) * 0.1)), getPlayer());
+				else livingEntity.damage(damage * (1 + (froststack.get(livingEntity) * 0.15)), getPlayer());
 				if (livingEntity instanceof Player) {
 					Player p = (Player) livingEntity;
 					if (!stackcoolSet.contains(p) && !penguinspin.contains(p)) {

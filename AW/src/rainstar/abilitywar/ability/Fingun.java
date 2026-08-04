@@ -1,9 +1,12 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -38,7 +41,7 @@ public class Fingun extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Fingun.class, "cooldown", 50,
+			rsAbilitySettings.new SettingObject<Integer>(Fingun.class, "cooldown", 50,
             "# 지건 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -51,7 +54,7 @@ public class Fingun extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(Fingun.class, "bleed-duration", 6.5,
+			rsAbilitySettings.new SettingObject<Double>(Fingun.class, "bleed-duration", 6.5,
             "# 출혈 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -61,7 +64,7 @@ public class Fingun extends AbilityBase {
     
 	
 	public static final SettingObject<Integer> INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Fingun.class, "increase", 25,
+			rsAbilitySettings.new SettingObject<Integer>(Fingun.class, "increase", 25,
             "# 출혈 대상에게 공격력 증가 수치", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -110,7 +113,7 @@ public class Fingun extends AbilityBase {
 			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
-		if (getPlayer().equals(damager) && chargestack >= 60 && e.getEntity() instanceof Player) {
+		if (getPlayer().equals(damager) && chargestack >= 60 && e.getEntity() instanceof Player && !e.getCause().equals(DamageCause.THORNS)) {
 			Player player = (Player) e.getEntity();
 			chargestack = 0;
 			ac.update("§7||||||||||");

@@ -69,6 +69,8 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 @AbilityManifest(name = "귤즙", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7게이지 §8- §e과즙§f: $[PERIOD]초마다 한 칸씩 최대 10칸을 보유 가능합니다.",
 		" 게이지 소모 이후엔 다음 게이지 차징까진 $[NEED_TO_WAIT]초를 기다려야 합니다.",
@@ -96,8 +98,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> PERIOD = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "period", 7.0,
-			"# 과즙이 차오르는 주기", "# WRECK 효과 50%까지 적용") {
+			rsAbilitySettings.new SettingObject<Double>(TangerineJuice.class, "period", 7.0,
+			"# 과즙이 차오르는 주기") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -107,8 +109,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> NEED_TO_WAIT = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-to-wait", 12.0,
-			"# 과즙 사용 후 대기시간", "# WRECK 효과 50%까지 적용") {
+			rsAbilitySettings.new SettingObject<Double>(TangerineJuice.class, "need-to-wait", 12.0,
+			"# 과즙 사용 후 대기시간") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -118,7 +120,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> ARROW_CONSUME = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "juice-consume:arrow", 3,
+			rsAbilitySettings.new SettingObject<Integer>(TangerineJuice.class, "juice-consume-arrow", 3,
 			"# 화살에 소모할 과즙 게이지") {
 
 		@Override
@@ -134,7 +136,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> GAUGE_RETURN = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "gauge-return", 1,
+			rsAbilitySettings.new SettingObject<Integer>(TangerineJuice.class, "gauge-return", 1,
 			"# 생명체 적중 시 돌려받는 과즙량") {
 
 		@Override
@@ -145,7 +147,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CREEP_LONG_DISTANCE_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "creep-long-distance-damage-increase", 25,
+			rsAbilitySettings.new SettingObject<Integer>(TangerineJuice.class, "creep-long-distance-damage-increase", 25,
 			"# 장판 위 적에게 주는 원거리 추가 피해량", "# 단위: %") {
 
 		@Override
@@ -156,7 +158,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> JUICE_EXPLODE_RANGE = 
-			abilitySettings.new SettingObject<Double>(TangerineJuice.class, "juice-explode-range", 4.0,
+			rsAbilitySettings.new SettingObject<Double>(TangerineJuice.class, "juice-explode-range", 4.0,
 			"# 과즙 폭발 사거리") {
 
 		@Override
@@ -167,7 +169,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> FIELD_RANGE = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "field-range", 5,
+			rsAbilitySettings.new SettingObject<Integer>(TangerineJuice.class, "field-range", 6,
 			"# 과즙 장판 범위") {
 
 		@Override
@@ -178,7 +180,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> FIELD_DURATION = 
-			abilitySettings.new SettingObject<Integer>(TangerineJuice.class, "field-duration", 10,
+			rsAbilitySettings.new SettingObject<Integer>(TangerineJuice.class, "field-duration", 10,
 			"# 과즙 장판 지속시간", "# 단위: 초") {
 
 		@Override
@@ -216,8 +218,8 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
-	private final int wait = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(50) * (NEED_TO_WAIT.getValue() * 20) : (NEED_TO_WAIT.getValue() * 20));
+	private final int period = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * (PERIOD.getValue() * 20) : (PERIOD.getValue() * 20));
+	private final int wait = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(100) * (NEED_TO_WAIT.getValue() * 20) : (NEED_TO_WAIT.getValue() * 20));
 	private final int consume = ARROW_CONSUME.getValue();
 	private final int returngauge = GAUGE_RETURN.getValue();
 	private final double dmgIncrease = 1 + (CREEP_LONG_DISTANCE_DAMAGE_INCREASE.getValue() * 0.01);
@@ -387,7 +389,7 @@ public class TangerineJuice extends AbilityBase implements ActiveHandler {
 			}
 			
 			for (Player players : LocationUtil.getEntitiesInCircle(Player.class, center, fieldrange, predicate)) {
-				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.08));
+				Vector vector = VectorUtil.validateVector(center.toVector().subtract(players.getLocation().toVector()).normalize().setY(0).multiply(0.11));
 				vectors.add(vector);
 				players.setVelocity(vector);
 			}

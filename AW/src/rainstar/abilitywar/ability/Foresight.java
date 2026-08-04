@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.triplemix.AbstractTripleMix;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
+import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -59,7 +62,7 @@ import rainstar.abilitywar.effect.Mute;
 		"§9[§3침묵§9] §a액티브§f, §6타게팅§f 스킬을 사용할 수 없습니다."
 		})
 
-@NotAvailable({AbstractMix.class, AbstractTripleMix.class})
+@NotAvailable({AbstractMix.class, AbstractTripleMix.class, ChangeMix.class})
 public class Foresight extends AbilityBase {
 	
 	public Foresight(Participant participant) {
@@ -67,7 +70,7 @@ public class Foresight extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Foresight.class, "cooldown", 77,
+			rsAbilitySettings.new SettingObject<Integer>(Foresight.class, "cooldown-value", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -83,7 +86,7 @@ public class Foresight extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> FORESIGHT_DURATION = 
-			abilitySettings.new SettingObject<Double>(Foresight.class, "foresight-duration", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(Foresight.class, "foresight-duration-value", 10.0,
 			"# 지정 지속시간") {
 
 		@Override
@@ -94,7 +97,7 @@ public class Foresight extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> SKILL_DURATION = 
-			abilitySettings.new SettingObject<Double>(Foresight.class, "skill-duration", 10.0,
+			rsAbilitySettings.new SettingObject<Double>(Foresight.class, "skill-duration-value", 15.0,
 			"# 복제한 스킬 지속시간") {
 
 		@Override
@@ -317,7 +320,7 @@ public class Foresight extends AbilityBase {
 				for (Location loc : OPEN_EYE.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {
 					ParticleLib.REDSTONE.spawnParticle(loc, color);
 				}
-				CLOSED_EYE.rotateAroundAxisY(yaw);	
+				OPEN_EYE.rotateAroundAxisY(yaw);	
 			}
 		}
 		

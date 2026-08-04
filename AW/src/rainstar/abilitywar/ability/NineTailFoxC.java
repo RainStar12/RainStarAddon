@@ -1,6 +1,7 @@
 package rainstar.abilitywar.ability;
 
-import java.text.DecimalFormat;
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -26,7 +27,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -66,7 +66,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "cooldown", 90,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "cooldown", 90,
             "# 쿨타임") {
 
         @Override
@@ -82,7 +82,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> STACK_COOL = 
-			abilitySettings.new SettingObject<Double>(NineTailFoxC.class, "stack-cooldown", 1.0,
+			rsAbilitySettings.new SettingObject<Double>(NineTailFoxC.class, "stack-cooldown", 1.0,
             "# 스택을 쌓을 때 내부 쿨타임") {
 
         @Override
@@ -93,7 +93,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> STACK_MAX = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "stack-max-", 5,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "stack-max-", 5,
             "# 최대 스택 개수") {
 
         @Override
@@ -104,7 +104,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DURATION = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-duration-", 5,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-duration-", 5,
             "# 유혹 지속 시간") {
 
         @Override
@@ -115,7 +115,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-decrease", 35,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-decrease", 35,
             "# 유혹 도중 대미지 감소율 (단위: %)") {
 
         @Override
@@ -126,7 +126,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-heal-", 40,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "charm-heal-", 40,
             "# 유혹된 대상 타격시 회복률 (단위: %)") {
 
         @Override
@@ -137,7 +137,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> DEADLINE = 
-			abilitySettings.new SettingObject<Double>(NineTailFoxC.class, "deadline", 3.0,
+			rsAbilitySettings.new SettingObject<Double>(NineTailFoxC.class, "deadline", 3.0,
             "# 근접 공격 강화 유효시간") {
 
         @Override
@@ -148,7 +148,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage-increase", 20,
+			rsAbilitySettings.new SettingObject<Integer>(NineTailFoxC.class, "damage-increase", 20,
             "# 철괴 우클릭 공격력 증가 배율", "# 단위: %") {
 
         @Override
@@ -190,14 +190,14 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 	private final int charmdecrease = CHARM_DECREASE.getValue();
 	private final int charmheal = CHARM_HEAL.getValue();
 	private final int deadline = (int) (DEADLINE.getValue() * 20);
-	private final double dmginc = DAMAGE_INCREASE.getValue() / 2000.0;
+	private final double dmginc = DAMAGE_INCREASE.getValue() * 0.01;
 	private Participant lastcharmed;
-	private DecimalFormat df = new DecimalFormat("0.0");
+	private boolean rebirth = false;
 	
 	private final Map<Player, Stack> stackMap = new HashMap<>();
     
 	public boolean ActiveSkill(Material material, ClickType clicktype) {
-	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cool.isCooldown() && !skill.isRunning()) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cool.isCooldown() && !skill.isRunning() && lastcharmed != null) {
 	    	return skill.start();
 	    }
 		return false;
@@ -211,8 +211,9 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				e.setCancelled(true);
 			}
-	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled()) {
+	    	if (getPlayer().getHealth() - e.getFinalDamage() <= 0 && !e.isCancelled() && !rebirth) {
 	    		e.setCancelled(true);
+	    		rebirth = true;
 				double nowhp = ((4 * (getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 10));
 				getPlayer().setHealth(nowhp);
 			   	SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(getPlayer(), 1, 0.7f);
@@ -278,7 +279,7 @@ public class NineTailFoxC extends AbilityBase implements ActiveHandler {
 						durations += charm.getDuration();
 					}
 				}
-				e.setDamage(e.getDamage() * (1 + (durations * dmginc)));
+				e.setDamage(e.getDamage() * (1 + (durations * dmginc * 0.0025)));
 				for (Charm charm : target.getEffects(Charm.registration)) {
 					if (charm.getApplier().equals(getPlayer())) {
 						charm.stop(false);

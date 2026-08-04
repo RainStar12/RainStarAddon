@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,7 +91,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Fairy.class, "cooldown", 100, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "cooldown-amount", 70, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -103,7 +105,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(Fairy.class, "range", 10, "# 사거리") {
+	public static final SettingObject<Integer> RANGE = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "range", 10, "# 사거리") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -112,7 +114,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "duration", 7, "# 지속 시간") {
+	public static final SettingObject<Integer> DURATION = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "duration-amount", 9, "# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -121,7 +123,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> SHOT_DURATION = synergySettings.new SettingObject<Integer>(Fairy.class, "shot-duration", 3, "# 활 결정화 지속 시간") {
+	public static final SettingObject<Integer> SHOT_DURATION = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "shot-duration-amount", 5, "# 활 결정화 지속 시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -130,7 +132,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> CHANCE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance", 20, "# 결정 화살 확률") {
+	public static final SettingObject<Integer> CHANCE = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "chance-amount", 30, "# 결정 화살 확률") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -139,7 +141,7 @@ public class Fairy extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> CHANCE_INCREASE = synergySettings.new SettingObject<Integer>(Fairy.class, "chance-increase", 10, "# 실패시 확률 증가") {
+	public static final SettingObject<Integer> CHANCE_INCREASE = rsSynergySettings.new SettingObject<Integer>(Fairy.class, "chance-increase-amount", 20, "# 실패시 확률 증가") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -371,7 +373,7 @@ public class Fairy extends Synergy implements ActiveHandler {
     	if (getPlayer().equals(e.getEntity().getShooter()) && NMS.isArrow(e.getEntity())) {
     		Arrow arrow = (Arrow) e.getEntity();
     		arrow.setCritical(true);
-			arrow.setVelocity(arrow.getVelocity().multiply(1.5));
+			arrow.setVelocity(arrow.getVelocity().multiply(1.75));
 			final RouletteWheel.Slice select = rouletteWheel.select();
 			if (select == positive) {
         		stack++;

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,7 +63,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = synergySettings.new SettingObject<Integer>(Abyss.class, "cooldown", 100, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = rsSynergySettings.new SettingObject<Integer>(Abyss.class, "cooldown", 60, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -75,7 +77,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 
 	};
 	
-	public static final SettingObject<Integer> INCREASE = synergySettings.new SettingObject<Integer>(Abyss.class, "damage-increase", 20, "# 영구 공격력 증가 (단위: %)") {
+	public static final SettingObject<Integer> INCREASE = rsSynergySettings.new SettingObject<Integer>(Abyss.class, "damage-increase", 20, "# 영구 공격력 증가 (단위: %)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -84,7 +86,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN_MULTIPLY = synergySettings.new SettingObject<Integer>(Abyss.class, "cooldown-multiply", 33, "# 분해 시 쿨타임 증가율 (단위: %)") {
+	public static final SettingObject<Integer> COOLDOWN_MULTIPLY = rsSynergySettings.new SettingObject<Integer>(Abyss.class, "cooldown-multiply", 33, "# 분해 시 쿨타임 증가율 (단위: %)") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -93,7 +95,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_INCREASE = synergySettings.new SettingObject<Integer>(Abyss.class, "harm-increase", 10, "# 받는 피해량 증가") {
+	public static final SettingObject<Integer> DAMAGE_INCREASE = rsSynergySettings.new SettingObject<Integer>(Abyss.class, "harm-increase", 10, "# 받는 피해량 증가") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -102,7 +104,7 @@ public class Abyss extends Synergy implements ActiveHandler, TargetHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> MAX_WAIT = synergySettings.new SettingObject<Integer>(Abyss.class, "dismantle-available", 10, "# 능력 분해가 가능한 최대 시간", "# 분해가 가능한 동안은 복제된 능력을 사용할 수 없습니다.") {
+	public static final SettingObject<Integer> MAX_WAIT = rsSynergySettings.new SettingObject<Integer>(Abyss.class, "dismantle-available", 10, "# 능력 분해가 가능한 최대 시간", "# 분해가 가능한 동안은 복제된 능력을 사용할 수 없습니다.") {
 
 		@Override
 		public boolean condition(Integer value) {

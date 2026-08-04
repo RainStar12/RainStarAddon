@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
@@ -80,7 +82,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(IslandRabbit.class,
 			"cooldown", 80, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -93,23 +95,23 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> TRUE_DAMAGE = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
-			"true-damage", 25, "# 강타 효과의 트루 대미지 비율", "# 단위: 퍼센트") {
+	public static final SettingObject<Integer> TRUE_DAMAGE = rsAbilitySettings.new SettingObject<Integer>(IslandRabbit.class,
+			"true-damage-value", 30, "# 강타 효과의 트루 대미지 비율", "# 단위: 퍼센트") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> PERCENTAGE = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
-			"percentage", 65, "# 강타 인챈트 추가 피해의 적용값", "# 단위: 퍼센트") {
+	public static final SettingObject<Integer> PERCENTAGE = rsAbilitySettings.new SettingObject<Integer>(IslandRabbit.class,
+			"smite-percentage", 75, "# 강타 인챈트 추가 피해의 적용값", "# 단위: 퍼센트") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 	};
 	
-	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
+	public static final SettingObject<Integer> RANGE = rsAbilitySettings.new SettingObject<Integer>(IslandRabbit.class,
 			"range", 15, "# 적 알람 범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -117,7 +119,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> SMITE_COUNT = abilitySettings.new SettingObject<Integer>(IslandRabbit.class,
+	public static final SettingObject<Integer> SMITE_COUNT = rsAbilitySettings.new SettingObject<Integer>(IslandRabbit.class,
 			"smite-count", 2, "# 치명타 강타 인챈트 적용 조건") {
 		@Override
 		public boolean condition(Integer value) {
@@ -302,8 +304,7 @@ public class IslandRabbit extends AbilityBase implements ActiveHandler {
 	    				try {
 	    					Vector vector = target.getLocation().clone().subtract(getPlayer().getLocation().toVector()).toVector();
 	    					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), 
-	    							vector.setY(0), 
-	    							1, (int) (vector.length() * 2)); iterator.hasNext(); ) {
+	    							vector.setY(0), 1, Math.max(1, (int) (vector.length() * 2))); iterator.hasNext(); ) {
 	    						final Block block = iterator.next();
 	    						if (!block.getType().isSolid()) {
 	    							lastEmpty = block;

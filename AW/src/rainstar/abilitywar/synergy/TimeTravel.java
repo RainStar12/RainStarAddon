@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -20,8 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -60,16 +60,15 @@ import rainstar.abilitywar.effect.TimeDistortion;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 
 @AbilityManifest(name = "시간 여행", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7철괴 우클릭 §8- §d시간 저장§f:  현재 나의 모든 상태를 저장합니다. $[RIGHT_COOLDOWN]",
-		" 과거 여행 발동 후 사용 시, 저장된 시간으로 역행합니다.",
-		" 이 역행으로는 최대 체력의 절반 이상의 체력을 회복할 수 없습니다.",
+		"§7철괴 우클릭 §8- §d시간 저장§f: 현재 나의 모든 상태를 저장합니다. $[RIGHT_COOLDOWN]",
+		" 과거 여행 발동 후 사용 시, §b미래 여행§f을 발동하고 저장된 시간으로 역행합니다.",
 		"§7사망 §8- §a과거 여행§f: 치명적인 피해를 입었을 때 단 한 번 사망하지 않고",
-		" 저장된 시간으로 자신의 상태를 되돌립니다. 이후 다시는 시간을 저장할 수 없으며",
-		" 사망 직전의 시간으로 시간이 고정 저장됩니다.",
-		"§7철괴 좌클릭 §8- §b미래 여행§f: $[DURATION]초간 §c무적 §f/ §d공격 불능 §f및 §3타게팅 불가 §f상태가 되며",
-		" 중도에 다시 좌클릭하여 즉시 §b미래 여행§f을 그만둘 수 있습니다. $[LEFT_COOLDOWN]",
+		" 저장된 시간으로 자신의 상태를 되돌린 후, §b미래 여행§f을 발동합니다.",
+		" 이후 사망 직전의 시간으로 시간이 고정된 채 저장됩니다.",
+		"§7철괴 좌클릭 §8- §b미래 여행§f: $[DURATION]초간 §3관전 상태§f가 되며 중도에 다시",
+		" 좌클릭하여 즉시 §b미래 여행§f을 그만둘 수 있습니다. $[LEFT_COOLDOWN]",
 		" §b미래 여행§f에서 나올 때, 주변 $[RANGE]칸 내 플레이어의 시간을 §7왜곡§f하여",
-		" $[EFFECT]초간 이동 속도와 공격 속도를 느리게 하고, 자신은 빨라집니다.",
+		" $[EFFECT]초간 이동§7/§f공격§7/§f회복 속도를 느리게 하고, 자신은 빨라집니다.",
 		" 이후 다음으로 받는 첫 피해를 무시합니다. 이 효과는 중첩되지 않습니다.",
 		"§2[§a!§2] §b_Daybreak_§f님이 시계 파티클 제작에 도움주셨습니다."
 })
@@ -80,7 +79,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> RIGHT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
+	public static final SettingObject<Integer> RIGHT_COOLDOWN = rsSynergySettings.new SettingObject<Integer>(TimeTravel.class,
 			"right-cooldown", 45, "# 과거 쿨타임",
 			"# 쿨타임 감소 효과를 50%까지만 받습니다.") {
 		@Override
@@ -94,7 +93,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> LEFT_COOLDOWN = synergySettings.new SettingObject<Integer>(TimeTravel.class,
+	public static final SettingObject<Integer> LEFT_COOLDOWN = rsSynergySettings.new SettingObject<Integer>(TimeTravel.class,
 			"left-cooldown", 45, "# 미래 쿨타임",
 			"# 쿨타임 감소 효과를 50%까지만 받습니다.") {
 		@Override
@@ -108,7 +107,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 		}
 	};	
 	
-	public static final SettingObject<Integer> DURATION = synergySettings.new SettingObject<Integer>(TimeTravel.class,
+	public static final SettingObject<Integer> DURATION = rsSynergySettings.new SettingObject<Integer>(TimeTravel.class,
 			"duration", 12, "# 미래 여행 지속 시간") {
 
 		@Override
@@ -118,7 +117,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> EFFECT = synergySettings.new SettingObject<Integer>(TimeTravel.class,
+	public static final SettingObject<Integer> EFFECT = rsSynergySettings.new SettingObject<Integer>(TimeTravel.class,
 			"effect-duration", 7, "# 효과 지속 시간") {
 
 		@Override
@@ -128,7 +127,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE = synergySettings.new SettingObject<Integer>(TimeTravel.class,
+	public static final SettingObject<Integer> RANGE = rsSynergySettings.new SettingObject<Integer>(TimeTravel.class,
 			"range", 7, "# 효과 범위", "§2[§c!§2] §7주의! 파티클이 변경되지 않습니다.") {
 
 		@Override
@@ -166,6 +165,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	private double savehp2 = 0;
 	
 	public void pastTraveling() {
+		traveling.start();
 		if (checkdeath) {
 			getPlayer().setHealth(savehp);	
 			getPlayer().setFireTicks(savefiretick);
@@ -250,13 +250,6 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 	    	}
 	    }
 	    return false;
-	}
-	
-	@SubscribeEvent
-	private void onPlayerTeleport(PlayerTeleportEvent e) {
-		if (traveling.isRunning() && getPlayer().equals(e.getPlayer())) {
-			if (e.getCause() == TeleportCause.SPECTATE) e.setCancelled(true);
-		}
 	}
 	
 	@SubscribeEvent(priority = 6)
@@ -352,6 +345,7 @@ public class TimeTravel extends Synergy implements ActiveHandler {
 			SoundLib.ITEM_TOTEM_USE.playSound(getPlayer(), 1, 1.7f);
 			PotionEffects.FAST_DIGGING.addPotionEffect(getPlayer(), effect * 20, 2, true);
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), effect * 20, 2, true);
+			PotionEffects.REGENERATION.addPotionEffect(getPlayer(), effect * 20, 0, true);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			clockeffect.start();
 			getPlayer().setFlySpeed(flyspeed);

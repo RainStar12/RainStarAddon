@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -9,6 +11,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -44,7 +47,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> ACCEL_DURATION = 
-			abilitySettings.new SettingObject<Double>(Accel.class, "accel-duration", 7.5,
+			rsAbilitySettings.new SettingObject<Double>(Accel.class, "accel-duration", 7.5,
 					"# 가속 지속시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -53,7 +56,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SPEED_UP = 
-			abilitySettings.new SettingObject<Integer>(Accel.class, "speed-up", 15, 
+			rsAbilitySettings.new SettingObject<Integer>(Accel.class, "speed-up", 15, 
 					"# 가속 당 이동 속도 증가치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +65,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> MAX_STACK = 
-			abilitySettings.new SettingObject<Integer>(Accel.class, "max-stack", 7, 
+			rsAbilitySettings.new SettingObject<Integer>(Accel.class, "max-stack", 7, 
 					"# 최대 중첩가능 횟수") {
 		@Override
 		public boolean condition(Integer value) {
@@ -71,7 +74,7 @@ public class Accel extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Accel.class, "cooldown", 60, 
+			rsAbilitySettings.new SettingObject<Integer>(Accel.class, "cooldown", 60, 
 					"# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -99,6 +102,13 @@ public class Accel extends AbilityBase implements ActiveHandler {
 			double speed = getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
 			e.setDamage(e.getDamage() * (1 + ((speed - 0.10000000149011612) * 2.5)));
 			new Holograms(e.getEntity().getLocation(), (1 + ((speed - 0.10000000149011612) * 2.5))).start();
+		} else if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (getPlayer().equals(projectile.getShooter())) {
+				double speed = getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue();
+				e.setDamage(e.getDamage() * (1 + ((speed - 0.10000000149011612) * 2.5)));
+				new Holograms(e.getEntity().getLocation(), (1 + ((speed - 0.10000000149011612) * 2.5))).start();
+			}
 		}
 	}
 	

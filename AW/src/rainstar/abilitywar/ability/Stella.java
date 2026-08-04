@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -97,7 +99,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	private final int stun = (int) (STUN.getValue() * 20);
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= abilitySettings.new SettingObject<Integer>(Stella.class,
+	= rsAbilitySettings.new SettingObject<Integer>(Stella.class,
 			"cooldown", 40, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -111,7 +113,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> PASSIVE_COOL 
-	= abilitySettings.new SettingObject<Integer>(Stella.class,
+	= rsAbilitySettings.new SettingObject<Integer>(Stella.class,
 			"passive-cooldown", 5, "# 공명 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -125,7 +127,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION 
-	= abilitySettings.new SettingObject<Integer>(Stella.class,
+	= rsAbilitySettings.new SettingObject<Integer>(Stella.class,
 			"duration", 7, "# 지속 시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -134,7 +136,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> STUN 
-	= abilitySettings.new SettingObject<Double>(Stella.class,
+	= rsAbilitySettings.new SettingObject<Double>(Stella.class,
 			"stun-duration", 2.5, "# 기절 지속 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -143,7 +145,7 @@ public class Stella extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> STACK_COOL = 
-			abilitySettings.new SettingObject<Double>(Stella.class, "stack-cooldown", 1.0,
+			rsAbilitySettings.new SettingObject<Double>(Stella.class, "stack-cooldown", 1.0,
             "# 스택을 쌓을 때 내부 쿨타임") {
 
         @Override
@@ -284,12 +286,11 @@ public class Stella extends AbilityBase implements ActiveHandler {
 		if (e.getDamager().hasMetadata("StarFirework")) {
 			e.setCancelled(true);
 		}
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player
-				&& !e.isCancelled() && predicate.test(e.getEntity())) {
-			target = getGame().getParticipant((Player) e.getEntity());
+		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player && !e.isCancelled() && predicate.test(e.getEntity())) {
 			Player p = (Player) e.getEntity();
+			target = getGame().getParticipant(p);
 			if (stackMap.containsKey(e.getEntity())) {
-				if (stackMap.get(e.getEntity()).getCount() < (300 - (stackcool * 20))) {
+				if (stackMap.get(e.getEntity()).getCount() < (300 - (stackcool * 5))) {
 					if (stackMap.get(e.getEntity()).addStack()) {
 						if (!glowMap.contains(target)) {
 							p.addPotionEffect(glowing);

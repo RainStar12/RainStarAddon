@@ -1,5 +1,8 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,9 +34,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
+import daybreak.abilitywar.game.list.murdermystery.JobList;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.Gradient;
 import daybreak.abilitywar.utils.base.color.RGB;
@@ -46,13 +53,13 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.collect.ImmutableMap;
 
-@AbilityManifest(name = "수녀", rank = Rank.S, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "수녀", rank = Rank.L, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §b십자가§f: §c언데드§f 종족에게 가하는 피해가 $[UNDEAD_DAMAGE]% 증가합니다.",
 		" §b신§f 종족에게 받는 피해가 $[GOD_DAMAGE_DECREASE]% 감소합니다.",
 		"§7철괴 우클릭 §8- §3신의 은총§f: $[CHANNELING_COUNT]초간 간절히 기도합니다. $[COOLDOWN]",
 		" 기도가 끝나면 무작위 §b신§f이 $[BEING_GOD]초간 강림해 그 §b신§f의 능력을 사용할 수 있습니다.",
 		" §b신§f의 등급당 $[RANK_DAMAGE_UP]%의 §c추가 피해§f를 입힙니다. 만일 강신 도중 치명적인",
-		" 피해를 입으면, 피해를 막고 지속시간을 최종 피해량 × $[DURATION_DECRASE]초 줄입니다.",
+		" 피해를 입으면, 피해를 막고 지속시간을 최종 피해량 × $[DURATION_DECREASE]초 줄입니다.",
 		" 피해를 한 번이라도 막아냈다면 강신 종료 시 $[HEALTH_GAIN]%만큼 체력을 회복합니다.",
 		"§e---------------------------------",
 		"$(EXPLAIN)",
@@ -73,8 +80,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
-			Nun.class, "cooldown", 80, "# 기도 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
+			Nun.class, "cooldown", 80, "# 기도 쿨타임", "# 최대 쿨타임 감소를 50%까지만 받습니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -88,7 +95,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	};
 	
-	public static final SettingObject<Double> CHANNELING_COUNT = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> CHANNELING_COUNT = rsAbilitySettings.new SettingObject<Double>(
 			Nun.class, "channeling-count", 2.0, "# 기도하는 시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -97,7 +104,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	};
 	
 	
-	public static final SettingObject<Double> BEING_GOD = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> BEING_GOD = rsAbilitySettings.new SettingObject<Double>(
 			Nun.class, "being-god", 30.0, "# 강신 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -105,7 +112,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> RANK_DAMAGE_UP = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> RANK_DAMAGE_UP = rsAbilitySettings.new SettingObject<Integer>(
 			Nun.class, "rank-damage-up", 5, "# 랭크당 공격력 증가 수치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -113,7 +120,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> UNDEAD_DAMAGE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> UNDEAD_DAMAGE = rsAbilitySettings.new SettingObject<Integer>(
 			Nun.class, "undead-damage", 25, "# 언데드 종족에게 가하는 피해량 증가 수치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -121,7 +128,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> GOD_DAMAGE_DECREASE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> GOD_DAMAGE_DECREASE = rsAbilitySettings.new SettingObject<Integer>(
 			Nun.class, "god-damage-decrease", 20, "# 신 종족에게 받는 대미지 감소", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -129,7 +136,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> DURATION_DECREASE = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> DURATION_DECREASE = rsAbilitySettings.new SettingObject<Double>(
 			Nun.class, "duration-decrease", 1.5, "# 최종 피해량당 줄어드는 지속시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -137,7 +144,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> HEALTH_GAIN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> HEALTH_GAIN = rsAbilitySettings.new SettingObject<Integer>(
 			Nun.class, "heal-amount", 15, "# 체력 회복량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -145,7 +152,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> CHANCE = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> CHANCE = rsAbilitySettings.new SettingObject<Integer>(
 			Nun.class, "chance", 5, "# 시너지 등장 확률", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -162,7 +169,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			.put(Rank.SPECIAL, "§c")
 			.build();
 	
-	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도");
+	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue(), "기도", CooldownDecrease._50);
 	private final int chance = CHANCE.getValue();
 	private final int channelingDur = (int) (CHANNELING_COUNT.getValue() * 20);
 	private final int duration = (int) (BEING_GOD.getValue() * 20);
@@ -176,6 +183,8 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 	private final Circle circle = Circle.of(0.5, 17);
 	private final List<RGB> gradations = Gradient.createGradient(30, RGB.of(223, 1, 1), RGB.of(1, 177, 222));
 	private int stack = 0;
+	private ActionbarChannel ac = newActionbarChannel();
+	private DecimalFormat df = new DecimalFormat("0.0");
 	
 	@SuppressWarnings("unused")
 	private final Object EXPLAIN = new Object() {
@@ -216,7 +225,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		Set<AbilityRegistration> abilities = new HashSet<>();
 		for (AbilityRegistration ability : AbilityFactory.getRegistrations()) {
 			String name = ability.getManifest().name();
-			if (!Configuration.Settings.isBlacklisted(name) && ability.getManifest().species().equals(Species.GOD)) {
+			if (!Configuration.Settings.isBlacklisted(name) && ability.getAbilityClass().getAnnotation(Beta.class) == null && ability.isAvailable(getGame().getClass()) && !JobList.isRegistered(ability) && ability.getManifest().species().equals(Species.GOD)) {
 				abilities.add(ability);
 				abilities.add(ability);
 			}
@@ -224,7 +233,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		for (AbilityRegistration ability : AbilityFactory.getRegistrations()) {
 			String name = ability.getManifest().name();
-			if (!Configuration.Settings.isBlacklisted(name) && ability.getManifest().species().equals(Species.DEMIGOD)) {
+			if (!Configuration.Settings.isBlacklisted(name) && ability.getAbilityClass().getAnnotation(Beta.class) == null && ability.isAvailable(getGame().getClass()) && !JobList.isRegistered(ability) && ability.getManifest().species().equals(Species.DEMIGOD)) {
 				abilities.add(ability);
 			}
 		}
@@ -239,7 +248,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		
         for (AbilityRegistration synergy : SynergyFactory.getSynergies()) {
         	String name = synergy.getManifest().name();
-        	if (!Configuration.Settings.isBlacklisted(name) && synergy.getManifest().species().equals(Species.GOD)) {
+        	if (!Configuration.Settings.isBlacklisted(name) && synergy.getAbilityClass().getAnnotation(Beta.class) == null && synergy.getManifest().species().equals(Species.GOD)) {
         		synergies.add(synergy);
         		synergies.add(synergy);
         	}
@@ -255,7 +264,6 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
         Random r = new Random();
         return synergies.toArray(new AbilityRegistration[]{})[r.nextInt(synergies.size())];
     }
-
 	
 	private AbilityTimer channeling = new AbilityTimer(channelingDur) {
 		
@@ -293,10 +301,12 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 			}
+			ac.update(rankcolor.get(godability.getRank()) + godability.getDisplayName() + " §f강신§7: §b" + df.format(duration / 20.0) + "§f초");
 		}
 		
 		@Override
 		public void run(int count) {
+			ac.update(rankcolor.get(godability.getRank()) + godability.getDisplayName() + " §f강신§7: §b" + df.format(count / 20.0) + "§f초");
 			if (count == duration - 30) NMS.clearTitle(getPlayer());
 			getPlayer().setGlowing(true);
 			stack = stack < 30 ? stack + 1 : 0;
@@ -314,6 +324,7 @@ public class Nun extends AbilityBase implements ActiveHandler, TargetHandler {
 		
 		@Override
 		public void onSilentEnd() {
+			ac.update(null);
 			cooldown.start();
 			NMS.clearTitle(getPlayer());
 			getPlayer().setGlowing(false);

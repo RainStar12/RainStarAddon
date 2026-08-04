@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class Echo extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Echo.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Echo.class,
 			"cooldown", 30, "# 반격 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -100,7 +102,7 @@ public class Echo extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> DECREASE = abilitySettings.new SettingObject<Integer>(Echo.class,
+	public static final SettingObject<Integer> DECREASE = rsAbilitySettings.new SettingObject<Integer>(Echo.class,
 			"cooldown-decrease", 5, "# 쿨타임 감소치") {
 		@Override
 		public boolean condition(Integer value) {

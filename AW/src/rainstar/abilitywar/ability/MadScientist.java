@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -38,9 +40,10 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import rainstar.abilitywar.effect.Poison;
 
-@AbilityManifest(name = "매드 사이언티스트", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7수치 §8- §a생명력§f: 최대 체력의 생명력 수치% 이상으로 회복할 수 없습니다.",
-		" 또한 생명력 수치%가 곧 수술의 성공률이 됩니다.",
+@AbilityManifest(name = "매드 사이언티스트", rank = Rank.S, species = Species.HUMAN, explain = {
+		"§7수치 §8- §a생명력§f: 최대 체력의 §a생명력 수치%§f 이상으로 회복할 수 없습니다.",
+		" 또한 §a생명력 수치%§f 가 곧 수술의 성공률이 됩니다.",
+		" 적을 $[COUNT]회 공격할 때마다 §a생명력§f을 $[HEALTHY_RECOVERY]% 회복하고 $[BONUS_DURATION]초간 §5도핑§f합니다.",
 		"§7철괴 좌클릭 §8- §5도핑§f: 생명력을 $[HEALTHY_DECREASE]% 감소시키고, 수술 쿨타임을 초기화합니다.",
 		" $[DURATION]초간 §c공격력§f과 §b이동 속도§f가 §8(§7100 - 생명력§8)§f%만큼 증가합니다.",
 		" §5도핑 중§f 재사용 시 효과를 즉시 종료하고 남은 시간에 비례해 체력을 §d회복§f합니다.",
@@ -61,7 +64,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(MadScientist.class, "cooldown", 80,
+			rsAbilitySettings.new SettingObject<Integer>(MadScientist.class, "cooldown", 80,
             "# 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -74,8 +77,17 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
         }
     };
 	
+    public static final SettingObject<Integer> COUNT = 
+			rsAbilitySettings.new SettingObject<Integer>(MadScientist.class, "count", 20,
+            "# 생명력 회복 요구 공격 횟수") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Integer> HEALTHY_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(MadScientist.class, "healthy-decrease", 10,
+			rsAbilitySettings.new SettingObject<Integer>(MadScientist.class, "healthy-decrease", 10,
             "# 도핑 스킬 생명력 수치 감소율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -83,8 +95,26 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
         }
     };
     
+	public static final SettingObject<Integer> HEALTHY_RECOVERY = 
+			rsAbilitySettings.new SettingObject<Integer>(MadScientist.class, "healthy-recovery", 10,
+            "# 도핑 스킬 생명력 수치 회복률", "# 단위: %") {
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
+    };
+    
+	public static final SettingObject<Double> BONUS_DURATION = 
+			rsAbilitySettings.new SettingObject<Double>(MadScientist.class, "bonus-duration", 5.0,
+            "# 공격 추가 도핑 지속시간", "# 단위: 초") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "duration", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(MadScientist.class, "duration", 15.0,
             "# 도핑 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -93,7 +123,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> HEAL_PERCENT = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "heal-percent", 0.6,
+			rsAbilitySettings.new SettingObject<Double>(MadScientist.class, "heal-percent", 0.6,
             "# 남은 시간 비례 회복력", "# 남은 시간의 1초당 해당 값만큼 회복합니다.") {
         @Override
         public boolean condition(Double value) {
@@ -102,7 +132,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "heal-amount", 6.0,
+			rsAbilitySettings.new SettingObject<Double>(MadScientist.class, "heal-amount", 6.0,
             "# 수술 성공 시 회복량", "# 단위: 반 칸") {
         @Override
         public boolean condition(Double value) {
@@ -111,7 +141,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> POISON = 
-			abilitySettings.new SettingObject<Double>(MadScientist.class, "poison", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(MadScientist.class, "poison", 15.0,
             "# 수술 실패 시 중독 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -143,6 +173,7 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	
     private ActionbarChannel ac = newActionbarChannel();
     private ActionbarChannel ac2 = newActionbarChannel();
+    private ActionbarChannel ac3 = newActionbarChannel();
     private final double healmultiply = HEAL_PERCENT.getValue();
     private final double decrease = HEALTHY_DECREASE.getValue() * 0.01;
 	private double healthy = 1.0;
@@ -152,11 +183,16 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldown = new Cooldown(COOLDOWN.getValue());
 	private final double healamount = HEAL_AMOUNT.getValue();
 	private final int poisonduration = (int) (POISON.getValue() * 20);
+	private final int count = COUNT.getValue();
+	private final double recovery = HEALTHY_RECOVERY.getValue() * 0.01;
+	private final int bonusDuration = (int) (BONUS_DURATION.getValue() * 20);
+	private int nowcount = 0;
 	
 	@Override
 	public void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			ac.update("§d♥§f: §a" + df.format(healthy * 100) + "§2%");
+			ac3.update("§b타격§7: §f" + nowcount + "§7/§b" + count + "§f회");
 		}
 	}
 	
@@ -257,16 +293,26 @@ public class MadScientist extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (doping.isRunning()) {
-			Player damager = null;
-			if (e.getDamager() instanceof Projectile) {
-				Projectile projectile = (Projectile) e.getDamager();
-				if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-			} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (getPlayer().equals(damager)) {
+			nowcount++;
+			ac3.update("§b타격§7: §f" + nowcount + "§7/§b" + count + "§f회");
+			if (nowcount >= count) {
+				nowcount = 0;
+				healthy = Math.min(1, healthy + recovery);
+				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(getPlayer().getLocation(), 1, 1);
+				ParticleLib.HEART.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.5, 1, 0.5, 30, 1);
+				ac.update("§d♥§f: §a" + df.format(healthy * 100) + "§2%");
+				if (doping.isRunning()) doping.setCount(doping.getCount() + bonusDuration);
+				else doping.start();
+			}
 			
-			if (getPlayer().equals(damager)) {
-				e.setDamage(e.getDamage() * (1 + (1 - healthy)));
-			}	
+			if (doping.isRunning()) e.setDamage(e.getDamage() * (1 + (1 - healthy)));
 		}
 	}
 

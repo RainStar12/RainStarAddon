@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ public class Stop extends AbilityBase {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> SKILL_COOLDOWN = abilitySettings.new SettingObject<Integer>(Stop.class,
+	public static final SettingObject<Integer> SKILL_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Stop.class,
 			"skill-cooldown", 60, "# 멈춰! 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -56,7 +58,7 @@ public class Stop extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> STIFFEN_DURATION = abilitySettings.new SettingObject<Double>(Stop.class,
+	public static final SettingObject<Double> STIFFEN_DURATION = rsAbilitySettings.new SettingObject<Double>(Stop.class,
 			"stiffen-duration-time", 3.0, "# 지속시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -97,7 +99,7 @@ public class Stop extends AbilityBase {
 	@SubscribeEvent(ignoreCancelled = false)
 	public void onPlayerChat(PlayerChatEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
-			if (e.getMessage().contains("멈춰!")) {
+			if (e.getMessage().contains("멈춰!") && !e.getMessage().equals("[능력] 멈춰!")) {
 				e.setCancelled(true);
 				if (!cooldown.isCooldown()) {
 					if (!attackers.isEmpty()) {

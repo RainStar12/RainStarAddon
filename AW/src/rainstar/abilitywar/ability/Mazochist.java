@@ -1,5 +1,8 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 
 @AbilityManifest(name = "피학증", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§c피해를 입을 때§f마다 스택을 획득해 §d회복 속도§f가 증가합니다.",
-		"스택은 체력이 가득 차면 초기화됩니다.",
+		"스택은 체력이 가득 차면 초기화되고 $[STACK_COOLDOWN]초간 오르지 않습니다.",
 		"철괴 우클릭 시, $[DURATION]초간 피해를 $[PERCENTAGE]%로 줄입니다. $[COOLDOWN]",
 		"그 대신, 피해량만큼 한 번 더 자해합니다.",
 		"§b[§7아이디어 제공자§b] §0personalmoder"
@@ -44,7 +47,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> DURATION = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "duration", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Mazochist.class, "duration", 10,
             "# 스킬 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -53,7 +56,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> HEAL = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "heal-amount", 40,
+			rsAbilitySettings.new SettingObject<Integer>(Mazochist.class, "heal-value", 30,
             "# 스택당 매 틱 회복량", "# 단위: 값 / 10000", "# 10 = 0.001", "# 초당 0.02 회복") {
         @Override
         public boolean condition(Integer value) {
@@ -62,7 +65,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> PERCENTAGE = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "more-damage-percentage", 60,
+			rsAbilitySettings.new SettingObject<Integer>(Mazochist.class, "more-damage-percentage", 60,
             "# 스킬 발동 시 추가 피해량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -70,8 +73,17 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
         }
     };
 	
+	public static final SettingObject<Double> STACK_COOLDOWN = 
+			rsAbilitySettings.new SettingObject<Double>(Mazochist.class, "stack-cooldown", 7.5,
+            "# 스택이 초기화되고 다시 오르기까지의 쿨타임", "# 단위: 초") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
+    
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Mazochist.class, "cooldown", 60,
+			rsAbilitySettings.new SettingObject<Integer>(Mazochist.class, "cooldown", 60,
             "# 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -88,7 +100,9 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
     private final double percentage = PERCENTAGE.getValue() * 0.01;
     private final int duration = DURATION.getValue() * 20;
     private final double heal = HEAL.getValue() / 10000.0;
-	private ActionbarChannel ac = newActionbarChannel();
+    private final int stackcooldown = (int) (STACK_COOLDOWN.getValue() * 20);
+	private ActionbarChannel ac = newActionbarChannel(), ac2 = newActionbarChannel();
+	private DecimalFormat df = new DecimalFormat("0.0");
 	private int stack = 0;
 	
 	@Override
@@ -114,7 +128,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 					}
 				}.runTaskLater(AbilityWar.getPlugin(), 10L);
 			}
-			stack += 1;
+			if (!stackCooldownTimer.isRunning()) stack += 1;
 		}
 	}
 	
@@ -128,7 +142,10 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 				Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
 			}
 			
-			if (getPlayer().getHealth() >= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.1) stack = 0;
+			if (getPlayer().getHealth() >= getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - 0.1 && stack != 0) {
+				stack = 0;
+				stackCooldownTimer.start();
+			}
 			ac.update("§c피격§f: §b" + stack + "§f회");
 		}
 	
@@ -137,9 +154,7 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 	private Duration skill = new Duration(duration) {
 		
 		@Override
-		public void onDurationProcess(int count) {
-			
-		}
+		public void onDurationProcess(int count) { }
 		
 		@Override
 		public void onDurationEnd() {
@@ -152,6 +167,30 @@ public class Mazochist extends AbilityBase implements ActiveHandler {
 		}
 	
 	}.setPeriod(TimeUnit.TICKS, 1);
+	
+	private AbilityTimer stackCooldownTimer = new AbilityTimer(stackcooldown) {
+		
+		@Override
+		public void onStart() {
+			ac2.update("§c스택 쿨타임§7: §f" + df.format(stackcooldown / 20.0));
+		}
+		
+		@Override
+		public void run(int count) {
+			ac2.update("§c스택 쿨타임§7: §f" + df.format(count / 20.0));
+		}
+		
+		@Override
+		public void onEnd() {
+			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			ac2.update(null);
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
 		if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !cooldown.isCooldown() && !skill.isRunning()) {

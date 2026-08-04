@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -7,10 +9,12 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -55,8 +59,8 @@ import java.util.function.Predicate;
 		"에덴 동산에서는 일정 주기로 §b선§c악§e과§f가 나오게 됩니다.",
 		"§b선§c악§e과§f를 먹으면 절반의 확률로 최대 체력의 $[HEAL_PERCENTAGE]%를 §d회복§f하거나,",
 		"혹은 최대 체력의 $[DEAL_PERCENTAGE]%를 잃을 수 있습니다.",
-		"적을 회복시키면 회복의 절반만큼 §e흡수 체력§f을, 적과 본인 관계없이 체력을 잃으면",
-		"잃은 체력의 20%만큼 §c영구 공격력§f을 얻습니다.",
+		"적을 회복시키면 회복의 절반만큼 §e흡수 체력§f을, 적/아군이 체력을 잃으면",
+		"잃은 체력의 50/10%만큼 §c영구 공격력§f을 얻습니다.",
 		"10% 확률로 두 배의 효과를 지닌 §b선§c악§e과§f가 나올 수 있습니다."
 		})
 public class Eden extends Synergy implements ActiveHandler {
@@ -66,7 +70,7 @@ public class Eden extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
-			synergySettings.new SettingObject<Integer>(Eden.class, "cooldown", 120, "# 쿨타임") {
+			rsSynergySettings.new SettingObject<Integer>(Eden.class, "cooldown-amount", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -81,7 +85,7 @@ public class Eden extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> HEAL_PERCENTAGE = 
-			synergySettings.new SettingObject<Integer>(Eden.class, "heal-percentage", 10, 
+			rsSynergySettings.new SettingObject<Integer>(Eden.class, "heal-percentage-amount", 15, 
 					"# 선악과의 회복량", "# 단위: 최대 체력의 n%") {
 
 		@Override
@@ -92,7 +96,7 @@ public class Eden extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DEAL_PERCENTAGE = 
-			synergySettings.new SettingObject<Integer>(Eden.class, "deal-percentage", 5, 
+			rsSynergySettings.new SettingObject<Integer>(Eden.class, "deal-percentage-amount", 10, 
 					"# 선악과의 피해량", "# 단위: 최대 체력의 n%") {
 
 		@Override
@@ -117,7 +121,7 @@ public class Eden extends Synergy implements ActiveHandler {
 	private final double healp = HEAL_PERCENTAGE.getValue() * 0.01;
 	private final double dealp = DEAL_PERCENTAGE.getValue() * 0.01;
 	private double addDamage = 0;
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -126,6 +130,29 @@ public class Eden extends Synergy implements ActiveHandler {
 					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
 		}
 	};
+	
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler &&
+								((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(
+							entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant)
+							|| (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+	};
+
 	private double currentRadius;
 	private Location center = null;
 	private final Random random = new Random();
@@ -300,7 +327,7 @@ public class Eden extends Synergy implements ActiveHandler {
 					final double maxHP = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 					double deal = maxHP * dealp * (special ? 2 : 1);
 					Healths.setHealth(p, Math.max(1, p.getHealth() - deal));
-					addDamage += (deal / 5);
+					addDamage += (deal * (predicate.test(e.getEntity()) ? 0.5 : 0.1));
 					ac.update("§c추가 공격력§f: §e" + df.format(addDamage));
 				}
 			}

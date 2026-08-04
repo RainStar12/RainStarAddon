@@ -71,11 +71,13 @@ public class AbilitySelectChance extends GameTimer implements Listener {
 	private AbilityRegistration selected;
 	
 	private final Inventory gui;
+	private final boolean isMix;
 	
-	public AbilitySelectChance(AbstractGame abstractGame, Player player) {
+	public AbilitySelectChance(AbstractGame abstractGame, Player player, boolean isMix) {
 		abstractGame.super(TaskType.REVERSE, 300);
 		setPeriod(TimeUnit.TICKS, 1);
 		this.player = player;
+		this.isMix = isMix;
 		gui = Bukkit.createInventory(null, 9, "§0능력을 선택해주세요.");
 	}
 	
@@ -107,11 +109,19 @@ public class AbilitySelectChance extends GameTimer implements Listener {
 	
 	@Override
 	protected void onSilentEnd() {
-		Mix mix = (Mix) getGame().getParticipant(player).getAbility();
-		try {
-			mix.setAbility(SynergyFactory.getSynergyBase(selected).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(selected).getRight().getAbilityClass());
-		} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
-			e1.printStackTrace();
+		if (isMix) {
+			Mix mix = (Mix) getGame().getParticipant(player).getAbility();
+			try {
+				mix.setAbility(SynergyFactory.getSynergyBase(selected).getLeft().getAbilityClass(), SynergyFactory.getSynergyBase(selected).getRight().getAbilityClass());
+			} catch (UnsupportedOperationException | ReflectiveOperationException e1) {
+				e1.printStackTrace();
+			}	
+		} else {
+			try {
+				getGame().getParticipant(player).setAbility(selected);
+			} catch (UnsupportedOperationException | ReflectiveOperationException e) {
+				e.printStackTrace();
+			}
 		}
 		HandlerList.unregisterAll(this);
 		player.setGameMode(GameMode.SURVIVAL);

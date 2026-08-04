@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.AbilityWar;
@@ -38,9 +41,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -58,16 +59,18 @@ import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
+import daybreak.google.common.collect.ImmutableSet;
 import rainstar.abilitywar.effect.Confusion;
 import rainstar.abilitywar.effect.Madness;
 
 @AbilityManifest(
 		name = "조커", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7철괴 우클릭 §8- §c짠 짠 짠§f: 스폰으로 즉시 이동합니다. 이동한 후 10초 이내에",
+		"§7철괴 우클릭 §8- §c짠 짠 짠§f: 바라보는 방향으로 즉시 이동합니다. 이동한 후 10초 이내에",
 		" 철괴를 다시 우클릭하면 원래 위치로 돌아가 주변 $[BLIND_RANGE]칸 내 플레이어를 실명시키고,",
 		" 카드를 휘날려 피해를 입힙니다. $[COOLDOWN_CONFIG]",
 		"§7사망 §8- §c내 죽음이 내 삶보다 가치있기를§f: 나를 죽인 대상과 그 주변 $[MADNESS_RANGE]칸 내",
@@ -80,7 +83,7 @@ public class Joker extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 110,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = rsSynergySettings.new SettingObject<Integer>(Joker.class, "cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -95,7 +98,7 @@ public class Joker extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> BLIND_RANGE = synergySettings.new SettingObject<Integer>(Joker.class, "blind-range", 10,
+	public static final SettingObject<Integer> BLIND_RANGE = rsSynergySettings.new SettingObject<Integer>(Joker.class, "blind-range", 10,
 			"# 실명 스킬 범위") {
 
 		@Override
@@ -105,7 +108,7 @@ public class Joker extends Synergy implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> MADNESS_RANGE = synergySettings.new SettingObject<Integer>(Joker.class, "madness-range", 5,
+	public static final SettingObject<Integer> MADNESS_RANGE = rsSynergySettings.new SettingObject<Integer>(Joker.class, "madness-range", 5,
 			"# 광란 스킬 범위") {
 
 		@Override
@@ -160,6 +163,22 @@ public class Joker extends Synergy implements ActiveHandler {
 	private final int blindrange = BLIND_RANGE.getValue();
 	private final int madnessrange = MADNESS_RANGE.getValue();
 	private List<Cards> deck = new ArrayList<>();
+	private Location targetblock;
+	private static final Set<Material> nocheck;
+	
+	static { nocheck = ImmutableSet.of(MaterialX.AIR.getMaterial(), MaterialX.GRASS.getMaterial(), MaterialX.WATER.getMaterial(),
+			MaterialX.LAVA.getMaterial(), MaterialX.GLASS.getMaterial(), MaterialX.GLASS_PANE.getMaterial(), MaterialX.BLACK_STAINED_GLASS.getMaterial(),
+			MaterialX.BLACK_STAINED_GLASS_PANE.getMaterial(), MaterialX.BLUE_STAINED_GLASS.getMaterial(), MaterialX.BLUE_STAINED_GLASS_PANE.getMaterial(),
+			MaterialX.BROWN_STAINED_GLASS.getMaterial(), MaterialX.BROWN_STAINED_GLASS_PANE.getMaterial(), MaterialX.CYAN_STAINED_GLASS.getMaterial(),
+			MaterialX.CYAN_STAINED_GLASS_PANE.getMaterial(), MaterialX.GRAY_STAINED_GLASS.getMaterial(), MaterialX.GRAY_STAINED_GLASS_PANE.getMaterial(),
+			MaterialX.GREEN_STAINED_GLASS.getMaterial(), MaterialX.GREEN_STAINED_GLASS_PANE.getMaterial(), MaterialX.LIGHT_BLUE_STAINED_GLASS.getMaterial(),
+			MaterialX.LIGHT_BLUE_STAINED_GLASS_PANE.getMaterial(), MaterialX.LIGHT_GRAY_STAINED_GLASS.getMaterial(), MaterialX.LIGHT_GRAY_STAINED_GLASS_PANE.getMaterial(),
+			MaterialX.LIME_STAINED_GLASS.getMaterial(), MaterialX.LIME_STAINED_GLASS_PANE.getMaterial(), MaterialX.MAGENTA_STAINED_GLASS.getMaterial(),
+			MaterialX.MAGENTA_STAINED_GLASS_PANE.getMaterial(), MaterialX.ORANGE_STAINED_GLASS.getMaterial(), MaterialX.ORANGE_STAINED_GLASS_PANE.getMaterial(),
+			MaterialX.PINK_STAINED_GLASS.getMaterial(), MaterialX.PINK_STAINED_GLASS_PANE.getMaterial(), MaterialX.PURPLE_STAINED_GLASS.getMaterial(),
+			MaterialX.PURPLE_STAINED_GLASS_PANE.getMaterial(), MaterialX.RED_STAINED_GLASS.getMaterial(), MaterialX.RED_STAINED_GLASS_PANE.getMaterial(),
+			MaterialX.WHITE_STAINED_GLASS.getMaterial(), MaterialX.WHITE_STAINED_GLASS_PANE.getMaterial(), MaterialX.YELLOW_STAINED_GLASS.getMaterial(),
+			MaterialX.YELLOW_STAINED_GLASS_PANE.getMaterial()); }
 	
 	private void updateTime(World world) {
 		world.setTime(13000);
@@ -274,8 +293,27 @@ public class Joker extends Synergy implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clicktype == ClickType.RIGHT_CLICK) {
 			if (!skill.isDuration()) {
 				if (!cool.isCooldown()) {
-					skill.start();
-					return true;
+					originalPoint = getPlayer().getLocation();
+					targetblock = getPlayer().getTargetBlock(nocheck, 10).getLocation();
+					Block lastEmpty = null;
+					try {
+						for (BlockIterator iterator = new BlockIterator(targetblock, 0, 2); iterator.hasNext(); ) {
+							final Block block = iterator.next();
+							if (!block.getType().isSolid()) {
+								lastEmpty = block;
+							}
+						}
+					} catch (IllegalStateException ignored) {
+					}
+					if (lastEmpty != null) {
+						this.targetblock = lastEmpty.getLocation();
+						getPlayer().teleport(targetblock.setDirection(getPlayer().getLocation().getDirection()));
+						SoundLib.ENTITY_ZOMBIE_VILLAGER_CONVERTED.playSound(getPlayer().getLocation(), 1, 1.8f);
+						skill.start();
+						return true;
+					} else {
+						getPlayer().sendMessage("§4[§c!§4] §f바라보는 방향에 이동할 수 있는 곳이 없습니다.");
+					}
 				}
 			} else {
 				if (originalPoint != null) getPlayer().teleport(originalPoint);
@@ -307,13 +345,6 @@ public class Joker extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void onDurationStart() {
-			originalPoint = getPlayer().getLocation();
-			final SpawnLocation spawnLocation = Settings.getSpawnLocation();
-			if (getPlayer().getWorld().getName().equals(spawnLocation.world)) {
-				getPlayer().teleport(spawnLocation.toBukkitLocation());
-			} else {
-				getPlayer().teleport(getPlayer().getWorld().getSpawnLocation());
-			}
 		}
 
 		@Override
@@ -662,7 +693,7 @@ public class Joker extends Synergy implements ActiveHandler {
 					if (!shooter.equals(damageable) && !checkhit.contains(damageable)) {
 						checkhit.add(damageable);
 						if (suit == 0) {
-							Damages.damageArrow(damageable, shooter, (float) (4 + ((rank + 1) * 0.3)));
+							Damages.damageArrow(damageable, shooter, (float) (9 + ((rank + 1) * 0.5)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Bleed.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -682,7 +713,7 @@ public class Joker extends Synergy implements ActiveHandler {
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, ((rank + 1) * 0.5), RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
-								Healths.setHealth((Player) shooter, shooter.getHealth() + ((rank + 1) * 0.5));
+								Healths.setHealth((Player) shooter, shooter.getHealth() + event.getAmount());
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound((Player) shooter, 1, 1.2f);
 								ParticleLib.HEART.spawnParticle(shooter.getLocation(), 0.5, 1, 0.5, 10, 1);
 							}
@@ -691,12 +722,12 @@ public class Joker extends Synergy implements ActiveHandler {
 						}
 						if (suit == 2) {
 							ParticleLib.EXPLOSION_HUGE.spawnParticle(entity.getLocation());
-							shooter.getWorld().createExplosion(entity.getLocation(), (float) (1 + ((rank + 1) * 0.2)), false, true);
+							shooter.getWorld().createExplosion(entity.getLocation(), (float) (1.5 + ((rank + 1) * 0.15)), false, true);
 							stop(false);
 							return;
 						}
 						if (suit == 3) {
-							Damages.damageArrow(damageable, shooter, (float) (3 + ((rank + 1) * 0.7)));
+							Damages.damageArrow(damageable, shooter, (float) (4 + ((rank + 1) * 1.3)));
 							if (damageable instanceof Player) {
 								Player p = (Player) damageable;
 								Confusion.apply(getGame().getParticipant(p), TimeUnit.TICKS, (rank + 1) * 10, 10);
@@ -718,7 +749,7 @@ public class Joker extends Synergy implements ActiveHandler {
 								final EntityRegainHealthEvent event = new EntityRegainHealthEvent(p, 3.9, RegainReason.CUSTOM);
 								Bukkit.getPluginManager().callEvent(event);
 								if (!event.isCancelled()) {
-									Healths.setHealth(p, p.getHealth() + 3.9);
+									Healths.setHealth(p, p.getHealth() + event.getAmount());
 									SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p, 1, 1.2f);
 									ParticleLib.HEART.spawnParticle(p.getLocation(), 0.5, 1, 0.5, 10, 1);
 								}
@@ -728,7 +759,7 @@ public class Joker extends Synergy implements ActiveHandler {
 							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(shooter, 6.5, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
-								Healths.setHealth((Player) shooter, shooter.getHealth() + 6.5);
+								Healths.setHealth((Player) shooter, shooter.getHealth() + event.getAmount());
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound((Player) shooter, 1, 1.2f);
 								ParticleLib.HEART.spawnParticle(shooter.getLocation(), 0.5, 1, 0.5, 10, 1);
 							}

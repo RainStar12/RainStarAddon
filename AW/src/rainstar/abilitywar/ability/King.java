@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +62,7 @@ public class King extends AbilityBase {
 	}
 	
 	public static final SettingObject<Integer> TIMER_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(King.class, "timer-decrease", 25,
+			rsAbilitySettings.new SettingObject<Integer>(King.class, "timer-decrease", 25,
             "# 지속 시간 감소율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -69,7 +71,7 @@ public class King extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(King.class, "range", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(King.class, "range", 5.0,
             "# 위압감 범위", "# 단위: 칸") {
         @Override
         public boolean condition(Double value) {
@@ -78,7 +80,7 @@ public class King extends AbilityBase {
     };
     
 	public static final SettingObject<Double> ADD_RANGE = 
-			abilitySettings.new SettingObject<Double>(King.class, "add-range", 0.5,
+			rsAbilitySettings.new SettingObject<Double>(King.class, "add-range", 0.5,
             "# 위압감 증가 범위", "# 값 / 10을 매 초마다 증가시킵니다.", "# 단위: 칸") {
         @Override
         public boolean condition(Double value) {
@@ -87,7 +89,7 @@ public class King extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> DAMAGE_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(King.class, "damage-decrease", 10,
+			rsAbilitySettings.new SettingObject<Integer>(King.class, "damage-decrease", 10,
             "# 공격력 감소율", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -9,6 +11,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.NotAvailable;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
@@ -17,13 +20,21 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.MixGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.triplemix.AbstractTripleMix;
+import daybreak.abilitywar.game.list.oneability.OneAbility;
+import daybreak.abilitywar.game.list.standard.StandardGame;
+import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.google.common.collect.ImmutableMap;
+import rainstar.abilitywar.game.chaos.hyperchaos.HyperChaosGame;
+import rainstar.abilitywar.game.select.SelectGame;
 
 @AbilityManifest(name = "아카식 레코드", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §3로그 조사§f: 다른 플레이어가 액티브 능력을 사용할 때마다",
@@ -40,6 +51,7 @@ import daybreak.google.common.collect.ImmutableMap;
 		" 로그 조사의 알림을 껐다 켤 수 있습니다."
 		})
 
+@NotAvailable({StandardGame.class, WarGame.class, SelectGame.class, BlindAbilityWar.class, OneAbility.class, HyperChaosGame.class, AbstractTripleMix.class})
 public class AkashicRecords extends Synergy implements ActiveHandler {
 	
 	public AkashicRecords(Participant participant) {
@@ -55,7 +67,7 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 			.put(Rank.SPECIAL, "§c")
 			.build();
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AkashicRecords.class,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = rsSynergySettings.new SettingObject<Integer>(AkashicRecords.class,
 			"cooldown", 60, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -86,61 +98,63 @@ public class AkashicRecords extends Synergy implements ActiveHandler {
 	private void onAbilityActiveSkill(AbilityActiveSkillEvent e) {
 		if (!e.getParticipant().equals(getParticipant()) && alarm) {
 	    	AbilityBase ab = e.getParticipant().getAbility();
-	    	final Mix mix = (Mix) ab;
 			int getx = (int) e.getParticipant().getPlayer().getLocation().getX();
 			int gety = (int) e.getParticipant().getPlayer().getLocation().getY();
 			int getz = (int) e.getParticipant().getPlayer().getLocation().getZ();
-	    	if (mix.hasSynergy()) {
-	    		if (mix.getSynergy().getClass().equals(AkashicRecords.class)) {
-	    			getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 §6아카식 레코드§f를 개방하였습니다.");
-	    		} else {
-		    		getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 §3시너지§f 능력을 사용하였습니다.");
-					getPlayer().sendMessage(" §7- §e사용 능력§f: " + rankcolor.get(mix.getSynergy().getRank()) + mix.getSynergy().getDisplayName()
-					+ " §7| §e사용 위치§f: §3" + getx + "§f, §3" + gety + "§f, §3" + getz);
-					try {
-						this.logability.add(AbilityBase.create(mix.getSynergy().getClass(), getParticipant())); 
-						this.logability.get(0).setRestricted(false);
-					} catch (ReflectiveOperationException e1) {
-						e1.printStackTrace();
-					}	
-	    		}
-	    	} else {
-				final AbilityBase first = mix.getFirst(), second = mix.getSecond();
-				getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 능력을 사용하였습니다.");
-				getPlayer().sendMessage(" §7- §e사용 능력§f: " + rankcolor.get(first.getRank()) + first.getDisplayName() + "§f + " + rankcolor.get(second.getRank()) + 
-						second.getDisplayName() + " §7| §e사용 위치§f: §3" + getx + "§f, §3" + gety + "§f, §3" + getz);
-				if (first instanceof ActiveHandler && !(second instanceof ActiveHandler)) {
-					try {
-						this.logability.add(AbilityBase.create(first.getClass(), getParticipant())); 
-						this.logability.get(0).setRestricted(false);
-					} catch (ReflectiveOperationException e1) {
-						e1.printStackTrace();
-					}
-				} else if (!(first instanceof ActiveHandler) && second instanceof ActiveHandler) {
-					try {
-						this.logability.add(AbilityBase.create(second.getClass(), getParticipant())); 
-						this.logability.get(0).setRestricted(false);
-					} catch (ReflectiveOperationException e1) {
-						e1.printStackTrace();
-					}
-				} else if (first instanceof ActiveHandler && second instanceof ActiveHandler) {
-					Random random = new Random();
-					if (random.nextBoolean() == true) {
+	    	if (getGame() instanceof MixGame) {
+	    		final Mix mix = (Mix) ab;
+	    		if (mix.hasSynergy()) {
+		    		if (mix.getSynergy().getClass().equals(AkashicRecords.class)) {
+		    			getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 §6아카식 레코드§f를 개방하였습니다.");
+		    		} else {
+			    		getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 §3시너지§f 능력을 사용하였습니다.");
+						getPlayer().sendMessage(" §7- §e사용 능력§f: " + rankcolor.get(mix.getSynergy().getRank()) + mix.getSynergy().getDisplayName()
+						+ " §7| §e사용 위치§f: §3" + getx + "§f, §3" + gety + "§f, §3" + getz);
+						try {
+							this.logability.add(AbilityBase.create(mix.getSynergy().getClass(), getParticipant())); 
+							this.logability.get(0).setRestricted(false);
+						} catch (ReflectiveOperationException e1) {
+							e1.printStackTrace();
+						}	
+		    		}
+		    	} else {
+					final AbilityBase first = mix.getFirst(), second = mix.getSecond();
+					getPlayer().sendMessage("[§c!§f] §e" + e.getPlayer().getName() + "§f님이 능력을 사용하였습니다.");
+					getPlayer().sendMessage(" §7- §e사용 능력§f: " + rankcolor.get(first.getRank()) + first.getDisplayName() + "§f + " + rankcolor.get(second.getRank()) + 
+							second.getDisplayName() + " §7| §e사용 위치§f: §3" + getx + "§f, §3" + gety + "§f, §3" + getz);
+					if (first instanceof ActiveHandler && !(second instanceof ActiveHandler)) {
 						try {
 							this.logability.add(AbilityBase.create(first.getClass(), getParticipant())); 
 							this.logability.get(0).setRestricted(false);
 						} catch (ReflectiveOperationException e1) {
 							e1.printStackTrace();
 						}
-					} else {
+					} else if (!(first instanceof ActiveHandler) && second instanceof ActiveHandler) {
 						try {
 							this.logability.add(AbilityBase.create(second.getClass(), getParticipant())); 
 							this.logability.get(0).setRestricted(false);
 						} catch (ReflectiveOperationException e1) {
 							e1.printStackTrace();
 						}
-					}
-				}	
+					} else if (first instanceof ActiveHandler && second instanceof ActiveHandler) {
+						Random random = new Random();
+						if (random.nextBoolean() == true) {
+							try {
+								this.logability.add(AbilityBase.create(first.getClass(), getParticipant())); 
+								this.logability.get(0).setRestricted(false);
+							} catch (ReflectiveOperationException e1) {
+								e1.printStackTrace();
+							}
+						} else {
+							try {
+								this.logability.add(AbilityBase.create(second.getClass(), getParticipant())); 
+								this.logability.get(0).setRestricted(false);
+							} catch (ReflectiveOperationException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}	
+		    	}
 	    	}
 		}
 	}

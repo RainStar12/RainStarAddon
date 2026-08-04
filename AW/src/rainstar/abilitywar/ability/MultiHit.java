@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -71,7 +73,7 @@ public class MultiHit extends AbilityBase {
 	private final int multiply = DAMAGE_CONFIG.getValue();
 	private final int invincibility = (int) (INV_CONFIG.getValue() * 20);
 	
-	public static final SettingObject<Double> INV_CONFIG = abilitySettings.new SettingObject<Double>(MultiHit.class,
+	public static final SettingObject<Double> INV_CONFIG = rsAbilitySettings.new SettingObject<Double>(MultiHit.class,
 			"invulnerable-time", 0.4, "# 무적 시간", "# 단위는 초입니다.") {
 
 		@Override
@@ -81,8 +83,8 @@ public class MultiHit extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Integer> COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(MultiHit.class,
-			"damage-count", 3, "# 타격 횟수") {
+	public static final SettingObject<Integer> COUNT_CONFIG = rsAbilitySettings.new SettingObject<Integer>(MultiHit.class,
+			"attack-count", 2, "# 타격 횟수") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -91,8 +93,8 @@ public class MultiHit extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(MultiHit.class,
-			"damage", 50, "# 대미지", "# 단위: % (50 = 50%)") {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = rsAbilitySettings.new SettingObject<Integer>(MultiHit.class,
+			"default-damage", 70, "# 대미지", "# 단위: % (50 = 50%)") {
 
 		@Override
 		public boolean condition(Integer value) {

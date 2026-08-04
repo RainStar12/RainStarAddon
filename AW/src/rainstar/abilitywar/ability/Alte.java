@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +17,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -49,7 +53,7 @@ import daybreak.google.common.collect.ImmutableSet;
 		"§7패시브 §8- §c전쟁 병기§f: 모든 피해를 §c$[GET_DAMAGE_INCREASE]배§f로 받습니다.",
 		" 그 대신, 피해를 $[EVADE]% 확률로 §b회피§f합니다.",
 		"§7검 들고 F §8- §3절박한 시도§f: 사용 이후 받는 다음 피해를 §c$[GET_DAMAGE_INCREASE]배§f 대신 §4$[SKILL_GET_INCREASED_DAMAGE]배§f로 받습니다.",
-		" 이 피해로 사망할 경우 피해량의 2.5배의 체력으로 부활하고, 폭발을 일으킵니다.",
+		" 이 피해로 사망할 경우 피해량의 1.5배의 체력으로 부활하고, 폭발을 일으킵니다.",
 		" 또한 영구 공격력 §c$[DAMAGE_INCREASE]%§f를 획득합니다. $[COOLDOWN]",
 		" 다만 자폭에 실패할 경우 매번 영구적으로 받는 피해량이 §c§l$[GET_DAMAGE_ADD_INCREASE]%§f 증가합니다."
 		},
@@ -68,7 +72,7 @@ public class Alte extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> GET_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "get-damage-increase", 1.1,
+			rsAbilitySettings.new SettingObject<Double>(Alte.class, "get-damage-increase", 1.1,
 			"# 받는 피해량 증가 배율") {
 
 		@Override
@@ -79,7 +83,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> SKILL_GET_INCREASED_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(Alte.class, "skill-get-increased-damage", 2.7,
+			rsAbilitySettings.new SettingObject<Double>(Alte.class, "skill-get-increased-damage", 2.0,
 			"# 절박한 시도 간 받는 피해량 증가 배율") {
 
 		@Override
@@ -90,7 +94,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> EVADE = 
-			abilitySettings.new SettingObject<Integer>(Alte.class, "evade-chance", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Alte.class, "evade-chance", 15,
 			"# 회피 확률", "# 단위: %") {
 
 		@Override
@@ -101,7 +105,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Alte.class, "damage-increase", 12,
+			rsAbilitySettings.new SettingObject<Integer>(Alte.class, "damage-increase", 12,
 			"# 영구 공격력", "# 단위: %") {
 
 		@Override
@@ -112,7 +116,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> GET_DAMAGE_ADD_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Alte.class, "get-damage-add-increase", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Alte.class, "get-damage-add-increase", 10,
 			"# 영구 받는 피해량 증가량", "# 단위: %") {
 
 		@Override
@@ -123,7 +127,7 @@ public class Alte extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Alte.class, "cooldown", 90,
+			rsAbilitySettings.new SettingObject<Integer>(Alte.class, "cooldown", 90,
             "# 쿨타임") {
 
         @Override
@@ -264,11 +268,15 @@ public class Alte extends AbilityBase {
 	        			e.setDamage(e.getDamage() * skillgetIncrease);
 	        			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 	        				e.setCancelled(true);
-	        				Healths.setHealth(getPlayer(), e.getFinalDamage() * 2.5);
+	    					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), e.getFinalDamage() * 1.5, RegainReason.CUSTOM);
+	    					Bukkit.getPluginManager().callEvent(event);
+	    					if (!event.isCancelled()) {
+		        				Healths.setHealth(getPlayer(), event.getAmount());	
+	    					}
 	        				ParticleLib.EXPLOSION_HUGE.spawnParticle(getPlayer().getLocation());
 	        				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation());
 	        				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
-	        					Damages.damageExplosion(damageable, getPlayer(), (float) (e.getDamage()));
+	        					Damages.damageExplosion(damageable, getPlayer(), (float) (e.getDamage() * 0.5));
 	        					damageable.setVelocity(VectorUtil.validateVector(damageable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0.5).multiply(0.95)));
 	        				}
 	        				stack++;

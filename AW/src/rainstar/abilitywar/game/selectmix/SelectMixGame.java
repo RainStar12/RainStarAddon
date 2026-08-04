@@ -1,4 +1,4 @@
-package rainstar.abilitywar.game.SelectMix;
+package rainstar.abilitywar.game.selectmix;
 
 import com.google.common.base.Strings;
 
@@ -35,12 +35,12 @@ import java.util.Map;
 		"",
 		"§7/aw config games로 리롤 횟수를 조절 가능합니다."
 })
-@GameAliases({"셀믹전", "셀믹"})
+@GameAliases({"셀믹전", "셀믹", "셀렉트믹스"})
 public class SelectMixGame extends AbstractMix {
 	
 	private final boolean invincible = InvincibilitySettings.isEnabled();
 	
-	public static final Setting<Integer> CHANGE = gameSettings.new Setting<Integer>(SelectMixGame.class, "change-count", 1, "# 리롤 기회") {
+	public static final Setting<Integer> CHANGE = gameSettings.new Setting<Integer>(SelectMixGame.class, "change", 2, "# 리롤 기회") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 1;

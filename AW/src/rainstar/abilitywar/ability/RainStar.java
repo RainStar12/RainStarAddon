@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,15 +62,20 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
@@ -94,6 +101,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.collect.ImmutableSet;
+import rainstar.abilitywar.RainStarAddon;
 import rainstar.abilitywar.effect.Charm;
 import rainstar.abilitywar.effect.Poison;
 
@@ -104,8 +112,10 @@ import rainstar.abilitywar.effect.Poison;
 		" 내 주변을 맴도는 별소나기를 총 7개까지 소환합니다.",
 		"§7철괴 우클릭 §8- §3은하수의 밤§f: 7칸의 필드를 $[FIELD_DURATION]초간 전개합니다. 필드 위에서 별소나기가",
 		" 항상 발동하며, 근접 공격 피해량이 1.2배로 증가합니다. $[RIGHT_COOLDOWN]",
-		" 은하수 내의 생명체들은 은하수의 중심으로 매우 강력하게 끌어당겨집니다.",
-		"§7철괴 좌클릭 §8- §b별의 일주§f: 별자리 효과를 다음 별자리로 넘깁니다. $[LEFT_COOLDOWN]"
+		" 은하수 내의 생명체들은 은하수의 중심으로 강력하게 끌어당겨집니다.",
+		"§7철괴 좌클릭 §8- §b별의 일주§f: 별자리 효과를 다음 별자리로 넘깁니다. $[LEFT_COOLDOWN]",
+		"§7패시브 §8- §9별들의 주인§f: §a레인스타 애드온§f의 능력을 소지한 대상에게는,",
+		" §a별소나기§f의 피해량이 §3§l50%§f 증가합니다§8(§7믹스 능력자에서는 능력당 25%§8)§f."
 		},
 		summarize = {
 		"12가지 §5별자리 패시브 효과§f 중 하나를 지급받습니다.",
@@ -122,7 +132,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	public static final SettingObject<Integer> LEFT_COOLDOWN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> LEFT_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
 			RainStar.class, "left-cooldown", 3, "# 좌클릭 쿨타임") {
 
 		@Override
@@ -137,7 +147,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RIGHT_COOLDOWN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> RIGHT_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
 			RainStar.class, "right-cooldown", 127, "# 우클릭 쿨타임") {
 
 		@Override
@@ -152,7 +162,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> FIELD_DURATION = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> FIELD_DURATION = rsAbilitySettings.new SettingObject<Integer>(
 			RainStar.class, "field-duration", 12, "# 필드 지속시간") {
 
 		@Override
@@ -166,7 +176,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean test(Effect effect) {
 			final ImmutableSet<EffectType> effectType = effect.getRegistration().getEffectType();
-			return effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT);
+			return effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT) || effectType.contains(EffectType.SIGHT_CONTROL) || effectType.contains(EffectType.SIGHT_RESTRICTION);
 		}
 
 		@Override
@@ -196,7 +206,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 	private Location mylocation;
 	private final ActionbarChannel ac1 = newActionbarChannel();
 	private int soundplaycount = 0;
-	private double firstDamage;
+	private int periodcool = (int) Math.ceil(Wreck.isEnabled(GameManager.getGame()) ? Wreck.calculateDecreasedAmount(30) * 300 : 300);
 
 	private RGB lemonlime;
 	private int lemonlimestacks = 0;
@@ -343,8 +353,8 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			final StringJoiner joiner = new StringJoiner("\n");
 			switch(constellation) {
 			case 0:
-				joiner.add(" §b양자리§f: 15초마다, 방어한 피해량의 25%만큼");
-				joiner.add(" 흡수 체력을 획득합니다.");
+				joiner.add(" §b양자리§f: 15초마다, 흡수 체력을 2칸 얻습니다.");
+				joiner.add(" 흡수 체력은 내 최대 체력까지만 얻을 수 있습니다.");
 				break;
 			case 1:
 				joiner.add(" §b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다.");
@@ -352,7 +362,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				joiner.add(" 대신 달리는 도중에 받는 피해량이 20% 증가합니다.");
 				break;
 			case 2:
-				joiner.add(" §b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다.");
+				joiner.add(" §b쌍둥이자리§f: 별소나기가 입히는 피해량이 2배가 됩니다.");
 				joiner.add(" 별소나기의 공전 범위가 증가하고, 히트박스가 2배가 됩니다.");
 				break;
 			case 3:
@@ -396,7 +406,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final AbilityTimer skillperiod = new AbilityTimer(300) {
+	private final AbilityTimer skillperiod = new AbilityTimer(periodcool) {
 		
 		@Override
 		public void onEnd() {
@@ -441,6 +451,10 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 			switch (constellation) {
 			case 0:
 				ac1.update("§b양자리");
+				if (!skillperiod.isRunning()) {
+					NMS.setAbsorptionHearts(getPlayer(), (float) Math.min(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), NMS.getAbsorptionHearts(getPlayer()) + 4));
+					skillperiod.start();
+				}
 				break;
 			case 1:
 				ac1.update("§b황소자리");
@@ -512,6 +526,11 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		if (getPlayer().isSprinting() && constellation == 1) e.setCancelled(true);
 	}
 	
+	@SubscribeEvent(onlyRelevant = true)
+	private void onParticipantEffectApply(ParticipantPreEffectApplyEvent e) {
+		if (getPlayer().isSprinting() && constellation == 1 && (e.getEffectType().getEffectType().contains(EffectType.MOVEMENT_RESTRICTION) || e.getEffectType().getEffectType().contains(EffectType.MOVEMENT_INTERRUPT) || e.getEffectType().getEffectType().contains(EffectType.SIGHT_CONTROL) || e.getEffectType().getEffectType().contains(EffectType.SIGHT_RESTRICTION))) e.setCancelled(true);
+	}
+	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player) {
@@ -544,7 +563,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
     					soundplaycount = 0;
     					break;
     				}
-					if (constellation == 2) bullets.add(new Bullet(getPlayer(), getPlayer().getLocation(), e.getDamage()));
 				}
 				e.setDamage(e.getDamage() * 1.2);
 			} else {
@@ -552,7 +570,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				if (select == positive) {
 					if (bullets.bullets.size() != 7) {
 						bullets.add(new Bullet(getPlayer(), getPlayer().getLocation(), e.getDamage()));
-						if (constellation == 2) bullets.add(new Bullet(getPlayer(), getPlayer().getLocation(), e.getDamage()));
 						soundplaycount++;
 	    				switch(soundplaycount) {
 	    				case 1: 				
@@ -613,27 +630,6 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 		}
 	}
 	
-	@SubscribeEvent(priority = -999, onlyRelevant = true)
-	public void onEntityDamageByEntityFirst(EntityDamageByEntityEvent e) {
-		firstDamage = e.getDamage();
-	} 
-	
-	@SubscribeEvent(priority = 6, onlyRelevant = true)
-	public void onEntityDamageByEntityLast(EntityDamageByEntityEvent e) {	
-    	Player damager = null;
-		if (e.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) e.getDamager();
-			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
-		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
-		
-		if (!getPlayer().equals(damager)) {
-			if (constellation == 0 && !skillperiod.isRunning()) {
-				NMS.setAbsorptionHearts(getPlayer(), (float) ((firstDamage - e.getFinalDamage()) * 0.25) + NMS.getAbsorptionHearts(getPlayer()));
-				skillperiod.start();
-			}
-		}
-	}
-
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
 		if (e.getHitEntity() == null) {
@@ -687,10 +683,10 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				if (getPlayer().equals(arrow.getShooter()) && !skillperiod.isRunning()) {
 					if (bows.contains(getPlayer().getInventory().getItemInMainHand().getType())) {
 						final ItemStack mainhand = getPlayer().getInventory().getItemInMainHand();
-						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(10, mainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
+						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(9, mainhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
 					} else if (bows.contains(getPlayer().getInventory().getItemInOffHand().getType())) {
 						final ItemStack offhand = getPlayer().getInventory().getItemInOffHand();
-						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(10, offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
+						new Bullet2(getPlayer(), getPlayer().getLocation().clone().add(0, 1, 0), arrow, arrow.getVelocity().length(), EnchantLib.getDamageWithPowerEnchantment(9, offhand.getEnchantmentLevel(Enchantment.ARROW_DAMAGE))).start();
 					}
 					skillperiod.start();
 				}	
@@ -701,7 +697,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 					@Override
 					public void onStart() {
 						arrow.setGravity(false);
-						arrow.setVelocity(arrow.getVelocity().multiply(1.1));
+						arrow.setVelocity(arrow.getVelocity().multiply(1.2));
 					}
 
 					@Override
@@ -737,13 +733,13 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 						constellation++;
 					switch (constellation) {
 					case 0:
-						getPlayer().sendMessage("§b양자리§f: 15초마다, 방어한 피해량의 25%만큼 흡수 체력을 획득합니다.");
+						getPlayer().sendMessage("§b양자리§f: 15초마다, 흡수 체력을 2칸 얻습니다. 흡수 체력은 내 최대 체력까지만 얻을 수 있습니다.");
 						break;
 					case 1:
 						getPlayer().sendMessage("§b황소자리§f: 달릴 때 더 빨리 달릴 수 있습니다. 달리는 도중엔 §3저지 불가§f 상태가 됩니다. 대신 달리는 도중에 받는 피해량이 20% 증가합니다.");
 						break;
 					case 2:
-						getPlayer().sendMessage("§b쌍둥이자리§f: 별소나기가 한 번에 두 개씩 생겨납니다. 별소나기의 공전 범위가 증가하고, 히트박스가 2배가 됩니다.");
+						getPlayer().sendMessage("§b쌍둥이자리§f: 별소나기가 입히는 피해량이 2배가 됩니다. 별소나기의 공전 범위가 증가하고, 히트박스가 2배가 됩니다.");
 						break;
 					case 3:
 						getPlayer().sendMessage("§b게자리§f: 15초마다 화살을 발사해 대상을 맞힐 때 1.5초간 기절시키고 집게를 소환해 범위 마법 피해를 입힙니다.");
@@ -791,15 +787,13 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int count) {
-			if (count % 40 == 0) {
-				ParticleLib.VILLAGER_HAPPY.spawnParticle(mylocation.clone().add(0, 2, 0), 4, 2, 4, 150, 0);
-			}
+			ParticleLib.VILLAGER_HAPPY.spawnParticle(mylocation.clone().add(0, 2, 0), 4, 2, 4, 2, 0);
 			if (count % 3 == 0) {
 				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, mylocation, 7, predicate)) {
-					livingEntity.setVelocity(VectorUtil.validateVector(mylocation.toVector().subtract(livingEntity.getLocation().toVector()).normalize().setY(0).multiply(0.2)));
+					livingEntity.setVelocity(VectorUtil.validateVector(mylocation.toVector().subtract(livingEntity.getLocation().toVector()).normalize().setY(0).multiply(0.13)));
 				}
 			}
-			if (count % 5 == 0) {
+			if (count % 8 == 0) {
 				if (lemonlimeturns)
 					lemonlimestacks++;
 				else
@@ -1069,7 +1063,29 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				boundingBox.setCenter(location);
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), boundingBox, predicate)) {
 					if (!shooter.equals(damageable) && !hitcheck.contains(damageable) && !damageable.isInvulnerable()) {
-						Damages.damageMagic(damageable, (Player) shooter, false, (float) damage);
+						float nowDamage = (float) damage;
+						if (damageable instanceof Player && getGame().isParticipating((Player) damageable) && getGame().getParticipant((Player) damageable).hasAbility()) {
+							Participant participant = getGame().getParticipant((Player) damageable);
+							AbilityBase ab = participant.getAbility();
+							if (ab instanceof Mix) {
+								Mix mix = (Mix) ab;
+								AbilityBase first = mix.getFirst(), second = mix.getSecond();
+								int stack = 0;
+								if (first != null && first.getRegistration().getProvider() instanceof Addon && ((Addon) first.getRegistration().getProvider()).getClass().equals(RainStarAddon.class)) {
+									stack += 25;
+								}
+								if (second != null && second.getRegistration().getProvider() instanceof Addon && ((Addon) second.getRegistration().getProvider()).getClass().equals(RainStarAddon.class)) {
+									stack += 25;
+								}
+								nowDamage *= (1 + (stack * 0.01));
+							} else {
+								if (ab.getRegistration().getProvider() instanceof Addon && ((Addon) ab.getRegistration().getProvider()).getClass().equals(RainStarAddon.class)) {
+									nowDamage *= 1.5;
+								}
+							}
+						}
+						SoundLib.ENTITY_ENDER_EYE_DEATH.playSound(location, 0.75f, 1.7f);
+						Damages.damageMagic(damageable, (Player) shooter, false, (constellation == 2) ? nowDamage * 2 : nowDamage);
 						if (constellation == 5) {
 							int random = new Random().nextInt(4);
 							if (random == 0) {
@@ -1278,7 +1294,7 @@ public class RainStar extends AbilityBase implements ActiveHandler {
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getWorld(),
 						entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
-						Damages.damageArrow(damageable, getPlayer(), (float) (constellation == 8 ? damage * 1.25 : damage * 0.25));
+						Damages.damageArrow(damageable, getPlayer(), (float) (constellation == 8 ? damage : damage * 0.25));
 						if (constellation == 11) new Grab(damageable, arrowLoc).start();
 						this.stop(false);
 					}

@@ -1,6 +1,11 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -11,12 +16,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -40,7 +43,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
@@ -58,12 +60,12 @@ import rainstar.abilitywar.ability.timestop.TimeStop;
 
 @AbilityManifest(name = "시한 폭탄", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c폭파광§f: 모든 폭발 피해를 무시하고, 받을 피해만큼 역회복합니다.",
-		" 폭발이 일어날 때마다 폭발 위치로 순간이동하고 $[DURATION_CONFIG]초간 힘 1 버프를 얻습니다.",
+		" 폭발에 휘말리면 $[DURATION_CONFIG]초간 힘 2 버프를 얻습니다.",
 		"§7철괴 우클릭 §8- §c시한 폭탄§f: 자신으로부터 $[RANGE_CONFIG]칸 범위 내 $[BOMB_AMOUNT]개의 폭탄을 ",
 		" 무작위로 설치합니다. 폭탄들은 제각기 폭발 시간이 다르며 각 폭탄의 위에서",
 		" 폭발까지의 남은 시간을 볼 수 있습니다. $[COOLDOWN_CONFIG]",
 		" 시한 폭탄이 터지면, 폭발에 휘말린 대상의 시간을 $[TIMESTOP_DURATION]초간 정지시킵니다.",
-		"§7철괴 좌클릭 §8- §c폭발 조절§f: 폭파광으로 순간이동할 지 여부를 결정합니다."
+		"§7철괴 좌클릭 §8- §c폭발 조절§f: 자신 주변 $[EXPLODE_RANGE]칸 내의 모든 폭탄을 즉시 터뜨립니다."
 		})
 
 public class TimeBomb extends Synergy implements ActiveHandler {
@@ -104,7 +106,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = 
-			synergySettings.new SettingObject<Integer>(TimeBomb.class, "cooldown", 200,
+			rsSynergySettings.new SettingObject<Integer>(TimeBomb.class, "cooldown", 100,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -117,7 +119,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DURATION_CONFIG = 
-			synergySettings.new SettingObject<Integer>(TimeBomb.class, "duration", 10,
+			rsSynergySettings.new SettingObject<Integer>(TimeBomb.class, "strength-duration-config", 60,
             "# 힘 버프 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -126,7 +128,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RANGE_CONFIG = 
-			synergySettings.new SettingObject<Integer>(TimeBomb.class, "range", 20,
+			rsSynergySettings.new SettingObject<Integer>(TimeBomb.class, "range-config", 20,
             "# 폭탄 설치 최대 범위") {
         @Override
         public boolean condition(Integer value) {
@@ -135,7 +137,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> BOMB_AMOUNT = 
-			synergySettings.new SettingObject<Integer>(TimeBomb.class, "bomb-amount", 30,
+			rsSynergySettings.new SettingObject<Integer>(TimeBomb.class, "bomb-amount-config", 30,
             "# 설치할 시한폭탄의 개수") {
         @Override
         public boolean condition(Integer value) {
@@ -144,20 +146,72 @@ public class TimeBomb extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> TIMESTOP_DURATION = 
-			synergySettings.new SettingObject<Integer>(TimeBomb.class, "timestop-duration", 2,
+			rsSynergySettings.new SettingObject<Integer>(TimeBomb.class, "timestop-duration-amount", 4,
             "# 시간 정지 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
             return value >= 0;
         }
     };
+    
+	public static final SettingObject<Double> EXPLODE_RANGE = 
+			rsSynergySettings.new SettingObject<Double>(TimeBomb.class, "explode-range", 7.5,
+            "# 즉시 폭발시킬 범위") {
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+    };
 	
-	private PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, (DURATION_CONFIG.getValue() * 20), 0, true, false);
-	private final Cooldown cool = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
+	private final PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, (DURATION_CONFIG.getValue() * 20), 1, true, false);
+	private final Cooldown cool = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int count = BOMB_AMOUNT.getValue();
 	private final int timestopduration = TIMESTOP_DURATION.getValue();
-	private boolean teleport = true;
+	private final double range = EXPLODE_RANGE.getValue();
+	private Map<TNTPrimed, BombTimer> bombTimers = new HashMap<>();
 	private Set<Player> stopped = new HashSet<>();
+	private final Set<TNTPrimed> glowing = new HashSet<>();
+	
+	@Override
+	public void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) passive.start();
+	}
+	
+	private AbilityTimer passive = new AbilityTimer() {
+		
+		@Override
+		public void run(int count) {
+			if (getPlayer().getInventory().getItemInMainHand().getType() != Material.IRON_INGOT) {
+	            for (TNTPrimed tnt : glowing) {
+	                if (!tnt.isDead()) tnt.setGlowing(false);
+	            }
+	            glowing.clear();
+	            return;
+	        }
+			
+			Set<TNTPrimed> nearby = new HashSet<>(LocationUtil.getNearbyEntities(TNTPrimed.class, getPlayer().getLocation(), range, range, null));
+			
+			for (TNTPrimed tnt : nearby) {
+	            if (glowing.add(tnt)) {
+	                tnt.setGlowing(true);
+	            }
+	        }
+			
+			Iterator<TNTPrimed> iterator = glowing.iterator();
+
+	        while (iterator.hasNext()) {
+	            TNTPrimed tnt = iterator.next();
+
+	            if (tnt.isDead() || !nearby.contains(tnt)) {
+	                if (!tnt.isDead()) {
+	                    tnt.setGlowing(false);
+	                }
+	                iterator.remove();
+	            }
+	        }
+		}
+		
+	}.setPeriod(TimeUnit.TICKS, 1).register();	
 	
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent e) {
@@ -251,53 +305,18 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 	}
 	
 	@SubscribeEvent
-	public void onEntityExplode(EntityExplodeEvent e) {
-		if (teleport) {
-			getPlayer().teleport(e.getLocation());
-			if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-				if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 1) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {
-					getPlayer().removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-					getPlayer().addPotionEffect(strength);
-				}
-			} else {
-				getPlayer().addPotionEffect(strength);		
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onBlockExplode(BlockExplodeEvent e) {
-		if (teleport && e.getBlock().getWorld().equals(getPlayer().getWorld())) {
-			getPlayer().teleport(e.getBlock().getLocation());
-			if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-				if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 1) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {
-					getPlayer().removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-					getPlayer().addPotionEffect(strength);
-				}
-			} else {
-				getPlayer().addPotionEffect(strength);		
-			}
-		}
-	}
-	
-	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 			if (e.getEntity().equals(getPlayer())) {
 				e.setCancelled(true);
 				Healths.setHealth(getPlayer(), getPlayer().getHealth() + (e.getFinalDamage() * 0.75));
-			}
-			if (!e.getEntity().equals(getPlayer())) {
-				if (teleport && e.getEntity().getWorld().equals(getPlayer().getWorld())) {
-					getPlayer().teleport(e.getEntity().getLocation());
-					if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-						if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 1) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {
-							getPlayer().removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-							getPlayer().addPotionEffect(strength);
-						}
-					} else {
-						getPlayer().addPotionEffect(strength);		
+				if (getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+					if (!(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() > 2) && !(getPlayer().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getDuration() > 10)) {
+						getPlayer().removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+						getPlayer().addPotionEffect(strength);
 					}
+				} else {
+					getPlayer().addPotionEffect(strength);		
 				}
 			}
 		}
@@ -319,7 +338,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 			for (Location l : LocationUtil.getRandomLocations(center, RANGE_CONFIG.getValue(), count)) {
 				Random random = new Random();
 				TNTPrimed tntprimed = l.getWorld().spawn(l, TNTPrimed.class);
-				tntprimed.setFuseTicks(((random.nextInt(15) + 1) * 2) * 20);
+				tntprimed.setFuseTicks((random.nextInt(61)) * 20);
 				new BombTimer(tntprimed, tntprimed.getFuseTicks()).start();
 			}
 			cool.start();
@@ -327,13 +346,12 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 		}
 		
 		if (material == Material.IRON_INGOT && clicktype == ClickType.LEFT_CLICK) {
-			if (teleport) {
-				teleport = false;
-				getPlayer().sendMessage("§4[§c!§4] §f이제 폭발이 일어나도 순간이동하지 않습니다.");
-			} else {
-				teleport = true;
-				getPlayer().sendMessage("§4[§c!§4] §f이제 폭발이 일어나면 순간이동합니다.");
+			for (TNTPrimed tnt : LocationUtil.getNearbyEntities(TNTPrimed.class, getPlayer().getLocation(), range, range, null)) {
+				if (bombTimers.containsKey(tnt)) bombTimers.get(tnt).setCount(1);
+				else tnt.setFuseTicks(1);
 			}
+			getPlayer().sendMessage("§4[§c!§4] §c점화시킵니다.");
+			SoundLib.ITEM_FLINTANDSTEEL_USE.playSound(getPlayer().getLocation(), 1, 1);
 		}
 		return false;
 	}
@@ -357,6 +375,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 			hologram.setCustomNameVisible(true);
 			hologram.setCustomName("§c§l" + (time / 20));
 			setPeriod(TimeUnit.TICKS, 1);
+			bombTimers.put(tntprimed, this);
 		}
 		
 		@Override
@@ -377,6 +396,7 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 		
 		@Override
 		protected void onSilentEnd() {
+			bombTimers.remove(tntprimed);
 			hologram.remove();
 			tntprimed.setFuseTicks(0);
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, tntprimed.getLocation(), 6.5, 6.5, predicate)) {
@@ -403,18 +423,18 @@ public class TimeBomb extends Synergy implements ActiveHandler {
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(player);
 			stopped.add(player);
 			player.leaveVehicle();
-				if (getGame().getParticipant(player).hasAbility()) {
-					AbilityBase ab = getGame().getParticipant(player).getAbility();
-					for (GameTimer t : ab.getRunningTimers()) {
-						if (t instanceof Duration.DurationTimer || t instanceof Cooldown.CooldownTimer) {
-							t.pause();
-						} else {
-							if (!ab.isRestricted()) {
-								ab.setRestricted(true);	
-							}
+			if (getGame().getParticipant(player).hasAbility()) {
+				AbilityBase ab = getGame().getParticipant(player).getAbility();
+				for (GameTimer t : ab.getRunningTimers()) {
+					if (t instanceof Duration.DurationTimer || t instanceof Cooldown.CooldownTimer) {
+						t.pause();
+					} else {
+						if (!ab.isRestricted()) {
+							ab.setRestricted(true);	
 						}
 					}
 				}
+			}
 			PotionEffects.SLOW_DIGGING.addPotionEffect(player, timestopduration * 20, 30, true);
 			PotionEffects.BLINDNESS.addPotionEffect(player, timestopduration * 20, 1, true);
 			NMS.sendTitle(player, "§b시간이 멈췄다.", "", 0, 40, 20);	

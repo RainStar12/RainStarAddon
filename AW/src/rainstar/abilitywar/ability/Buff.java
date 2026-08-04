@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -71,7 +73,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(
 			Buff.class, "cooldown", 75, "# 쿨타임") {
 
 		@Override
@@ -86,7 +88,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> AMPLIFIER = abilitySettings.new SettingObject<Integer>(
+	public static final SettingObject<Integer> AMPLIFIER = rsAbilitySettings.new SettingObject<Integer>(
 			Buff.class, "amplifier", 0, "# 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
 
 		@Override
@@ -101,7 +103,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> RANGE = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> RANGE = rsAbilitySettings.new SettingObject<Double>(
 			Buff.class, "range", 5.0, "# 파운딩 범위") {
 
 		@Override
@@ -111,8 +113,8 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> INVENTORY_DAMAGE = abilitySettings.new SettingObject<Double>(
-			Buff.class, "item-damage", 0.4, "# 채워진 칸당 피해량") {
+	public static final SettingObject<Double> INVENTORY_DAMAGE = rsAbilitySettings.new SettingObject<Double>(
+			Buff.class, "inventory-damage", 0.6, "# 채워진 칸당 피해량") {
 
 		@Override
 		public boolean condition(Double value) {
@@ -121,7 +123,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> EFFECT_CHANGE = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> EFFECT_CHANGE = rsAbilitySettings.new SettingObject<Double>(
 			Buff.class, "effect-change", 10.0, "# 효과 변경 주기") {
 
 		@Override
@@ -131,7 +133,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> STUN = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> STUN = rsAbilitySettings.new SettingObject<Double>(
 			Buff.class, "stun", 1.0, "# 기절 지속시간") {
 
 		@Override
@@ -141,7 +143,7 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> CHANNELING = abilitySettings.new SettingObject<Double>(
+	public static final SettingObject<Double> CHANNELING = rsAbilitySettings.new SettingObject<Double>(
 			Buff.class, "channeling", 3.0, "# 이동 불가 시간") {
 
 		@Override
@@ -151,8 +153,8 @@ public class Buff extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Double> HEAL_AMOUNT = abilitySettings.new SettingObject<Double>(
-			Buff.class, "heal-amount", 5.0, "# 체력 회복량") {
+	public static final SettingObject<Double> HEAL_AMOUNT = rsAbilitySettings.new SettingObject<Double>(
+			Buff.class, "heal-amount", 10.0, "# 체력 회복량") {
 
 		@Override
 		public boolean condition(Double value) {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ public class Chatterbox extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> PERIOD = 
-			abilitySettings.new SettingObject<Double>(Chatterbox.class, "damage-increase", 30.0,
+			rsAbilitySettings.new SettingObject<Double>(Chatterbox.class, "damage-increase", 30.0,
 			"# 문장이 나오는 주기", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -58,7 +60,7 @@ public class Chatterbox extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> DEADLINE_TIME = 
-			abilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline-time", 15.0,
+			rsAbilitySettings.new SettingObject<Double>(Chatterbox.class, "deadline-time", 15.0,
 			"# 받아쓰기 제한시간", "# 단위: 초") {
 		@Override
 		public boolean condition(Double value) {
@@ -67,8 +69,8 @@ public class Chatterbox extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> DECREASE = 
-			abilitySettings.new SettingObject<Integer>(Chatterbox.class, "damage-decrease", 75,
-			"# 받아쓰기 중 피해량 감소", "# 단위: %") {
+			rsAbilitySettings.new SettingObject<Integer>(Chatterbox.class, "damage-all-decrease", 25,
+			"# 받아쓰기 중 주는/받는 피해량 감소", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -1108,7 +1110,9 @@ public class Chatterbox extends AbilityBase {
 			+ "단 13초 앞조차 모른다 해도#"
 			+ "기분 내키는 대로 하는 난 적을 골라 싸우는 비겁한 소년#"
 			+ "하늘로 흩날리는 세상의 저편 어둠을 비추는 첫번째 별#"
-			+ "ㅎ";
+			+ "ㅋ#"
+			+ "쉬어가세요#"
+			+ "뭘 기대하신 거죠?";
 	
 	static final String englishes = "A bad beginning makes a bad ending.#"
 			+ "A bad corn promise is better than a good lawsuit.#"
@@ -2127,7 +2131,7 @@ public class Chatterbox extends AbilityBase {
 	private static final String[] koreanlist = koreans.split("#");
 	private static final String[] englishlist = englishes.split("#");
 	
-	private final int period = (int) (PERIOD.getValue() * 20 * Wreck.calculateDecreasedAmount(33));
+	private final int period = (int) (PERIOD.getValue() * 20 * Wreck.calculateDecreasedAmount(50));
 	private final int duration = (int) (DEADLINE_TIME.getValue() * 20);
 	private final double decrease = 1 - (DECREASE.getValue() * 0.01);
 	private final Random random = new Random();
@@ -2169,8 +2173,12 @@ public class Chatterbox extends AbilityBase {
 		public void run(int count) {
 			if (count % 15 == 0) {
 				nowType = random.pick(potiontypes);
-				nowDuration = random.nextInt(600);
-				nowAmplifier = random.nextInt(3);
+				nowDuration = random.nextInt(601) + 100;
+				int randomnum = random.nextInt(100);
+				if (randomnum < 20) nowAmplifier = 0;
+				else if (randomnum < 70) nowAmplifier = 1;
+				else if (randomnum < 95) nowAmplifier = 2;
+				else nowAmplifier = 3;
 				nowEffect = "" + POTIONS.get(nowType) + " §e" + (nowAmplifier + 1) + " §8(§7" + df.format(nowDuration / 20.0) + "초§8)";
 			}
 			

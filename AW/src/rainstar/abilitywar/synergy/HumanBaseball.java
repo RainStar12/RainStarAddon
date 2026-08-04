@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,7 +62,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN 
-	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
+	= rsSynergySettings.new SettingObject<Integer>(HumanBaseball.class,
 			"cooldown", 70, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -74,7 +76,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_BY_ENTITY 
-	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
+	= rsSynergySettings.new SettingObject<Integer>(HumanBaseball.class,
 			"damage-by-entity", 12, "# 생명체에 부딪힐 때 양쪽의 피해", "# 피해 타입은 발사체입니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -83,7 +85,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DAMAGE_BY_WALL 
-	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
+	= rsSynergySettings.new SettingObject<Integer>(HumanBaseball.class,
 			"damage-by-wall", 3, "# 벽에 부딪힐 때 피해", "# 피해 타입은 방어력 무시 근접입니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -92,7 +94,7 @@ public class HumanBaseball extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> STUN_DURATION 
-	= synergySettings.new SettingObject<Integer>(HumanBaseball.class,
+	= rsSynergySettings.new SettingObject<Integer>(HumanBaseball.class,
 			"stun-duration", 40, "# 벽에 부딪힐 때 기절 시간 (단위: 틱)", "# 20틱 = 1초, 1틱 = 0.05초") {
 		@Override
 		public boolean condition(Integer value) {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +62,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> WAIT = 
-			abilitySettings.new SettingObject<Double>(Earthquake.class, "wait", 0.5,
+			rsAbilitySettings.new SettingObject<Double>(Earthquake.class, "wait", 0.5,
 			"# 지진파 대기 시간") {
 
 		@Override
@@ -71,7 +73,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> STUN = 
-			abilitySettings.new SettingObject<Double>(Earthquake.class, "stun", 4.0,
+			rsAbilitySettings.new SettingObject<Double>(Earthquake.class, "stun", 5.0,
 			"# 기절 시간") {
 
 		@Override
@@ -82,7 +84,7 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 200,
+			rsAbilitySettings.new SettingObject<Integer>(Earthquake.class, "cooldown", 120,
 			"# 쿨타임") {
 
 		@Override
@@ -221,10 +223,12 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 			for (Iterator<Location> iterator = Circle.iteratorOf(center, radius, maxCount); iterator.hasNext(); ) {
 				Location loc = iterator.next();
 				LocationUtil.floorY(loc);
-				ParticleLib.CRIT.spawnParticle(loc, 0, 0, 0, 1, 0.35);
-				ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count - 1));
+				if (count % 2 == 0) {
+					ParticleLib.CRIT.spawnParticle(loc, 0, 0, 0, 1, 0.35);
+					ParticleLib.REDSTONE.spawnParticle(loc, gradations.get(count - 1));	
+				}
 				SoundLib.BLOCK_STONE_BREAK.playSound(loc, 0.5f, 1);
-				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.6, 0.6, predicate)) {
+				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, loc, 0.85, 0.85, predicate)) {
 					hitEntity.add(damageable);
 					damageable.setVelocity(new Vector(0, 0.5 + (maxCount / 75.0), 0));
 					if (damageable instanceof Player) new Airborn((Player) damageable).start();
@@ -235,6 +239,11 @@ public class Earthquake extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onEnd() {
 			onSilentEnd();
+		}
+		
+		@Override
+		public void onSilentEnd() {
+			hitEntity.clear();
 		}
 		
 	}

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +62,6 @@ import kotlin.ranges.RangesKt;
 
 @AbilityManifest(name = "섀도우", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §9가장 오래된 감정§f: §b§n공포 상태§f의 적에게 주는 피해가 $[FEAR_DAMAGE_INCREASE]% 증가합니다.",
-		" 다른 두 스킬 중 하나라도 §c쿨타임§f이라면 패시브 외 다른 스킬도 사용하지 못합니다.",
 		"§7검 우클릭 §8- §5흑마술§f: $[DARK_ARTS_DURATION]초간 내게 피해를 주는 대상은 $[DARK_ARTS_FEAR]초간 §b§n공포 상태§f가 됩니다.",
 		" §5흑마술§f이 끝날 때, §b§n공포§f를 준 대상 수 × §d$[HEAL]HP§f를 §d회복§f합니다. $[DARK_ARTS_COOLDOWN]",
 		"§7철괴 우클릭 §8- §c그림자 베기§f: $[SHADOW_MODE_DURATION]초간 §3그림자 상태§f가 되어, 적을 근접 공격하면",
@@ -84,7 +85,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> FEAR_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "fear-damage-increase", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Shadow.class, "fear-damage-increase", 15,
 			"# 공포 대상에게 피해량 증가 수치") {
 
 		@Override
@@ -95,7 +96,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DARK_ARTS_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-duration-", 3.3,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-duration-", 3.3,
 			"# 흑마술 지속시간") {
 
 		@Override
@@ -106,7 +107,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> DARK_ARTS_FEAR = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-fear", 1.2,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "dark-arts-fear", 1.2,
 			"# 흑마술 공포 지속시간") {
 
 		@Override
@@ -117,7 +118,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> HEAL = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "heal", 2.5,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "heal", 2.5,
 			"# 흑마술 종료 시 회복량") {
 
 		@Override
@@ -128,7 +129,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DARK_ARTS_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown--", 40,
+			rsAbilitySettings.new SettingObject<Integer>(Shadow.class, "dark-arts-cooldown", 70,
 			"# 흑마술 쿨타임") {
 
 		@Override
@@ -144,7 +145,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_MODE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-mode-duration-", 6.0,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "shadow-mode-duration-", 7.0,
 			"# 그림자 베기 지속시간") {
 
 		@Override
@@ -155,7 +156,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "range", 2.0,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "range", 2.0,
 			"# 그림자 베기 범위") {
 
 		@Override
@@ -166,7 +167,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_FEAR = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-fear", 0.8,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "shadow-fear-amount", 1.2,
 			"# 그림자 베기 공포 지속시간") {
 
 		@Override
@@ -177,7 +178,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> SHADOW_ADD_DURATION = 
-			abilitySettings.new SettingObject<Double>(Shadow.class, "shadow-add-duration", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(Shadow.class, "shadow-add-duration", 30.0,
 			"# 그림자 베기 추가 지속시간") {
 
 		@Override
@@ -188,7 +189,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SHADOW_DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-damage-increase", 30,
+			rsAbilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-damage-increase", 30,
 			"# 그림자 베기 적 처치 공격력 증가 수치") {
 
 		@Override
@@ -199,7 +200,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> SHADOW_MODE_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown--", 60,
+			rsAbilitySettings.new SettingObject<Integer>(Shadow.class, "shadow-mode-cooldown", 90,
 			"# 그림자 베기 쿨타임") {
 
 		@Override
@@ -270,7 +271,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	};
 	
 	public boolean ActiveSkill(Material material, AbilityBase.ClickType clicktype) {
-	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !shadow.isRunning() && !darkarts.isRunning() && !shadowcool.isCooldown() && !darkartscool.isCooldown()) {
+	    if (material.equals(Material.IRON_INGOT) && clicktype.equals(ClickType.RIGHT_CLICK) && !shadow.isRunning() && !shadowcool.isCooldown()) {
 	    	return shadow.start();
 	    }
 	    return false;
@@ -335,7 +336,7 @@ public class Shadow extends AbilityBase implements ActiveHandler {
 	
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !shadow.isRunning() && !darkarts.isRunning() && !darkartscool.isCooldown() && !shadowcool.isCooldown()) {
+		if (e.getPlayer().equals(getPlayer()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType()) && !darkarts.isRunning() && !darkartscool.isCooldown()) {
 			final AbilityActiveSkillEvent event = new AbilityActiveSkillEvent(this, e.getItem().getType(), ClickType.RIGHT_CLICK);
 			Bukkit.getPluginManager().callEvent(event);
 			getPlayer().sendMessage("§d능력을 사용하였습니다.");

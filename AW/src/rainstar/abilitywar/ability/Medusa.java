@@ -1,13 +1,13 @@
 package rainstar.abilitywar.ability;
 
-import java.text.DecimalFormat;
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -17,7 +17,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -30,14 +29,14 @@ import rainstar.abilitywar.effect.Petrification;
 		"적이 나를 $[LOOKING_COUNT]초간 쳐다보면, 대상은 $[PETRIFICATION]초간 §8§n석화§f됩니다. $[COOLDOWN]",
 		"쳐다보지 않는 시간이 $[NOT_LOOK]초를 넘어가면 쳐다본 시간이 초기화됩니다.",
 		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
-		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
+		" 4번째 피해를 받으면 2배의 피해를 입고 석화가 해제됩니다.",
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다.",
 		"§b[§7아이디어 제공자§b] §eYeow_ool §7/ §b_Daybreak_"
 		},
 		summarize = {
 		"적이 나를 일정 시간 쳐다보면 대상은 석화됩니다. $[COOLDOWN]",
 		"§0[§8석화§0]§f 이동할 수 없습니다. 피해를 99% 경감하여 받습니다.",
-		" 7번째 피해를 받으면 3배의 피해를 입고 석화가 해제됩니다.",
+		" 4번째 피해를 받으면 2배의 피해를 입고 석화가 해제됩니다.",
 		" 웅크리기를 연타하는 것으로 저항하여 석화 지속시간을 줄일 수 있습니다."
 		})
 public class Medusa extends AbilityBase {
@@ -47,7 +46,7 @@ public class Medusa extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> COOLDOWN = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "cooldown", 20.0,
+			rsAbilitySettings.new SettingObject<Double>(Medusa.class, "unit-cooldown", 15.0,
             "# 유닛별 쿨타임", "# 단위: 초", "# 석화 걸기에 성공 시 바로 적용됩니다.") {
         @Override
         public boolean condition(Double value) {
@@ -61,7 +60,7 @@ public class Medusa extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> PETRIFICATION = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "petrification", 9.5,
+			rsAbilitySettings.new SettingObject<Double>(Medusa.class, "petrification-duration-amount", 7.0,
             "# 석화 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -70,7 +69,7 @@ public class Medusa extends AbilityBase {
     };
 	
 	public static final SettingObject<Double> LOOKING_COUNT = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "looking-count", 3.5,
+			rsAbilitySettings.new SettingObject<Double>(Medusa.class, "looking-count", 3.5,
             "# 석화를 걸기에 필요한 시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -79,7 +78,7 @@ public class Medusa extends AbilityBase {
     };
     
 	public static final SettingObject<Double> NOT_LOOK = 
-			abilitySettings.new SettingObject<Double>(Medusa.class, "not-look", 1.2,
+			rsAbilitySettings.new SettingObject<Double>(Medusa.class, "not-look-time", 2.5,
             "# 바라볼 수 있는 시간 최대치", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -88,7 +87,7 @@ public class Medusa extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> RANGE = 
-			abilitySettings.new SettingObject<Integer>(Medusa.class, "range", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Medusa.class, "range-amount", 25,
             "# 인식 가능 거리", "# 단위: 칸") {
         @Override
         public boolean condition(Integer value) {
@@ -161,8 +160,6 @@ public class Medusa extends AbilityBase {
 	public class LookTimer extends AbilityTimer {
 		
 		private final Player player;
-		private final ActionbarChannel ac;
-		private final DecimalFormat df = new DecimalFormat("0.0");
 		private int stack = 0;
 		
 		public LookTimer(Player player) {
@@ -170,7 +167,6 @@ public class Medusa extends AbilityBase {
 			setPeriod(TimeUnit.TICKS, 1);
 			looktimers.put(player, this);
 			this.player = player;
-			ac = getGame().getParticipant(player).actionbar().newChannel();
 		}
 		
 		@Override
@@ -179,7 +175,6 @@ public class Medusa extends AbilityBase {
 				stack++;
 				if (stack > notlookcount) this.stop(true);
 			}
-			else ac.update("§c" + df.format(count));
 		}
 		
 		@Override
@@ -193,7 +188,6 @@ public class Medusa extends AbilityBase {
 		@Override
 		public void onSilentEnd() {
 			stack = 0;
-			ac.unregister();
 			looktimers.remove(player);
 		}
 		

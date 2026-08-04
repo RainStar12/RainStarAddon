@@ -30,6 +30,7 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -39,7 +40,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 }, description = {
 		"§f이동과 시야 전환이 불가능해집니다.",
 		"§f공격할 수 없고, 대미지를 99% 경감하여 받습니다.",
-		"§f7번째 피해는 석화를 해제시키고 3배의 피해를 입습니다.",
+		"§f4번째 피해는 석화를 해제시키고 2배의 피해를 입습니다.",
 		"§f웅크리기를 연타하여 저항해, 지속시간을 조금씩 줄일 수 있습니다."
 })
 public class Petrification extends AbstractGame.Effect implements Listener {
@@ -103,10 +104,10 @@ public class Petrification extends AbstractGame.Effect implements Listener {
 
 	@EventHandler
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(participant.getPlayer()) && !e.isCancelled()) {
+		if (e.getEntity().equals(participant.getPlayer()) && !e.isCancelled() && !e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK)) {
 			stack++;
-			e.setDamage(stack < 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
-			if (stack >= 7) {
+			e.setDamage(stack < 4 ? e.getDamage() * 0.01 : e.getDamage() * 2);
+			if (stack >= 4) {
 				SoundLib.ENTITY_PLAYER_ATTACK_STRONG.playSound(participant.getPlayer().getLocation(), 1, 1.15f);
 				ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.STONE);
 				this.stop(false);
@@ -118,8 +119,8 @@ public class Petrification extends AbstractGame.Effect implements Listener {
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(participant.getPlayer()) && !e.isCancelled()) {
 			stack++;
-			e.setDamage(stack < 7 ? e.getDamage() * 0.01 : e.getDamage() * 3);
-			if (stack >= 7) {
+			e.setDamage(stack < 4 ? e.getDamage() * 0.01 : e.getDamage() * 2);
+			if (stack >= 4) {
 				SoundLib.ENTITY_PLAYER_ATTACK_STRONG.playSound(participant.getPlayer().getLocation(), 1, 1.15f);
 				ParticleLib.ITEM_CRACK.spawnParticle(participant.getPlayer().getEyeLocation(), .3f, .3f, .3f, 100, 0.5, MaterialX.STONE);
 				this.stop(false);

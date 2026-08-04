@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
@@ -53,7 +55,6 @@ import rainstar.abilitywar.effect.FrozenHeart;
 import rainstar.abilitywar.effect.SnowflakeMark;
 
 @AbilityManifest(name = "유키<눈꽃>", rank = Rank.L, species = Species.HUMAN, explain = {
-		"냉기를 자유자재로 다루는 §b얼음 속성§f의 눈꽃 마법사, 유키.",
 		"§7패시브 §8- §b콜드 마스터§f: 빙결, 냉기, 눈꽃 표식, 프로즌 하트 상태이상을",
 		" 무효화시키고 효과를 받을 때마다 최대 10의 눈꽃 결정 스택을 쌓아",
 		" 윈터 퍼레이드의 피해를 강화합니다.",
@@ -204,7 +205,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> CAST_COOLDOWN 
-	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
+	= rsSynergySettings.new SettingObject<Integer>(YukiSnow.class,
 			"cast-cooldown", 40, "# 영창 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -218,7 +219,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> DURATION 
-	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
+	= rsSynergySettings.new SettingObject<Integer>(YukiSnow.class,
 			"duration", 5, "# 필드 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -227,7 +228,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Integer> EFFECT_DURATION 
-	= synergySettings.new SettingObject<Integer>(YukiSnow.class,
+	= rsSynergySettings.new SettingObject<Integer>(YukiSnow.class,
 			"effect-duration", 15, "# 프로즌 하트 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -236,7 +237,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Boolean> SNOWMAN_SPAWN 
-	= synergySettings.new SettingObject<Boolean>(YukiSnow.class,
+	= rsSynergySettings.new SettingObject<Boolean>(YukiSnow.class,
 			"snowman-spawn", true, "# 유키가 플레이어를 죽일 때 눈사람을",
 			"# 소환할 지 여부를 정합니다.") {
 	};
@@ -336,9 +337,9 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-				damage = 8;
+				damage = 16;
 			} else {
-				damage = 6;
+				damage = 14;
 			}
 		}
 		
@@ -346,7 +347,7 @@ public class YukiSnow extends Synergy implements ActiveHandler {
 		public void run(int count) {
     		if (count % 20 == 0) {
     			for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, loc, 7, 7, predicate)) {
-    				Damages.damageMagic(d, getPlayer(), false, (float) (damage + (stack * 0.25)));
+    				Damages.damageMagic(d, getPlayer(), false, (float) (damage + stack));
     				if (d instanceof Player) {
     					Player p = (Player) d;
     					FrozenHeart.apply(getGame().getParticipant(p), TimeUnit.SECONDS, EFFECT_DURATION.getValue());

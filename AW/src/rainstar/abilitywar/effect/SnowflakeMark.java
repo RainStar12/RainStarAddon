@@ -31,7 +31,7 @@ import daybreak.google.common.base.Strings;
 @EffectManifest(name = "눈꽃 표식", displayName = "§b눈꽃 표식", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.COMBAT_RESTRICTION
 }, description = {
-		"방어력을 레벨당 2씩 감소시킵니다.",
+		"방어력을 레벨당 3씩 감소시킵니다.",
 		"화염계 피해를 받으면 피해를 줄이고 효과가 빠르게 사라집니다."
 })
 
@@ -98,7 +98,7 @@ public class SnowflakeMark extends AbstractGame.Effect implements Listener {
 	
 	@Override
 	protected void onStart() {
-		this.snowflake = new AttributeModifier(UUID.randomUUID(), "snowflake", -(level * 2), Operation.ADD_NUMBER);
+		this.snowflake = new AttributeModifier(UUID.randomUUID(), "snowflake", -(level * 3), Operation.ADD_NUMBER);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		participant.getPlayer().getAttribute(Attribute.GENERIC_ARMOR).addModifier(snowflake);
 		super.onStart();

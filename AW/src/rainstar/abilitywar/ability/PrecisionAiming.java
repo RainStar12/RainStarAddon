@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -40,7 +42,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.google.common.base.Predicate;
 import daybreak.google.common.base.Strings;
 
-@AbilityManifest(name = "정밀 조준", rank = Rank.A, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "정밀 조준", rank = Rank.S, species = Species.HUMAN, explain = {
 		"$[RELOAD]초마다 다음 $[AMMO_SIZE]발의 화살을 정밀하게 조준하여,",
 		"화살로부터 $[RANGE]칸 내 가장 가까운 플레이어에게 §5유도§f됩니다."
 		},
@@ -61,7 +63,7 @@ import daybreak.google.common.base.Strings;
         		"화살은 유도만 할 뿐, 관통의 효과를 지니지 못해",
         		"지형지물로 화살이 가로막힐 수 있음을 주의하세요."
         })
-}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.TWO), difficulty = Difficulty.VERY_EASY)
+}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.FIVE), difficulty = Difficulty.VERY_EASY)
 
 public class PrecisionAiming extends AbilityBase {
 	
@@ -76,7 +78,7 @@ public class PrecisionAiming extends AbilityBase {
 	private int stack = 0;
 	
 	public static final SettingObject<Integer> RELOAD = 
-			abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "reload-time", 40, 
+			rsAbilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "reload", 30, 
 			"# 강화 대기 시간", "# 쿨타임 감소 영향을 50%까지 받습니다.") {
 		@Override
 		public boolean condition(Integer value) {
@@ -85,7 +87,7 @@ public class PrecisionAiming extends AbilityBase {
 	};
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(PrecisionAiming.class, "range", 3.5, 
+			rsAbilitySettings.new SettingObject<Double>(PrecisionAiming.class, "range", 3.5, 
 			"# 유도 범위") {
 		@Override
 		public boolean condition(Double value) {
@@ -94,7 +96,7 @@ public class PrecisionAiming extends AbilityBase {
 	};
 	
 	public static final SettingObject<Integer> AMMO_SIZE = 
-			abilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "ammo-size", 7, 
+			rsAbilitySettings.new SettingObject<Integer>(PrecisionAiming.class, "ammo-size", 7, 
 			"# 강화할 화살의 수") {
 		@Override
 		public boolean condition(Integer value) {

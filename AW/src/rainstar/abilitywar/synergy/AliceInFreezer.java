@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,7 +69,7 @@ public class AliceInFreezer extends Synergy implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			synergySettings.new SettingObject<Integer>(AliceInFreezer.class, "cooldown", 17,
+			rsSynergySettings.new SettingObject<Integer>(AliceInFreezer.class, "cooldown", 27,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {

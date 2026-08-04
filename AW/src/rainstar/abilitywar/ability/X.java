@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 
 import javax.annotation.Nullable;
@@ -43,15 +45,17 @@ import rainstar.abilitywar.effect.Erosion;
 		"§7철괴 우클릭 §8- §4통제불가§f: $[DURATION]초간 §d$[ZOMBIE_HP]HP§f의 §2좀비§f로 변합니다. $[COOLDOWN]",
 		"§2좀비§f가 적을 공격하거나 사망 시 폭발하며 $[RANGE]칸 내에 살점을 뿌립니다.",
 		"이 살점에 휘말린 대상은 $[EROSION_DURATION]초간 §2§n침식§f 상태에 빠집니다.",
-		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
-		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
+		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 4초간 §5§n감염§f시키고,",
+		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다.",
+		" 강타에 의한 피해를 50%만 적용받습니다."
 		},
 		summarize = {
 		"§5§n감염§f이나 §2§n침식§f 상태이상을 무효화하고 그 지속시간의 두 배만큼",
 		"공격력이 증가합니다. §7철괴 우클릭 시§f $[DURATION]초간 §2좀비§f가 되어",
 		"적을 공격하거나 사망 시 폭발하는 것으로 주변에게 §2§n침식§f 상태를 부여합니다.",
-		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 1.5초간 §5§n감염§f시키고,",
-		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다."
+		"§5[§2침식§5] §f신체가 좀비화되어 통제할 수 없게 됩니다. 공격한 대상을 4초간 §5§n감염§f시키고,",
+		" 이 상태에서 적에게 사망할 경우 본인의 능력을 상대에게 감염시킵니다.",
+		" 강타에 의한 피해를 50%만 적용받습니다."
 		})
 public class X extends AbilityBase implements ActiveHandler {
 	
@@ -60,7 +64,7 @@ public class X extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(X.class, "cooldown-", 100,
+			rsAbilitySettings.new SettingObject<Integer>(X.class, "cooldown-", 100,
             "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
@@ -74,7 +78,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> DURATION = 
-			abilitySettings.new SettingObject<Double>(X.class, "zombie-duration-", 10.0,
+			rsAbilitySettings.new SettingObject<Double>(X.class, "zombie-duration-", 10.0,
             "# 좀비화 지속 시간") {
         @Override
         public boolean condition(Double value) {
@@ -83,7 +87,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> ZOMBIE_HP = 
-			abilitySettings.new SettingObject<Double>(X.class, "zombie-hp", 4.0,
+			rsAbilitySettings.new SettingObject<Double>(X.class, "zombie-hp", 4.0,
             "# 좀비 체력") {
         @Override
         public boolean condition(Double value) {
@@ -92,7 +96,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(X.class, "range", 5.0,
+			rsAbilitySettings.new SettingObject<Double>(X.class, "range", 5.0,
             "# 폭발 범위") {
         @Override
         public boolean condition(Double value) {
@@ -101,7 +105,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DAMAGE_INCREASE = 
-			abilitySettings.new SettingObject<Integer>(X.class, "damage-increase", 20,
+			rsAbilitySettings.new SettingObject<Integer>(X.class, "damage-increase", 20,
             "# 공격력 증가치") {
         @Override
         public boolean condition(Integer value) {
@@ -110,7 +114,7 @@ public class X extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> EROSION_DURATION = 
-			abilitySettings.new SettingObject<Double>(X.class, "erosion-duration", 8.0,
+			rsAbilitySettings.new SettingObject<Double>(X.class, "erosion-duration", 8.0,
             "# 침식 부여 시간") {
         @Override
         public boolean condition(Double value) {
@@ -219,7 +223,7 @@ public class X extends AbilityBase implements ActiveHandler {
     	public void run(int count) {
     		ac.update("§2좀비화§f: " + df.format(count / 20.0));
     		if (zombie.isDead()) this.stop(true);
-    		else getPlayer().setSpectatorTarget(zombie);
+    		if (!zombie.isDead() && zombie != null) getPlayer().setSpectatorTarget(zombie);
     	}
     	
     	@Override

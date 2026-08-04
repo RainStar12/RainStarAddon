@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,8 +61,8 @@ import rainstar.abilitywar.effect.Poison;
 		name = "버터플라이", rank = Rank.S, species = Species.ANIMAL, explain = {
 		"§7철괴를 우클릭§f하면 §3$[DURATION]초§f간 주위 §3$[RANGE]칸§f 안에 있는 생명체들에게",
 		"§a인분 가루§f를 뿌려 상태이상을 부여합니다. $[COOLDOWN]",
-		"§a인분 가루§f는 세 종류로, 능력을 쓸 때마다 순차적으로 다음 효과로 넘어가며",
-		"§7철괴를 든 채 F키§f를 눌러 §a가루§f의 상세 효과를 보며 조정 가능합니다.",
+		"§a인분 가루§f는 §d§n몽환§f, §2§n중독§f, §3§n마비§f로, 능력을 쓸 때마다 순차적으로 다음 효과로 넘어가며",
+		"§7철괴 F키§f를 눌러 §a가루§f의 상세 효과를 보며 조정 가능합니다.",
 		"§e낮§f에는 쿨타임이 더 빠르게 끝납니다.",
 		"§b[§7아이디어 제공자§b] §3lLeeShin"
 		},
@@ -77,7 +79,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> RANGE = abilitySettings.new SettingObject<Integer>(Butterfly.class, "range", 12,
+	public static final SettingObject<Integer> RANGE = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "range", 12,
 			"# 능력 범위") {
 
 		@Override
@@ -87,7 +89,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Butterfly.class, "cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "cooldown", 120,
 			"# 쿨타임", "# 쿨타임 감소 효과를 66%까지 받습니다.") {
 
 		@Override
@@ -102,7 +104,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Butterfly.class, "duration", 7,
+	public static final SettingObject<Integer> DURATION = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "duration", 7,
 			"# 지속시간 (단위: 초)") {
 
 		@Override
@@ -112,7 +114,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> DREAM_DURATION = abilitySettings.new SettingObject<Integer>(Butterfly.class, "dream-duration", 12,
+	public static final SettingObject<Integer> DREAM_DURATION = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "dream-duration-amount", 13,
 			"# 몽환 지속시간 (단위: 초)") {
 
 		@Override
@@ -122,7 +124,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> POISON_DURATION = abilitySettings.new SettingObject<Integer>(Butterfly.class, "poison-duration", 11,
+	public static final SettingObject<Integer> POISON_DURATION = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "poison-duration-amount", 5,
 			"# 중독 지속시간 (단위: 초)") {
 
 		@Override
@@ -132,7 +134,7 @@ public class Butterfly extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> PARALYSIS_DURATION = abilitySettings.new SettingObject<Integer>(Butterfly.class, "paralysis-duration", 10,
+	public static final SettingObject<Integer> PARALYSIS_DURATION = rsAbilitySettings.new SettingObject<Integer>(Butterfly.class, "paralysis-duration-amount", 15,
 			"# 마비 지속시간 (단위: 초)") {
 
 		@Override

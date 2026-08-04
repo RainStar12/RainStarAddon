@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,11 +69,11 @@ import rainstar.abilitywar.effect.ElectricShock;
 		"§7철괴 좌클릭 §8- §e자기 폭풍§f: 바라보는 방향에 10초간 원 파티클이 생겨 다시", 
 		" 좌클릭 시 전자기장을 생성해 범위 내 대상들을 중심으로 계속해서 끌어당기고,",
 		" 7초 후 자기 폭발을 일으킵니다. $[LEFT_COOLDOWN]",
-		" 폭발에 휘말린 대상은 14초의 §d§n감전§f 효과를 얻습니다.",
+		" 폭발에 휘말린 대상은 $[ELECTRIC_SHOCK]초의 §d§n감전§f 효과를 얻습니다.",
 		"§7철괴 우클릭 §8- §e레일건§f: 다음 활 발사 시 초고속의 유도 탄환을 발사해 적중 대상에게",
 		" 근접 피해를 주고, 플라즈마 폭발을 일으키고 대상의 위치로 순간 이동합니다. $[RIGHT_COOLDOWN]",
-		"§b[§d감전§b]§f 매 2초마다 0.5초간 §e§n기절§f합니다. §d§n감전§f 도중에 §e§n기절§f 효과가 새로이",
-		" 들어올 때마다 획득한 §e§n기절§f의 시간에 비례해 0.5초당 1의 피해를 끝날 때 입습니다."
+		"§b[§d감전§b]§f 매 2초마다 0.5초간 이동 불가가 됩니다. §d§n감전§f 도중에 §e§n기절§f 효과가 새로이",
+		" 들어올 때마다 획득한 §e§n기절§f의 시간에 비례해 0.2초당 1의 피해를 끝날 때 입습니다."
 		},
 		summarize = {
 		"자신이 주는 모든 §c근접 피해 외 피해§f는 피해량에 비례한 §e기절 부여§f로 대체됩니다.",
@@ -91,7 +93,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Integer> LEFT_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Tesla.class, "left-cooldown", 170,
+			rsAbilitySettings.new SettingObject<Integer>(Tesla.class, "left-cooldown", 170,
             "# 좌클릭 쿨타임") {
 
         @Override
@@ -107,7 +109,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> RIGHT_COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Tesla.class, "right-cooldown", 110,
+			rsAbilitySettings.new SettingObject<Integer>(Tesla.class, "right-cooldown", 110,
             "# 우클릭 쿨타임") {
 
         @Override
@@ -121,9 +123,32 @@ public class Tesla extends AbilityBase implements ActiveHandler {
         }
 
     };
+    
+	public static final SettingObject<Double> ELECTRIC_SHOCK = 
+			rsAbilitySettings.new SettingObject<Double>(Tesla.class, "electric-shock-duration", 14.0,
+            "# 감전 지속시간", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+    
+	public static final SettingObject<Double> SUB_ELECTRIC_SHOCK = 
+			rsAbilitySettings.new SettingObject<Double>(Tesla.class, "sub-electric-shock-duration", 5.0,
+            "# 추가 감전 지속시간", "# 단위: 초") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
 	
 	private final Cooldown leftcool = new Cooldown(LEFT_COOLDOWN.getValue(), "자기 폭풍");
 	private final Cooldown rightcool = new Cooldown(RIGHT_COOLDOWN.getValue(), "레일건 충전");
+	private final int electricDuration = (int) (ELECTRIC_SHOCK.getValue() * 20), subElectricDuration = (int) (SUB_ELECTRIC_SHOCK.getValue() * 20);
 	
 	private final ActionbarChannel ac = newActionbarChannel();
 	private boolean charged = false;
@@ -262,7 +287,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			Projectile projectile = (Projectile) e.getDamager();
 			if (getPlayer().equals(projectile.getShooter()) && !player.equals(getPlayer())) {
 				if (predicate.test(player)) {
-					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 7));
+					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 10));
 					e.setDamage(0);	
 				}
 			}
@@ -271,7 +296,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			Player player = (Player) e.getEntity();
 			if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.ENTITY_SWEEP_ATTACK) && !player.equals(getPlayer())) {
 				if (predicate.test(player)) {
-					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 7));
+					Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, (int) (e.getFinalDamage() * 10));
 					e.setDamage(0);	
 				}
 			}
@@ -379,6 +404,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 			if (count % 50 == 0) {
 				for (Player player : LocationUtil.getEntitiesInCircle(Player.class, location, 7, predicate)) {
 					player.getWorld().strikeLightning(player.getLocation());
+					ElectricShock.apply(getGame().getParticipant(player), TimeUnit.TICKS, subElectricDuration);	
 				}
 			}
 			
@@ -395,13 +421,13 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			for (Location loc : explosioncircle.toLocations(location)) {
-				location.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.35f, false, false);
+				location.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 1.4f, false, false);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				ParticleLib.EXPLOSION_HUGE.spawnParticle(loc);
 				location.getWorld().strikeLightning(loc);
 			}
-			for (Player p : LocationUtil.getNearbyEntities(Player.class, location, 6, 6, predicate)) {
-				ElectricShock.apply(getGame().getParticipant(p), TimeUnit.SECONDS, 14);	
+			for (Player p : LocationUtil.getNearbyEntities(Player.class, location, 7, 7, predicate)) {
+				ElectricShock.apply(getGame().getParticipant(p), TimeUnit.TICKS, electricDuration);	
 			}
 		}
 		
@@ -509,7 +535,7 @@ public class Tesla extends AbilityBase implements ActiveHandler {
 					ParticleLib.EXPLOSION_HUGE.spawnParticle(player.getLocation());
 					player.getWorld().strikeLightningEffect(player.getLocation());
 					player.damage(15, getPlayer());
-					player.getWorld().createExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1.4f, false, false);
+					player.getWorld().createExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1.8f, false, false);
 					hitPlayer.add(player);
 					new BukkitRunnable() {
 						@Override

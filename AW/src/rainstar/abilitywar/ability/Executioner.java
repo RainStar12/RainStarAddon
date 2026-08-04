@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +72,7 @@ import kotlin.ranges.RangesKt;
 		"§7검 들고 F키§f로 §a유예 §7↔ §c집행§f 모드를 변경할 수 있습니다.",
         "변경 후 다음 근접 공격은 심판 표식을 터뜨려 효과를 발동시킬 수 있습니다.",
         "§2[§a유예§2]§f", 
-        "§8<§7패시브§8>§f 매 초당 $[EXTRA_HEAL]의 체력을 §d회복§f합니다.",
+        "§8<§7패시브§8>§f 매 초당 $[EXTRA_HEAL_AMOUNT]의 체력을 §d회복§f합니다.",
         "§8<§7표식 폭발§8>§f 표식 수치만큼 대상은 공격력이 §b감소§f합니다. 이는 $[DECREASE_DURATION]초에 걸쳐 점점 사라집니다.",
         "§4[§c집행§4]§f", 
         "§8<§7패시브§8>§f 적에게 가하는 피해가 §c$[INCREASE]%§f 증가합니다.",
@@ -83,7 +85,7 @@ public class Executioner extends AbilityBase {
 	}
 
 	public static final SettingObject<Double> STACK_DURATION = 
-			abilitySettings.new SettingObject<Double>(Executioner.class, "stack-duration", 3.5,
+			rsAbilitySettings.new SettingObject<Double>(Executioner.class, "stack-duration", 10.0,
             "# 심판 표식 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -92,7 +94,7 @@ public class Executioner extends AbilityBase {
     };
     
 	public static final SettingObject<Double> UNIT_COOLDOWN = 
-			abilitySettings.new SettingObject<Double>(Executioner.class, "unit-cooldown", 20.0,
+			rsAbilitySettings.new SettingObject<Double>(Executioner.class, "unit-cooldown", 20.0,
             "# 유닛별 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -101,7 +103,7 @@ public class Executioner extends AbilityBase {
     };
     
 	public static final SettingObject<Double> EXTRA_HEAL_AMOUNT = 
-			abilitySettings.new SettingObject<Double>(Executioner.class, "extra-heal", 0.3,
+			rsAbilitySettings.new SettingObject<Double>(Executioner.class, "extra-heal", 0.3,
             "# [유예] 초당 체력 회복량") {
         @Override
         public boolean condition(Double value) {
@@ -110,7 +112,7 @@ public class Executioner extends AbilityBase {
     };
     
 	public static final SettingObject<Double> DECREASE_DURATION = 
-			abilitySettings.new SettingObject<Double>(Executioner.class, "decrease-duration", 10.0,
+			rsAbilitySettings.new SettingObject<Double>(Executioner.class, "decrease-duration", 10.0,
             "# [유예] 적 공격력 감소 지속시간", "# 단위: 초") {
         @Override
         public boolean condition(Double value) {
@@ -119,7 +121,7 @@ public class Executioner extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> INCREASE = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Executioner.class, "damage-increase", 15,
             "# [집행] 공격력 증가량", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -128,7 +130,7 @@ public class Executioner extends AbilityBase {
     };
     
 	public static final SettingObject<Integer> EXECUTE_HEALTH = 
-			abilitySettings.new SettingObject<Integer>(Executioner.class, "execute-health", 10,
+			rsAbilitySettings.new SettingObject<Integer>(Executioner.class, "execute-health", 10,
             "# [집행] 처형 조건 체력", "# 단위: %") {
         @Override
         public boolean condition(Integer value) {
@@ -197,6 +199,23 @@ public class Executioner extends AbilityBase {
     		changed = true;
     	}
     }
+    
+	@SubscribeEvent(ignoreCancelled = true, priority = Integer.MAX_VALUE, eventPriority = EventPriority.MONITOR)
+	public void onEntityDamageByEntityFinal(EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+		
+		if (damager != null && !getPlayer().equals(damager)) {
+			if (System.currentTimeMillis() - lastExplode.getOrDefault(damager.getUniqueId(), 0L) >= unitCooldown) {
+				if (!damageMap.containsKey(damager)) {
+					new AttackStack(damager, duration, e.getFinalDamage()).start();
+				}
+			}	
+		}
+	}
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -207,14 +226,6 @@ public class Executioner extends AbilityBase {
 		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
 		
 		if (execute && getPlayer().equals(damager)) e.setDamage(e.getDamage() * attackincrease);
-		
-		if (damager != null && !getPlayer().equals(damager)) {
-			if (System.currentTimeMillis() - lastExplode.getOrDefault(damager.getUniqueId(), 0L) >= unitCooldown) {
-				if (!damageMap.containsKey(damager)) {
-					new AttackStack(damager, duration, e.getFinalDamage()).start();
-				}
-			}	
-		}
 		
 		if (damageMap.containsKey(e.getEntity()) && e.getDamager().equals(getPlayer()) && changed) {
 			Player player = (Player) e.getEntity();

@@ -30,6 +30,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import rainstar.abilitywar.effect.ApparentDeath;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 @AbilityManifest(name = "살인토끼", rank = Rank.L, species = Species.ANIMAL, explain = {
 		"§7패시브 §8- §c살의§f: §a근접 공격력§f이 §c살의§e%§f만큼 증가합니다.",
 		" 적 처치 시 §c살의§f $[TRANS]%당 §e흡수 체력§f 반 칸으로 치환합니다.",
@@ -51,13 +53,10 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	
 	public KillerBunny(Participant participant) {
 		super(participant);
-		if (!getGame().hasModule(HealthBar.class)) {
-			getGame().addModule(new HealthBar(getGame()));
-		}
 	}
 	
 	public static final SettingObject<Double> TRANS = 
-			abilitySettings.new SettingObject<Double>(KillerBunny.class, "trans", 4.0,
+			rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "trans", 4.0,
 			"# 살의 치환 비율", "# 설정값% 당 흡수 체력 반 칸입니다.") {
 
 		@Override
@@ -68,7 +67,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> MURDER_GAIN = 
-			abilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-gain", 2.0,
+			rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-gain", 2.0,
 			"# 살의 획득량") {
 
 		@Override
@@ -79,7 +78,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
 	};
 	
 	public static final SettingObject<Double> MURDER_LOSS = 
-            abilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-loss", 1.5,
+            rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "murder-loss", 1.5,
             "# 살의 소모량") {
 
         @Override
@@ -90,7 +89,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     };
 
     public static final SettingObject<Double> MULTIPLY = 
-            abilitySettings.new SettingObject<Double>(KillerBunny.class, "multiply", 1.4,
+            rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "multiply", 1.4,
             "# 기본 살의 효과 배수") {
 
         @Override
@@ -101,7 +100,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(KillerBunny.class, "cooldown", 100,
+			rsAbilitySettings.new SettingObject<Integer>(KillerBunny.class, "cooldown", 100,
             "# 철괴 우클릭 쿨타임", "# 단위: 초") {
         @Override
         public boolean condition(Integer value) {
@@ -114,7 +113,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     };
     
     public static final SettingObject<Double> SKILL_MULTIPLY = 
-            abilitySettings.new SettingObject<Double>(KillerBunny.class, "skill-multiply", 2.0,
+            rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "skill-multiply", 2.0,
             "# 스킬 살의 효과 배수") {
 
         @Override
@@ -125,7 +124,7 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     };
     
     public static final SettingObject<Double> APPARENTDEATH_DURATION = 
-            abilitySettings.new SettingObject<Double>(KillerBunny.class, "apparent-death-duration-", 4.0,
+            rsAbilitySettings.new SettingObject<Double>(KillerBunny.class, "apparent-death-duration-", 4.0,
             "# 가사 지속시간") {
 
         @Override
@@ -163,12 +162,17 @@ public class KillerBunny extends AbilityBase implements ActiveHandler {
     @Override
     public void onUpdate(Update update) {
     	if (update == Update.RESTRICTION_CLEAR) {
+    		if (!getGame().hasModule(HealthBar.class)) {
+    			getGame().addModule(new HealthBar(getGame())).register();
+    		}
     		getGame().getModule(HealthBar.class).addPlayer(getPlayer());
     		murderfluct(0);
     	}
     	if (update == Update.ABILITY_DESTROY) {
 	    	NMS.setAbsorptionHearts(getPlayer(), 0);
-	    	getGame().getModule(HealthBar.class).removePlayer(getPlayer());
+	    	if (getGame().hasModule(HealthBar.class)) {
+		    	getGame().getModule(HealthBar.class).removePlayer(getPlayer());	
+	    	}
 	    }
     }
     

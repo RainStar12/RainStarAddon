@@ -1,10 +1,13 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +52,7 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -61,17 +65,18 @@ import rainstar.abilitywar.effect.Corrosion;
 		"§3물 속성§f의 꼬마 정령, 소다.",
 		"§7패시브 §8- §3순수§f: 불 속성의 피해, 모든 §5§n상태이상§f, 모든 포션 효과에 §b면역 효과§f를",
 		" 가집니다. 또한 신발을 신고 물 속에 들어갈 때 물갈퀴 인챈트를 자동 획득합니다.",
-		"§7철괴 좌클릭 §8- §3스플래쉬§f: $[DURATION_CONFIG]초간 §b물§f이 되어, 타게팅 불능 및 무적 상태가 됩니다.",
-		" §b물§f이 된 동안 지면에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 §b물§f 상태가",
-		" 해제되고 주변 $[RANGE_CONFIG]칸 내 적에게 $[EFFECT_DURATION]초간 §7§n부식§f 상태이상을 겁니다. $[COOLDOWN_CONFIG]",
+		"§7철괴 좌클릭 §8- §3스플래쉬§f: $[DURATION_CONFIG]초간 §b물§f이 되어, 타게팅 불가 및 관전 상태가 됩니다.",
+		" §b물§f이 된 동안 블록에 맞닿아서만 이동할 수 있으며, 지속 시간이 끝날 때 §b물§f 상태가",
+		" 해제되고 주변 $[RANGE_CONFIG]칸 내 적에게 $[EFFECT_DURATION]초간 §7§n부식§f을 부여합니다. $[COOLDOWN_CONFIG]",
 		"§7연계 패시브 §8- §b버블§f: §3스플래쉬§f 사용 후 $[BUBBLE]초 안에 §3순수§f로 §5§n상태이상§f이나 포션 효과를",
-		" 정화하면 남은 시간동안 §e흡수 체력§f을 $[ABSORTION_GAIN]HP 획득하고 이동 속도가 $[SPEED_INCREASE]% 증가합니다.",
+		" 정화하면, 즉시 체력을 $[HEAL_AMOUNT] 회복하고, 잔여 시간동안 유지되는 §e흡수 체력§f을",
+		" $[ABSORTION_GAIN] 획득하며 이동 속도가 $[SPEED_INCREASE]% 증가합니다.",
 		"§8[§7부식§8]§f 철 광물을 사용하는 모든 아이템을 사용할 수 없습니다.",
 		" 또한 갑옷의 방어력이 착용 광물에 비례해 희귀성이 낮을수록 더 많이 감소합니다."
 		},
 		summarize = {
 		"모든 불 피해, 상태이상, 포션 효과에 면역이 생깁니다.",
-		"§7철괴 좌클릭 시§f §b물§f 상태가 되어 지면에 맞닿아 이동할 수 있으며,",
+		"§7철괴 좌클릭 시§f §b물§f 상태가 되어 블록에 맞닿아 이동할 수 있으며,",
 		"§b물§f 상태가 해제될 때 주변 적에게 §7§n부식§f 상태이상을 겁니다.",
 		"§7§n부식§f된 적은 방어력이 감소하고 철 아이템을 사용할 수 없습니다."
 		})
@@ -82,7 +87,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> DURATION_CONFIG = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"duration", 7, "# 물 상태 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -91,7 +96,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> EFFECT_DURATION = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> EFFECT_DURATION = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"effect-duration", 5, "# 부식 지속시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -100,7 +105,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 
 	};
 	
-	public static final SettingObject<Integer> RANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> RANGE_CONFIG = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"range", 5, "# 부식 범위") {
 		@Override
 		public boolean condition(Integer value) {
@@ -109,7 +114,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"cooldown", 40, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -122,8 +127,8 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> BUBBLE = abilitySettings.new SettingObject<Double>(Soda.class,
-			"bubble-duration", 8.0, "# 버블 지속시간") {
+	public static final SettingObject<Double> BUBBLE = rsAbilitySettings.new SettingObject<Double>(Soda.class,
+			"bubble-duration-amount", 15.0, "# 버블 지속시간") {
 		@Override
 		public boolean condition(Double value) {
 			return value >= 0;
@@ -131,7 +136,16 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> ABSORTION_GAIN = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> HEAL_AMOUNT = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
+			"heal-amount", 2, "# 체력 회복량") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+	
+	public static final SettingObject<Integer> ABSORTION_GAIN = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"absortion-health-gain", 8, "# 흡수 체력 획득량") {
 		@Override
 		public boolean condition(Integer value) {
@@ -140,7 +154,7 @@ public class Soda extends AbilityBase implements ActiveHandler {
 		
 	};
 	
-	public static final SettingObject<Integer> SPEED_INCREASE = abilitySettings.new SettingObject<Integer>(Soda.class,
+	public static final SettingObject<Integer> SPEED_INCREASE = rsAbilitySettings.new SettingObject<Integer>(Soda.class,
 			"speed-increase", 40, "# 이동 속도 증가치", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -220,8 +234,14 @@ public class Soda extends AbilityBase implements ActiveHandler {
 	private double preabsortion = 0;
 	private final ActionbarChannel ac = newActionbarChannel();
 	private final DecimalFormat df = new DecimalFormat("0.0");
+	private final int healamount = HEAL_AMOUNT.getValue();
 	
 	private void actived() {
+		final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), healamount, RegainReason.CUSTOM);
+		Bukkit.getPluginManager().callEvent(event);
+		if (!event.isCancelled()) {
+			Healths.setHealth(getPlayer(), getPlayer().getHealth() + healamount);
+		}
 		preabsortion = NMS.getAbsorptionHearts(getPlayer());
 		NMS.setAbsorptionHearts(getPlayer(), (float) (preabsortion + absortion));
 		try {

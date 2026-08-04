@@ -1,5 +1,7 @@
 package rainstar.abilitywar.synergy;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsSynergySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Material;
@@ -39,7 +41,6 @@ import daybreak.google.common.base.Predicate;
 		" 주변 9칸 내 다른 플레이어가 있을 경우 §7- §b신속",
 		" 해당사항이 없을 경우 §7- §e성급함"
 		})
-
 public class LaplaceDemon extends Synergy implements ActiveHandler {
 	
 	public LaplaceDemon(Participant participant) {
@@ -57,7 +58,7 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
 	private final int amplifier = AMPLIFIER.getValue();
 	
 	public static final SettingObject<Integer> COOLDOWN = 
-			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "cooldown", 14,
+			rsSynergySettings.new SettingObject<Integer>(LaplaceDemon.class, "cooldown", 14,
             "# 쿨타임") {
         @Override
         public boolean condition(Integer value) {
@@ -70,7 +71,7 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> DURATION = 
-			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "duration", 300,
+			rsSynergySettings.new SettingObject<Integer>(LaplaceDemon.class, "duration", 200,
             "# 지속 시간", "# 단위: 틱(20틱 = 1초, 1틱 = 0.05초)") {
         @Override
         public boolean condition(Integer value) {
@@ -79,7 +80,7 @@ public class LaplaceDemon extends Synergy implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> AMPLIFIER = 
-			synergySettings.new SettingObject<Integer>(LaplaceDemon.class, "amplifier", 0,
+			rsSynergySettings.new SettingObject<Integer>(LaplaceDemon.class, "amplifier-value", 1,
             "# 포션 효과 계수", "# 주의! 0부터 시작합니다.", "# 0일 때 포션 효과 계수는 1레벨,", "# 1일 때 포션 효과 계수는 2레벨입니다.") {
         @Override
         public boolean condition(Integer value) {

@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 
 import javax.annotation.Nullable;
@@ -81,7 +83,7 @@ public class Minotauros extends AbilityBase {
 		}
 	}
 	
-	public static final SettingObject<Integer> RUSH_COOLDOWN = abilitySettings.new SettingObject<Integer>(Minotauros.class,
+	public static final SettingObject<Integer> RUSH_COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Minotauros.class,
 			"rush-cooldown", 100, "# 돌진 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -94,7 +96,7 @@ public class Minotauros extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> ATTACK_COOLDOWN = abilitySettings.new SettingObject<Double>(Minotauros.class,
+	public static final SettingObject<Double> ATTACK_COOLDOWN = rsAbilitySettings.new SettingObject<Double>(Minotauros.class,
 			"attack-cooldown", 1.2, "# 쿨타임", "# WRECK 게임 모드의 영향을 받지 않습니다.") {
 		@Override
 		public boolean condition(Double value) {
@@ -102,7 +104,7 @@ public class Minotauros extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> CRASH_RANGE = abilitySettings.new SettingObject<Double>(Minotauros.class,
+	public static final SettingObject<Double> CRASH_RANGE = rsAbilitySettings.new SettingObject<Double>(Minotauros.class,
 			"crash-range", 5.0, "# 충돌 범위") {
 		@Override
 		public boolean condition(Double value) {
@@ -110,7 +112,7 @@ public class Minotauros extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Double> STUN_DURATION = abilitySettings.new SettingObject<Double>(Minotauros.class,
+	public static final SettingObject<Double> STUN_DURATION = rsAbilitySettings.new SettingObject<Double>(Minotauros.class,
 			"attack-cooldown", 2.2, "# 충돌된 적들의 기절 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -118,7 +120,7 @@ public class Minotauros extends AbilityBase {
 		}
 	};
 	
-	public static final SettingObject<Integer> COOLDOWN_DECREASE = abilitySettings.new SettingObject<Integer>(Minotauros.class,
+	public static final SettingObject<Integer> COOLDOWN_DECREASE = rsAbilitySettings.new SettingObject<Integer>(Minotauros.class,
 			"cooldown-decrease", 8, "# 피격 시 돌진 쿨타임 감소 (단위: %)") {
 		@Override
 		public boolean condition(Integer value) {
@@ -319,17 +321,12 @@ public class Minotauros extends AbilityBase {
 			ItemStack mainhand = getPlayer().getInventory().getItemInMainHand();
 			if ((e.getItem().getType().toString().endsWith("SWORD") && mainhand.getType().toString().endsWith("SWORD"))) {
 				if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-					if (!rush_cooldown.isRunning()) {
+					if (!rush_cooldown.isCooldown()) {
 						if (!rush.isRunning()) {
 							skillDamage = getItemDamage(mainhand);
 							getPlayer().sendMessage("§4[§c!§4] §c돌진§d 능력을 사용하였습니다.");
 							rush.start();
 						}
-					} else {
-						int bysecond = (rush_cooldown.getCount() / 20);
-						int minute = bysecond / 60;
-						int second = bysecond % 60;
-						getPlayer().sendMessage("§c돌진 쿨타임§7: §f" + (minute != 0 ? minute + "분 " : "") + second + "초");
 					}
 				}
 				if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
@@ -341,7 +338,7 @@ public class Minotauros extends AbilityBase {
 							double dot = targetLocation.dot(direction);
 							if (dot > 0.575D) {
 								double damage = getItemDamage(mainhand);
-								livingEntity.damage(damage, getPlayer());
+								livingEntity.damage(damage * 1.1, getPlayer());
 							}
 						}
 						sweep_cooldown.start();

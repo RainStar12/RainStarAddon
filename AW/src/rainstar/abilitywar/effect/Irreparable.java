@@ -34,9 +34,9 @@ public class Irreparable extends AbstractGame.Effect implements Listener {
 	private final Participant participant;
 
 	public Irreparable(Participant participant, TimeUnit timeUnit, int duration) {
-		participant.getGame().super(registration, participant, (timeUnit.toTicks(duration) / 20));
+		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
-		setPeriod(TimeUnit.SECONDS, 1);
+		setPeriod(TimeUnit.TICKS, 1);
 	}
 
 	@Override

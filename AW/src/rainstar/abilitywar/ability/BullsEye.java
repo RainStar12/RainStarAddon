@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class BullsEye extends AbilityBase {
 	}
 	
 	public static final SettingObject<Double> ADD_DAMAGE = 
-			abilitySettings.new SettingObject<Double>(BullsEye.class, "add-damage", 1.8,
+			rsAbilitySettings.new SettingObject<Double>(BullsEye.class, "add-damage", 1.8,
 			"# 거리 1칸당 대미지 증가량", "# 단위: %") {
 
 		@Override

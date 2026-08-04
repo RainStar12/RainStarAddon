@@ -1,5 +1,8 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,10 +14,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -49,13 +51,13 @@ import daybreak.google.common.base.Predicate;
 		"정지된 발사체가 화살일 때 나 이외의 존재가 닿으면 정지가 해제됩니다.",
 		"§7철괴 좌클릭 시§f, 정지된 모든 발사체를 정지 해제합니다.",
 		"§7철괴를 들고 웅크린 채 휠§f로 정지까지 걸리는 시간을 조절 가능합니다.",
-		"내 발사체에 맞은 적은 기본 무적 시간이 §c초기화§f됩니다."
+		"자신의 발사체는 피해량이 $[DAMAGE_INCREASE]% 증가합니다.",
 		},
 		summarize = {
 		"발사하는 모든 투사체를 잠시 후 멈출 수 있습니다.",
 		"시간은 웅크린 채 휠로 조절 가능합니다.",
 		"철괴 좌클릭으로 모든 투사체의 정지를 해제합니다.",
-		"투사체에 맞은 적은 기본 무적 시간이 초기화됩니다."
+		"자신의 투사체는 피해량이 $[DAMAGE_INCREASE]% 증가합니다."
 		})
 
 @Tips(tip = {
@@ -81,7 +83,7 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> ARROW = abilitySettings.new SettingObject<Integer>(AntiGravity.class,
+	public static final SettingObject<Integer> ARROW = rsAbilitySettings.new SettingObject<Integer>(AntiGravity.class,
 			"arrow-amount", 64, "# 화살 추가 지급 개수") {
 		@Override
 		public boolean condition(Integer value) {
@@ -89,8 +91,16 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> ENDERPEARL = abilitySettings.new SettingObject<Integer>(AntiGravity.class,
+	public static final SettingObject<Integer> ENDERPEARL = rsAbilitySettings.new SettingObject<Integer>(AntiGravity.class,
 			"enderpearl-amount", 16, "# 엔더진주 추가 지급 개수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
+	
+	public static final SettingObject<Integer> DAMAGE_INCREASE = rsAbilitySettings.new SettingObject<Integer>(AntiGravity.class,
+			"damage-increase", 50, "# 발사체 피해량 증가", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -101,6 +111,7 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 	private final Map<Projectile, AntiGravitied> antigravityMap = new HashMap<>();
 	private boolean kit = true;
 	private int timer = 1;
+	private double damagemultifly = 1 + (DAMAGE_INCREASE.getValue() * 0.01);
 	
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -135,8 +146,7 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 	
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR && kit == true) {
-			
+		if (update == Update.RESTRICTION_CLEAR && kit) {		
 			ItemStack arrow = new ItemStack(Material.ARROW, ARROW.getValue());
 			ItemStack enderpearl = new ItemStack(Material.ENDER_PEARL, ENDERPEARL.getValue());
 			ItemMeta ameta = arrow.getItemMeta();
@@ -159,8 +169,10 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 		}
 		
 		if (update == Update.ABILITY_DESTROY || update == Update.RESTRICTION_SET) {
-			for (Entry<Projectile, AntiGravitied> entry : antigravityMap.entrySet()) {
-				entry.getValue().stop(false);
+			if (!antigravityMap.isEmpty()) {
+				for (AntiGravitied gravitied : new ArrayList<>(antigravityMap.values())) {
+				    gravitied.stop(false);
+				}
 			}
 		}
 	}
@@ -241,13 +253,11 @@ public class AntiGravity extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 4);
 	
 	@SubscribeEvent
-	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getHitBlock() == null) {
-			if (getPlayer().equals(e.getEntity().getShooter())) {
-				if (e.getHitEntity() instanceof LivingEntity) {
-					LivingEntity l = (LivingEntity) e.getHitEntity();
-					l.setNoDamageTicks(0);
-				}
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (getPlayer().equals(projectile.getShooter())) {
+				e.setDamage(e.getDamage() * damagemultifly);
 			}
 		}
 	}

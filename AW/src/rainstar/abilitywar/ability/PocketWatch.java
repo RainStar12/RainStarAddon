@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,7 +88,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> MAX_TIME = abilitySettings.new SettingObject<Integer>(PocketWatch.class,
+	public static final SettingObject<Integer> MAX_TIME = rsAbilitySettings.new SettingObject<Integer>(PocketWatch.class,
 			"max-time", 30, "# 시간 가속 최대 시간") {
 		@Override
 		public boolean condition(Integer value) {
@@ -94,7 +96,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> MULTIPLY = abilitySettings.new SettingObject<Double>(PocketWatch.class,
+	public static final SettingObject<Double> MULTIPLY = rsAbilitySettings.new SettingObject<Double>(PocketWatch.class,
 			"multiply-cooldown", 3.3, "# 사용한 시간의 쿨타임 배수") {
 		@Override
 		public boolean condition(Double value) {
@@ -102,7 +104,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> RANGE = abilitySettings.new SettingObject<Double>(PocketWatch.class,
+	public static final SettingObject<Double> RANGE = rsAbilitySettings.new SettingObject<Double>(PocketWatch.class,
 			"range", 7.0, "# 시간 정지 범위") {
 		@Override
 		public boolean condition(Double value) {
@@ -110,7 +112,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> DURATION = abilitySettings.new SettingObject<Double>(PocketWatch.class,
+	public static final SettingObject<Double> DURATION = rsAbilitySettings.new SettingObject<Double>(PocketWatch.class,
 			"duration", 4.5, "# 시간 정지 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -118,7 +120,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> DECREASE = abilitySettings.new SettingObject<Integer>(PocketWatch.class,
+	public static final SettingObject<Integer> DECREASE = rsAbilitySettings.new SettingObject<Integer>(PocketWatch.class,
 			"decrease", 20, "# 정지된 적이 받는 피해 감소량", "# 단위: %") {
 		@Override
 		public boolean condition(Integer value) {
@@ -445,8 +447,8 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		
     		if (usedtime < maxtime) {
     			usedtime++;
-    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.000315));
-				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.000175, RegainReason.CUSTOM);
+    			getPlayer().setWalkSpeed((float) (getPlayer().getWalkSpeed() + 0.00045));
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), usedtime * 0.00022, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
 					Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
@@ -466,7 +468,7 @@ public class PocketWatch extends AbilityBase implements ActiveHandler {
     		slower.start();
     		getPlayer().setSprinting(false);
     		getPlayer().setWalkSpeed(0.2f);
-    		cooldown = (int) (Wreck.isEnabled(GameManager.getGame()) ? (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.75) * (usedtime * multiply)) : (usedtime * multiply));
+    		cooldown = (int) (Wreck.isEnabled(GameManager.getGame()) ? ((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * (usedtime * multiply) : (usedtime * multiply));
     		usedtime = 0;
     	}
 		

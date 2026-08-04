@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -45,8 +47,8 @@ import rainstar.abilitywar.effect.Poison;
         "§7철괴 우클릭 §8- §d달콤하게§f: $[RANGE]칸 내의 모든 적을 $[CHARM_DURATION]초간 §d§n유혹§f합니다.",
         " 이 스킬은 $[COUNT]번 사용 후 §c쿨타임§f을 가집니다. $[COOLDOWN]",
         " 자신 외 게임 참가자가 체력을 회복할 때마다 §c쿨타임§f이 회복량 × $[COOLDECREASE_MULTIPLY]초 줄어듭니다.",
-        "§7철괴 좌클릭 §8- §c아찔하게§f: $[RANGE]칸 내의 자신 외 모든 적의 §3§n상태이상§f을",
-        " §4§n혈사병§f을 제외하고 전부 §c§n출혈 효과§f로 변경합니다. 이 스킬은 §c쿨타임§f이 없습니다."
+        "§7철괴 좌클릭 §8- §c아찔하게§f: $[RANGE]칸 내의 모든 대상의 §4§n혈사병§f을 제외한 §3§n상태이상§f을",
+        " 전부 §c§n강력한 출혈§f로 변경합니다. 자신 대상으로는 §c§n출혈§f이 비교적 약해집니다."
         },
         summarize = {
         "§7철괴 우클릭으로§f 주변 적들을 §d§n유혹§f합니다. $[COUNT]번 쓰면 쿨타임이 생깁니다.",
@@ -59,7 +61,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	}
 	
 	public static final SettingObject<Double> RANGE = 
-			abilitySettings.new SettingObject<Double>(Succubus.class, "skill-range", 7.5,
+			rsAbilitySettings.new SettingObject<Double>(Succubus.class, "skill-range", 7.4,
             "# 모든 스킬 범위", "# 단위: 칸") {
 
         @Override
@@ -70,7 +72,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COUNT = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "count", 3,
+			rsAbilitySettings.new SettingObject<Integer>(Succubus.class, "count", 3,
             "# 철괴 우클릭 연속 사용 가능 횟수") {
 
         @Override
@@ -81,7 +83,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Double> CHARM_DURATION = 
-			abilitySettings.new SettingObject<Double>(Succubus.class, "charm-duration", 6.9,
+			rsAbilitySettings.new SettingObject<Double>(Succubus.class, "charm-duration", 6.9,
             "# 유혹 지속 시간") {
 
         @Override
@@ -92,7 +94,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> CHARM_DECREASE = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-decrease-", 15,
+			rsAbilitySettings.new SettingObject<Integer>(Succubus.class, "charm-decrease", 25,
             "# 유혹 도중 대미지 감소율 (단위: %)") {
 
         @Override
@@ -103,7 +105,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
 	
 	public static final SettingObject<Integer> CHARM_HEAL = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "charm-heal-", 25,
+			rsAbilitySettings.new SettingObject<Integer>(Succubus.class, "charm-heal", 30,
             "# 유혹된 대상 타격시 회복률 (단위: %)") {
 
         @Override
@@ -114,7 +116,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Double> COOLDECREASE_MULTIPLY = 
-			abilitySettings.new SettingObject<Double>(Succubus.class, "cooldown-decrease-multiply", 1.2,
+			rsAbilitySettings.new SettingObject<Double>(Succubus.class, "cooldown-decrease-multiply", 1.3,
             "# 회복량 비례 쿨타임 감소율") {
 
         @Override
@@ -125,7 +127,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
     };
     
 	public static final SettingObject<Integer> COOLDOWN = 
-			abilitySettings.new SettingObject<Integer>(Succubus.class, "cooldown-", 444,
+			rsAbilitySettings.new SettingObject<Integer>(Succubus.class, "cooldown-", 444,
             "# 쿨타임") {
 
         @Override
@@ -258,6 +260,28 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 	    			return false;
 	    		}
 	    	} else if (clicktype.equals(ClickType.LEFT_CLICK)) {
+	    		if (getParticipant().getEffects().size() > 0) {
+	    			Collection<Effect> effectlist = new HashSet<>(getParticipant().getEffects());
+	    			for (Effect effects : effectlist) {
+	    				if (!effects.getRegistration().equals(Hemophilia.registration) && !effects.getRegistration().equals(Bleed.registration)) {
+		    				int duration = (int) (effects.getCount() * effects.getPeriod());
+		    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
+		    				Bleed.apply(getParticipant(), TimeUnit.TICKS, duration, 20);
+	    				}
+	    			}
+	    			getParticipant().removeEffects(new Predicate<Effect>() {
+	                    @Override
+	                    public boolean test(Effect effect) {
+	                    	return !(effect.getRegistration().equals(Bleed.registration) || effect.getRegistration().equals(Hemophilia.registration));
+	                    }
+
+						@Override
+						public boolean apply(@Nullable Effect arg0) {
+							return false;
+						}
+	                });
+	    		}
+	    		
 	    		for (Player player : LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), range, predicate)) {
 	    			Participant p = getGame().getParticipant(player);
 	    			if (p.getEffects().size() > 0) {
@@ -267,7 +291,7 @@ public class Succubus extends AbilityBase implements ActiveHandler {
 		    				if (!effects.getRegistration().equals(Hemophilia.registration) && !effects.getRegistration().equals(Bleed.registration)) {
 			    				int duration = (int) (effects.getCount() * effects.getPeriod());
 			    				if (multiplyEffects.containsKey(effects.getRegistration())) duration = (int) (duration * multiplyEffects.get(effects.getRegistration()));
-			    				Bleed.apply(p, TimeUnit.TICKS, duration, 30);
+			    				Bleed.apply(p, TimeUnit.TICKS, duration, 8);
 			    				changed = true;
 		    				}
 		    			}	

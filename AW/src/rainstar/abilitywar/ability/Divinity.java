@@ -1,5 +1,7 @@
 package rainstar.abilitywar.ability;
 
+import static rainstar.abilitywar.system.config.RainStarAbilitySetting.rsAbilitySettings;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -62,7 +64,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 	
-	public static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Divinity.class,
+	public static final SettingObject<Integer> COOLDOWN = rsAbilitySettings.new SettingObject<Integer>(Divinity.class,
 			"cooldown", 100, "# 쿨타임") {
 		@Override
 		public boolean condition(Integer value) {
@@ -75,7 +77,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> ALTER_DURATION = abilitySettings.new SettingObject<Double>(Divinity.class,
+	public static final SettingObject<Double> ALTER_DURATION = rsAbilitySettings.new SettingObject<Double>(Divinity.class,
 			"alter-duration", 10.0, "# 분신 지속 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -83,7 +85,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Double> DURATION_DECREASE = abilitySettings.new SettingObject<Double>(Divinity.class,
+	public static final SettingObject<Double> DURATION_DECREASE = rsAbilitySettings.new SettingObject<Double>(Divinity.class,
 			"duration", 1.5, "# 감소 지속 시간") {
 		@Override
 		public boolean condition(Double value) {
@@ -91,7 +93,7 @@ public class Divinity extends AbilityBase implements ActiveHandler {
 		}
 	};
 	
-	public static final SettingObject<Integer> ATTACK_DAMAGE_DECREASE = abilitySettings.new SettingObject<Integer>(Divinity.class,
+	public static final SettingObject<Integer> ATTACK_DAMAGE_DECREASE = rsAbilitySettings.new SettingObject<Integer>(Divinity.class,
 			"attack-damage-decrease", 15, "# 분신 지속 중 대미지 감소") {
 		@Override
 		public boolean condition(Integer value) {

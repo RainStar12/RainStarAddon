@@ -32,7 +32,9 @@ public class KillRewardSelectGUI implements Listener {
     @EventHandler()
     public void onInventoryClick(InventoryClickEvent e) {
     	if (e.getClickedInventory().equals(gui)) {
-    		player.getInventory().addItem(e.getCurrentItem());
+    		if (player.getInventory().firstEmpty() == -1) {
+    			player.getWorld().dropItem(player.getLocation(), e.getCurrentItem());
+    		} else player.getInventory().addItem(e.getCurrentItem());
     		e.setCancelled(true);
     		player.closeInventory();
     	}
