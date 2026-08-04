@@ -221,11 +221,11 @@ public class RainStarAddon extends Addon implements Listener {
 					Bukkit.broadcastMessage("§2[§a!§2] §e§lG§a§lO§e§lL§a§lD §e§lR§a§lU§e§lS§a§lH§e§l!§a§l!§e§l!");
 					e.getGame().addModule(new GoldRush(e.getGame(), time));
 				}
+				e.getGame().addModule(new MurderTimer(e.getGame(), time));
+				e.getGame().addModule(new CheckMurdererSword(e.getGame(), (time * 20)));
 				if (RainStarConfig.getBoolean(ConfigOption.NO_KILL)) {
 					e.getGame().addModule(new NoKill(e.getGame(), RainStarConfig.getInt(ConfigOption.NO_KILL_TIME) * 20));
 				}
-				e.getGame().addModule(new MurderTimer(e.getGame(), time));
-				e.getGame().addModule(new CheckMurdererSword(e.getGame(), (time * 20)));
 			}
 			e.getGame().addModule(new MurderTeamChat(e.getGame()));
 			e.getGame().addModule(new DetectiveBuffer(e.getGame()));
