@@ -239,6 +239,8 @@ public class RainStarAddon extends Addon implements Listener {
 			} else if (RainStarConfig.getBoolean(ConfigOption.HEAD_COUNT_BALANCE)) {
 				e.getGame().addModule(new HeadcountBalance(e.getGame()));
 			}
+			Bukkit.broadcastMessage("§4[§c!§4] §c머더 팀§f은 채팅 맨 앞에 §c§l`§f를 붙여§8(§7쉬프트 없이 ~키§8)§c 머더 채팅§f을 이용할 수 있습니다.");
+			Bukkit.broadcastMessage("§4[§c예시§4] §c`머더 누구임?");
 		}
 	}
 	

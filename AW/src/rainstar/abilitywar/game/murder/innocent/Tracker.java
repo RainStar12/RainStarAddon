@@ -101,7 +101,7 @@ public class Tracker extends AbstractInnocent {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Participant participant = getGame().getParticipant(e.getPlayer());
 		if (participant != null && !getParticipant().equals(participant) && getPlayer().getWorld().equals(participant.getPlayer().getWorld())) {
-			if (!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), 10) && LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), 10)) {
+			if (!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), 15) && LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), 15)) {
 				if (!participant.getPlayer().equals(target)) getPlayer().sendMessage("§8[§c감지§8]§c 누군가가 접근 중입니다!!!");
 				target = participant.getPlayer();
 				new AbilityTimer(TaskType.REVERSE, 20) {
@@ -123,7 +123,7 @@ public class Tracker extends AbstractInnocent {
 		}
 		
 		if (target != null) {
-			if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), 10) && !LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), 10)) {
+			if (LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), 15) && !LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), 15)) {
 				target = null;
 			}
 		}
